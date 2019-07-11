@@ -1,0 +1,39 @@
+{
+    "name": "crudadmin/resources",
+    "type": "library",
+    "description": "Package creating support for Admin Model migrations feature",
+    "keywords": ["crudadmin", "admin-model", "model", "admin", "eloquent", "laravel"],
+    "homepage": "https://crudadmin.com",
+    "license": "MIT",
+    "authors": [
+        { "name": "Marek Gogoľ", "email": "info@marekgogol.sk" }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "crudadmin/crudadmin": "^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.7|~7.0",
+        "orchestra/testbench": "^3.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Admin\\Resources\\": "src",
+        },
+        "files": [
+            "src/Helpers/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Admin\\Core\\Tests\\App\\": "tests/Stubs/app"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Admin\\Core\\Providers\\AppServiceProvider"
+            ]
+        }
+    }
+}

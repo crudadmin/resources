@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         cacheResult="true"
+         stopOnFailure="false">
+    <testsuites>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
+    <php>
+        <env name="APP_URL" value="127.0.0.1:8000"/>
+        <env name="DB_CONNECTION" value="mysql"/>
+        <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF"/>
+    </php>
+</phpunit>
