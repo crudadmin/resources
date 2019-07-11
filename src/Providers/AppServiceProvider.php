@@ -11,6 +11,8 @@ class AppServiceProvider extends ServiceProvider
 {
     protected $providers = [
         CommandsServiceProvider::class,
+        PublishServiceProvider::class,
+        RouteServiceProvider::class,
     ];
 
     /**
@@ -20,8 +22,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //Load translations
-        $this->loadTranslationsFrom(__DIR__.'/../Resources/lang/', 'admin.core');
+        /*
+         * Bind variable to admin views path
+         */
+        $this->loadViewsFrom(__DIR__ . '/../Views', 'admin');
+
+        /*
+         * Load admin translates
+         */
+        $this->loadTranslationsFrom(__DIR__.'/../Resources/lang/', 'admin');
     }
 
     /**
@@ -31,34 +40,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //Merge configs
-        $this->mergeConfigFrom(
-            __DIR__.'/../Config/config.php', 'admin'
-        );
-
-        $this->registerFacades();
-
         $this->registerProviders();
-    }
-
-    /*
-     * Register facades helpers and aliases
-     */
-    public function registerFacades()
-    {
-        //Register facades
-        foreach ($this->facades as $alias => $facade) {
-            $this->app->bind($alias, $facade['helper']);
-        }
-
-        //Register aliasess
-        $this->app->booting(function () {
-            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-
-            foreach ($this->facades as $facade) {
-                $loader->alias($facade['classname'], $facade['facade']);
-            }
-        });
     }
 
     /*

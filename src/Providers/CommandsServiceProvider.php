@@ -2,9 +2,7 @@
 
 namespace Admin\Resources\Providers;
 
-use Admin\Resources\Commands\AdminMigrationCommand;
-use Admin\Resources\Commands\AdminModelCommand;
-use Illuminate\Filesystem\Filesystem;
+use Admin\Resources\Commands\AdminUpdateCommand;
 use Illuminate\Support\ServiceProvider;
 
 class CommandsServiceProvider extends ServiceProvider
