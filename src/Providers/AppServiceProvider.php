@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
         /*
          * Bind variable to admin views path
          */
-        $this->loadViewsFrom(__DIR__ . '/../Views', 'admin');
+        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'admin');
 
         /*
          * Load admin translates
