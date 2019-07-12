@@ -238,7 +238,7 @@ class UploadedFile extends File
      * IE/Safari/Opera file type auto detection bug.
      * Returns `true` if a file contains insecure HTML code at the beginning.
      *
-     * @return boolean `true` if the uploaded file contains HTML in the first 1024 bytes.
+     * @return bool `true` if the uploaded file contains HTML in the first 1024 bytes.
      */
     public function containsHtml()
     {

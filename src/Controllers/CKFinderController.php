@@ -20,7 +20,7 @@ class CKFinderController extends Controller
      */
     public function __construct()
     {
-        app()->bind('ckfinder.connector', function() {
+        app()->bind('ckfinder.connector', function () {
             $ckfinder = new \CKSource\CKFinder\CKFinder(require __DIR__.'/../Plugins/CKFinder/config.php');
 
             if (Kernel::MAJOR_VERSION >= 4) {

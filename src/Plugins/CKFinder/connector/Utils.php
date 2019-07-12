@@ -68,7 +68,7 @@ class Utils
             $sRealPath = dirname($_SERVER['SCRIPT_FILENAME']);
         } else {
             /**
-             * realpath — Returns canonicalized absolute pathname
+             * realpath — Returns canonicalized absolute pathname.
              */
             $sRealPath = realpath('.');
         }
@@ -189,7 +189,7 @@ class Utils
 
     /**
      * Removes any cache headers that might be set by the session cache limiter.
-     * See @link http://php.net/manual/en/function.session-cache-limiter.php
+     * See @link http://php.net/manual/en/function.session-cache-limiter.php.
      */
     public static function removeSessionCacheHeaders()
     {

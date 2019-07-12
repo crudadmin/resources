@@ -22,7 +22,7 @@
 
 $config = array();
 
-$config['authentication'] = function(){
+$config['authentication'] = function () {
     return auth()->guard('web')->check();
 };
 
@@ -185,7 +185,7 @@ $config['csrfProtection'] = false;
 
 /*============================== End of Configuration =================================*/
 
-/**
+/*
  * Config must be returned - do not change it.
  */
 return $config;

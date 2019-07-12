@@ -101,7 +101,7 @@ class OperationManager
 
     /**
      * Starts a time consuming operation in the current request.
-
+     *
      * @return bool `true` if operation tracking was started.
      */
     public function start()
