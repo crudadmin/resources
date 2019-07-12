@@ -10,12 +10,13 @@
  * modifying or distribute this file or part of its contents. The contents of
  * this file is part of the Source Code of CKFinder.
  */
+
 namespace CKSource\CKFinder\Backend\Adapter;
 
 use League\Flysystem\AdapterInterface;
 
 /**
- * Class Ftp
+ * Class Ftp.
  *
  * Customized FTP adapter to avoid performance issue introduced with following change:
  * https://github.com/thephpleague/flysystem/commit/846ed144d2c888b68884b6ac9a6c8b0e74d87073
@@ -34,7 +35,7 @@ class Ftp extends \League\Flysystem\Adapter\Ftp
     protected function normalizeObject($item, $base)
     {
         $item = preg_replace('#\s+#', ' ', trim($item), 7);
-        list($permissions, /* $number */, /* $owner */, /* $group */, $size,  $month, $day, $time, $name) = explode(' ', $item, 9);
+        list($permissions, /* $number */, /* $owner */, /* $group */, $size, $month, $day, $time, $name) = explode(' ', $item, 9);
         $type = $this->detectType($permissions);
         $path = empty($base) ? $name : $base.$this->separator.$name;
 

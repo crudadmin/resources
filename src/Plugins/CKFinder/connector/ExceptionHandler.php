@@ -40,7 +40,7 @@ class ExceptionHandler implements EventSubscriberInterface
     protected $debug;
 
     /**
-     * LoggerInterface
+     * LoggerInterface.
      *
      * @var LoggerInterface $logger
      */

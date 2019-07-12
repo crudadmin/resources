@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: zaak
  * Date: 05.01.16
- * Time: 12:27
+ * Time: 12:27.
  */
 
 namespace CKSource\CKFinder\Backend\Adapter;

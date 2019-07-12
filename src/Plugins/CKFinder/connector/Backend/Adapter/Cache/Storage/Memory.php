@@ -18,7 +18,7 @@ use League\Flysystem\Cached\Storage\Memory as MemoryBase;
 
 /**
  * Cached adapter customization that resolves
- * https://github.com/thephpleague/flysystem-cached-adapter/issues/18
+ * https://github.com/thephpleague/flysystem-cached-adapter/issues/18.
  */
 class Memory extends MemoryBase
 {

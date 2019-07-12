@@ -45,7 +45,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Creates backend-relative path for cache file for given key
+     * Creates backend-relative path for cache file for given key.
      *
      * @param string $key
      * @param bool   $prefix
@@ -58,7 +58,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Sets the value in cache under given key
+     * Sets the value in cache under given key.
      *
      * @param string $key
      * @param mixed  $value
@@ -71,7 +71,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Returns value under given key from cache
+     * Returns value under given key from cache.
      *
      * @param string $key
      *
@@ -89,7 +89,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Deletes value under given key  from cache
+     * Deletes value under given key  from cache.
      *
      * @param string $key
      *
@@ -121,7 +121,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Deletes all cache entries with given key prefix
+     * Deletes all cache entries with given key prefix.
      *
      * @param string $keyPrefix
      *
@@ -138,7 +138,7 @@ class BackendAdapter implements AdapterInterface
     }
 
     /**
-     * Changes prefix for all entries given key prefix
+     * Changes prefix for all entries given key prefix.
      *
      * @param string $sourcePrefix
      * @param string $targetPrefix

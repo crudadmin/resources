@@ -38,7 +38,7 @@ class Azure extends AzureAdapterBase implements EmulateRenameDirectoryInterface
         $listResults = $this->client->listBlobs($this->container, $options);
 
         foreach ($listResults->getBlobs() as $blob) {
-            /** @var \MicrosoftAzure\Storage\Blob\Models\Blob $blob */
+            /* @var \MicrosoftAzure\Storage\Blob\Models\Blob $blob */
             $this->client->copyBlob(
                 $this->container,
                 $this->replacePath($blob->getName(), $path, $newPath),

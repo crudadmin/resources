@@ -162,7 +162,7 @@ abstract class File
      * @param string $fileName
      * @param bool   $disallowUnsafeCharacters
      *
-     * @return boolean `true` if `$fileName` is a valid file name.
+     * @return bool `true` if `$fileName` is a valid file name.
      */
     public static function isValidName($fileName, $disallowUnsafeCharacters = true)
     {

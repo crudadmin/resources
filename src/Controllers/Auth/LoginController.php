@@ -50,7 +50,7 @@ class LoginController extends Controller
     {
         //If is user logged
         if ($this->guard()->user()) {
-            return redirect( $this->redirectPath() );
+            return redirect($this->redirectPath());
         }
 
         $username = $this->username();
@@ -63,8 +63,9 @@ class LoginController extends Controller
         $this->guard()->logout();
 
         //Custom logout path
-        if ( !($path = config('admin.authentication.login.path')) )
+        if (!($path = config('admin.authentication.login.path'))) {
             $path = $this->redirectTo;
+        }
 
         return redirect($path);
     }
