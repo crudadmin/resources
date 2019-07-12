@@ -60,7 +60,7 @@ class DownloadedFile extends ExistingFile
      *
      * @throws \Exception
      *
-     * @return boolean `true` if the file passed validation.
+     * @return bool `true` if the file passed validation.
      */
     public function isValid()
     {

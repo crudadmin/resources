@@ -25,7 +25,7 @@ Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset');
 /*
  * Admin routes
  */
-Route::group(['middleware' => 'admin'], function(){
+Route::group(['middleware' => 'admin'], function () {
     // Dashboard
     Route::get('/admin', 'DashboardController@index');
 

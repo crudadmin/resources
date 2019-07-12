@@ -29,7 +29,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   -->
   <link rel="stylesheet" href="<?php echo admin_asset('/dist/css/skins/skin-blue.min.css') ?>">
 
-  <?php foreach(array_merge((array)config('admin.styles', []), ((($customCssPath = public_path('/assets/admin/css/custom.css')) && file_exists($customCssPath)) ? [ asset('/assets/admin/css/custom.css') ] : [])) as $css){ ?>
+  <?php foreach (array_merge((array)config('admin.styles', []), ((($customCssPath = public_path('/assets/admin/css/custom.css')) && file_exists($customCssPath)) ? [ asset('/assets/admin/css/custom.css') ] : [])) as $css) { ?>
   <link rel="stylesheet" type="text/css" href="<?php echo admin_asset($css, true) ?>">
   <?php } ?>
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -173,7 +173,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <!-- Default to the left -->
             <strong>
               &copy; <?php echo date('Y') > config('admin.author.since', 2016) ? config('admin.author.since', 2016) . ' - '.date('Y') : date('Y') ?> <a href="<?php echo config('admin.author.url', 'http://marekgogol.sk') ?>" target="_blank"><?php echo config('admin.author.name', 'CrudAdmin') ?></a>
-              <?php if ( config('admin.author', true) !== false ){ ?>
+              <?php if (config('admin.author', true) !== false) { ?>
               system by <a href="<?php echo config('admin.author.url', 'http://marekgogol.sk') ?>" target="_blank"><?php echo config('admin.author.copyright', 'Marek Gogoľ') ?></a>.
               <?php } ?>
             </strong>
@@ -183,12 +183,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </div>
         <!-- ./wrapper -->
 
-        <?php if ( Admin::isDev() == false ) { ?>
+        <?php if (Admin::isDev() == false) { ?>
         <!-- REQUIRED JS SCRIPTS -->
         <div id="loader" v-cloak v-bind:class="{ hidenloader : user }">
             <div class="spinner">
                 <h2><strong><?php echo config('admin.author.name', 'CrudAdmin') ?></strong> <span>&copy;</span> <?php echo date('Y') > config('admin.author.since', 2016) ? config('admin.author.since', 2016) . ' - '.date('Y') : date('Y') ?>
-                <?php if ( config('admin.author', true) !== false ){ ?>
+                <?php if (config('admin.author', true) !== false) { ?>
                 by <?php echo config('admin.author.copyright', 'Marek Gogoľ') ?>
                 <?php } ?></h2>
                 <div class="bounce1"></div>
@@ -216,14 +216,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="<?php echo admin_asset('/plugins/ckeditor/ckeditor.js') ?>"></script>
 
     <!-- APP JS -->
-    <script src="<?php echo admin_asset('/js/app.js?v=' . (Admin::getVersion() == 'dev-master' ? rand(00000, 99999) : Admin::getAssetsVersion() ) ) ?>"></script>
+    <script src="<?php echo admin_asset('/js/app.js?v=' . (Admin::getVersion() == 'dev-master' ? rand(00000, 99999) : Admin::getAssetsVersion())) ?>"></script>
 
-    <?php foreach((array)config('admin.scripts', []) as $script){ ?>
+    <?php foreach ((array)config('admin.scripts', []) as $script) { ?>
     <script type="text/javascript" src="<?php echo admin_asset($script) ?>"></script>
     <?php } ?>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <?php if ( Admin::isDev() === false ) { ?>
+    <?php if (Admin::isDev() === false) { ?>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-42935841-6"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -236,8 +236,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <?php
     //Slot into template
-    if ( file_exists($path = resource_path('views/vendor/crudadmin/slot.php')) )
-      include_once($path);
+    if (file_exists($path = resource_path('views/vendor/crudadmin/slot.php'))) {
+        include_once($path);
+    }
     ?>
 
   </body>

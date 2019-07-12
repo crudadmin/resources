@@ -53,7 +53,7 @@ class Folder
      * @param string $folderName
      * @param bool   $disallowUnsafeCharacters
      *
-     * @return boolean
+     * @return bool
      */
     public static function isValidName($folderName, $disallowUnsafeCharacters)
     {

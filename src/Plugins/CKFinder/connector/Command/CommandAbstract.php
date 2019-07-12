@@ -96,7 +96,7 @@ abstract class CommandAbstract
         return $this->requestMethod;
     }
 
-    /**
+    /*
      * This method is not defined as abstract to allow for parameter injection.
      * @see CKSource\CKFinder\CommandResolver::getArguments()
      */

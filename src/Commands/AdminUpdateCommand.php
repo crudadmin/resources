@@ -40,7 +40,6 @@ class AdminUpdateCommand extends Command
      */
     public function handle()
     {
-
         $this->removeOldVendor();
 
         $this->publishVendor();
@@ -74,17 +73,18 @@ class AdminUpdateCommand extends Command
             'assets/admin/dist',
         ];
 
-        foreach ($remove as $file)
-        {
+        foreach ($remove as $file) {
             $path = public_path($file);
 
-            if ( ! file_exists($path) )
+            if (! file_exists($path)) {
                 continue;
+            }
 
-            if ( is_dir($path) )
+            if (is_dir($path)) {
                 File::deleteDirectory($path);
-            else
+            } else {
                 unlink($path);
+            }
         }
 
         $this->line('<comment>+ Old Vendor directories has been successfully removed</comment>');

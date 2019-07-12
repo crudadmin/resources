@@ -69,8 +69,7 @@ class QuickUpload extends FileUpload
             $fileUrl = isset($responseData['url']) ? $responseData['url'] : '';
             $errorMessage = isset($responseData['error']['message']) ? $responseData['error']['message'] : '';
 
-            ob_start();
-            ?>
+            ob_start(); ?>
 <script type="text/javascript">
     window.parent.CKEDITOR.tools.callFunction(<?php echo json_encode($funcNum); ?>, <?php echo json_encode($fileUrl); ?>, <?php echo json_encode($errorMessage); ?>);
 </script>

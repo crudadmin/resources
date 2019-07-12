@@ -29,7 +29,7 @@ class Init extends CommandAbstract
     {
         $data = new \stdClass();
 
-        /**
+        /*
          * The connector is always enabled here.
          *
          * @see CKFinder::checkAuth()

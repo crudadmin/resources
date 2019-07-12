@@ -194,7 +194,7 @@ class ResizedImage extends ResizedImageAbstract
     {
         $backend = $this->sourceFileResourceType->getBackend();
 
-        /**
+        /*
          * In case the requested size is bigger than the size of the original image,
          * the resized version was not created.
          * This is a fallback that returns the URL to the original image.

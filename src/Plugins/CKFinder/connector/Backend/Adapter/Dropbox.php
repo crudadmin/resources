@@ -77,7 +77,7 @@ class Dropbox extends \Spatie\FlysystemDropbox\DropboxAdapter
         }
 
         if (substr($sharedLinkUrl, -5) === '?dl=0') {
-            $sharedLinkUrl[strlen($sharedLinkUrl)-1] = '1';
+            $sharedLinkUrl[strlen($sharedLinkUrl) - 1] = '1';
         }
 
         return $sharedLinkUrl;

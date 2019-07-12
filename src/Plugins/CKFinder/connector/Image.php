@@ -217,7 +217,7 @@ class Image
     }
 
     /**
-     * Returns the aspect ratio size as an associative array:
+     * Returns the aspect ratio size as an associative array:.
      * @code
      * array
      * (
@@ -360,7 +360,7 @@ class Image
      * @param int $srcH
      * @param int $quality
      *
-     * @return boolean
+     * @return bool
      */
     public function fastCopyResampled(&$dstImage, $srcImage, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH, $quality = 3)
     {
