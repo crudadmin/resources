@@ -25,6 +25,7 @@ return [
     'languages' => 'Jazyková mutácia',
     'languages-missing' => 'V administrácii sa nenachádzaju žiadné jazykové mutácie, ku ktorým by mohli byť záznamy naviazané. Prosím, pridajte aspoň jeden jazyk.',
     'change-language' => 'Zmena jazykovej mutácie. Pozor! Zmena jazyka môže zahodiť Vaše aktuálne rozpísane zmeny.',
+    'languages-field' => 'Tento vstup je prekladaný do viacerých jazykov.',
 
     'super-admin' => 'Super administrátor',
     'admin-group' => 'Administrátorska skupina',

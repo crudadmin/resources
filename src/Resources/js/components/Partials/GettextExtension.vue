@@ -156,9 +156,6 @@ export default {
     },
 
     methods: {
-        trans(key){
-            return this.$root.trans(key);
-        },
         close(){
             this.$parent.gettext_editor = null;
         },

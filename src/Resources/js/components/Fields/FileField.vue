@@ -1,6 +1,10 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled }">
-        <label>{{ field_name }} <span v-if="required" class="required">*</span></label>
+        <label>
+            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
+            {{ field_name }}
+            <span v-if="required" class="required">*</span>
+        </label>
 
         <div class="file-group">
             <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? field_key + '[]' : field_key" @change="addFile" class="form-control" :placeholder="field.placeholder || field_name">
@@ -140,9 +144,6 @@
             addFile(e){
                 this.file_will_remove = false;
                 this.file_from_server = false;
-            },
-            trans(key){
-                return this.$root.trans(key);
             },
         },
     }

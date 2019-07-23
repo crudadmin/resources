@@ -92,9 +92,6 @@ export default {
             }
 
             return changes.join(', ');
-        },
-        trans(key){
-            return this.$root.trans(key);
         }
     },
 }

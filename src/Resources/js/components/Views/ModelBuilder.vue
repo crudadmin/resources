@@ -351,7 +351,7 @@
                     var data = response.data;
 
                     if ( data.length <= 1 )
-                        return this.$root.openAlert(this.$root.trans('info'), this.$root.trans('no-changes'), 'warning');
+                        return this.$root.openAlert(this.trans('info'), this.trans('no-changes'), 'warning');
 
                     this.history.id = row.id;
                     this.history.rows = data;
@@ -452,9 +452,6 @@
                 }
 
                 this.depth_level = depth;
-            },
-            trans(key){
-                return this.$root.trans(key);
             },
             initSearchSelectboxes(){
                 window.js_date_event = document.createEvent('HTMLEvents');
@@ -627,10 +624,10 @@
             },
             getSearchingColumnName(column){
                 if ( column == 'id' )
-                    return this.$root.trans('number');
+                    return this.trans('number');
 
                 if ( column == 'created_at' )
-                    return this.$root.trans('created-at');
+                    return this.trans('created-at');
 
                 if ( ! column || !(column in this.model.fields) )
                     return this.trans('search-all');

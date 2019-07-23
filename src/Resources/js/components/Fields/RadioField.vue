@@ -1,6 +1,10 @@
 <template>
     <div class="form-group radio-group">
-        <label>{{ field_name }} <span v-if="required" class="required">*</span></label>
+        <label>
+            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
+            {{ field_name }}
+            <span v-if="required" class="required">*</span>
+        </label>
         <div class="radio" v-if="!required">
             <label>
                 <input type="radio" :name="field_key" value="">
@@ -36,9 +40,6 @@
             },
             changeValue(e){
                 this.$parent.changeValue(e);
-            },
-            trans(key){
-                return this.$root.trans(key);
             },
         },
     }

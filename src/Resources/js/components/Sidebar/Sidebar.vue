@@ -87,9 +87,6 @@ export default {
             }
 
             return false;
-        },
-        trans(key){
-          return this.$root.trans(key);
         }
     }
 }

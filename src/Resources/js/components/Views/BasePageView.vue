@@ -67,11 +67,5 @@ export default {
     },
 
     components : { ModelBuilder },
-
-    methods : {
-        trans(key){
-            return this.$root.trans(key);
-        },
-    }
 }
 </script>

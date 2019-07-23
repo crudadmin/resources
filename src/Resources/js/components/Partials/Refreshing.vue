@@ -8,9 +8,7 @@
 <script>
 export default {
     methods: {
-      trans(key){
-        return this.$root.trans(key);
-      }
+
     }
 }
 </script>

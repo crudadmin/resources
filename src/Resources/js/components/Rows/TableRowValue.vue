@@ -239,9 +239,6 @@ export default {
                 return this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.limit', defaultLimit);
             }
         },
-        trans(key){
-            return this.$root.trans(key);
-        },
         isEncodedValue(key)
         {
             return this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.encode', true);

@@ -689,9 +689,6 @@ export default {
                 }
             }
         },
-        trans(key){
-            return this.$root.trans(key);
-        },
         openGettextEditor(){
             this.gettext_editor = this.row;
         },

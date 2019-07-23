@@ -86,7 +86,7 @@ const BaseComponent = (router) => {
                         return permissions.join(', ');
                 }
 
-                return this.$root.trans('admin-user');
+                return this.trans('admin-user');
             }
         },
 
@@ -233,7 +233,7 @@ const BaseComponent = (router) => {
                     this.alert[key] = null;
             },
             arrorAlert(callback){
-                this.openAlert(this.$root.trans('warning'), this.$root.trans('unknown-error'), 'danger', null, callback ? callback : function(){});
+                this.openAlert(this.trans('warning'), this.trans('unknown-error'), 'danger', null, callback ? callback : function(){});
             },
             checkAlertEvents(){
                 $(window).keyup(e => {
@@ -288,13 +288,13 @@ const BaseComponent = (router) => {
 
                 if ( response.status == 404 )
                 {
-                    return this.$root.openAlert(this.$root.trans('warning'), this.$root.trans('row-error'), 'warning');
+                    return this.$root.openAlert(this.trans('warning'), this.trans('row-error'), 'warning');
                 }
 
                 //If has been client logged off
                 if ( response.status == 401 )
                 {
-                    return this.$root.openAlert(this.$root.trans('warning'), this.$root.trans('auto-logout'), 'warning', null, function(){
+                    return this.$root.openAlert(this.trans('warning'), this.trans('auto-logout'), 'warning', null, function(){
                         window.location.reload();
                     });
                 }
@@ -328,15 +328,6 @@ const BaseComponent = (router) => {
                 }
 
                 return model;
-            },
-            /*
-             * Get translates
-             */
-            trans(key){
-                if ( key in this.localization )
-                    return this.localization[key];
-
-                return key;
             },
             /*
             * Returns correct values into multilangual select

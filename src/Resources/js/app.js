@@ -18,6 +18,18 @@ import BaseComponent from './components/BaseComponent.js';
 //Router
 import Router from './router.js';
 
+//Global methods
+Vue.mixin({
+    methods: {
+        trans(key){
+            if ( key in this.$root.localization )
+                return this.$root.localization[key];
+
+            return key;
+        }
+    }
+})
+
 //Create base VueApp instance
 window.VueApp = new Vue(
     BaseComponent(Router)

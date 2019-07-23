@@ -384,9 +384,6 @@ export default {
 
             return true;
         },
-        trans(key){
-            return this.$root.trans(key);
-        },
         reloadRows(){
             this.$parent.row = this.$parent.emptyRowInstance();
             this.rows.data = [];
@@ -790,9 +787,9 @@ export default {
 
             //Check if is row can be deleted
             if ( this.isReservedRow(ids) )
-                return this.$root.openAlert(this.$root.trans('warning'), this.$root.trans(ids.length > 1 ? 'cannot-delete-multiple' : 'cannot-delete'), 'warning');
+                return this.$root.openAlert(this.trans('warning'), this.trans(ids.length > 1 ? 'cannot-delete-multiple' : 'cannot-delete'), 'warning');
 
-            this.$root.openAlert(this.$root.trans('warning'), this.$root.trans('delete-warning'), 'warning', success, true);
+            this.$root.openAlert(this.trans('warning'), this.trans('delete-warning'), 'warning', success, true);
         },
         togglePublishedAt(row)
         {

@@ -1,6 +1,9 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled }">
-        <label>{{ field_name }} <span v-if="required" class="required">*</span></label>
+        <label>
+            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i> {{ field_name }}
+            <span v-if="required" class="required">*</span>
+        </label>
         <textarea
             rows="5"
             @keyup="changeValue"

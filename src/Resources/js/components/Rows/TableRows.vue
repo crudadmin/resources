@@ -362,13 +362,13 @@ export default {
                 switch( key )
                 {
                     case 'id':
-                        return this.$root.trans('number');
+                        return this.trans('number');
                         break;
                     case 'created_at':
-                        return this.$root.trans('created');
+                        return this.trans('created');
                         break;
                     case 'updated_at':
-                        return this.$root.trans('updated');
+                        return this.trans('updated');
                         break;
                     default:
                         return key;
@@ -463,15 +463,15 @@ export default {
             var data = '';
 
             if ( row.created_at != null )
-                data += this.$root.trans('created-at') + ': <strong>' + this.getDateByField(row, 'created_at') + '</strong><br>';
+                data += this.trans('created-at') + ': <strong>' + this.getDateByField(row, 'created_at') + '</strong><br>';
 
             if ( row.updated_at != null && this.model.editable != false )
-                data += this.$root.trans('last-change') + ': <strong>' + this.getDateByField(row, 'updated_at') + '</strong><br>';
+                data += this.trans('last-change') + ': <strong>' + this.getDateByField(row, 'updated_at') + '</strong><br>';
 
             if ( row.published_at != null )
-                data += this.$root.trans('published-at') + ': <strong>' + this.getDateByField(row, 'published_at') + '</strong>';
+                data += this.trans('published-at') + ': <strong>' + this.getDateByField(row, 'published_at') + '</strong>';
 
-            this.$root.openAlert(this.$root.trans('row-info-n') + ' ' + row.id, data, 'primary', null, function(){});
+            this.$root.openAlert(this.trans('row-info-n') + ' ' + row.id, data, 'primary', null, function(){});
         },
         openGettextEditor(item){
             this.$parent.$parent.gettext_editor = item;
@@ -562,9 +562,6 @@ export default {
                         scrollTop: $('#' + this.formID).offset().top - 10
                 }, this.$root.isTest ? 0 : 500);
             }, 25);
-        },
-        trans(key){
-            return this.$root.trans(key);
         }
     },
 }

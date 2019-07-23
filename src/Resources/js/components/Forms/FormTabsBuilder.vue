@@ -239,9 +239,6 @@ export default {
 
             return this.isOpenedRow || this.getModel(tab.model).without_parent == true;
         },
-        trans(key){
-            return this.$root.trans(key);
-        },
         isField(field){
             return typeof field == 'string' && field in this.model.fields;
         },

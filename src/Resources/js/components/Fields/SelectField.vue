@@ -1,6 +1,10 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled || hasNoFilterValues }" v-show="required || !hasNoFilterValues">
-        <label>{{ field.name }} <span v-if="required || isRequiredIfHasValues" class="required">*</span></label>
+        <label>
+            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
+            {{ field.name }}
+            <span v-if="required || isRequiredIfHasValues" class="required">*</span>
+        </label>
         <div :class="{ 'can-add-select' : canAddRow }">
             <select ref="select" :disabled="disabled" :name="!isMultiple ? field_key : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
                 <option v-if="!isMultiple" value="">{{ trans('select-option') }}</option>
@@ -220,9 +224,6 @@
             },
             changeValue(e, value, no_field){
                 this.$parent.changeValue(e, value, no_field);
-            },
-            trans(key){
-                return this.$root.trans(key);
             },
             /*
              * Apply on change events into selectbox

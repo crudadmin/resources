@@ -156,9 +156,6 @@
             this.syncFieldsValueWithRow();
         },
         methods : {
-            trans(key){
-                return this.$root.trans(key);
-            },
             parseArrayValue(value){
                 if ( $.isArray(value) )
                 {

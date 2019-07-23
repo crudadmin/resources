@@ -36,9 +36,6 @@ export default {
         },
         isOther(path){
             return !(this.isImage(path) || this.isPdf(path) || this.isZip(path) || this.isDoc(path));
-        },
-        trans(key){
-            return this.$root.trans(key);
         }
     },
     computed : {
