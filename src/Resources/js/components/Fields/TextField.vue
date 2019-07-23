@@ -10,6 +10,7 @@
             :id="id"
             :disabled="disabled"
             :name="field_key"
+            :maxlength="field.max"
             :class="{ 'form-control' : isText, 'js_editor' : isEditor }"
             :placeholder="field.placeholder || field_name"
             :value="value">
