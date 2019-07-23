@@ -24,6 +24,7 @@ return [
     'languages-mo-name' => 'Překlad .mo souboru pro Poedit',
     'languages' => 'Jazykové mutace',
     'languages-missing' => 'V administraci se nenacházejí žádné jazykové mutace, ke kterým by mohly být záznamy navázány. Prosím, přidejte alespoň jeden jazyk.',
+    'languages-field' => 'Tento vstup je překládán do více jazyků.',
     'change-language' => 'Změna jazykové mutace. Pozor! Změna jazyka může zahodit Vaše aktuální rozepsané změny.',
 
     'super-admin' => 'Super administrátor',
