@@ -271,9 +271,7 @@
                     var obj_value = typeof this.field.value === 'object' ? this.field.value||{} : {};
                         obj_value[this.langslug] = value;
 
-                    //Update specific row language value
-                    this.$set(this.row, this.field_key, obj_value);
-                    return;
+                    value = obj_value;
                 }
 
                 //Update field values
