@@ -33,8 +33,8 @@
                 });
             }
 
-            eventHub.$on('updateField', data => {
-                if ( data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.field_key )
+            eventHub.$on('updateField', this.onUpdateEvent = data => {
+                if ( data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.$parent.field_key )
                     return;
 
                 //After change value, update same value in ckeditor
@@ -45,9 +45,23 @@
                 if ( ! editor )
                     return;
 
-                // If is editor not ready yet, then wait for ready state
-                editor.setData( this.field.value||'' );
+                var value = this.$parent.getLocalizedValue(this.field.value) || '';
+
+                editor.setData(value);
+
+                // If is editor not ready yet, then wait for ready state.
+                // We need set data also on instance ready, because of bug in single admin model when switching pages...
+                // Somethimes data wont be loaded properly.
+                editor.on('instanceReady', () => {
+                    if ( _.trim(editor.getData()) != _.trim(value) ) {
+                        editor.setData(value);
+                    }
+                });
             });
+        },
+
+        destroyed(){
+            eventHub.$off('updateField', this.onUpdateEvent);
         },
 
         computed: {

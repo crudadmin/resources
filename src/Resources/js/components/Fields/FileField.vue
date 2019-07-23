@@ -46,8 +46,8 @@
         mounted(){
             this.addMultipleFilesSupport(true);
 
-            eventHub.$on('updateField', data => {
-                if ( data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.field_key )
+            eventHub.$on('updateField', this.onUpdateEvent = data => {
+                if ( data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.$parent.field_key )
                     return;
 
                 this.file_from_server = true;
@@ -55,7 +55,7 @@
                 this.addMultipleFilesSupport();
             });
 
-            eventHub.$on('onSubmit', data => {
+            eventHub.$on('onSubmit', this.onSubmitEvent = data => {
                 var row = data.row;
 
                 if ( data.table != this.model.slug || data.depth_level != this.depth_level )
@@ -71,6 +71,11 @@
                 //Reset input value after file has been sent
                 $(this.$refs.fileInput).val('');
             });
+        },
+
+        destroyed(){
+            eventHub.$off('updateField', this.onUpdateEvent);
+            eventHub.$off('onSubmit', this.onSubmitEvent);
         },
 
         computed: {

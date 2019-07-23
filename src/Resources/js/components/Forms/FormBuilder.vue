@@ -107,7 +107,7 @@ export default {
         //Initialize form
         this.form = $('#'+this.formID);
 
-        eventHub.$on('changeFormSaveState', data => {
+        eventHub.$on('changeFormSaveState', this.changeFormSaveStateEvent = data => {
             if ( data.model != this.model.slug )
                 return;
 
@@ -115,6 +115,10 @@ export default {
             //in other tab, button need to be hidden
             this.cansave = data.state;
         });
+    },
+
+    destroyed(){
+        eventHub.$off('changeFormSaveState', this.changeFormSaveStateEvent);
     },
 
     watch: {

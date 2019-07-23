@@ -61,12 +61,16 @@
 
             this.bindFilters();
 
-            eventHub.$on('updateField', data => {
-                if ( data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.field_key )
+            eventHub.$on('updateField', this.onUpdateEvent = data => {
+                if ( data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.$parent.field_key )
                     return;
 
                 this.$nextTick(this.reloadSelectWithMultipleOrders);
             });
+        },
+
+        destroyed(){
+            eventHub.$off('updateField', this.onUpdateEvent);
         },
 
         computed: {

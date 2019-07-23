@@ -74,12 +74,16 @@ export default {
             this.$parent.$parent.checkActiveSize( this.columns );
 
         //On history change
-        eventHub.$on('selectHistoryRow', data => {
+        eventHub.$on('selectHistoryRow', this.selectHistoryRowEvent = data => {
             if ( this.model.slug != data.table )
                 return;
 
             this.selectRow({ id : data.row_id }, null, null, data.history_id, data.row);
         })
+    },
+
+    destroyed() {
+        eventHub.$off('selectHistoryRow', this.selectHistoryRowEvent);
     },
 
     computed: {

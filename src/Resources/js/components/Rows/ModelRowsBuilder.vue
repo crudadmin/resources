@@ -141,7 +141,7 @@ export default {
         /*
          * When row is added, then push it into table
          */
-        eventHub.$on('onCreate', data => {
+        eventHub.$on('onCreate', this.onCreateEvent = data => {
             if ( data.table != this.model.slug || data.depth_level != this.depth_level )
                 return;
 
@@ -180,7 +180,7 @@ export default {
         /*
          * When row is updated, then change data into table for changed rows
          */
-        eventHub.$on('onUpdate', data => {
+        eventHub.$on('onUpdate', this.onUpdateEvent = data => {
             if ( data.table != this.model.slug || data.depth_level != this.depth_level )
                 return;
 
@@ -203,6 +203,8 @@ export default {
 
     destroyed() {
         this.destroyTimeout();
+        eventHub.$off('onCreate', this.onCreateEvent);
+        eventHub.$off('onUpdate', this.onUpdateEvent);
     },
 
     events: {

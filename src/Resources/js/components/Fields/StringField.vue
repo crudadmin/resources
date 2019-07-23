@@ -23,10 +23,6 @@
     export default {
         props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled'],
 
-        mounted(){
-            console.log('lal');
-        },
-
         computed : {
             isPassword(){
                 return this.field.type == 'password';

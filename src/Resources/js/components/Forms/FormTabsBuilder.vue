@@ -86,12 +86,16 @@ export default {
             this.models_loaded = [];
         });
 
-        eventHub.$on('rowsChanged', item => {
+        eventHub.$on('rowsChanged', this.rowsChangedEvent = item => {
             if ( this.depth_level+1 != item.depth_level )
                 return;
 
             this.$set(this.models_data, item.table, item);
         });
+    },
+
+    destroyed(){
+        eventHub.$off('rowsChanged', this.rowsChangedEvent);
     },
 
     watch: {
