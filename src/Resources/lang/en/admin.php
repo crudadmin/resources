@@ -140,6 +140,8 @@ return [
     'gettext-source' => 'Source text',
     'gettext-translation' => 'Translation',
     'gettext-count' => 'Show all translations',
+    'gettext-showmissing' => 'Show removed translations',
+    'gettext-missing' => 'This translation has been deleted from application.',
     'gettext-loading' => 'The translations are loading, please wait.',
     'gettext-save' => 'Save and close',
 ];

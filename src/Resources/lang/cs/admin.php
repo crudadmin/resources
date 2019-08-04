@@ -140,6 +140,8 @@ return [
     'gettext-source' => 'Zdrojový text',
     'gettext-translation' => 'Překlad',
     'gettext-count' => 'Zobrazit všechny překlady',
+    'gettext-showmissing' => 'Zobrazit odstraněny překlady',
+    'gettext-missing' => 'Tento překlad byl odstraněn, tím pádem se již nevyužívá.',
     'gettext-loading' => 'Překlady se načitávajú, prosím počkejte.',
     'gettext-save' => 'Uložit a zavřít',
 ];

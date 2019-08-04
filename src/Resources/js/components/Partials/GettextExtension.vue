@@ -28,16 +28,29 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(values, key) in filtratedTranslates">
+                                    <tr v-for="(values, key) in filtratedTranslates" :class="{ missing : isMissing(key) }">
                                         <td>{{ key }}</td>
                                         <td class="input" :class="{ edited : hasChange(key), plural : isPlural(key) }">
-                                            <textarea v-for="i in getPluralLength(key)" :class="{ long : getValue(values, i-1).length > 80 }" :value="getValue(values, i-1)" :placeholder="getPluralsPlaceholder(key, i-1)" :title="getPluralsPlaceholder(key, i-1)" data-toggle="tooltip" @input="changeText($event, key, i-1)" class="form-control"></textarea>
+                                            <textarea
+                                                data-toggle="tooltip"
+                                                class="form-control"
+                                                v-for="i in getPluralLength(key)"
+                                                :disabled="isMissing(key)"
+                                                :title="isMissing(key) ? trans('gettext-missing') : getPluralsPlaceholder(key, i-1)"
+                                                :class="{ long : getValue(values, i-1).length > 80 }"
+                                                :value="getValue(values, i-1)"
+                                                :placeholder="getPluralsPlaceholder(key, i-1)"
+                                                @input="changeText($event, key, i-1)">
+                                            </textarea>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
 
-                            <a @click="limit = false" v-if="limit != false && fullCount > limit" class="all-translates">{{ trans('gettext-count') }} ({{ fullCount }})</a>
+                            <div class="translation-actions">
+                                <a @click="showMissing = true" v-if="missing.length > 0 && showMissing == false">{{ trans('gettext-showmissing') }} ({{ missing.length }})</a>
+                                <a @click="limit = false" v-if="limit != false && fullCount > limit">{{ trans('gettext-count') }} ({{ fullCount }})</a>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" @click="saveAndClose" class="btn btn-primary">{{ trans('gettext-save') }}</button>
@@ -61,6 +74,8 @@ export default {
     data(){
         return {
             translates : {},
+            showMissing : false,
+            missing : [],
             plurals : [],
             plural_forms : '',
             query : null,
@@ -75,19 +90,29 @@ export default {
     },
 
     computed: {
+        availableTranslated(){
+            var obj = {};
+
+            //Filter missing translates
+            for ( var key in this.translates )
+                if ( this.missing.indexOf(key) === -1 || this.showMissing === true )
+                    obj[key] = this.translates[key];
+
+            return obj;
+        },
         filtratedTranslates(){
             var obj = {},
-                    query = (this.query+'').toLowerCase(),
-                    i = 0;
+                query = (this.query+'').toLowerCase(),
+                i = 0;
 
-            for ( var key in this.translates )
+            for ( var key in this.availableTranslated )
             {
                 //If is under limit, and if has query match
                 if (
                     (this.limit == false || i < this.limit)
-                    && (!this.query || this.hasChange(key) || this.translates[key].join('').toLowerCase().indexOf(query) > -1 || key.toLowerCase().indexOf(query) > -1 )
+                    && (!this.query || this.hasChange(key) || this.availableTranslated[key].join('').toLowerCase().indexOf(query) > -1 || key.toLowerCase().indexOf(query) > -1 )
                 ){
-                    obj[key] = this.translates[key];
+                    obj[key] = this.availableTranslated[key];
 
                     i++;
                 }
@@ -96,7 +121,7 @@ export default {
             return obj;
         },
         fullCount(){
-            return Object.keys(this.translates).length;
+            return Object.keys(this.availableTranslated).length;
         },
         resultLength(){
             return Object.keys(this.filtratedTranslates).length;
@@ -163,6 +188,7 @@ export default {
             this.$http.get(this.$root.requests.translations.replace(':id', this.gettext_editor.id)).then(function(response){
                 var messages = response.data.messages;
 
+                this.missing = response.data.missing;
                 this.plurals = response.data.plurals;
                 this.plural_forms = response.data['plural-forms'];
                 this.translates = response.data.messages[Object.keys(messages)[0]]||{};
@@ -172,6 +198,9 @@ export default {
         },
         isPlural(text){
             return this.plurals.indexOf(text) > -1;
+        },
+        isMissing(text){
+            return this.missing.indexOf(text) > -1;
         },
         getPluralLength(text){
             return this.isPlural(text) ? this.pluralLength : 1;
@@ -200,7 +229,7 @@ export default {
             {
                 //Build plural forms array
                 if ( ! (src in this.changes) )
-                    this.changes[src] = this.translates[src];
+                    this.$set(this.changes, src, this.translates[src]);
 
                 //Update specific plural form
                 this.changes[src][i] = value;
@@ -208,7 +237,7 @@ export default {
 
             //Non plural forms
             else {
-                this.changes[src] = value;
+                this.$set(this.changes, src, value);
             }
 
             //Update core translates object
