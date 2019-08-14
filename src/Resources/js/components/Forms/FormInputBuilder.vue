@@ -261,6 +261,10 @@
              * Apply event on changed value
              */
             changeValue(e, value, no_field){
+                //Do not update value when confirmation field has been changed
+                if ( this.isConfirmation )
+                    return;
+
                 var value = e ? e.target.value : value;
 
                 if ( this.field.type == 'checkbox' )
@@ -404,9 +408,9 @@
             },
             getValueOrDefault()
             {
-                //If is password, return none value
-                if ( this.isPassword ){
-                    return this.field.value;
+                //If is confirmation, then return null value every time
+                if ( this.isConfirmation ){
+                    return '';
                 }
 
                 var value = this.parseArrayValue(this.field.value);
