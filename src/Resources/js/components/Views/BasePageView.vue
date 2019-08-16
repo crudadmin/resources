@@ -17,7 +17,7 @@
 
         <!-- Main content -->
         <section class="content" v-if="model">
-            <model-builder :key="model.slug" :model_builder="model" :langid="langid" dusk="model-builder"></model-builder>
+            <model-builder :key="model.slug" :model_builder="model" :langid="langid" dusk="model-builder" :data-model="model.table"></model-builder>
         </section>
         <!-- /.content -->
     </div>

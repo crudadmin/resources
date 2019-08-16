@@ -115,6 +115,11 @@ export default {
             //in other tab, button need to be hidden
             this.cansave = data.state;
         });
+
+        //On create form instance, we need initialize given row.
+        //For example if single model is loaded from database as relation, but FormBuilder is not loaded yet
+        //Then we need insert row data after FormBuilder initialization.
+        this.initForm(this.row);
     },
 
     destroyed(){
@@ -148,7 +153,7 @@ export default {
             return 'form-' + this.depth_level + '-' + this.model.slug;
         },
         isSingle(){
-            return this.model.minimum == 1 && this.model.maximum == 1;
+            return this.model.minimum == 1 && this.model.maximum == 1 || this.model.single == true;
         },
         isOpenedRow(){
             return this.row && 'id' in this.row;
@@ -555,12 +560,13 @@ export default {
                     var autoreset = this.$root.getModelProperty(this.model, 'settings.autoreset');
 
                     //Reseting form after new row
-                    if ( !(this.model.minimum == 1 && this.model.maximum == 1) && autoreset !== false)
+                    if ( !(this.isSingle) && autoreset !== false)
                     {
                         this.initForm(this.$parent.emptyRowInstance());
+                    }
 
                     //If is disabled autoreseting form, then select inserted row
-                    } else if ( autoreset === false ){
+                    else if ( autoreset === false ){
                         this.row = clonedRow;
 
                         this.scrollToForm();

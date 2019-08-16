@@ -117,6 +117,8 @@
                 </div>
 
                 <model-builder
+                    dusk="model-builder"
+                    :data-model="getModel(child).table"
                     v-if="(isOpenedRow || getModel(child).without_parent == true) && getModel(child).in_tab !== true"
                     v-for="child in model.childs"
                     :key="getModel(child).slug"

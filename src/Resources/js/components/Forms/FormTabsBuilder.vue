@@ -22,6 +22,8 @@
                         </form-tabs-builder>
 
                         <model-builder
+                            dusk="model-builder"
+                            :data-model="getModel(tab.model).table"
                             v-if="isModel(tab)"
                             :langid="langid"
                             :ischild="true"
