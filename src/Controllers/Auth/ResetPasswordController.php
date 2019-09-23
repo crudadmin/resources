@@ -2,12 +2,12 @@
 
 namespace Admin\Resources\Controllers\Auth;
 
-use Auth;
 use Admin\Resources\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Auth;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {
@@ -60,5 +60,10 @@ class ResetPasswordController extends Controller
     public function broker()
     {
         return Password::broker('admin');
+    }
+
+    protected function guard()
+    {
+        return Auth::guard('web');
     }
 }
