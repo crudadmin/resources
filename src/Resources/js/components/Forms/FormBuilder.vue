@@ -283,8 +283,9 @@ export default {
 
             this.resetErrors();
 
-            if ( ! is_row )
+            if ( ! is_row ) {
                 this.$parent.resetForm();
+            }
 
             //Checks if form can be editable
             if ( is_row && this.canaddrow && this.model.editable == false && this.$parent.hasChilds() == 0 )

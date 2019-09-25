@@ -282,7 +282,13 @@
                 if ( no_field != true )
                     this.field.value = value;
 
-                this.$set(this.row, this.field_key, value);
+                var data = {};
+                    data[this.field_key] = value;
+
+                //We need assign data to root property owner
+                //Because if we just modify row here. It wont be applied in components
+                //after opening or closing row.
+                this.getModelBuilder().row = Object.assign({}, this.row, data);
             },
             //Get parent model builder
             getModelBuilder(slug, except){
