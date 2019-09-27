@@ -102,9 +102,13 @@ export default {
 
     watch: {
         activetab(tabid){
+            //If tab is in subgroup of field, we do not want change save button state
+            if ( typeof this.cansave == 'undefined' )
+                return;
+
             eventHub.$emit('changeFormSaveState', {
                 model : this.model.slug,
-                state : !this.isModel(this.getTabs[tabid])
+                state : ! this.isModel(this.getTabs[tabid])
             });
         },
     },

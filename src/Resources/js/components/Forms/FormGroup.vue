@@ -110,7 +110,7 @@ export default {
                     && !('invisible' in field && field.invisible == true);
         },
         canShowField(field){
-            if ( 'hideFromForm' in field && field.hideFromForm == true )
+            if ( 'hideFromForm' in field && field.hideFromForm === true )
                 return false;
 
             if ( (field.ifExists === true || field.hideOnCreate === true) && ! this.isOpenedRow )

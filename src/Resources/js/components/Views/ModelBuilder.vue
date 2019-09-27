@@ -173,7 +173,7 @@
 
                 activeSize : null,
 
-                row : this.emptyRowInstance(),
+                row : this.emptyRowInstance(this.model_builder),
 
                 /*
                  * Search engine
@@ -237,6 +237,8 @@
             this.resetSearchBar();
 
             this.updateParentChildData();
+
+            this.setModelEvents();
         },
 
         watch : {
@@ -313,20 +315,6 @@
                 this.$broadcast(name, param);
             },
 
-            //Send into all childs parent row data
-            sendParentRow(){
-                eventHub.$emit('getParentRow', {
-                    model : this.model,
-                    slug : this.model.slug,
-                    row : this.row,
-                    rows : this.rows.data,
-                    count : this.rows.count,
-                    component : this,
-                });
-
-                return true;
-            },
-
             reloadRows(model){
                 this.$broadcast('reloadRows', model);
             },
@@ -334,6 +322,18 @@
         },
 
         methods : {
+            setModelEvents(){
+                eventHub.$on('sendParentRow', () => {
+                    eventHub.$emit('getParentRow', {
+                        model : this.model,
+                        slug : this.model.slug,
+                        row : this.row,
+                        rows : this.rows.data,
+                        count : this.rows.count,
+                        component : this,
+                    });
+                });
+            },
             updateSearchQuery: _.debounce(function(input, e){
                 this.search[input] = e.target.value;
             }, 300),
@@ -530,7 +530,7 @@
             },
             checkActiveSize(columns){
                 var data = this.getStorage(),
-                        defaultValue = this.$root.getModelProperty(this.model, 'settings.grid.default');
+                    defaultValue = this.$root.getModelProperty(this.model, 'settings.grid.default');
 
                 //Full screen
                 if ( ! this.canShowForm || this.isSingle )
@@ -663,11 +663,20 @@
             resetForm(){
                 this.row = this.emptyRowInstance();
             },
-            emptyRowInstance(){
-                var row = {};
+            emptyRowInstance(model){
+                var row = {},
+                    model = model||this.model,
+                    table;
 
-                if ( this.parentrow && this.model && this.model.foreign_column != null )
-                    row[this.model.foreign_column[this.getParentTableName()]] = this.parentrow.id;
+                //Add foreign columns
+                if ( this.parentrow && model && model.foreign_column != null ) {
+                    if ( table = model.foreign_column[this.getParentTableName()] )
+                        row[table] = this.parentrow.id;
+                }
+
+                //Add default columns
+                for ( var key in model.fields )
+                    row[key] = null;
 
                 return row;
             },
@@ -722,11 +731,6 @@
             //Returns if is model in single row mode
             isSingle(){
                 var single = this.model.minimum == 1 && this.model.maximum == 1;
-
-                if ( single ) {
-                    this.row = this.rows.data[0]||this.emptyRowInstance();
-                    this.row;
-                }
 
                 return single;
             },

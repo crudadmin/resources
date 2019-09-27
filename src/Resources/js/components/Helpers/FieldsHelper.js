@@ -13,6 +13,13 @@ var Fields = (Model) => {
         this.fields[key].removeFromForm = value;
     }
 
+    /*
+     * Filter fields options by key or by function
+     */
+    Model.prototype.optionsFilter = function(key, filter){
+        this.fields[key].optionsFilter = filter;
+    }
+
 };
 
 export default Fields;

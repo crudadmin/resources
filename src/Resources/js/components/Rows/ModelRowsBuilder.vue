@@ -484,8 +484,7 @@ export default {
                 this.$parent.rows.loaded = true;
 
                 //If is reversed sorting in model, then set pagination into last page after first displaying table
-                if ( this.isReversed() && this.refresh.count == 0 )
-                {
+                if ( this.isReversed() && this.refresh.count == 0 ) {
                     this.pagination.position = Math.ceil(this.rows.count / this.pagination.limit);
                 }
 
@@ -495,6 +494,11 @@ export default {
 
                     //Render additional layouts
                     this.$parent.layouts = response.data.layouts;
+                }
+
+                //Set single model row
+                if ( this.$parent.isSingle ) {
+                    this.$parent.row = response.data.rows[0]||this.$parent.emptyRowInstance();
                 }
 
                 //Update refresh informations
@@ -702,8 +706,7 @@ export default {
          */
         updateRowsData(data, update){
             //This update rows just in table, not in forms
-            if ( update !== true && (this.rows.data.length != data.length || this.rows.data.length == 0 || this.rows.data[0].id != data[0].id || update === 1) )
-            {
+            if ( update !== true && (this.rows.data.length != data.length || this.rows.data.length == 0 || this.rows.data[0].id != data[0].id || update === 1) ) {
                 this.rows.data = data;
                 return;
             }

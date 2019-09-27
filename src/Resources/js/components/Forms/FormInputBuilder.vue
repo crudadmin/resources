@@ -228,10 +228,10 @@
                     Vue.component(this.componentName, component);
             },
             defaultFieldValue(field){
-                var default_value = field.value||field.default;
+                var default_value = (field.value || field.value === 0 || field.value === false) ? field.value : field.default;
 
                 if (
-                    ! default_value
+                    (!default_value && default_value !== false) //false is valid value, so we do not want to return empty string
                     || (['number', 'string', 'boolean'].indexOf(typeof default_value) === -1 && !this.isMultipleField(field))
                 ) {
                     return '';
@@ -254,6 +254,9 @@
                             return model.row[default_parts[1]];
                     }
                 }
+
+                if ( this.isCheckbox )
+                    return default_value == true ? true : false;
 
                 return default_value||'';
             },
@@ -447,7 +450,7 @@
                 if ( this.field.required_if )
                 {
                     var parts = this.field.required_if.split(','),
-                            value = this.row[parts[0]];
+                        value = this.row[parts[0]];
 
                     if (value && parts.slice(1).indexOf(value) > -1)
                         return true;

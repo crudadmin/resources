@@ -419,7 +419,7 @@ export default {
                     // Wrong validation
                     this.$root.errorResponseLayer( response, 422, () => {
                         var obj = response.responseJSON,
-                                errors = [];
+                            errors = [];
 
                         //Laravel 5.5+ provides validation errors in errors object.
                         if ( 'errors' in obj && !('length' in obj.errors) )
@@ -451,7 +451,7 @@ export default {
         },
         bindErrorMessages(key, errors){
             var keys = [],
-                    parts = key.split('.');
+                parts = key.split('.');
 
             if ( parts.length == 1 || parts.length == 2 && parts[1] == 0 ){
                 parts = [parts[0]];
@@ -561,14 +561,13 @@ export default {
                     var autoreset = this.$root.getModelProperty(this.model, 'settings.autoreset');
 
                     //Reseting form after new row
-                    if ( !(this.isSingle) && autoreset !== false)
-                    {
+                    if ( !this.isSingle && autoreset !== false) {
                         this.initForm(this.$parent.emptyRowInstance());
                     }
 
                     //If is disabled autoreseting form, then select inserted row
-                    else if ( autoreset === false ){
-                        this.row = clonedRow;
+                    else {
+                        this.$parent.row = clonedRow;
 
                         this.scrollToForm();
                     }
