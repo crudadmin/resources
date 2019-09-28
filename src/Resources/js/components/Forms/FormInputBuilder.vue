@@ -199,7 +199,7 @@
                     return;
 
                 var components = this.field.component.split(','),
-                        component = null;
+                    component = null;
 
                 for ( var i = 0; i < components.length; i++ )
                 {
@@ -288,10 +288,7 @@
                 var data = {};
                     data[this.field_key] = value;
 
-                //We need assign data to root property owner
-                //Because if we just modify row here. It wont be applied in components
-                //after opening or closing row.
-                this.getModelBuilder().row = Object.assign({}, this.row, data);
+                this.$set(this.row, this.field_key, value);
             },
             //Get parent model builder
             getModelBuilder(slug, except){

@@ -198,6 +198,16 @@ export default {
 
             //Reset history on update row
             this.$parent.closeHistory();
+        });
+
+        /*
+         * Reload table rows on request
+         */
+        eventHub.$on('reloadRows', this.onReloadRows = table => {
+            if ( this.model.slug != table )
+                return;
+
+            this.loadRows();
         })
     },
 
@@ -205,15 +215,7 @@ export default {
         this.destroyTimeout();
         eventHub.$off('onCreate', this.onCreateEvent);
         eventHub.$off('onUpdate', this.onUpdateEvent);
-    },
-
-    events: {
-        reloadRows(table){
-            if ( this.model.slug != table )
-                return;
-
-            this.loadRows();
-        },
+        eventHub.$off('reloadRows', this.onReloadRows);
     },
 
     watch: {
@@ -785,7 +787,6 @@ export default {
                         this.checked = [];
                 })
                 .catch(response => {
-                    console.log(response);
                     this.$root.errorResponseLayer(response);
                 });
             }.bind(this);

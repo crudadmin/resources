@@ -472,7 +472,53 @@ const BaseComponent = (router) => {
                 if ( obj.ready && !obj.mounted )
                   obj.mounted = obj.ready;
 
-              return obj;
+                var originalCreated = obj.created||(() => {}),
+                    originalMounted = obj.mounted||(() => {}),
+                    originalDestroyed = obj.destroyed||(() => {}),
+                    proxyEventsResend = ['sendParentRow', 'reloadRows'],
+                    proxyEventsReceive = ['getParentRow', 'onCreate', 'onUpdate', 'onSubmit', 'changeFormSaveState', 'selectHistoryRow'],
+                    events = {};
+
+                //Extend created method
+                obj.created = function() {
+                    //This events should be resend from component to eventHub
+                    for ( var key in proxyEventsResend ) {
+                        ((event) => {
+                            this.$on(event, events[event] = (data) => {
+                                eventHub.$emit(event, data);
+                            });
+                        })(proxyEventsResend[key]);
+                    }
+
+                    //This events should be received from evnentHub and send to component
+                    for ( var key in proxyEventsReceive ) {
+                        ((event) => {
+                            eventHub.$on(event, events[event] = (data) => {
+                                this.$emit(event, data);
+                            });
+                        })(proxyEventsReceive[key]);
+                    }
+
+                    originalCreated.call(this);
+                }
+
+                //Extend mounted method
+                obj.mounted = function() {
+                    originalMounted.call(this);
+                }
+
+                obj.destroyed = function(){
+                    //Unmount eventhub proxy
+                    for ( var key in proxyEventsReceive ) {
+                        ((event) => {
+                            eventHub.$off(event, events[event]);
+                        })(proxyEventsReceive[key]);
+                    }
+
+                    originalDestroyed.call(this);
+                }
+
+                return obj;
             }
         }
     }

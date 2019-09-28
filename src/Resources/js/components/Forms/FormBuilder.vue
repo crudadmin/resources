@@ -470,15 +470,19 @@ export default {
 
             keys.push(parts.join(''));
 
-            if ( parts[parts.length - 1] == '[0]' )
-                keys.push(keys.slice(0, parts.length - 1).concat(['[]']).join(''))
+            //Add multiple field support to each key prefix
+            for ( var i = 0; i < keys.length; i++ ) {
+                if ( keys[i].substr(-2) != '[]' ) {
+                    keys.push(keys[i]+'[]');
+                }
+            }
 
             for ( var i = 0; i < errors.length; i++ )
             {
                 _.uniqBy(keys).map(key => {
                     this.form.find('input[name="'+key+'"], select[name="'+key+'"], textarea[name="'+key+'"]')
-                                     .firstLevelForm(this.form[0])
-                                     .each(this.showErrorMessage(errors[i], i));
+                             .firstLevelForm(this.form[0])
+                             .each(this.showErrorMessage(errors[i], i));
                 });
             }
         },

@@ -241,6 +241,10 @@
             this.setModelEvents();
         },
 
+        destroyed(){
+            this.removeModelEvents();
+        },
+
         watch : {
             sizes : {
                 deep: true,
@@ -309,21 +313,9 @@
             }
         },
 
-        events : {
-            //Receive event and send into child components
-            proxy(name, param){
-                this.$broadcast(name, param);
-            },
-
-            reloadRows(model){
-                this.$broadcast('reloadRows', model);
-            },
-
-        },
-
         methods : {
             setModelEvents(){
-                eventHub.$on('sendParentRow', () => {
+                eventHub.$on('sendParentRow', this.sendParentRowEvent = () => {
                     eventHub.$emit('getParentRow', {
                         model : this.model,
                         slug : this.model.slug,
@@ -333,6 +325,9 @@
                         component : this,
                     });
                 });
+            },
+            removeModelEvents(){
+                eventHub.$off('sendParentRow', this.sendParentRowEvent);
             },
             updateSearchQuery: _.debounce(function(input, e){
                 this.search[input] = e.target.value;
@@ -376,24 +371,24 @@
                 for ( var i = 0; i < layouts.length; i++ )
                 {
                     var name = layouts[i].name,
-                            data = layouts[i].view,
-                            obj;
+                        data = layouts[i].view,
+                        obj;
 
                     if ( layouts[i].type == 'vuejs' )
                     {
                         try {
-                                obj = this.$root.getComponentObject(data);
+                            obj = this.$root.getComponentObject(data);
                         } catch(error){
-                                console.error('Syntax error in component ' + layouts[i].name + '.Vue' + "\n", error);
-                                continue;
+                            console.error('Syntax error in component ' + layouts[i].name + '.Vue' + "\n", error);
+                            continue;
                         }
                     }
 
                     //Create blade component
                     else {
                         var data = $(data);
-                                data.find('script').remove();
-                                data.find('style').remove();
+                            data.find('script').remove();
+                            data.find('style').remove();
 
                         obj = {
                             template: '<div class="my-component" data-component="'+name+'">'+data.html()+'</div>',
@@ -591,19 +586,6 @@
                     this.sizes[key].active = false;
 
                 row.active = true;
-            },
-
-            saveLanguageFilter(rows){
-
-                rows = rows.sort(function(a, b){
-                    return parseInt(b.id) - parseInt(a.id);
-                });
-
-                this.buffer.rows = rows;
-
-                this.$broadcast('updateBufferRows');
-
-                return rows;
             },
             checkIfCanShowLanguages(){
                 var languages_active = false;
