@@ -483,8 +483,8 @@ const BaseComponent = (router) => {
                 var originalCreated = obj.created||(() => {}),
                     originalMounted = obj.mounted||(() => {}),
                     originalDestroyed = obj.destroyed||(() => {}),
-                    proxyEventsResend = ['sendParentRow', 'reloadRows'],
-                    proxyEventsReceive = ['getParentRow', 'onCreate', 'onUpdate', 'onSubmit', 'changeFormSaveState', 'selectHistoryRow'],
+                    proxyEventsResend = ['sendRow', 'sendParentRow', 'reloadRows'],
+                    proxyEventsReceive = ['getRow', 'getParentRow', 'onCreate', 'onUpdate', 'onSubmit', 'changeFormSaveState', 'selectHistoryRow'],
                     events = {};
 
                 //Extend created method

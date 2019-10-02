@@ -137,9 +137,8 @@ export default {
                 if ( !row || !oldRow || row.id != oldRow.id || this.history.history_id )
                 {
                     this.initForm(row, canResetForm);
-                    eventHub.$emit('sendParentRow', {
-                        depth_level : this.depth_level,
-                    });
+
+                    this.$parent.sendRowData();
                 }
             },
             deep: true,

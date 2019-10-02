@@ -501,6 +501,7 @@ export default {
                 //Set single model row
                 if ( this.$parent.isSingle ) {
                     this.$parent.row = response.data.rows[0]||this.$parent.emptyRowInstance();
+                    this.$parent.sendRowData();
                 }
 
                 //Update refresh informations

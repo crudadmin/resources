@@ -254,8 +254,8 @@
                         if ( row.active == true )
                         {
                             var rows = this.getStorage();
-                                    rows[ this.model.slug ] = row.size;
-                                    rows[ this.model.slug + '_default' ] = this.$root.getModelProperty(this.model, 'settings.grid.default');
+                                rows[ this.model.slug ] = row.size;
+                                rows[ this.model.slug + '_default' ] = this.$root.getModelProperty(this.model, 'settings.grid.default');
 
                             localStorage.sizes = JSON.stringify( rows );
                         }
@@ -314,24 +314,42 @@
         },
 
         methods : {
+            /*
+             * Send all avaiable row events
+             */
+            sendRowData(){
+                this.emitRowData('getRow');
+                this.emitRowData('getParentRow');
+            },
+            emitRowData(type, data){
+                if ( data && data.table != this.model.table )
+                    return;
+
+                eventHub.$emit(type, {
+                    model : this.model,
+                    slug : this.model.slug,
+                    row : this.row,
+                    rows : this.rows.data,
+                    count : this.rows.count,
+                    component : this,
+                });
+            },
             setModelEvents(){
+                eventHub.$on('sendRow', this.sendRowEvent = (data) => {
+                    this.emitRowData('getRow', data);
+                });
+
                 eventHub.$on('sendParentRow', this.sendParentRowEvent = (data) => {
 
                     //Skip child components
                     if ( !data || !(this.depth_level < data.depth_level) )
                         return;
 
-                    eventHub.$emit('getParentRow', {
-                        model : this.model,
-                        slug : this.model.slug,
-                        row : this.row,
-                        rows : this.rows.data,
-                        count : this.rows.count,
-                        component : this,
-                    });
+                    this.emitRowData('getParentRow', data);
                 });
             },
             removeModelEvents(){
+                eventHub.$off('sendRowEvent', this.sendRowEvent);
                 eventHub.$off('sendParentRow', this.sendParentRowEvent);
             },
             updateSearchQuery: _.debounce(function(input, e){
@@ -463,13 +481,13 @@
                 js_date_event.initEvent('change', true, true);
 
                 $('#'+this.getFilterId+' .js_chosen').chosen({disable_search_threshold: 5}).on('change', function(){
-                        if ( dispached == false )
-                        {
-                                dispached = true;
-                                this.dispatchEvent(js_date_event);
-                        } else {
-                                dispached = false;
-                        }
+                    if ( dispached == false )
+                    {
+                            dispached = true;
+                            this.dispatchEvent(js_date_event);
+                    } else {
+                            dispached = false;
+                    }
                 });
             },
             reloadDatetimeSearch(){
@@ -486,7 +504,7 @@
                     datepicker: column == 'created_at' ? true : this.model.fields[column].type != 'time',
                     scrollInput: false,
                     onChangeDateTime : (current_date_time, e) => {
-                            this.search[e.attr('data-search-date') === undefined ? 'query_to' : 'query'] = moment(current_date_time).format('DD.MM.Y');
+                        this.search[e.attr('data-search-date') === undefined ? 'query_to' : 'query'] = moment(current_date_time).format('DD.MM.Y');
                     }
                 });
             },
@@ -541,19 +559,19 @@
                 //Select size from storage
                 if ( this.model.slug in data && data[this.model.slug + '_default'] == defaultValue )
                 {
-                    for ( var key in this.sizes )
-                        if ( this.sizes[key].size == data[ this.model.slug ] )
-                        {
+                    for ( var key in this.sizes ) {
+                        if ( this.sizes[key].size == data[ this.model.slug ] ) {
                             return this.sizes[key].active = true;
                         }
+                    }
                 } else if ( defaultValue !== null ){
 
                     // If model has default grid property
-                    for ( var key in this.sizes )
-                        if ( this.sizes[key].size == defaultValue || this.sizes[key].key == defaultValue )
-                        {
+                    for ( var key in this.sizes ) {
+                        if ( this.sizes[key].size == defaultValue || this.sizes[key].key == defaultValue ) {
                             return this.sizes[key].active = true;
                         }
+                    }
                 }
 
                 /*
@@ -648,7 +666,12 @@
                 return this.$root.getModelProperty(this.model, 'settings.buttons.insert', this.trans('new-row'));
             },
             resetForm(){
-                this.row = this.emptyRowInstance();
+                //We do not want reset object is is already empty instance
+                //Because if component receives getParentRow, and then will be rewrited row observer
+                //Changes in this component wont be interactive
+                if ( ! _.isEqual(this.row, this.emptyRowInstance()) ) {
+                    this.row = this.emptyRowInstance();
+                }
             },
             emptyRowInstance(model){
                 var row = {},
