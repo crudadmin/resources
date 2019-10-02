@@ -315,7 +315,12 @@
 
         methods : {
             setModelEvents(){
-                eventHub.$on('sendParentRow', this.sendParentRowEvent = () => {
+                eventHub.$on('sendParentRow', this.sendParentRowEvent = (data) => {
+
+                    //Skip child components
+                    if ( !data || !(this.depth_level < data.depth_level) )
+                        return;
+
                     eventHub.$emit('getParentRow', {
                         model : this.model,
                         slug : this.model.slug,

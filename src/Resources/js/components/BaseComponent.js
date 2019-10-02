@@ -465,8 +465,16 @@ const BaseComponent = (router) => {
 
                 return lang.name;
             },
+            eventDataModifier(event, data, component){
+                if ( event == 'sendParentRow' ){
+                    data = { depth_level : component.$parent.depth_level };
+                }
+
+                return data;
+            },
             getComponentObject(data){
-                var obj = (new Function('return '+data))();
+                var obj = (new Function('return '+data))(),
+                    _this = this;
 
                 //Fixed backwards compacitibility for vuejs1 components
                 if ( obj.ready && !obj.mounted )
@@ -485,7 +493,7 @@ const BaseComponent = (router) => {
                     for ( var key in proxyEventsResend ) {
                         ((event) => {
                             this.$on(event, events[event] = (data) => {
-                                eventHub.$emit(event, data);
+                                eventHub.$emit(event, _this.eventDataModifier(event, data, this));
                             });
                         })(proxyEventsResend[key]);
                     }

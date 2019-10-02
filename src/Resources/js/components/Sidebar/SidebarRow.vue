@@ -23,19 +23,16 @@ export default {
     name : 'sidebar-row',
     props: ['row', 'parent'],
 
-    data : function() {
+    data() {
         return {
             levels : [],
         };
     },
-    created : function()
-    {
+    created(){
         var levels = [];
 
-        if ( this.parent )
-        {
-            for ( var i = 0; i < this.parent.length; i++ )
-            {
+        if ( this.parent ) {
+            for ( var i = 0; i < this.parent.length; i++ ) {
                 levels.push( this.parent[i] );
             }
         }
