@@ -125,7 +125,8 @@
             :field="field"
             :history_changed="isChangedFromHistory"
             :row="row"
-            :field_key="field_key"
+            :field_key="getFieldName"
+            :field_key_original="field_key"
             :is="componentName">
         </component>
     </div>

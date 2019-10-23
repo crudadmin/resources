@@ -14,7 +14,7 @@
 
             <div v-show="(isMultiple && !isMultirows) && getFiles.length > 0">
                 <select ref="multipleFiles" :name="(hasLocale || (isMultiple && !isMultirows) && getFiles.length > 0) ? '$uploaded_'+field_key+'[]' : ''" data-placeholder=" " multiple>
-                    <option selected v-for="file in getFiles">{{ file }}</option>
+                    <option :key="file" selected v-for="file in getFiles">{{ file }}</option>
                 </select>
             </div>
 

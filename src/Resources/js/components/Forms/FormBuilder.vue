@@ -665,8 +665,14 @@ export default {
             input.parents('.tab-pane').each(function(){
                 var getActiveTab = (panel) => {
                     var li = panel.parent().prev().find('li'),
-                        id = panel.attr('id'),
-                        tab = id ? li.parent().find('> li > a[href="#'+id+'"]') : null;
+                        id = panel.attr('id')||panel.attr('data-tab-id'),
+                        tab;
+
+                    //This is support for custom tabs
+                    //If tab has gived ID, then find this tab in a element with same hashtag as tab id
+                    if ( id ) {
+                        tab = li.parent().add($('ul.nav.nav-tabs')).find('> li > a[href="#'+id+'"]');
+                    }
 
                     //Return tab by id, if those tabs are custom
                     if ( tab )
@@ -677,8 +683,9 @@ export default {
 
                 //On button click, remove tabs alerts in actual tree, if tab has no more recursive errors
                 $(this).one('click', function(){
-                    if ( $(this).find('.nav-tabs-custom:not(.default) li[has-error]').length == 0 )
+                    if ( $(this).find('.nav-tabs-custom:not(.default) li[has-error]').length == 0 ) {
                         _this.removeActiveTab(getActiveTab($(this)), true);
+                    }
                 });
 
                 getActiveTab($(this)).each(function(){
