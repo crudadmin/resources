@@ -1,13 +1,13 @@
 <template>
     <!-- Horizontal Form -->
-    <form method="post" action="" v-bind:id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm">
+    <component :is="formType" method="post" action="" v-bind:id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form">
         <div v-bind:class="['box', { 'box-info' : isActive, 'box-warning' : !isActive }]">
 
             <div data-header class="box-header with-border" :class="{ visible : (hasLocaleFields || canShowGettext || (isOpenedRow && model.history)) }">
                 <h3 class="box-title"><span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="fa fa-globe"></span> {{ title }}</h3>
                 <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor()" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-globe"></i> {{ trans('gettext-open') }}</button>
-                <button v-if="isOpenedRow && canaddrow && !isSingle" @click.prevent="resetForm" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-plus"></i> {{ newRowTitle }}</button>
-                <button v-if="isOpenedRow && model.history && isSingle" type="button" @click="showHistory(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i> {{ trans('history.show') }}</button>
+                <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-plus"></i> {{ newRowTitle }}</button>
+                <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i> {{ trans('history.show') }}</button>
 
                 <component
                     v-for="name in getComponents('form-header')"
@@ -34,6 +34,8 @@
             </div>
 
             <div class="box-body" :class="{ cantadd : !cansave }">
+                <input v-for="(value, key) in getAdditionalFormData" type="hidden" :name="key" :value="value">
+
                 <component
                     v-for="name in getComponents('form-top')"
                     :key="name"
@@ -65,7 +67,7 @@
                 </component>
             </div>
 
-            <div data-footer class="box-footer" v-if="canUpdateForm">
+            <div :data-footer="model.table" class="box-footer" v-if="canUpdateForm">
                 <component
                     v-for="name in getComponents('form-footer')"
                     :key="name"
@@ -80,7 +82,7 @@
             </div>
 
         </div>
-    </form>
+    </component>
     <!-- /.box -->
 </template>
 <script>
@@ -116,6 +118,24 @@ export default {
             this.cansave = data.state;
         });
 
+        /*
+         * When row is updated, then bind data from incoming request/database into model row and his values
+         */
+        eventHub.$on('onUpdate', this.onUpdateEvent = data => {
+            if ( data.table != this.model.slug || data.depth_level != this.depth_level )
+                return;
+
+            //Update model data of existing model on row update
+            for ( var key in data.row ) {
+                this.row[key] = data.row[key];
+
+                //Update values in fields cause updating files in form
+                if ( key in this.model.fields ) {
+                    this.model.fields[key].value = data.row[key];
+                }
+            }
+        });
+
         //On create form instance, we need initialize given row.
         //For example if single model is loaded from database as relation, but FormBuilder is not loaded yet
         //Then we need insert row data after FormBuilder initialization.
@@ -124,6 +144,7 @@ export default {
 
     destroyed(){
         eventHub.$off('changeFormSaveState', this.changeFormSaveStateEvent);
+        eventHub.$off('onUpdate', this.onUpdateEvent);
     },
 
     watch: {
@@ -153,8 +174,8 @@ export default {
         formID(){
             return 'form-' + this.depth_level + '-' + this.model.slug;
         },
-        isSingle(){
-            return this.model.minimum == 1 && this.model.maximum == 1 || this.model.single == true;
+        formType(){
+            return this.model.isInParent() ? 'div' : 'form';
         },
         isOpenedRow(){
             return this.row && 'id' in this.row;
@@ -208,8 +229,7 @@ export default {
             return this.$root.getModelProperty(this.model, 'settings.buttons.update') || this.trans('save');
         },
         sendButton(){
-            return this.$root.getModelProperty(this.model, 'settings.buttons.create')
-                         || this.trans('send');
+            return this.$root.getModelProperty(this.model, 'settings.buttons.create') || this.trans('send');
         },
         hasLocaleFields(){
             for ( var key in this.model.fields )
@@ -242,6 +262,10 @@ export default {
             if ( this.isOpenedRow && this.$root.getModelProperty(this.model, 'settings.editable') == false )
                 return false;
 
+            //Model cannot be updated, when is inParent relation
+            if ( this.model.isInParent() )
+                return false;
+
             return this.cansave;
         },
         canShowGettext(){
@@ -250,6 +274,42 @@ export default {
 
             return false;
         },
+        getAdditionalFormData(){
+            //Data for request
+            var data = {
+                _model : this.model.slug,
+            };
+
+            //Check if form belongs to other form
+            if ( this.model.foreign_column != null && this.$parent.parentrow )
+                data[this.model.foreign_column[this.$parent.getParentTableName()]] = this.$parent.parentrow.id;
+
+            //If is updating, then add row ID
+            if ( this.getFormAction == 'update' )
+            {
+                data['_id'] = this.row.id;
+                data['_method'] = 'put';
+            } else {
+                //Check if is enabled language
+                if ( this.langid )
+                    data['language_id'] = this.langid;
+
+                //Push saved childs without actual parent row
+                if ( this.hasParentModel() && this.$parent.rows.save_children.length > 0 )
+                    data['_save_children'] = JSON.stringify(this.$parent.rows.save_children);
+            }
+
+            //If we need mutate keys of additional form data
+            var mutatedData = {};
+            for ( var key in data ) {
+                mutatedData[this.model.formPrefix()+key] = data[key];
+            }
+
+            return mutatedData;
+        },
+        getFormAction(){
+            return ! this.isOpenedRow ? 'store' : 'update';
+        }
     },
 
     methods: {
@@ -340,36 +400,9 @@ export default {
 
             //Resets ckeditor values for correct value
             if (typeof CKEDITOR!='undefined'){
-                    for (var key in CKEDITOR.instances){
-                            CKEDITOR.instances[key].updateElement();
-                    }
-            }
-
-            //Data for request
-            var data = {
-                    _model : this.model.slug,
-            };
-
-            //Data at the end of request
-            var additional_data = {};
-
-            //Check if form belongs to other form
-            if ( this.model.foreign_column != null && this.$parent.parentrow )
-                data[this.model.foreign_column[this.$parent.getParentTableName()]] = this.$parent.parentrow.id;
-
-            //If is updating, then add row ID
-            if ( action == 'update' )
-            {
-                data['_id'] = this.row.id;
-                data['_method'] = 'put';
-            } else {
-                //Check if is enabled language
-                if ( this.langid )
-                    data['language_id'] = this.langid;
-
-                //Push saved childs without actual parent row
-                if ( this.hasParentModel() && this.$parent.rows.save_children.length > 0 )
-                    additional_data['_save_children'] = this.$parent.rows.save_children;
+                for (var key in CKEDITOR.instances){
+                    CKEDITOR.instances[key].updateElement();
+                }
             }
 
             this.resetErrors();
@@ -379,14 +412,6 @@ export default {
             $(e.target).ajaxSubmit({
 
                 url : this.$root.requests[action],
-
-                data : additional_data,
-
-                //Add additional data into top of request, because of correct order in relations setters in laravel
-                beforeSubmit(arr, $form, options) {
-                    for ( var key in data )
-                        arr.unshift({ name : key, value : data[key] });
-                },
 
                 success : data => {
 
@@ -399,7 +424,6 @@ export default {
 
                     //Fix for resubmiting form after closing with enter
                     setTimeout(() => {
-
                         this.$root.openAlert(data.title, data.message, data.type, null, () => {
 
                             //Timeout for sending new request with enter
@@ -408,7 +432,6 @@ export default {
                             }, 500);
 
                         });
-
                     }, 100);
 
                     callback( data );
@@ -530,93 +553,111 @@ export default {
                 }
             };
         },
-        buildEventData(data){
+        buildEventData(data, model, isChild){
+            var model = model||this.model;
+
             return {
-                table : this.model.slug,
-                model : this.model,
-                depth_level : this.depth_level,
+                table : model.slug,
+                model : model,
+
+                //If is child inParent relation, then add depth level + 1 for correct communication
+                depth_level : this.depth_level + (isChild ? 1 : 0),
                 ...data
             };
         },
         saveForm(e)
         {
             //Devide if is updating or creating form
-            var action = ! this.isOpenedRow ? 'store' : 'update';
+            var action = this.getFormAction;
 
             this.sendForm(e, action, response => {
                 if ( ! response.data )
                     return false;
 
                 //Push new row
-                if ( action == 'store' )
-                {
-                    var clonedRow = _.cloneDeep(response.data.rows[0]);
+                if ( action == 'store' ) {
+                    for ( var key in response.data ) {
+                        var clonedRow = _.cloneDeep(response.data[key].rows[0]),
+                            isParentRow = response.data[key].model == this.model.table,
+                            model = this.$root.models[response.data[key].model];
 
-                    //Reset actual items buffer
-                    if ( this.hasParentModel() )
-                        this.saveParentChilds(response);
+                        //Reset actual items buffer
+                        if ( isParentRow && this.hasParentModel() )
+                            this.saveParentChilds(response.data[key].rows);
 
-                    //Bind values for input builder
-                    eventHub.$emit('onSubmit', this.buildEventData({ row : clonedRow, request : response.data}));
+                        var eventData = this.buildEventData({
+                            row : clonedRow,
+                            request : response.data[key]
+                        }, model, !isParentRow);
 
-                    //Send notification about new row
-                    eventHub.$emit('onCreate', this.buildEventData({ row : clonedRow, request : response.data}));
+                        //Bind values for input builder
+                        eventHub.$emit('onSubmit', eventData);
 
-                    //If form has disabled autoreseting
-                    var autoreset = this.$root.getModelProperty(this.model, 'settings.autoreset');
+                        //Send notification about new row
+                        eventHub.$emit('onCreate', eventData);
 
-                    //Reseting form after new row
-                    if ( !this.isSingle && autoreset !== false) {
-                        this.initForm(this.$parent.emptyRowInstance());
-                    }
+                        if ( isParentRow ) {
+                            //If form has disabled autoreseting
+                            var autoreset = this.$root.getModelProperty(this.model, 'settings.autoreset');
 
-                    //If is disabled autoreseting form, then select inserted row
-                    else {
-                        this.$parent.row = clonedRow;
+                            //Reseting form after new row
+                            if ( !this.model.isSingle() && autoreset !== false) {
+                                this.initForm(this.$parent.emptyRowInstance());
+                            }
 
-                        this.scrollToForm();
+                            //If is disabled autoreseting form, then select inserted row
+                            else {
+                                this.$parent.row = clonedRow;
+
+                                this.scrollToForm();
+                            }
+                        }
                     }
                 }
 
                 //Update existing row
                 else if ( action == 'update' ) {
-                    var clonedRow = _.cloneDeep(response.data.row);
+                    var rows = response.data.rows;
 
-                    //Bind values for input builder
-                    eventHub.$emit('onSubmit', this.buildEventData({ row : clonedRow, request : response.data}));
+                    //Update all updated models. Parent and also child data...
+                    for ( var table in rows ) {
+                        var clonedRow = _.cloneDeep(rows[table]),
+                            isParentRow = table == this.model.table,
+                            model = this.$root.models[table];
 
-                    //Send notification about updated row
-                    eventHub.$emit('onUpdate', this.buildEventData({ row : clonedRow, request : response.data}));
+                        var eventData = this.buildEventData({
+                            row : clonedRow,
+                            request : rows[table]
+                        }, model, !isParentRow);
 
-                    for ( var key in response.data.row )
-                    {
-                        this.row[key] = response.data.row[key];
+                        //Bind values for input builder
+                        eventHub.$emit('onSubmit', eventData);
 
-                        //Update values in fields cause updating files in form
-                        if ( key in this.model.fields )
-                        {
-                            this.model.fields[key].value = response.data.row[key];
-                        }
+                        //Send notification about updated row
+                        eventHub.$emit('onUpdate', eventData);
                     }
                 }
 
                 //Add or update select options
-                if ( this.hasparentmodel !== true )
-                    this.$parent.$parent.pushOption(action == 'store' ? response.data.rows[0] : response.data.row, action);
+                if ( this.hasparentmodel !== true ) {
+                    var incomingRow = action == 'store' ? response.data[0].rows[0] : response.data.rows[this.model.table];
+
+                    this.$parent.$parent.pushOption(incomingRow, action);
+                }
             });
 
         },
         removeActiveTab(tab, all){
-            var remove_from = tab.filter(function(){
+            var removeFrom = tab.filter(function(){
                 return all === true || ! $(this).hasClass('model-tab');
             });
 
-            remove_from.removeAttr('data-toggle')
-                                    .removeAttr('data-original-title')
-                                    .removeAttr('has-error')
-                                    .tooltip("destroy")
-                                    .find('a > .fa.fa-exclamation-triangle')
-                                    .remove();
+            removeFrom.removeAttr('data-toggle')
+                      .removeAttr('data-original-title')
+                      .removeAttr('has-error')
+                      .tooltip("destroy")
+                      .find('a > .fa.fa-exclamation-triangle')
+                      .remove();
         },
         colorizeTab(input){
             var _this = this;
@@ -624,8 +665,8 @@ export default {
             input.parents('.tab-pane').each(function(){
                 var getActiveTab = (panel) => {
                     var li = panel.parent().prev().find('li'),
-                            id = panel.attr('id'),
-                            tab = id ? li.parent().find('> li > a[href="#'+id+'"]') : null;
+                        id = panel.attr('id'),
+                        tab = id ? li.parent().find('> li > a[href="#'+id+'"]') : null;
 
                     //Return tab by id, if those tabs are custom
                     if ( tab )
@@ -641,26 +682,28 @@ export default {
                 });
 
                 getActiveTab($(this)).each(function(){
-                            if ( $(this).hasClass('has-error') )
-                                    return;
+                    if ( $(this).hasClass('has-error') )
+                        return;
 
-                            $(this).attr('data-toggle', 'tooltip').attr('data-original-title', _this.trans('tab-error')).attr('has-error', '').one('click', function(){
-                                    var active = $(this).parents('.nav-tabs-custom').find('> .nav-tabs > li.active[has-error]').not($(this).parent().find('> li'));
+                    $(this).attr('data-toggle', 'tooltip').attr('data-original-title', _this.trans('tab-error')).attr('has-error', '').one('click', function(){
+                        var active = $(this).parents('.nav-tabs-custom').find('> .nav-tabs > li.active[has-error]').not($(this).parent().find('> li'));
 
-                                    _this.removeActiveTab($([this].concat(active.toArray())), true);
-                            }).find('a').prepend('<i class="fa fa-exclamation-triangle"></i>');
+                        _this.removeActiveTab($([this].concat(active.toArray())), true);
+                    }).find('a').prepend('<i class="fa fa-exclamation-triangle"></i>');
                 })
             });
         },
         colorizeLangDropdown(input){
             var field_wrapper = input.parents('.field-wrapper'),
-                    field_key = field_wrapper.attr('data-field'),
-                    field_lang = field_wrapper.attr('data-lang');
+                field_key = field_wrapper.attr('data-field'),
+                field_lang = field_wrapper.attr('data-lang'),
+                field_model = field_wrapper.attr('data-model');
 
             if ( ! field_key )
                 return;
 
-            var field = this.model.fields[field_key];
+            var model = this.$root.models[field_model],
+                field = model.fields[field_key];
 
             if ( field.locale != true || field_lang == this.selectedLanguage.slug )
                 return;
@@ -676,14 +719,14 @@ export default {
         scrollToForm(){
             setTimeout(() => {
                 $('html, body').animate({
-                        scrollTop: $('#'+this.formID).offset().top - 10
+                    scrollTop: $('#'+this.formID).offset().top - 10
                 }, 500);
             }, this.$root.isTest ? 0 : 500);
         },
         hasParentModel(){
             return this.$parent.$options.name == 'model-builder';
         },
-        saveParentChilds(response){
+        saveParentChilds(rows){
             this.$parent.rows.save_children = [];
 
             //If actual row has no parent, and need to ba saved when parent will be saved
@@ -694,12 +737,11 @@ export default {
                 while(!('rows' in parent))
                     parent = parent.$parent;
 
-                for ( var i = 0; i < response.data.rows.length; i++ )
+                for ( var i = 0; i < rows.length; i++ )
                 {
                     parent.rows.save_children.push({
                         table : this.model.slug,
-                        id : response.data.rows[i].id,
-                        column : this.model.foreign_column[this.$parent.getParentTableName(true)],
+                        id : rows[i].id,
                     });
                 }
             }

@@ -499,7 +499,7 @@ export default {
                 }
 
                 //Set single model row
-                if ( this.$parent.isSingle ) {
+                if ( this.model.isSingle() && response.data.rows.length > 0 ) {
                     this.$parent.row = response.data.rows[0]||this.$parent.emptyRowInstance();
                     this.$parent.sendRowData();
                 }
@@ -511,8 +511,11 @@ export default {
                 //Get new csrf token
                 this.$root.reloadCSRFToken(response.data.token);
 
-                //Add next timeout
-                this.initTimeout(false);
+                //Add next timeout, but we do not want sync filled single model
+                //If single model is empty, then keep syncing till row will be available
+                if ( ! this.model.isSingle() || response.data.rows.length == 0 ) {
+                    this.initTimeout(false);
+                }
             })
             .catch(function(response){
                 //If has been component destroyed, and request is delivered...

@@ -1,11 +1,13 @@
 import Tabs from './TabsHelper.js';
 import Fields from './FieldsHelper';
+import ModelProperties from './ModelProperties';
 
 const Model = () => {};
 
 var extensions = [
     Tabs,
     Fields,
+    ModelProperties,
 ];
 
 /*

@@ -8,7 +8,7 @@
 
         <div class="file-group">
             <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? field_key + '[]' : field_key" @change="addFile" class="form-control" :placeholder="field.placeholder || field_name">
-            <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_' + field_key" :value="1">
+            <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+field_key" :value="1">
 
             <button v-if="value && !isMultipleUpload || !file_from_server" @click.prevent="removeFile" type="button" class="btn btn-danger btn-md" data-toggle="tooltip" title="" :data-original-title="trans('delete-file')"><i class="fa fa-remove"></i></button>
 
@@ -21,7 +21,7 @@
             <small>{{ field.title }}</small>
 
             <span v-if="value && !hasMultipleFilesValue && file_from_server && !isMultiple">
-                <file :file="value" :field="field_key" :model="model"></file>
+                <file :file="value" :field="field_key_original" :model="model"></file>
             </span>
 
         </div>
@@ -32,7 +32,7 @@
     import File from '../Partials/File.vue';
 
     export default {
-        props: ['id', 'row', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'depth_level'],
+        props: ['id', 'row', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level'],
 
         components : { File },
 

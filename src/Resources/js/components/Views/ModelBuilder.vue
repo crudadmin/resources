@@ -15,12 +15,12 @@
             <p>{{ trans('languages-missing') }}</p>
         </div>
 
-        <div :data-depth="depth_level" :class="[ 'box', { 'single-mode' : isSingle, 'box-warning' : isSingle } ]" v-show="canShowForm || (hasRows && canShowRows || isSearching)">
+        <div :data-depth="depth_level" :class="[ 'box', { 'single-mode' : model.isSingle(), 'is-in-parent' : model.isInParent(), 'box-warning' : model.isSingle() } ]" v-show="canShowForm || (hasRows && canShowRows || isSearching)">
 
-            <div class="box-header" :class="{ 'with-border' : isSingle }" v-show="ischild && (!model.in_tab || isEnabledGrid || canShowSearchBar) || ( !isSingle && (isEnabledGrid || canShowSearchBar))">
+            <div class="box-header" :class="{ 'with-border' : model.isSingle() }" v-show="ischild && (!model.in_tab || isEnabledGrid || canShowSearchBar) || ( !model.isSingle() && (isEnabledGrid || canShowSearchBar))">
                 <h3 v-if="ischild" class="box-title">{{ model.name }}</h3> <span class="model-info" v-if="model.title && ischild" v-html="model.title"></span>
 
-                <div class="pull-right" v-if="!isSingle">
+                <div class="pull-right" v-if="!model.isSingle()">
                     <div class="search-bar" data-search-bar :class="{ interval : search.interval }" :id="getFilterId" v-show="canShowSearchBar">
                         <div class="input-group input-group-sm">
                             <div class="input-group-btn">
@@ -551,8 +551,7 @@
                     defaultValue = this.$root.getModelProperty(this.model, 'settings.grid.default');
 
                 //Full screen
-                if ( ! this.canShowForm || this.isSingle )
-                {
+                if ( ! this.canShowForm || this.model.isSingle() ) {
                     return this.enableOnlyFullScreen();
                 }
 
@@ -738,14 +737,8 @@
 
                 return true;
             },
-            //Returns if is model in single row mode
-            isSingle(){
-                var single = this.model.minimum == 1 && this.model.maximum == 1;
-
-                return single;
-            },
             canShowRows(){
-                if ( this.isSingle ){
+                if ( this.model.isSingle() ){
                     this.enableOnlyFullScreen();
 
                     return false;

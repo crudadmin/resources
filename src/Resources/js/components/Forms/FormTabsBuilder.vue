@@ -1,12 +1,12 @@
 <template>
     <div class="nav-tabs-custom" :class="{ default : hasNoTabs }">
         <ul class="nav nav-tabs">
-            <li v-for="(tab, $index) in getTabs" v-if="isTab(tab) && !tab.model || isModel(tab)" v-show="isTabVisible(tab)" data-tabs :data-depth="depth_level" :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : ''" :class="{ active : activetab == $index, 'model-tab' : isModel(tab) }" @click="activetab = $index">
+            <li v-for="(tab, $index) in getTabs" v-if="isTab(tab) && !tab.model || isModel(tab)" v-show="isTabVisible(tab)" data-tabs :data-depth="depth_level" :default-tab="isModel(tab) && getModel(tab.model) ? false : ''" :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table" :class="{ active : activetab == $index, 'model-tab' : isModel(tab) }" @click="activetab = $index">
                 <a data-toggle="tab" aria-expanded="true"><i v-if="getTabIcon(tab)" :class="['fa', getTabIcon(tab)]"></i> {{ getTabName(tab)||trans('general-tab') }}</a>
             </li>
         </ul>
         <div class="tab-content">
-            <div v-for="(tab, $index) in getTabs" class="tab-pane" :class="{ active : activetab == $index }" :tab-model="isModel(tab) ? getModel(tab.model).slug : ''">
+            <div v-for="(tab, $index) in getTabs" v-if="canRenderTab(tab)" class="tab-pane" :class="{ active : activetab == $index }" :data-tab-model="isModel(tab) ? getModel(tab.model).slug : ''">
                 <div class="row">
                     <div v-if="hasTabs(tab.fields) || isModel(tab)" :class="{ model : isModel(tab) }" class="col-lg-12">
                         <form-tabs-builder
@@ -28,7 +28,7 @@
                             :langid="langid"
                             :ischild="true"
                             :model_builder="getModel(tab.model)"
-                            :activetab="isLoadedModel(getModel(tab.model), activetab == $index)"
+                            :activetab="isLoadedModel(getModel(tab.model), $index)"
                             :parentrow="row">
                         </model-builder>
                     </div>
@@ -108,7 +108,7 @@ export default {
 
             eventHub.$emit('changeFormSaveState', {
                 model : this.model.slug,
-                state : ! this.isModel(this.getTabs[tabid])
+                state : !(this.isModel(this.getTabs[tabid]) && this.getModel(this.getTabs[tabid].model).inParent !== true)
             });
         },
     },
@@ -178,6 +178,17 @@ export default {
     },
 
     methods: {
+        canRenderTab(tab, index){
+            //If tab has fields or tab is model relation
+            if ( this.hasTabs(tab.fields) || this.isModel(tab) )
+                return true;
+
+            //If tab has groups
+            if ( this.chunkGroups(tab.fields).length > 0 )
+                return true;
+
+            return false;
+        },
         tabsFields(fields){
             return fields.filter(item => {
                 return this.isTab(item);
@@ -202,7 +213,11 @@ export default {
                     name = tab.name||model.name,
                     data = this.models_data[model.slug];
 
-                return name + ' (' + (data ? parseInt(data.count||0) : '0') + ')';
+                //If is not single model, then show rows count
+                if ( ! model.isSingle() || ! model.isInParent() )
+                    name += ' (' + (data ? parseInt(data.count||0) : '0') + ')';
+
+                return name;
             }
 
             return tab.name;
@@ -303,8 +318,10 @@ export default {
 
             return items;
         },
-        isLoadedModel(model, active){
-            if ( active === true && this.models_loaded.indexOf(model.slug) === -1 )
+        isLoadedModel(model, index){
+            //Tab is active only when is selected, or when is inParentMode
+            //because we need loaded fields also when tab is not opened. For proper validation errors.
+            if ( (index === this.activetab || model.isInParent()) && this.models_loaded.indexOf(model.slug) === -1 )
                 this.models_loaded.push(model.slug);
 
             return this.models_loaded.indexOf(model.slug) > -1;

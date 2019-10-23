@@ -68,6 +68,7 @@
             :model="model"
             :field_name="getName"
             :field_key="getFieldName"
+            :field_key_original="field_key"
             :field="field"
             :value="getValueOrDefault"
             :required="isRequired"
@@ -338,10 +339,14 @@
             },
             getFieldName()
             {
-                if ( this.hasLocale )
-                    return this.field_key+'['+this.langslug+']';
+                var key = this.field_key;
 
-                return this.field_key;
+                //If is localized key, add field locale key
+                if ( this.hasLocale ) {
+                    key = this.field_key+'['+this.langslug+']';
+                }
+
+                return this.model.formPrefix()+key;
             },
             getName()
             {
