@@ -675,7 +675,7 @@ export default {
                     }
 
                     //Return tab by id, if those tabs are custom
-                    if ( tab )
+                    if ( tab && tab.length > 0 )
                         return tab.parent();
 
                     return li.eq(panel.index());
