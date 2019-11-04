@@ -9,7 +9,7 @@
     {!! csrf_field() !!}
 
     <div class="form-group has-feedback">
-      <input type="{{ $username == 'email' ? 'email' : 'text'  }}" name="{{ $username }}" class="form-control" value="{{ old($username) }}" placeholder="{{ config('admin.authentication.login.'.$username, 'Email') }}">
+      <input type="{{ $username == 'email' && (get_class(Auth::getProvider()) === \Illuminate\Auth\EloquentUserProvider::class) ? 'email' : 'text'  }}" name="{{ $username }}" class="form-control" value="{{ old($username) }}" placeholder="{{ config('admin.authentication.login.'.$username, 'Email') }}">
       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       @if ($errors->has($username))
           <span class="help-block">
