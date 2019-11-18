@@ -4,11 +4,11 @@
       <!-- User Account Menu -->
       <li class="dropdown user user-menu">
         <!-- Menu Toggle Button -->
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          <!-- The user image in the navbar-->
+        <a href="#" class="user-toggle" data-toggle="dropdown">
           <img v-bind:src="getAvatar" class="user-image" alt="User Image">
-          <!-- hidden-xs hides the username on small devices so only the image appears. -->
-          <span class="hidden-xs" v-if="user">{{ user.username }}</span>
+
+          <span v-if="user">{{ user.username }}</span>
+          <i class="fa fa-angle-down"></i>
         </a>
         <ul class="dropdown-menu">
           <!-- The user image in the menu -->
@@ -26,7 +26,7 @@
           <!-- Menu Footer-->
           <li class="user-footer">
             <div class="pull-right">
-              <a href="<?php echo admin_action('Auth\LoginController@logout'); ?>" class="btn btn-default btn-flat">{{ trans('admin.logout') }}</a>
+              <a href="#logout" class="btn btn-primary">{{ trans('logout') }}</a>
             </div>
           </li>
         </ul>
@@ -39,7 +39,7 @@
 export default {
     props: ['user'],
 
-    methods: {
+    computed: {
         getPermissions() {
             if ( 'admins_groups' in this.user )
             {

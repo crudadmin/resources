@@ -1,0 +1,163 @@
+header.main-header {
+    height: $navharHeight;
+    border-bottom: 1px solid $navbarBorderColor;
+    display: flex;
+
+    .navbar-left {
+        background: white;
+        border-right: 1px solid $navbarBorderColor;
+        width: $navbarWidth;
+        padding: 0 $navbarPadding;
+        display: flex;
+        align-items: center;
+
+        .logo {
+            color: #4A5056;
+            font-weight: 600;
+            text-decoration: none;
+            @include fontSize(30px);
+        }
+    }
+
+    .navbar-right {
+        width: calc(100% - #{$navbarWidth});
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0 $navbarPadding;
+
+        .user-menu {
+            a.user-toggle {
+                color: #98A7B7;
+                @include fontSize(14px);
+                font-weight: 400;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+
+                img {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 100%;
+                }
+
+                span {
+                    padding: 0 10px;
+                }
+            }
+
+            .dropdown-menu {
+                transform: none !important;
+                left: auto !important;
+                right: 0 !important;
+                top: 47px !important;
+                border-color: $navbarBorderColor;
+                border-radius: 1px;
+                min-width: 200px;
+                padding: $navbarPadding;
+
+                .user-header {
+                    text-align: center;
+                    min-width: 300px;
+
+                    img {
+                        border-radius: 100%;
+                    }
+
+                    p {
+                        margin-top: 30px;
+                    }
+                }
+
+                .user-footer {
+                    .btn {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+aside.main-sidebar {
+    width: $navbarWidth;
+    background: white;
+    border-right: 1px solid $navbarBorderColor;
+    position: relative;
+
+    .sidebar {
+        padding: $navbarPadding;
+
+        .sidebar-menu {
+            margin-left: 0;
+            padding-left: 0;
+            color: $darkText;
+
+            li {
+                list-style: none;
+                line-height: 40px;
+
+                .treeview-menu {
+                    padding-left: 15px;
+                }
+
+                a {
+                    color: $darkText;
+                    @include fontSize(12px);
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    display: block;
+                    width: 100%;
+                    position: relative;
+
+                    i.icon {
+                        @include fontSize(15px);
+                        margin-right: 21px;
+                    }
+
+                    .side-arrow {
+                        position: absolute;
+                        top: calc(50% - 6px);
+                        right: 0;
+                    }
+                }
+
+                &.active:not(.treeview-list) {
+                    &:before {
+                        content: '';
+                        width: 2px;
+                        height: 40px;
+                        background: $primary;
+                        display: block;
+                        position: absolute;
+                        right: 0;
+                    }
+
+                    i.icon {
+                        color: $primary;
+                    }
+
+                    a {
+                        color: #41464C;
+                    }
+                }
+            }
+        }
+    }
+
+    .footer-sidebar {
+        border-top: 1px solid $navbarBorderColor;
+        padding: $navbarPadding;
+        @include fontSize(12px);
+        color: $darkText;
+
+        p {
+            margin-bottom: 5px;
+
+            a {
+                /*color: $darkText;*/
+            }
+        }
+    }
+
+}

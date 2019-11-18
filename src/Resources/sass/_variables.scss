@@ -1,21 +1,20 @@
 // Body
-$body-bg: #fff;
+$body-bg: #F7F7F7;
 
 // Typography
-$font-family-sans-serif: 'Avenir Next', sans-serif;
+$font-family-sans-serif: 'Inter', sans-serif;
 $font-size-base: 1rem;
 $line-height-base: 1.6;
 
-$smallSectionSize: 30px;
-$sectionSize: 50px;
-$primary: #015093;
-$blog: #1EC6C9;
-$dark: #222;
-$orange: #E87613;
-$gray: #F9F9F9;
-$orangeLight: #ccc;
+$navharHeight: 70px;
+$navbarWidth: 250px;
+$navbarPadding: 30px;
+$navbarBorderColor: rgba(208, 215, 221, 0.7);
+
+$primary: #4A54E2;
 
 // Colors
+$darkText: #8292A5;
 $blue: #3490dc;
 $indigo: #6574cd;
 $purple: #9561e2;

@@ -1,15 +1,23 @@
 <template>
     <fragment>
         <router-link tag="li" class="treeview" v-if="isActive && !isGroup" :data-slug="row.slug" :to="{ name : 'admin-model', params: { model : row.slug } }" exact-active-class="active" active-class="active">
-          <a><i v-bind:class="['fa', row.icon]"></i> <span>{{ row.name }}</span> <i v-if="hasSubmenu" class="fa fa-angle-left pull-right"></i></a>
-          <ul v-if="hasSubmenu" class="treeview-menu">
+          <a @click="toggleMenu">
+            <i :class="['fa', row.icon]" class="icon"></i>
+            <span>{{ row.name }}</span>
+            <i v-if="hasSubmenu" class="fa side-arrow" :class="{ 'fa-angle-down' : opened, 'fa-angle-left' : !opened }"></i>
+          </a>
+          <ul v-if="hasSubmenu" v-show="opened" class="treeview-menu">
             <sidebar-row v-for="(subrow, key) in row.submenu" :key="key" :row="subrow" :parent="levels"></sidebar-row>
           </ul>
         </router-link>
 
-        <li class="treeview" v-if="isActive && isGroup && hasChilds" :data-slug="row.slug" >
-          <a><i class="fa" :class="row.icon||'fa-folder-open-o'"></i> <span>{{ row.name }}</span> <i v-if="hasSubmenu" class="fa fa-angle-left pull-right"></i></a>
-          <ul v-if="hasSubmenu" class="treeview-menu">
+        <li class="treeview treeview-list" v-if="isActive && isGroup && hasChilds" :data-slug="row.slug" >
+          <a @click="toggleMenu">
+            <i class="fa icon" :class="row.icon||'fa-folder-open far'"></i>
+            <span>{{ row.name }}</span>
+            <i v-if="hasSubmenu" class="fa side-arrow" :class="{ 'fa-angle-down' : opened, 'fa-angle-left' : !opened }"></i>
+          </a>
+          <ul v-if="hasSubmenu" v-show="opened" class="treeview-menu">
             <sidebar-row v-for="(subrow, key) in row.submenu" :key="key" :row="subrow" :parent="levels"></sidebar-row>
           </ul>
         </li>
@@ -25,9 +33,11 @@ export default {
 
     data() {
         return {
+            opened : false,
             levels : [],
         };
     },
+
     created(){
         var levels = [];
 
@@ -40,6 +50,10 @@ export default {
         levels.push( this.row );
 
         return this.levels = levels;
+    },
+
+    mounted(){
+        this.openTree();
     },
 
     computed: {
@@ -59,5 +73,24 @@ export default {
             return this.row.active !== false;
         }
     },
+
+    methods: {
+        //Recursively open all menu items way up
+        openTree(){
+            //If is opened actual model
+            if ( this.row.table != this.$router.history.current.params.model )
+                return;
+
+            var parent = this;
+            while(parent.$options.name == 'sidebar-row') {
+                parent.opened = true;
+
+                parent = parent.$parent;
+            }
+        },
+        toggleMenu(){
+            this.opened = !this.opened;
+        },
+    }
 }
 </script>

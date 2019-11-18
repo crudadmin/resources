@@ -1,0 +1,8 @@
+.wrapper {
+    display: flex;
+    min-height: calc(100vh - #{$navharHeight})
+}
+
+.content-wrapper {
+    width: calc(100% - #{$navbarWidth})
+}

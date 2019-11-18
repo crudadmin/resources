@@ -13,9 +13,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="<?php echo admin_asset('/plugins/font-awesome/css/font-awesome.min.css') ?>">
-
   <!-- Theme style -->
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/lightbox/lightbox.min.css') ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datatables/dataTables.bootstrap.css') ?>">
@@ -28,72 +25,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" type="text/css" href="<?php echo admin_asset($css, true) ?>">
   <?php } ?>
 </head>
-<body class="hold-transition">
+<body>
     <div id="app">
-        <div class="wrapper">
-
-          <!-- Main Header -->
-          <header class="main-header">
-
+        <!-- Main Header -->
+        <header class="main-header">
+          <nav class="navbar-left">
             <!-- Logo -->
             <a href="#/dashboard" class="logo">
-              <!-- mini logo for sidebar mini 50x50 pixels -->
-              <span class="logo-mini"><?php echo config('admin.name') ?></span>
-              <!-- logo for regular state and mobile devices -->
-              <span class="logo-lg"><?php echo config('admin.name') ?></span>
+              <span><?php echo config('admin.name') ?></span>
             </a>
+          </nav>
 
-            <!-- Header Navbar -->
-            <nav class="navbar navbar-static-top" role="navigation">
-              <!-- Navbar Right Menu -->
-              <right-navbar
-                :user="user" />
-            </nav>
-          </header>
+          <!-- Header Navbar -->
+          <nav class="navbar-right">
+            <right-navbar
+              :user="user" />
+          </nav>
+        </header>
 
+        <div class="wrapper">
           <!-- Left side column. contains the logo and sidebar -->
           <aside class="main-sidebar">
             <sidebar
               :rows="tree"
+              :version="version"
               :languages="languages"
               :langid.sync="language_id"
               :user="user">
             </sidebar>
           </aside>
-
-          <!-- MODAL -->
-          <div class="example-modal message-modal" v-if="canShowAlert">
-            <div class="modal" :class="'modal-'+alert.type" v-bind:style="{ display : canShowAlert ? 'block' : 'none' }">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" v-on:click="closeAlert( alert.close )" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">×</span>
-                    </button>
-                    <h4 class="modal-title">{{ alert.title }}</h4>
-                  </div>
-                  <div class="modal-body">
-                    <p v-if="alert.message" v-html="alert.message"></p>
-                    <component
-                      v-if="alert.component"
-                      :model="alert.component.model"
-                      :rows="alert.component.rows"
-                      :row="alert.component.row"
-                      :request="alert.component.request"
-                      :data="alert.component.data"
-                      :is="getComponentName(alert.component.name)">
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" v-on:click="closeAlert( alert.close )" v-if="alert.close || alert.type=='success' && !alert.close || !alert.close && !alert.success" v-bind:class="{ 'btn' : true, 'btn-outline' : true, 'pull-left' : alert.success }" data-dismiss="modal"><?php echo trans('admin::admin.close') ?></button>
-                    <button type="button" v-on:click="closeAlert( alert.success )" v-if="alert.success" class="btn btn-outline"><?php echo trans('admin::admin.accept') ?></button>
-                  </div>
-                </div>
-                <!-- /.modal-content -->
-              </div>
-              <!-- /.modal-dialog -->
-            </div>
-            <!-- /.modal -->
-          </div>
 
           <!-- Your Page Content Here -->
           <!-- Content Wrapper. Contains page content -->
@@ -104,25 +64,42 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <router-view :langid="language_id"></router-view>
           </div>
           <!-- END CONTENT -->
-
-          <!-- Main Footer -->
-          <footer class="main-footer">
-            <!-- To the right -->
-            <div class="pull-right hidden-xs">
-              Version <a target="_blank" v-bind:href="'https://packagist.org/packages/marekgogol/crudadmin#'+version">{{ version }}</a>
-            </div>
-            <!-- Default to the left -->
-            <strong>
-              &copy; <?php echo date('Y') > config('admin.author.since', 2016) ? config('admin.author.since', 2016) . ' - '.date('Y') : date('Y') ?> <a href="<?php echo config('admin.author.url', 'http://marekgogol.sk') ?>" target="_blank"><?php echo config('admin.author.name', 'CrudAdmin') ?></a>
-              <?php if (config('admin.author', true) !== false) { ?>
-              system by <a href="<?php echo config('admin.author.url', 'http://marekgogol.sk') ?>" target="_blank"><?php echo config('admin.author.copyright', 'Marek Gogoľ') ?></a>.
-              <?php } ?>
-            </strong>
-          </footer>
-
-          <div class="control-sidebar-bg"></div>
         </div>
         <!-- ./wrapper -->
+
+        <!-- MODAL -->
+        <div class="example-modal message-modal" v-if="canShowAlert">
+          <div class="modal" :class="'modal-'+alert.type" v-bind:style="{ display : canShowAlert ? 'block' : 'none' }">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" v-on:click="closeAlert( alert.close )" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                  <h4 class="modal-title">{{ alert.title }}</h4>
+                </div>
+                <div class="modal-body">
+                  <p v-if="alert.message" v-html="alert.message"></p>
+                  <component
+                    v-if="alert.component"
+                    :model="alert.component.model"
+                    :rows="alert.component.rows"
+                    :row="alert.component.row"
+                    :request="alert.component.request"
+                    :data="alert.component.data"
+                    :is="getComponentName(alert.component.name)">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" v-on:click="closeAlert( alert.close )" v-if="alert.close || alert.type=='success' && !alert.close || !alert.close && !alert.success" v-bind:class="{ 'btn' : true, 'btn-outline' : true, 'pull-left' : alert.success }" data-dismiss="modal"><?php echo trans('admin::admin.close') ?></button>
+                  <button type="button" v-on:click="closeAlert( alert.success )" v-if="alert.success" class="btn btn-outline"><?php echo trans('admin::admin.accept') ?></button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+        </div>
 
         <?php if (Admin::isDev() == false) { ?>
         <!-- REQUIRED JS SCRIPTS -->

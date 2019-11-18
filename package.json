@@ -13,6 +13,7 @@
     "precommit": "npm run production && git add src/Resources/admin/js/*"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.11.2",
     "git-pre-commit": "^2.1.4",
     "resolve-url-loader": "^3.1.0",
     "sass": "^1.23.6",

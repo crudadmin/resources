@@ -1,42 +1,41 @@
 <template>
-<section class="sidebar">
-    <!-- Sidebar user panel (optional) -->
-    <div class="user-panel">
-        <div class="pull-left image">
-            <img :src="getAvatar" class="img-circle" alt="User Image">
-        </div>
-        <div class="pull-left info">
-            <p v-if="user">{{ user.username }}</p>
-            <!-- Status -->
-            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-        </div>
-    </div>
     <div>
-        <ul class="sidebar-menu">
-            <li class="header">
-                {{ hasLanguages && isActive ? trans('language-mutation') : trans('navigation') }}
-                <div v-if="hasLanguages && isActive" class="form-group language_select" data-toggle="tooltip" title="" :data-original-title="trans('change-language')">
-                    <select @change="changeLanguage" class="form-control" data-global-language-switch>
-                        <option v-for="language in languages" :selected="langid == language.id" :value="language.id">{{ getLangName(language) }}</option>
-                    </select>
-                </div>
-            </li>
-        </ul>
+        <section class="sidebar">
+            <div>
+                <ul class="sidebar-menu" v-if="hasLanguages && isActive">
+                    <li class="header">
+                        {{ trans('language-mutation') }}
+                        <div v-if="hasLanguages && isActive" class="form-group language_select" data-toggle="tooltip" title="" :data-original-title="trans('change-language')">
+                            <select @change="changeLanguage" class="form-control" data-global-language-switch>
+                                <option v-for="language in languages" :selected="langid == language.id" :value="language.id">{{ getLangName(language) }}</option>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
 
-        <!-- Sidebar Menu -->
-        <ul class="sidebar-menu">
-            <sidebar-row v-for="(row, key) in groups" :key="key" :row="row"></sidebar-row>
-        </ul>
-        <!-- /.sidebar-menu -->
+                <!-- Sidebar Menu -->
+                <ul class="sidebar-menu">
+                    <sidebar-row v-for="(row, key) in groups" :key="key" :row="row"></sidebar-row>
+                </ul>
+                <!-- /.sidebar-menu -->
+            </div>
+        </section>
+
+        <div class="footer-sidebar">
+            <p>Developed by <a href="https://www.marekgogol.sk" target="_blank">Marek Gogoľ</a></p>
+            <p>&copy; 2016 - {{ year }} <a href="https://www.crudadmin.com" target="_blank">CrudAdmin</a></p>
+            <br>
+            <p>Version <a target="_blank" :href="'https://packagist.org/packages/crudadmin/crudadmin#'+version">{{ version }}</a></p>
+          </strong>
+        </div>
     </div>
-</section>
 </template>
 
 <script>
 import SidebarRow from './SidebarRow.vue';
 
 export default {
-    props: ['rows', 'languages', 'langid', 'user'],
+    props: ['rows', 'languages', 'langid', 'user', 'version'],
 
     components: { SidebarRow },
 
@@ -49,6 +48,9 @@ export default {
     },
 
     computed : {
+        year(){
+            return moment().format('Y');
+        },
         groups(){
             var groups = this.rows;
 
