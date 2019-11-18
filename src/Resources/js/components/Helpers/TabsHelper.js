@@ -3,6 +3,9 @@ var Tabs = (Model) => {
      * Hide tab
      */
     Model.prototype.showTab = function(key){
+        if ( this.hidden_tabs.indexOf(key) === -1 )
+            return;
+
         var hidden_tabs = _.cloneDeep(this.hidden_tabs);
             hidden_tabs.splice(this.hidden_tabs.indexOf(key), 1);
 
