@@ -1,7 +1,7 @@
 window.$ = window.jQuery = require('jquery');
 
 require('jquery-form/jquery.form.js');
-require('bootstrap-sass');
+require('bootstrap');
 require('jquery-datetimepicker');
 
 require('../admin/plugins/lightbox/lightbox.min.js');

@@ -12,34 +12,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <title><?php echo config('admin.name') ?> - <?php echo trans('admin::admin.admin') ?></title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.5 -->
-  <link rel="stylesheet" href="<?php echo admin_asset('/bootstrap/css/bootstrap.min.css') ?>">
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/font-awesome/css/font-awesome.min.css') ?>">
+
   <!-- Theme style -->
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/lightbox/lightbox.min.css') ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datatables/dataTables.bootstrap.css') ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/chosen/chosen.css?v=').Admin::getAssetsVersion() ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datetimepicker/jquery.datetimepicker.css?v=').Admin::getAssetsVersion() ?>">
-  <link rel="stylesheet" href="<?php echo admin_asset('/dist/css/AdminLTE.css?v=').Admin::getAssetsVersion() ?>">
+  <link rel="stylesheet" href="<?php echo admin_asset('/css/app.css?v=').Admin::getAssetsVersion() ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/css/style.css?v=').Admin::getAssetsVersion() ?>">
-  <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
-        page. However, you can choose any other skin. Make sure you
-        apply the skin class to the body tag so the changes take effect.
-  -->
-  <link rel="stylesheet" href="<?php echo admin_asset('/dist/css/skins/skin-blue.min.css') ?>">
 
   <?php foreach (array_merge((array)config('admin.styles', []), ((($customCssPath = public_path('/assets/admin/css/custom.css')) && file_exists($customCssPath)) ? [ asset('/assets/admin/css/custom.css') ] : [])) as $css) { ?>
   <link rel="stylesheet" type="text/css" href="<?php echo admin_asset($css, true) ?>">
   <?php } ?>
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition">
     <div id="app">
         <div class="wrapper">
 
@@ -56,68 +45,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
             <!-- Header Navbar -->
             <nav class="navbar navbar-static-top" role="navigation">
-              <!-- Sidebar toggle button-->
-              <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-                <span class="sr-only">Toggle navigation</span>
-              </a>
               <!-- Navbar Right Menu -->
-              <div class="navbar-custom-menu">
-                <ul class="nav navbar-nav">
-
-                  <!-- User Account Menu -->
-                  <li class="dropdown user user-menu">
-                    <!-- Menu Toggle Button -->
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                      <!-- The user image in the navbar-->
-                      <img v-bind:src="getAvatar" class="user-image" alt="User Image">
-                      <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                      <span class="hidden-xs" v-if="user">{{ user.username }}</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                      <!-- The user image in the menu -->
-                      <li class="user-header">
-                        <img v-bind:src="getAvatar" class="img-circle" alt="User Image">
-
-                        <p v-if="user">
-                          {{ user.username }} - {{ getPermissions }}
-                        </p>
-                      </li>
-                      <!-- Menu Body -->
-                      <li class="user-body">
-
-                      </li>
-                      <!-- Menu Footer-->
-                      <li class="user-footer">
-                        <div class="pull-right">
-                          <a href="<?php echo admin_action('Auth\LoginController@logout'); ?>" class="btn btn-default btn-flat"><?php echo trans('admin::admin.logout') ?></a>
-                        </div>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
+              <right-navbar
+                :user="user" />
             </nav>
           </header>
+
           <!-- Left side column. contains the logo and sidebar -->
           <aside class="main-sidebar">
-
-            <!-- sidebar: style can be found in sidebar.less -->
-            <section class="sidebar">
-
-              <!-- Sidebar user panel (optional) -->
-              <div class="user-panel">
-                <div class="pull-left image">
-                  <img v-bind:src="getAvatar" class="img-circle" alt="User Image">
-                </div>
-                <div class="pull-left info">
-                  <p v-if="user">{{ user.username }}</p>
-                  <!-- Status -->
-                  <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-                </div>
-              </div>
-
-              <sidebar :rows="tree" :languages="languages" :langid.sync="language_id"></sidebar>
-            </section>
+            <sidebar
+              :rows="tree"
+              :languages="languages"
+              :langid.sync="language_id"
+              :user="user">
+            </sidebar>
           </aside>
 
           <!-- MODAL -->

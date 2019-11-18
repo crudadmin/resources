@@ -1,4 +1,16 @@
 <template>
+<section class="sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel">
+        <div class="pull-left image">
+            <img :src="getAvatar" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+            <p v-if="user">{{ user.username }}</p>
+            <!-- Status -->
+            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        </div>
+    </div>
     <div>
         <ul class="sidebar-menu">
             <li class="header">
@@ -17,13 +29,14 @@
         </ul>
         <!-- /.sidebar-menu -->
     </div>
+</section>
 </template>
 
 <script>
 import SidebarRow from './SidebarRow.vue';
 
 export default {
-    props: ['rows', 'languages', 'langid'],
+    props: ['rows', 'languages', 'langid', 'user'],
 
     components: { SidebarRow },
 

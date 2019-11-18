@@ -14,21 +14,13 @@ Vue.use(VueRouter);
 
 // Components
 import BaseComponent from './components/BaseComponent.js';
+import CrudAdmin from './components/Helpers/CrudAdmin.js';
 
 //Router
 import Router from './router.js';
 
 //Global methods
-Vue.mixin({
-    methods: {
-        trans(key){
-            if ( key in this.$root.localization )
-                return this.$root.localization[key];
-
-            return key;
-        }
-    }
-})
+Vue.mixin(CrudAdmin);
 
 //Create base VueApp instance
 window.VueApp = new Vue(

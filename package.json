@@ -13,10 +13,14 @@
     "precommit": "npm run production && git add src/Resources/admin/js/*"
   },
   "devDependencies": {
-    "git-pre-commit": "^2.1.4"
+    "git-pre-commit": "^2.1.4",
+    "resolve-url-loader": "^3.1.0",
+    "sass": "^1.23.6",
+    "sass-loader": "^7.3.1"
   },
   "dependencies": {
-    "bootstrap-sass": "3.3.5",
+    "bootstrap": "^4.0.0",
+    "popper.js": "^1.12",
     "cross-env": "^5.1",
     "jquery": "^3.4.1",
     "jquery-datetimepicker": "^2.5.21",

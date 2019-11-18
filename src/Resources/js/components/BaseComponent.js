@@ -1,6 +1,7 @@
 import config from '../config';
 import RequestHelper from './Helpers/RequestHelper';
 
+import RightNavbar from './Partials/RightNavbar.vue';
 import Sidebar from './Sidebar/Sidebar.vue';
 import License from './Partials/License.vue';
 import CheckAssetsVersion from './Partials/CheckAssetsVersion.vue';
@@ -45,7 +46,7 @@ const BaseComponent = (router) => {
             }
         },
 
-        components: { Sidebar, License, CheckAssetsVersion },
+        components: { Sidebar, RightNavbar, License, CheckAssetsVersion },
 
         created(){
             this.reloadCSRFToken($('meta[name="csrf-token"]')[0].content);
@@ -65,29 +66,6 @@ const BaseComponent = (router) => {
             canShowAlert(){
                 return this.alert.title != null && this.alert.message != null || this.alert.component;
             },
-            getAvatar()
-            {
-                if ( this.user && this.user.avatar )
-                    return this.user.avatar;
-
-                return this.$http.options.root + '/../'+window.crudadmin.path+'/dist/img/avatar5.png';
-            },
-            getPermissions()
-            {
-                if ( 'admins_groups' in this.user )
-                {
-                    var permissions = [];
-
-                    for (var i = 0; i < this.user.admins_groups.length; i++){
-                        permissions.push( this.user.admins_groups[i].name );
-                    }
-
-                    if ( permissions.length > 0 )
-                        return permissions.join(', ');
-                }
-
-                return this.trans('admin-user');
-            }
         },
 
         methods : {
