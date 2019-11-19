@@ -1,13 +1,34 @@
 <template>
     <!-- Horizontal Form -->
-    <component :is="formType" method="post" action="" v-bind:id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form">
-        <div v-bind:class="['box', { 'box-info' : isActive, 'box-warning' : !isActive }]">
+    <component :is="formType" method="post" action="" :id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form">
+        <div class="box-wrapper" :class="{ 'box-info' : isActive, 'box-warning' : !isActive }">
 
-            <div data-header class="box-header with-border" :class="{ visible : (hasLocaleFields || canShowGettext || (isOpenedRow && model.history)) }">
-                <h3 class="box-title"><span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="fa fa-globe"></span> {{ title }}</h3>
-                <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor()" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-globe"></i> {{ trans('gettext-open') }}</button>
-                <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-plus"></i> {{ newRowTitle }}</button>
-                <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i> {{ trans('history.show') }}</button>
+            <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (isOpenedRow && model.history)) }">
+                <div class="table-header">
+                    <div class="left">
+                        <h3 class="box-title"><span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="fa fa-globe"></span> {{ title }}</h3>
+                    </div>
+
+                    <div class="right">
+                        <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor()" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-globe"></i> {{ trans('gettext-open') }}</button>
+                        <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-plus"></i> {{ newRowTitle }}</button>
+                        <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i> {{ trans('history.show') }}</button>
+
+                        <div class="dropdown pull-right multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <i class="fa fa-globe"></i> <span class="text">{{ getLangName(selectedLanguage) }}</span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                <li v-for="lang in languages" v-if="selectedLanguage.id != lang.id" :data-slug="lang.slug">
+                                    <a href="#" @click.prevent="changeLanguage(lang.id)">
+                                        <i class="fa fa-exclamation-triangle"></i>{{ getLangName(lang) }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
                 <component
                     v-for="name in getComponents('form-header')"
@@ -17,25 +38,9 @@
                     :rows="rows.data"
                     :is="name">
                 </component>
-
-                <div class="dropdown pull-right multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <i class="fa fa-globe"></i> <span class="text">{{ getLangName(selectedLanguage) }}</span>
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-                        <li v-for="lang in languages" v-if="selectedLanguage.id != lang.id" :data-slug="lang.slug">
-                            <a href="#" @click.prevent="changeLanguage(lang.id)">
-                                <i class="fa fa-exclamation-triangle"></i>{{ getLangName(lang) }}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
             </div>
 
             <div class="box-body" :class="{ cantadd : !cansave }">
-                <input v-for="(value, key) in getAdditionalFormData" type="hidden" :name="key" :value="value">
-
                 <component
                     v-for="name in getComponents('form-top')"
                     :key="name"
@@ -45,17 +50,21 @@
                     :is="name">
                 </component>
 
-                <form-tabs-builder
-                    :model="model"
-                    :childs="true"
-                    :langid="langid"
-                    :inputlang="selectedLanguage"
-                    :row="row"
-                    :cansave="cansave"
-                    :hasparentmodel="hasparentmodel"
-                    :depth_level="depth_level"
-                    :history="history">
-                </form-tabs-builder>
+                <div class="box-body-wrapper">
+                    <input v-for="(value, key) in getAdditionalFormData" type="hidden" :name="key" :value="value">
+
+                    <form-tabs-builder
+                        :model="model"
+                        :childs="true"
+                        :langid="langid"
+                        :inputlang="selectedLanguage"
+                        :row="row"
+                        :cansave="cansave"
+                        :hasparentmodel="hasparentmodel"
+                        :depth_level="depth_level"
+                        :history="history">
+                    </form-tabs-builder>
+                </div>
 
                 <component
                     v-for="name in getComponents('form-bottom')"
@@ -76,9 +85,10 @@
                     :rows="rows.data"
                     :is="name">
                 </component>
-
-                <button v-if="progress" type="button" data-action-type="updating" v-bind:class="['btn', 'btn-' + ( isOpenedRow ? 'success' : 'primary')]"><i class="fa updating fa-refresh"></i> {{ isOpenedRow ? trans('saving') : trans('sending') }}</button>
-                <button v-if="!progress" type="submit" :data-action-type="isOpenedRow ? 'update' : 'create'" name="submit" v-bind:class="['btn', 'btn-' + ( isOpenedRow ? 'success' : 'primary')]">{{ isOpenedRow ? saveButton : sendButton }}</button>
+                <div class="footer-wrapper">
+                    <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( isOpenedRow ? 'success' : 'primary')]"><i class="fa updating fa-refresh"></i> {{ isOpenedRow ? trans('saving') : trans('sending') }}</button>
+                    <button v-if="!progress" type="submit" :data-action-type="isOpenedRow ? 'update' : 'create'" name="submit" class="btn btn-primary">{{ isOpenedRow ? saveButton : sendButton }}</button>
+                </div>
             </div>
 
         </div>
@@ -387,7 +397,7 @@ export default {
         },
         resetErrors(){
             this.form.find('.form-group.has-error').firstLevelForm(this.form[0]).removeClass('has-error').find('.help-block').remove();
-            this.form.find('.fa.fa-times-circle-o').firstLevelForm(this.form[0]).remove();
+            this.form.find('.far.fa-times-circle').firstLevelForm(this.form[0]).remove();
             this.form.find('.multi-languages .has-error').firstLevelForm(this.form[0]).removeClass('has-error');
             this.removeActiveTab(this.form.find('.nav-tabs li[has-error]').firstLevelForm(this.form[0]));
             this.$parent.progress = false;
@@ -548,8 +558,8 @@ export default {
                 if ( i == 0 ){
                     var label = $(this).closest('div.form-group').addClass('has-error').find('> label');
 
-                    if ( label.find('.fa-times-circle-o').length == 0 )
-                        label.prepend('<i class="fa fa-times-circle-o"></i> ');
+                    if ( label.find('.fa-times-circle').length == 0 )
+                        label.prepend('<i class="far fa-times-circle"></i> ');
                 }
             };
         },
@@ -655,7 +665,7 @@ export default {
             removeFrom.removeAttr('data-toggle')
                       .removeAttr('data-original-title')
                       .removeAttr('has-error')
-                      .tooltip("destroy")
+                      .tooltip("dispose")
                       .find('a > .fa.fa-exclamation-triangle')
                       .remove();
         },

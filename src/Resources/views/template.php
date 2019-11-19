@@ -67,39 +67,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </div>
         <!-- ./wrapper -->
 
-        <!-- MODAL -->
-        <div class="example-modal message-modal" v-if="canShowAlert">
-          <div class="modal" :class="'modal-'+alert.type" v-bind:style="{ display : canShowAlert ? 'block' : 'none' }">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" v-on:click="closeAlert( alert.close )" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                  </button>
-                  <h4 class="modal-title">{{ alert.title }}</h4>
-                </div>
-                <div class="modal-body">
-                  <p v-if="alert.message" v-html="alert.message"></p>
-                  <component
-                    v-if="alert.component"
-                    :model="alert.component.model"
-                    :rows="alert.component.rows"
-                    :row="alert.component.row"
-                    :request="alert.component.request"
-                    :data="alert.component.data"
-                    :is="getComponentName(alert.component.name)">
-                </div>
-                <div class="modal-footer">
-                  <button type="button" v-on:click="closeAlert( alert.close )" v-if="alert.close || alert.type=='success' && !alert.close || !alert.close && !alert.success" v-bind:class="{ 'btn' : true, 'btn-outline' : true, 'pull-left' : alert.success }" data-dismiss="modal"><?php echo trans('admin::admin.close') ?></button>
-                  <button type="button" v-on:click="closeAlert( alert.success )" v-if="alert.success" class="btn btn-outline"><?php echo trans('admin::admin.accept') ?></button>
-                </div>
-              </div>
-              <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-          </div>
-          <!-- /.modal -->
-        </div>
+        <modal
+          :alert="alert"
+        />
 
         <?php if (Admin::isDev() == false) { ?>
         <!-- REQUIRED JS SCRIPTS -->

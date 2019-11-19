@@ -1,5 +1,5 @@
 header.main-header {
-    height: $navharHeight;
+    height: $navbarHeight;
     border-bottom: 1px solid $navbarBorderColor;
     display: flex;
 
@@ -27,6 +27,8 @@ header.main-header {
         padding: 0 $navbarPadding;
 
         .user-menu {
+            position: relative;
+
             a.user-toggle {
                 color: #98A7B7;
                 @include fontSize(14px);
@@ -91,6 +93,7 @@ aside.main-sidebar {
         .sidebar-menu {
             margin-left: 0;
             padding-left: 0;
+            margin-bottom: 0;
             color: $darkText;
 
             li {

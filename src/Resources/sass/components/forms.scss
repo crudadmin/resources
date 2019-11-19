@@ -1,0 +1,54 @@
+.form-control {
+    border-color: #DEE3E8;
+    @include fontSize(14px);
+    border-radius: $inputRadius;
+
+    &::placeholder, ::-webkit-input-placeholder {
+        color: $darkText;
+    }
+}
+
+.form-group {
+    label {
+        @include fontSize(14px);
+    }
+
+    &.has-error {
+        & > .cke,
+        .chosen-container > .chosen-single,
+        .chosen-container > .chosen-choices {
+            border-color: $validationErrorcolor;
+            box-shadow: none;
+        }
+
+        label, .help-block {
+            color: $validationErrorcolor;
+        }
+
+        .form-control {
+            border-color: $validationErrorcolor;
+        }
+
+        .help-block {
+            @include fontSize(14px);
+            margin-top: 5px;
+            display: block;
+        }
+    }
+
+    .file-group {
+        input {
+            line-height: 120%;
+        }
+        .upload-file-wrapper {
+            position: relative;
+
+            button.remove-file {
+                height: 100%;
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+        }
+    }
+}

@@ -3,17 +3,21 @@ $body-bg: #F7F7F7;
 
 // Typography
 $font-family-sans-serif: 'Inter', sans-serif;
-$font-size-base: 1rem;
+$font-size-base: 0.875rem;
 $line-height-base: 1.6;
 
-$navharHeight: 70px;
+$inputBorderColor: #DEE3E8;
+$inputRadius: 4px;
+$navbarHeight: 70px;
 $navbarWidth: 250px;
 $navbarPadding: 30px;
 $navbarBorderColor: rgba(208, 215, 221, 0.7);
+$validationErrorcolor: #dd4b39;
 
 $primary: #4A54E2;
 
 // Colors
+$blackText: #41464C;
 $darkText: #8292A5;
 $blue: #3490dc;
 $indigo: #6574cd;

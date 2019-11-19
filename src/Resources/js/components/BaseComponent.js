@@ -5,6 +5,7 @@ import RightNavbar from './Partials/RightNavbar.vue';
 import Sidebar from './Sidebar/Sidebar.vue';
 import License from './Partials/License.vue';
 import CheckAssetsVersion from './Partials/CheckAssetsVersion.vue';
+import Modal from './Partials/Modal.vue';
 import ModelHelper from './Helpers/ModelHelper.js';
 
 const BaseComponent = (router) => {
@@ -46,7 +47,7 @@ const BaseComponent = (router) => {
             }
         },
 
-        components: { Sidebar, RightNavbar, License, CheckAssetsVersion },
+        components: { Sidebar, RightNavbar, License, CheckAssetsVersion, Modal },
 
         created(){
             this.reloadCSRFToken($('meta[name="csrf-token"]')[0].content);
@@ -55,20 +56,24 @@ const BaseComponent = (router) => {
 
             //Set datepickers language
             jQuery.datetimepicker.setLocale(this.locale);
+        },
 
-            this.checkAlertEvents();
+        mounted(){
+            this.bootTooltips();
         },
 
         computed : {
             isTest(){
                 return this.version.indexOf('test') > -1;
             },
-            canShowAlert(){
-                return this.alert.title != null && this.alert.message != null || this.alert.component;
-            },
         },
 
         methods : {
+            bootTooltips(){
+                $('body').tooltip({
+                  selector: "[data-toggle='tooltip']",
+                });
+            },
             reloadCSRFToken(token){
                 this.csrf_token = token;
 
@@ -170,8 +175,7 @@ const BaseComponent = (router) => {
                 this.alert.success = success;
                 this.alert.close = close;
                 this.alert.opened = new Date().getTime();
-
-                this.bindAlertComponent(component);
+                this.alert.component = component;
 
                 //After opening alert unfocus focused input
                 //for prevent sending of new form ajax instance...
@@ -183,55 +187,8 @@ const BaseComponent = (router) => {
             getComponentName(name){
                 return name + 'Alert';
             },
-            bindAlertComponent(component){
-                this.alert.component = component;
-
-                if ( component ){
-                    var obj;
-
-                    try {
-                        obj = this.getComponentObject(component.component);
-                        obj.name = this.getComponentName(component.name);
-
-                        this.$options.components[obj.name] = obj;
-
-                        console.log('component registred', this.getComponentName(component.name), component);
-                    } catch(error){
-                        console.error('Syntax error in component button component.' + "\n", error);
-
-                        this.alert.component = null;
-                    }
-                }
-            },
-            closeAlert(callback){
-                if ( typeof callback == 'function' )
-                    callback.call(this);
-
-                for ( var key in this.alert )
-                    this.alert[key] = null;
-            },
             arrorAlert(callback){
                 this.openAlert(this.trans('warning'), this.trans('unknown-error'), 'danger', null, callback ? callback : function(){});
-            },
-            checkAlertEvents(){
-                $(window).keyup(e => {
-
-                    //If is opened alert
-                    if ( this.canShowAlert !== true )
-                        return;
-
-                    //If enter/esc has been pressed 300ms after alert has been opened
-                    //does not close this alert and ignore enter
-                    if ( this.alert.opened && new Date().getTime() - this.alert.opened < 300 )
-                        return;
-
-                    if ( e.keyCode == 13 )
-                        this.closeAlert( this.alert.success || this.alert.close );
-
-                    if ( e.keyCode == 27 )
-                        this.closeAlert( this.alert.close );
-
-                });
             },
             bootLanguages(){
                 if ( this.languages.length == 0 )

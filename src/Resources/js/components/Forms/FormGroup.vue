@@ -18,13 +18,14 @@
                             :depth_level="depth_level">
                         </form-tabs-builder>
                     </div>
+
                     <div v-else-if="canShowGroupName(group) && visibleFields.length == 0">
                         <div class="col-md-12">
                             <p class="empty-group-separator">...</p>
                         </div>
                     </div>
 
-                    <div v-for="(item, index) in group.fields">
+                    <fragment :key="index" v-for="(item, index) in group.fields">
                         <div
                             v-if="isField(item) && canRenderField(model.fields[item])"
                             v-for="langslug in getFieldLangs(model.fields[item])"
@@ -55,7 +56,7 @@
                             :history="history"
                             :depth_level="depth_level">
                         </form-group>
-                    </div>
+                    </fragment>
                 </div>
             </div>
         </div>

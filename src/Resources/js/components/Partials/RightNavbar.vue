@@ -2,7 +2,7 @@
 <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
       <!-- User Account Menu -->
-      <li class="dropdown user user-menu">
+      <li class="user user-menu">
         <!-- Menu Toggle Button -->
         <a href="#" class="user-toggle" data-toggle="dropdown">
           <img v-bind:src="getAvatar" class="user-image" alt="User Image">

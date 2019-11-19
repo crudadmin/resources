@@ -1,0 +1,61 @@
+.dropdown {
+    border: 1px solid $inputBorderColor;
+    border-radius: $inputRadius;
+    background: white;
+
+    &, button {
+        @include fontSize(14px);
+        color: $darkText;
+    }
+
+    button {
+        padding: 11px 17px 11px 19px;
+        line-height: 100%;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+            background: #FCFCFC;
+            color: $darkText;
+        }
+
+        i {
+            margin-left: 15px;
+            @include fontSize(11px);
+        }
+
+        &:after {
+            display: none;
+        }
+    }
+
+    ul {
+        width: 200px;
+        padding: 0;
+        margin-top: 3px;
+
+        li {
+            @include fontSize(14px);
+            padding: 0 11px;
+            color: $darkText;
+            line-height: 40px;
+
+            a {
+                color: $darkText;
+                display: block;
+
+                &, &:hover {
+                    text-decoration: none;
+                }
+            }
+
+            &:hover {
+                background: #FCFCFC;
+            }
+
+            &:not(:last-child) {
+                border-bottom: 1px solid $inputBorderColor;
+            }
+        }
+    }
+}

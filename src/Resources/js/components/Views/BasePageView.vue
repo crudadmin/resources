@@ -2,21 +2,16 @@
     <div>
         <!-- Content Header (model header) -->
         <section class="content-header" v-if="model">
-            <h1>
-                {{ model.name }}
-                <small v-html="model.title"></small>
-            </h1>
             <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> {{ trans('admin') }}</a></li>
                 <li v-if="getGroup">{{ getGroup.name }}</li>
                 <li class="active">
-                    <a class="active"><i v-bind:class="['fa', model.icon]"></i> {{ model.name }}</a>
+                    <a class="active">{{ model.name }}</a>
                 </li>
             </ol>
         </section>
 
         <!-- Main content -->
-        <section class="content" v-if="model">
+        <section class="crudadmin-content" v-if="model">
             <model-builder :key="model.slug" :model_builder="model" :langid="langid" dusk="model-builder" :data-model="model.table"></model-builder>
         </section>
         <!-- /.content -->

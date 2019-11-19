@@ -1,0 +1,37 @@
+.message-modal .modal {
+    background: rgba(0, 0, 0, 0.2);
+
+    &.modal-success {
+        .modal-content {
+            background: #00a65a;
+            color: white;
+
+            .modal-header {
+                display: flex;
+                align-items: center;
+
+                .close {
+                    color: white;
+                }
+            }
+
+            .modal-header, .modal-footer { border-color: rgba(0, 0, 0, 0.2); }
+
+            .btn-secondary {
+                background: none;
+                border-color: white;
+            }
+        }
+    }
+
+    .modal-title {
+        font-weight: 400;
+        @include fontSize(20px);
+    }
+
+    .modal-body {
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

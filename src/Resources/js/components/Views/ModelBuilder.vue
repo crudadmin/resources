@@ -15,23 +15,27 @@
             <p>{{ trans('languages-missing') }}</p>
         </div>
 
-        <div :data-depth="depth_level" :class="[ 'box', { 'single-mode' : model.isSingle(), 'is-in-parent' : model.isInParent(), 'box-warning' : model.isSingle() } ]" v-show="canShowForm || (hasRows && canShowRows || isSearching)">
+        <div :data-depth="depth_level" :class="[ { 'single-mode' : model.isSingle(), 'is-in-parent' : model.isInParent(), 'box-warning' : model.isSingle() } ]" v-show="canShowForm || (hasRows && canShowRows || isSearching)">
 
-            <div class="box-header" :class="{ 'with-border' : model.isSingle() }" v-show="ischild && (!model.in_tab || isEnabledGrid || canShowSearchBar) || ( !model.isSingle() && (isEnabledGrid || canShowSearchBar))">
-                <h3 v-if="ischild" class="box-title">{{ model.name }}</h3> <span class="model-info" v-if="model.title && ischild" v-html="model.title"></span>
+            <div class="admin-header" :class="{ 'with-border' : model.isSingle() }" v-show="ischild && (!model.in_tab || isEnabledGrid || canShowSearchBar) || ( !model.isSingle() && (isEnabledGrid || canShowSearchBar))">
+                <div class="left">
+                    <h3 v-if="ischild" class="box-title">{{ model.name }}</h3>
+                    <span class="model-info" v-if="model.title && ischild" v-html="model.title"></span>
+                </div>
 
-                <div class="pull-right" v-if="!model.isSingle()">
-                    <div class="search-bar" data-search-bar :class="{ interval : search.interval }" :id="getFilterId" v-show="canShowSearchBar">
-                        <div class="input-group input-group-sm">
-                            <div class="input-group-btn">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{ getSearchingColumnName(search.column) }}
-                                    <span class="caret"></span>
+                <div class="right" v-if="!model.isSingle()">
+                    <div class="search-bar" data-search-bar :class="{ interval : search.interval, resetRightBorders : canBeInterval || canResetSearch, hasResetButton : canResetSearch  }" :id="getFilterId" v-show="canShowSearchBar">
+                        <div class="input-group">
+                            <div class="dropdown">
+                                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    {{ getSearchingColumnName(search.column) }}
+                                    <i class="fa fa-angle-down"></i>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li data-field="" :class="{ active : !search.column }"><a href="#" @click.prevent="search.column = null">{{ trans('search-all') }}</a></li>
-                                    <li data-field="id" :class="{ active : search.column == 'id' }"><a href="#" @click.prevent="search.column = 'id'">{{ getSearchingColumnName('id') }}</a></li>
-                                    <li :data-field="key" v-for="key in getSearchableFields" :class="{ active : search.column == key }"><a href="#" @click.prevent="search.column = key">{{ getSearchingColumnName(key) }}</a></li>
-                                    <li data-field="created_at" :class="{ active : search.column == 'created_at' }"><a href="#" @click.prevent="search.column = 'created_at'">{{ getSearchingColumnName('created_at') }}</a></li>
+                                    <li data-field="" :class="{ active : !search.column }" @click="search.column = null">{{ trans('search-all') }}</li>
+                                    <li data-field="id" :class="{ active : search.column == 'id' }" @click="search.column = 'id'">{{ getSearchingColumnName('id') }}</li>
+                                    <li :data-field="key" v-for="key in getSearchableFields" :class="{ active : search.column == key }" @click="search.column = key">{{ getSearchingColumnName(key) }}</li>
+                                    <li data-field="created_at" :class="{ active : search.column == 'created_at' }" @click="search.column = 'created_at'">{{ getSearchingColumnName('created_at') }}</li>
                                 </ul>
                             </div>
                             <!-- /btn-group -->
@@ -54,30 +58,28 @@
                             </div>
                             <!-- Search columns -->
 
-                            <div class="interval" data-interval v-if="canBeInterval" data-toggle="tooltip" data-original-title="Interval">
-                                <button class="btn" :class="{ 'btn-default' : !search.interval, 'btn-primary' : search.interval }" @click="search.interval = !search.interval"><i class="fa fa-arrows-h"></i></button>
+                            <div class="interval-btn" data-interval v-if="canBeInterval" data-toggle="tooltip" data-original-title="Interval">
+                                <button class="btn" :class="{ 'btn-default' : !search.interval, 'btn-primary' : search.interval }" @click="search.interval = !search.interval"><i class="fa fa-arrows-alt-h"></i></button>
                             </div>
 
-                            <input type="text" data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'"  @input="updateSearchQuery('query_to', $event)" class="form-control">
+                            <input type="text" data-inerval-input data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'"  @input="updateSearchQuery('query_to', $event)" class="form-control">
 
-                            <input type="text" data-search-interval-date v-show="search.interval && isDate" readonly class="form-control js_date">
+                            <input type="text" data-inerval-input data-search-interval-date v-show="search.interval && isDate" readonly class="form-control js_date">
 
-                            <div class="interval" data-reset-interval v-if="search.query || search.query_to" data-toggle="tooltip" :data-original-title="trans('reset')">
-                                <button class="btn btn-default" @click="resetInerval()"><i class="fa fa-times"></i></button>
+                            <div class="interval" data-reset-interval v-if="canResetSearch" data-toggle="tooltip" :data-original-title="trans('reset')">
+                                <button class="btn btn-default" @click="resetIterval"><i class="fa fa-times"></i></button>
                             </div>
                         </div>
                     </div>
 
-                    <ul class="pagination pagination-sm no-margin" v-if="isEnabledGrid" data-toggle="tooltip" :data-original-title="trans('edit-size')">
-                        <li v-for="size in sizes" :data-size="size.key" :class="{ 'active' : size.active, 'disabled' : size.disabled }"><a href="#" @click.prevent="changeSize(size)" title="">{{ size.name }}</a></li>
+                    <ul class="change-grid-size" v-if="isEnabledGrid" data-toggle="tooltip" :data-original-title="trans('edit-size')">
+                        <li v-for="size in sizes" :data-size="size.key" :class="{ 'active' : size.active, 'disabled' : size.disabled }" @click="changeSize(size)">{{ size.name }}</li>
                     </ul>
                 </div>
             </div>
 
-            <div class="box-body">
-
+            <div>
                 <div :class="{ 'row' : true, 'flex-table' : activeSize == 0 }">
-
                     <!-- left column -->
                     <div :class="['col-lg-'+(12 - activeSize)]" class="col col-form col-md-12 col-sm-12" v-show="canShowForm" v-if="activetab!==false">
                         <form-builder
@@ -113,7 +115,6 @@
                         </model-rows-builder>
                     </div>
                     <!--/.col (right) -->
-
                 </div>
 
                 <model-builder
@@ -697,6 +698,10 @@
 
                 return ModelHelper(model);
             },
+            resetIterval(){
+                this.search.query = '';
+                this.search.query_to = '';
+            },
         },
 
         computed: {
@@ -714,6 +719,9 @@
                     return true;
 
                 return column in this.model.fields && (['integer', 'decimal', 'date', 'datetime', 'time'].indexOf(this.model.fields[column].type) > -1) ? true : false;
+            },
+            canResetSearch(){
+                return this.search.query || this.search.query_to;
             },
             isOpenedRow(){
                 return this.row && 'id' in this.row;
@@ -777,7 +785,8 @@
              * Show search if has been at least one time used, or if is not single row, or if is more then 10 rows
              */
             canShowSearchBar(){
-                var searching = this.$root.getModelProperty(this.model, 'settings.search.enabled', null);
+                var searching = this.$root.getModelProperty(this.model, 'settings.search.enabled', null),
+                    minimum = 2;
 
                 //If is forced showing searchbar
                 if ( searching === true )
@@ -785,7 +794,7 @@
                 else if ( searching === false )
                     return false;
 
-                return this.search.used === true || (this.model.maximum==0 || this.model.maximum >= 10) && this.rows.count >= 10;
+                return this.search.used === true || (this.model.maximum==0 || this.model.maximum >= minimum) && this.rows.count >= minimum;
             },
             getSearchableFields(){
                 var keys = [];
@@ -834,10 +843,6 @@
             },
             isSearching(){
                 return this.search.used == true;
-            },
-            resetInerval(){
-                this.search.query = '';
-                this.search.query_to = '';
             },
             isLocaleModel(){
                 if ( this.model.localization === true )

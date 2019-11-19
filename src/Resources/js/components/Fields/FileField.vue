@@ -7,10 +7,12 @@
         </label>
 
         <div class="file-group">
-            <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? field_key + '[]' : field_key" @change="addFile" class="form-control" :placeholder="field.placeholder || field_name">
-            <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+field_key" :value="1">
+            <div class="upload-file-wrapper">
+                <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? field_key + '[]' : field_key" @change="addFile" class="form-control" :placeholder="field.placeholder || field_name">
+                <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+field_key" :value="1">
 
-            <button v-if="value && !isMultipleUpload || !file_from_server" @click.prevent="removeFile" type="button" class="btn btn-danger btn-md" data-toggle="tooltip" title="" :data-original-title="trans('delete-file')"><i class="fa fa-remove"></i></button>
+                <button v-if="value && !isMultipleUpload || !file_from_server" @click.prevent="removeFile" type="button" class="btn btn-danger remove-file" data-toggle="tooltip" title="" :data-original-title="trans('delete-file')"><i class="far fa-trash-alt"></i></button>
+            </div>
 
             <div v-show="(isMultiple && !isMultirows) && getFiles.length > 0">
                 <select ref="multipleFiles" :name="(hasLocale || (isMultiple && !isMultirows) && getFiles.length > 0) ? '$uploaded_'+field_key+'[]' : ''" data-placeholder=" " multiple>
