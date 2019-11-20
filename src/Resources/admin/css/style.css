@@ -14,19 +14,8 @@
 .tooltip-inner { word-wrap: break-word; }
 .box-table-body { overflow-x: auto; clear: both; }
 .box { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2)  }
-.box-info { background: #fafeff }
-.box-warning { background: #fffdfa }
 .data-table td {line-height: 198% !important;}
 .table { margin-bottom: 6px; }
-
-button.dropdown-toggle > span.caret { margin-left: 5px; }
-.dropdown.actions-list { margin-right: 5px; float: right; }
-.dropdown.actions-list i { min-width: 15px;text-align: left; }
-.dropdown.actions-list a { cursor: pointer; }
-.dropdown.fields-list { margin-right: 5px; float: right; }
-.dropdown.fields-list .dropdown-menu li label {cursor: pointer; padding: 0 10px; font-weight: 400; color: #777 }
-.dropdown.fields-list .dropdown-menu li input { margin-right: 5px }
-.search-bar .dropdown-menu, .dropdown.fields-list .dropdown-menu {max-height: 400px !important;overflow: auto;}
 
 /* Modal links, for exports etc, from buttons response... */
 .message-modal > .modal { z-index: 99999999999; }
@@ -100,8 +89,6 @@ button.dropdown-toggle > span.caret { margin-left: 5px; }
  * Form settings
  */
 .content .box-body .add-row-btn i, .nav-tabs li i, .nav-tabs-custom h4 i { margin-right: 5px }
-.content .box-body .file-group { position: relative; }
-.content .box-body .file-group button[type=button] { position: absolute; right: 0; top: 0; }
 .content .box-body .radio-group label { display: block }
 .content .box-body .radio-group .radio { display: inline-block; margin-right: 20px; }
 .content .box-body .radio-group .help-block { margin-top: 0; }
@@ -309,9 +296,6 @@ select[multiple] {height: 34px;color: white;}
 .file-group .chosen-container-multi .chosen-choices { background: none; border: none; padding: 2px 0; }
 .file-group .chosen-container-multi .chosen-drop { border: none; }
 .file-group .chosen-container-active .chosen-choices { box-shadow: none !important }
-.form-group.has-error > .cke,
-.form-group.has-error .chosen-container > .chosen-single,
-.form-group.has-error .chosen-container > .chosen-choices { border-color: #dd4b39; box-shadow: none; }
 .form-group .can-add-select { width: 100%; position: relative; }
 .form-group .can-add-select > div.chosen-container { width: calc(100% - 35px) !important; min-width: calc(100% - 35px) !important; }
 .form-group .can-add-select > button { float: right; height: 100%; width: 35px; position: absolute;}
@@ -332,23 +316,8 @@ select[multiple] {height: 34px;color: white;}
 .form-group .modal > .modal-dialog > .modal-content > .modal-body > div > .box > .box-header {padding: 0;position: absolute;right: 45px;top: -59px;}
 .form-group .modal > .modal-dialog > .modal-content > .modal-body > div > .box > .box-body {padding: 0;margin-bottom: -15px;}
 
-.th-id { width: 50px; text-align: center; }
-.td-id { text-align: center; }
-
 .box .overlay > p { position: absolute;top: calc(50% + 28px);text-align: center;width: 100%;font-weight: bold;}
 .pagination-sm>li>a { border-radius: 0 !important }
-
-
-.search-bar {max-width: 280px; display: inline-block; margin: 0 5px; }
-.search-bar.interval {max-width: 350px }
-.search-bar .input-group-btn { text-align: right; }
-.search-bar .input-group-btn button { margin-right: 0 !important; }
-.search-bar .chosen-single { height: 30px }
-.search-bar .chosen-container-single .chosen-single span { margin-top: 2px; font-size: 13px }
-.search-bar input {border-left: 0}
-.search-bar select {border-radius: 0;}
-.search-bar .interval {display: table-cell;white-space: nowrap;vertical-align: top;width: 25px;}
-.search-bar .interval button {padding: 4px;border-radius: 0;border-left: 0;width: 100%;}
 
 form label span.required { color: red; position: relative; top: 2px }
 
