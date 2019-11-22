@@ -75,14 +75,20 @@
                     <ul class="change-grid-size" v-if="isEnabledGrid" data-toggle="tooltip" :data-original-title="trans('edit-size')">
                         <li v-for="size in sizes" :data-size="size.key" :class="{ 'active' : size.active, 'disabled' : size.disabled }" @click="changeSize(size)">{{ size.name }}</li>
                     </ul>
+
+                    <button v-if="isOpenedRow && canAddRow && !model.isSingle()" data-create-new-row @click.prevent="resetForm(true)" type="button" class="btn--icon btn btn-primary">
+                        <i class="fa fa-plus"></i>
+                        {{ newRowTitle() }}
+                    </button>
                 </div>
             </div>
 
             <div>
-                <div :class="{ 'row' : true, 'flex-table' : activeSize == 0 }">
+                <div :class="{ 'row' : true, 'grid-fullsize' : activeSize == 0 }">
                     <!-- left column -->
-                    <div :class="['col-lg-'+(12 - activeSize)]" class="col col-form col-md-12 col-sm-12" v-show="canShowForm" v-if="activetab!==false">
+                    <div :class="['col-lg-'+(12 - activeSize)]" class="col col--form col-md-12 col-sm-12" v-show="canShowForm" v-if="activetab!==false">
                         <form-builder
+                            :formID="formID"
                             :progress.sync="progress"
                             :rows.sync="rows"
                             :history="history"
@@ -99,7 +105,7 @@
                     <!--/.col (left) -->
 
                     <!-- right column -->
-                    <div :class="['col-lg-'+(12-(12-activeSize))]" class="col col-rows col-md-12 col-sm-12" v-show="hasRows && canShowRows">
+                    <div :class="['col-lg-'+(12-(12-activeSize))]" class="col col--rows col-md-12 col-sm-12" v-show="hasRows && canShowRows">
                         <model-rows-builder
                             :model.sync="model"
                             :rows.sync="rows"
@@ -665,12 +671,16 @@
             newRowTitle(){
                 return this.$root.getModelProperty(this.model, 'settings.buttons.insert', this.trans('new-row'));
             },
-            resetForm(){
+            resetForm(scroll){
                 //We do not want reset object is is already empty instance
                 //Because if component receives getParentRow, and then will be rewrited row observer
                 //Changes in this component wont be interactive
                 if ( ! _.isEqual(this.row, this.emptyRowInstance()) ) {
                     this.row = this.emptyRowInstance();
+                }
+
+                if ( scroll === true ) {
+                    this.scrollTo('#'+this.formID);
                 }
             },
             emptyRowInstance(model){
@@ -705,6 +715,9 @@
         },
 
         computed: {
+            formID(){
+                return 'form-' + this.depth_level + '-' + this.model.slug;
+            },
             hasparentmodelMutated(){
                     //If parent model builder does not exists
                     if ( [null, undefined].indexOf(this.hasparentmodel) > -1 )

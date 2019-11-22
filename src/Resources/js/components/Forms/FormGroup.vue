@@ -20,7 +20,7 @@
                     </div>
 
                     <div v-else-if="canShowGroupName(group) && visibleFields.length == 0">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <p class="empty-group-separator">...</p>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                             v-if="isField(item) && canRenderField(model.fields[item])"
                             v-for="langslug in getFieldLangs(model.fields[item])"
                             v-show="canShowField(model.fields[item]) && canShowLanguageField(model.fields[item], langslug, inputlang)"
-                            class="col-lg-12">
+                            class="col-12">
                             <form-input-builder
                                 :key="item"
                                 :history="history"
@@ -134,12 +134,12 @@ export default {
                 width[0] = 4;
 
             if ( width.length == 2 && width[1] == 'inline' )
-                return 'col-md-'+width[0]+' inline-col';
+                return 'col-'+width[0]+' inline-col';
 
             if ( $.isNumeric(width[0]) )
-                return 'col-md-' + width[0];
+                return 'col-' + width[0];
 
-            return 'col-md-12';
+            return 'col-12';
         },
         canShowGroupName(group){
             return group.name;

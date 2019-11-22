@@ -7,19 +7,27 @@
                 <div class="box-header__actions">
                     <div class="box-header__left">
                         <h3 class="box-header__title">
-                            <span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="fa fa-globe"></span>
+                            <span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="--icon-left fa fa-globe-americas"></span>
                             {{ title }}
                         </h3>
                     </div>
 
                     <div class="box-header__right">
-                        <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe"></i> {{ trans('gettext-open') }}</button>
-                        <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-plus"></i> {{ newRowTitle }}</button>
-                        <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i> {{ trans('history.show') }}</button>
+                        <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
+                            {{ trans('gettext-open') }}
+                        </button>
+                        <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="btn--icon btn btn-default btn-sm">
+                            <i class="fa fa-plus"></i>
+                            {{ newRowTitle }}
+                        </button>
+                        <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
+                            <i class="fa fa-history"></i>
+                            {{ trans('history.show') }}
+                        </button>
 
                         <div class="dropdown multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage">
                             <button class="btn btn-default dropdown-toggle btn-sm" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <i class="--icon-left fa fa-globe"></i>
+                                <i class="--icon-left fa fa-globe-americas"></i>
                                 <span class="text">{{ getLangName(selectedLanguage) }}</span>
                                 <i class="--icon-right fa fa-angle-down"></i>
                             </button>
@@ -105,7 +113,7 @@ import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
 export default {
     name : 'form-builder',
 
-    props : ['model', 'row', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level'],
+    props : ['formID', 'model', 'row', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level'],
 
     components: { FormTabsBuilder },
 
@@ -185,9 +193,6 @@ export default {
     },
 
     computed: {
-        formID(){
-            return 'form-' + this.depth_level + '-' + this.model.slug;
-        },
         formType(){
             return this.model.isInParent() ? 'div' : 'form';
         },
@@ -739,9 +744,7 @@ export default {
         },
         scrollToForm(){
             setTimeout(() => {
-                $('html, body').animate({
-                    scrollTop: $('#'+this.formID).offset().top - 10
-                }, 500);
+                this.scrollTo('#'+this.formID);
             }, this.$root.isTest ? 0 : 500);
         },
         hasParentModel(){

@@ -40,6 +40,9 @@ export default {
 
     methods : {
         setPosition(position){
+            if ( position == this.pagination.position )
+                return;
+
             this.$parent.setPosition(position);
         },
         showLimit(i){
@@ -50,7 +53,7 @@ export default {
                 return true;
 
             //Middle range
-            var radius = 3,
+            var radius = max < 1000 ? 3 : (max < 1500 ? 2 : 1),
                 interval = [[100, 0.3], [100, 0.7], [1000, 0.1], [1000, 0.85]],
                 in_middle_active = 0;
 

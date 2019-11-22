@@ -172,6 +172,7 @@ const icons = {
         "fa-get-pocket": "fab fa-get-pocket",
         "fa-gg": "fab fa-gg",
         "fa-gg-circle": "fab fa-gg-circle",
+        "fa-globe": "fa fa-globe-americas",
         "fa-git": "fab fa-git",
         "fa-git-square": "fab fa-git-square",
         "fa-github": "fab fa-github",

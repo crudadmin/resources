@@ -1,47 +1,45 @@
 <template>
-    <div>
-        <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="depth_level" :class="['table', { 'sortable' : model.sortable && orderby[0] == '_order' }]">
-            <thead data-table-head>
-                <tr>
-                    <th @click="toggleAllCheckboxes" v-if="multipleCheckbox">
-                        <i data-toggle="tooltip" :data-original-title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')" :class="isCheckedAll ? 'fa-check-square-o' : 'fa-square-o'" class="fa"></i>
-                    </th>
-                    <th v-for="(name, field) in columns" :class="'th-'+field" @click="toggleSorting(field)">
-                        <i class="arrow-sorting fa fa-angle-up" v-if="orderby[0] == field && orderby[1] == 0"></i>
-                        <i class="arrow-sorting fa fa-angle-down" v-if="orderby[0] == field && orderby[1] == 1"></i>
-                        {{ name }}
-                    </th>
-                    <th class="th-options-buttons"></th>
-                </tr>
-            </thead>
-            <draggable tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
-                <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id">
-                    <td class="checkbox-td" v-if="multipleCheckbox">
-                        <div class="checkbox-box" @click="checkRow(item.id)">
-                            <input type="checkbox" :checked="checked.indexOf(item.id) > -1">
-                            <span class="checkmark"></span>
-                        </div>
-                    </td>
+    <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="depth_level" :class="['table', { 'sortable' : model.sortable && orderby[0] == '_order' }]">
+        <thead data-table-head>
+            <tr>
+                <th @click="toggleAllCheckboxes" v-if="multipleCheckbox">
+                    <i data-toggle="tooltip" :data-original-title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')" :class="isCheckedAll ? 'fa-check-square-o' : 'fa-square-o'" class="fa"></i>
+                </th>
+                <th v-for="(name, field) in columns" :class="'th-'+field" @click="toggleSorting(field)">
+                    <i class="arrow-sorting fa fa-angle-up" v-if="orderby[0] == field && orderby[1] == 0"></i>
+                    <i class="arrow-sorting fa fa-angle-down" v-if="orderby[0] == field && orderby[1] == 1"></i>
+                    {{ name }}
+                </th>
+                <th class="th-options-buttons"></th>
+            </tr>
+        </thead>
+        <draggable tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
+            <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id">
+                <td class="select-row-checkbox" v-if="multipleCheckbox">
+                    <div class="checkbox-box" @click="checkRow(item.id)">
+                        <input type="checkbox" :checked="checked.indexOf(item.id) > -1">
+                        <span class="checkmark"></span>
+                    </div>
+                </td>
 
-                    <td v-for="(name, field) in columns" @click="checkRow(item.id, field)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
-                        <table-row-value :field="field" :name="name" :item="item" :model="model" :image="isImageField(field)"></table-row-value>
-                    </td>
+                <td v-for="(name, field) in columns" @click="checkRow(item.id, field)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
+                    <table-row-value :field="field" :name="name" :item="item" :model="model" :image="isImageField(field)"></table-row-value>
+                </td>
 
-                    <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
-                        <div v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="trans('edit')"><i class="far fa-edit"></i></button></div>
-                        <div v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
-                        <div v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe"></i></button></div>
-                        <div><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
-                        <div v-for="(button, button_key) in getButtonsForRow(item)">
-                            <button type="button" :data-button="'action-'+button.key" v-on:click="buttonAction(button_key, button, item)" :class="['btn', 'btn-sm', button.class]" data-toggle="tooltip" title="" :data-original-title="button.name"><i :class="['fa', button_loading == getButtonKey(item.id, button_key) ? 'fa-refresh' : button.icon, { 'fa-spin' : button_loading == getButtonKey(item.id, button_key) }]"></i></button>
-                        </div>
-                        <div v-if="model.publishable"><button data-button="publishable" type="button" v-on:click="togglePublishedAt(item)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
-                        <div v-if="model.deletable && count > model.minimum"><button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button></div>
-                    </td>
-                </tr>
-            </draggable>
-        </table>
-    </div>
+                <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
+                    <div class="buttons-options__item"  v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="trans('edit')"><i class="far fa-edit"></i></button></div>
+                    <div class="buttons-options__item"  v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
+                    <div class="buttons-options__item"  v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
+                    <div class="buttons-options__item" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
+                    <div class="buttons-options__item"  v-for="(button, button_key) in getButtonsForRow(item)">
+                        <button type="button" :data-button="'action-'+button.key" v-on:click="buttonAction(button_key, button, item)" :class="['btn', 'btn-sm', button.class]" data-toggle="tooltip" title="" :data-original-title="button.name"><i :class="['fa', button_loading == getButtonKey(item.id, button_key) ? 'fa-refresh' : button.icon, { 'fa-spin' : button_loading == getButtonKey(item.id, button_key) }]"></i></button>
+                    </div>
+                    <div class="buttons-options__item"  v-if="model.publishable"><button data-button="publishable" type="button" v-on:click="togglePublishedAt(item)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
+                    <div class="buttons-options__item"  v-if="model.deletable && count > model.minimum"><button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button></div>
+                </td>
+            </tr>
+        </draggable>
+    </table>
 </template>
 
 <script>

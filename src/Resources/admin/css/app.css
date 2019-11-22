@@ -16933,6 +16933,14 @@ aside.main-sidebar .footer-sidebar p a {
   padding: 30px;
 }
 
+.wrapper .content-wrapper .crudadmin-wrapper .grid-fullsize .col.col--form {
+  order: 2;
+}
+
+.wrapper .content-wrapper .crudadmin-wrapper .grid-fullsize .col.col--rows {
+  margin-bottom: 30px;
+}
+
 .wrapper .content-wrapper .crudadmin-wrapper .box {
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.13);
@@ -16976,6 +16984,14 @@ aside.main-sidebar .footer-sidebar p a {
   margin-bottom: 0;
 }
 
+.wrapper .content-wrapper .crudadmin-wrapper .box .box-header .box-header__title .\--icon-left {
+  margin-right: 5px;
+}
+
+.wrapper .content-wrapper .crudadmin-wrapper .box .box-header .box-header__title .\--icon-right {
+  margin-left: 5px;
+}
+
 .wrapper .content-wrapper .crudadmin-wrapper .box .box-header .box-header__description {
   display: block;
   font-size: 16px;
@@ -17015,65 +17031,6 @@ aside.main-sidebar .footer-sidebar p a {
   padding-bottom: 14px;
 }
 
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body.box-body--table {
-  padding: 0;
-  overflow-x: auto;
-  clear: both;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table {
-  margin-bottom: 0;
-  border: 0;
-  font-size: 14px;
-  font-size: 0.875rem;
-  color: #8292A5;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table th,
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table td {
-  border-color: #DEE3E8;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table thead {
-  background: rgba(216, 216, 216, 0);
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table thead th {
-  font-size: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #41464C;
-  border-bottom: 0;
-  border-top: 0;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table thead th i {
-  display: inline-block;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table thead th.th-id {
-  text-align: center;
-  width: 55px;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table tbody {
-  background: white;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table tbody td {
-  vertical-align: middle;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table tbody td.td-id {
-  text-align: center;
-  width: 55px;
-}
-
-.wrapper .content-wrapper .crudadmin-wrapper .box .box-body .table tbody tr:last-child td {
-  border-bottom: 0;
-}
-
 .wrapper .content-wrapper .crudadmin-wrapper .box .box-footer {
   background: white;
   padding: 30px;
@@ -17083,6 +17040,7 @@ aside.main-sidebar .footer-sidebar p a {
 .wrapper .content-wrapper .crudadmin-wrapper .box .box-footer .box-footer__actions {
   display: flex;
   justify-content: space-between;
+  overflow-x: auto;
 }
 
 .wrapper .content-wrapper .crudadmin-wrapper .box .box-footer.box-footer--actions .box-footer__left,
@@ -17132,6 +17090,11 @@ aside.main-sidebar .footer-sidebar p a {
   margin-right: 15px;
 }
 
+.wrapper .content-wrapper .crudadmin-wrapper .admin-header .search-bar {
+  margin-top: -1px;
+  margin-bottom: -1px;
+}
+
 .wrapper .content-wrapper .crudadmin-wrapper .admin-header .search-bar .dropdown button {
   height: 100%;
   border-radius: 4px 0 0 4px;
@@ -17139,7 +17102,7 @@ aside.main-sidebar .footer-sidebar p a {
 }
 
 .wrapper .content-wrapper .crudadmin-wrapper .admin-header .search-bar input.form-control {
-  height: 40px;
+  height: 38px;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
 }
@@ -17188,11 +17151,14 @@ aside.main-sidebar .footer-sidebar p a {
   font-size: 0.875rem;
   color: #8292A5;
   cursor: pointer;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  overflow: hidden;
 }
 
 .wrapper .content-wrapper .crudadmin-wrapper .admin-header ul.change-grid-size li {
   list-style: none;
-  height: 40px;
+  height: 36px;
   background: white;
   display: flex;
   align-items: center;
@@ -17439,6 +17405,181 @@ aside.main-sidebar .footer-sidebar p a {
   color: #dbe0e5;
 }
 
+.wrapper .crudadmin-wrapper .box {
+  position: relative;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body.box-body--table {
+  padding: 0;
+  overflow-x: auto;
+  clear: both;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table {
+  margin-bottom: 0;
+  border: 0;
+  font-size: 14px;
+  font-size: 0.875rem;
+  color: #8292A5;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table th,
+.wrapper .crudadmin-wrapper .box .box-body .table td {
+  border-color: #DEE3E8;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table thead {
+  background: rgba(216, 216, 216, 0);
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table thead th {
+  font-size: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #41464C;
+  border-bottom: 0;
+  border-top: 0;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table thead th i {
+  display: inline-block;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table thead th.th-id {
+  text-align: center;
+  width: 55px;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody {
+  background: white;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td {
+  vertical-align: middle;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.td-id {
+  text-align: center;
+  width: 55px;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox {
+  position: relative;
+  width: 25px;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox .checkbox-box {
+  display: block;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox .checkbox-box input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox .checkbox-box .checkmark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox .checkbox-box:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox .checkbox-box input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox .checkbox-box .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox .checkbox-box input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody td.select-row-checkbox .checkbox-box .checkmark:after {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody .buttons-options {
+  text-align: right;
+  font-size: 0;
+  white-space: nowrap;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody .buttons-options .buttons-options__item {
+  margin: 0 1.25px;
+  display: inline-block;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody .buttons-options .buttons-options__item:first-child {
+  margin-left: 0;
+}
+
+.wrapper .crudadmin-wrapper .box .box-body .table tbody .buttons-options .buttons-options__item:last-child {
+  margin-right: 0;
+}
+
+.wrapper .crudadmin-wrapper .box .box__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 100;
+}
+
+.wrapper .crudadmin-wrapper .box .box__overlay p {
+  position: absolute;
+  top: calc(50% + 28px);
+  text-align: center;
+  width: 100%;
+  font-weight: bold;
+}
+
+.wrapper .crudadmin-wrapper .box .box__overlay i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -15px;
+  margin-top: -15px;
+  color: #000;
+  font-size: 30px;
+  font-size: 1.875rem;
+}
+
 .crudadmin-form {
   /*
    * Fields groups
@@ -17561,6 +17702,18 @@ aside.main-sidebar .footer-sidebar p a {
   color: #8292A5;
 }
 
+.form-group {
+  /*
+   * Checkboxes
+   */
+  /*
+   * Calendar
+   */
+  /*
+   * Form in modal settings
+   */
+}
+
 .form-group label {
   color: #41464C;
   font-size: 14px;
@@ -17609,6 +17762,133 @@ aside.main-sidebar .footer-sidebar p a {
   top: 0;
 }
 
+.form-group label.checkbox {
+  /* Normal Track */
+  /* Checked Track (Blue) */
+  /* Green Track */
+  /* Normal Knob */
+  /* Checked Knob (Blue Style) */
+  /* Green Knob */
+}
+
+.form-group label.checkbox span {
+  color: #555;
+  font-weight: normal;
+}
+
+.form-group label.checkbox input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+}
+
+.form-group label.checkbox input[type=checkbox].ios-switch + div {
+  vertical-align: middle;
+  width: 40px;
+  height: 20px;
+  border: 1px solid #bdbaba;
+  border-radius: 999px;
+  background-color: rgba(0, 0, 0, 0.1);
+  -webkit-transition-duration: 0.4s;
+  -webkit-transition-property: background-color, box-shadow;
+  box-shadow: inset 0 0 0 0px rgba(0, 0, 0, 0.4);
+  margin: 5px 0;
+}
+
+.form-group label.checkbox input[type=checkbox].ios-switch:checked + div {
+  width: 40px;
+  background-position: 0 0;
+  background-color: #3b89ec;
+  border: 1px solid #0e62cd;
+  box-shadow: inset 0 0 0 10px #3b89ff;
+}
+
+.form-group label.checkbox input[type=checkbox].green.ios-switch:checked + div {
+  background-color: #00e359;
+  border: 1px solid #00a23f;
+  box-shadow: inset 0 0 0 10px #00e359;
+}
+
+.form-group label.checkbox input[type=checkbox].ios-switch + div > div {
+  float: left;
+  width: 18px;
+  height: 18px;
+  border-radius: inherit;
+  background: #ffffff;
+  -webkit-transition-timing-function: cubic-bezier(0.54, 1.85, 0.5, 1);
+  -webkit-transition-duration: 0.4s;
+  -webkit-transition-property: transform, background-color, box-shadow;
+  -moz-transition-timing-function: cubic-bezier(0.54, 1.85, 0.5, 1);
+  -moz-transition-duration: 0.4s;
+  -moz-transition-property: transform, background-color;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.12), 0px 0px 0 1px #cecece;
+  pointer-events: none;
+}
+
+.form-group label.checkbox input[type=checkbox].ios-switch:checked + div > div {
+  -webkit-transform: translate3d(20px, 0, 0);
+  -moz-transform: translate3d(20px, 0, 0);
+  background-color: #ffffff;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0px 0px 0 1px #0850ac;
+}
+
+.form-group label.checkbox input[type=checkbox].green.ios-switch:checked + div > div {
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0 0 0 1px #00a23f;
+}
+
+.form-group.multiple-date label {
+  display: block;
+}
+
+.form-group .xdsoft_datetimepicker {
+  z-index: 99999999999;
+}
+
+.form-group .xdsoft_datetimepicker,
+.form-group .xdsoft_datetimepicker .xdsoft_time_box {
+  border-color: #DEE3E8;
+}
+
+.form-group .xdsoft_datetimepicker .xdsoft_calendar td,
+.form-group .xdsoft_datetimepicker .xdsoft_calendar .xdsoft_time,
+.form-group .xdsoft_datetimepicker .xdsoft_time_box td,
+.form-group .xdsoft_datetimepicker .xdsoft_time_box .xdsoft_time {
+  background: white;
+}
+
+.form-group .xdsoft_datetimepicker .xdsoft_calendar td:hover,
+.form-group .xdsoft_datetimepicker .xdsoft_calendar .xdsoft_time:hover,
+.form-group .xdsoft_datetimepicker .xdsoft_time_box td:hover,
+.form-group .xdsoft_datetimepicker .xdsoft_time_box .xdsoft_time:hover {
+  background: #6069e6 !important;
+}
+
+.form-group .xdsoft_datetimepicker .xdsoft_calendar td.multiple-selected,
+.form-group .xdsoft_datetimepicker .xdsoft_calendar .xdsoft_time.multiple-selected,
+.form-group .xdsoft_datetimepicker .xdsoft_time_box td.multiple-selected,
+.form-group .xdsoft_datetimepicker .xdsoft_time_box .xdsoft_time.multiple-selected {
+  background: #4A54E2 !important;
+  color: white !important;
+  font-weight: bold !important;
+  box-shadow: none !important;
+}
+
+.form-group .xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current:not(.multiple-selected),
+.form-group .xdsoft_datetimepicker .xdsoft_calendar .xdsoft_time.xdsoft_current:not(.multiple-selected),
+.form-group .xdsoft_datetimepicker .xdsoft_time_box td.xdsoft_current:not(.multiple-selected),
+.form-group .xdsoft_datetimepicker .xdsoft_time_box .xdsoft_time.xdsoft_current:not(.multiple-selected) {
+  background: #f6f5f6 !important;
+  box-shadow: none !important;
+  color: #555 !important;
+  font-weight: normal !important;
+}
+
+@media (min-width: 768px) {
+  .form-group > .modal > .modal-dialog {
+    width: 80%;
+    max-width: inherit;
+  }
+}
+
 .message-modal .modal {
   background: rgba(0, 0, 0, 0.2);
 }
@@ -17645,6 +17925,10 @@ aside.main-sidebar .footer-sidebar p a {
 
 .message-modal .modal .modal-body p:last-child {
   margin-bottom: 0;
+}
+
+.th-history-buttons {
+  width: 51px;
 }
 
 body {

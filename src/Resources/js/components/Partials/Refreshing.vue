@@ -1,6 +1,6 @@
 <template>
-    <div class="overlay">
-      <i class="fa fa-refresh fa-spin"></i>
+    <div class="box__overlay">
+      <i class="fa fa-sync fa-spin"></i>
       <p>{{ trans('loading') }}</p>
     </div>
 </template>

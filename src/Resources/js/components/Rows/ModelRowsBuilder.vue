@@ -665,7 +665,7 @@ export default {
             this.orderBy = [this.model.orderBy[0], this.model.orderBy[1].toLowerCase().replace('asc', 0).replace('desc', 1)];
         },
         setPosition(position, indicator){
-            if ( position == 0 || position == this.pagination.position || position > Math.ceil(this.rows.count/this.pagination.limit) )
+            if ( position == 0 || position > Math.ceil(this.rows.count/this.pagination.limit) )
                 return;
 
             this.pagination.position = position;

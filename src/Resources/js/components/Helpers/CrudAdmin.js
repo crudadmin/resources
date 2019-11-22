@@ -19,6 +19,11 @@ const CrudAdmin = {
         },
         faMigrator(icon){
             return fontAwesomeMigrator(icon);
+        },
+        scrollTo(id){
+            $('html, body').animate({
+                scrollTop: $(id).offset().top - 10
+            }, 500);
         }
     }
 }

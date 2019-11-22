@@ -29,6 +29,16 @@
         .crudadmin-wrapper {
             padding: $navbarPadding;
 
+            .grid-fullsize {
+                .col.col--form {
+                    order: 2;
+                }
+
+                .col.col--rows {
+                    margin-bottom: $navbarPadding;
+                }
+            }
+
             .box {
                 background: white;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.13);
@@ -56,6 +66,9 @@
                         @include fontSize(20px);
                         font-weight: 400;
                         margin-bottom: 0;
+
+                        .--icon-left { margin-right: 5px; }
+                        .--icon-right { margin-left: 5px; }
                     }
 
                     .box-header__description {
@@ -102,64 +115,6 @@
                     &.box-body--form {
                         padding-bottom: $navbarPadding - $form-group-margin-bottom;
                     }
-
-                    &.box-body--table {
-                        padding: 0;
-                        overflow-x: auto;
-                        clear: both;
-                    }
-
-                    .table {
-                        margin-bottom: 0;
-                        border: 0;
-                        @include fontSize(14px);
-                        color: $darkText;
-
-                        th, td {
-                            border-color: $inputBorderColor;
-                        }
-
-                        thead {
-                            background: rgba(216, 216, 216, 0);
-
-                            th {
-                                @include fontSize(12px);
-                                font-weight: 600;
-                                text-transform: uppercase;
-                                color: $blackText;
-                                border-bottom: 0;
-                                border-top: 0;
-
-                                i {
-                                    display: inline-block;
-                                }
-
-                                &.th-id {
-                                    text-align: center;
-                                    width: 55px;
-                                }
-                            }
-                        }
-
-                        tbody {
-                            background: white;
-
-                            td {
-                                vertical-align: middle;
-
-                                &.td-id {
-                                    text-align: center;
-                                    width: 55px;
-                                }
-                            }
-
-                            tr:last-child {
-                                td {
-                                    border-bottom: 0;
-                                }
-                            }
-                        }
-                    }
                 }
 
                 .box-footer {
@@ -169,6 +124,7 @@
                     &.box-footer--actions, .box-footer__actions {
                         display: flex;
                         justify-content: space-between;
+                        overflow-x: auto;
 
                         .box-footer__left {
                             margin-right: auto;
@@ -210,6 +166,9 @@
                 }
 
                 .search-bar {
+                    margin-top: -1px;
+                    margin-bottom: -1px;
+
                     .dropdown {
                         button {
                             height: 100%;
@@ -219,7 +178,7 @@
                     }
 
                     input.form-control {
-                        height: 40px;
+                        height: 38px;
                         border-top-right-radius: $inputRadius;
                         border-bottom-right-radius: $inputRadius;
                     }
@@ -270,10 +229,13 @@
                     @include fontSize(14px);
                     color: $darkText;
                     cursor: pointer;
+                    margin-top: -1px;
+                    margin-bottom: -1px;
+                    overflow: hidden;
 
                     li {
                         list-style: none;
-                        height: 40px;
+                        height: 36px;
                         background: white;
                         display: flex;
                         align-items: center;
