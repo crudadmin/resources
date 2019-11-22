@@ -57,8 +57,14 @@ export default {
             $(window).keyup(e => {
 
                 //If is opened alert
-                if ( this.canShowAlert !== true )
+                if ( this.canShowAlert !== true ) {
+                    //Close other alerts, which are not associated with this component
+                    if ( e.keyCode == 27 ) {
+                        $('.modal .modal-header .close:visible').click();
+                    }
+
                     return;
+                }
 
                 //If enter/esc has been pressed 300ms after alert has been opened
                 //does not close this alert and ignore enter

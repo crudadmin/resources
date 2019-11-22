@@ -1,5 +1,10 @@
 .btn {
+    &.btn--icon > i:first-child {
+        margin-right: 3px;
+    }
 
+    .--icon-left { margin-right: 5px; }
+    .--icon-right { margin-left: 5px; }
 }
 
 .btn-default {

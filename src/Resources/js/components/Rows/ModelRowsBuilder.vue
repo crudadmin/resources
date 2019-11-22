@@ -1,29 +1,29 @@
 <template>
     <div class="box box-wrapper">
         <div class="box-header">
-            <div class="table-header">
-                <div class="left">
-                    <h3 class="box-title">{{ title }} <small>({{ rows.count }})</small></h3>
+            <div class="box-header__actions">
+                <div class="box-header__left">
+                    <h3 class="box-header__title">{{ title }} <small>({{ rows.count }})</small></h3>
                 </div>
 
-                <div class="right">
+                <div class="box-header__right">
                     <div class="dropdown fields-list" fields-list>
                         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             {{ trans('rows-list') }}
-                            <i class="fa fa-angle-down"></i>
+                            <i class="--icon-right fa fa-angle-down"></i>
                         </button>
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
                             <li @click="$event.stopPropagation()" v-for="(column, key) in enabled_columns" v-if="canShowColumn(column, key)" :class="{ active : column.enabled }">
                                 <label><input type="checkbox" :data-column="key" v-model="column.enabled"> {{ columnName(key, column.name) }}</label>
                             </li>
-                            <li><a href="#" @click.prevent="resetColumnsList">{{ trans('default') }}</a></li>
+                            <li class="default-reset"><a href="#" @click.prevent="resetColumnsList">{{ trans('default') }}</a></li>
                         </ul>
                     </div>
 
                     <div class="dropdown actions-list fields-list" v-if="checked.length > 0" data-action-list>
                         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             {{ trans('action') }}
-                            <i class="fa fa-angle-down"></i>
+                            <i class="--icon-right fa fa-angle-down"></i>
                         </button>
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
                             <li v-if="model.deletable"><a @click.prevent="removeRow()"><i class="fa fa-trash-alt"></i> {{ trans('delete') }}</a></li>
@@ -45,7 +45,7 @@
             </component>
         </div>
 
-        <div class="box-body box-table-body">
+        <div class="box-body box-body--table">
             <table-rows
                 :model="model"
                 :row.sync="row"
@@ -73,17 +73,17 @@
                 :is="name">
             </component>
 
-            <div class="footer-wrapper">
-                <ul v-if="isPaginationEnabled && rows.count>pagination.limit" data-pagination class="pagination pagination-sm no-margin">
-                    <li data-pagination-prev v-if="pagination.position>1"><a v-on:click.prevent="setPosition(pagination.position - 1)" href="#">«</a></li>
-                    <li v-bind:class="{ active : pagination.position == i }" v-if="showLimit(i)" v-for="i in Math.ceil(rows.count / pagination.limit)"><a href="#" @click.prevent="setPosition(i)">{{ i }}</a></li>
-                    <li data-pagination-next v-if="pagination.position<rows.count/pagination.limit"><a v-on:click.prevent="setPosition(pagination.position + 1)" href="#">»</a></li>
-                </ul>
-
-                <div class="pagination-limit" v-if="isPaginationEnabled" :title="trans('rows-count')">
-                    <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
-                        <option v-for="count in pagination.limits">{{ count }}</option>
-                    </select>
+            <div class="box-footer__actions">
+                <div class="box-footer__left"></div>
+                <div class="box-footer__center">
+                    <pagination v-if="isPaginationEnabled" :rows="rows" :pagination="pagination" />
+                </div>
+                <div class="box-footer__right">
+                    <div class="pagination-limit" v-if="isPaginationEnabled" :title="trans('rows-count')">
+                        <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
+                            <option v-for="count in pagination.limits">{{ count }}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -96,11 +96,12 @@
 <script>
 import Refreshing from '../Partials/Refreshing.vue';
 import TableRows from './TableRows.vue';
+import Pagination from '../Partials/Pagination.vue';
 
 export default {
     props : ['model', 'row', 'rows', 'langid', 'progress', 'search', 'history', 'gettext_editor', 'iswithoutparent', 'activetab', 'depth_level'],
 
-    components : { Refreshing, TableRows },
+    components : { Refreshing, TableRows, Pagination },
 
     data : function(){
         //Load pagination limit from localStorage
@@ -115,7 +116,7 @@ export default {
                 limit : parseInt(limit),
                 limits : [ 5, 10, 20, 30, 50, 100, 200, 500 ],
                 refreshing : false,
-                maxpages : 15,
+                maxpages : 10,
             },
 
             searching : false,
@@ -663,44 +664,10 @@ export default {
             //Add default order of rows
             this.orderBy = [this.model.orderBy[0], this.model.orderBy[1].toLowerCase().replace('asc', 0).replace('desc', 1)];
         },
-        showLimit(i){
-            var max = parseInt(this.rows.count / this.pagination.limit);
-
-            if ( this.rows.count / this.pagination.limit === max )
-                max--;
-
-            //If is first or last page, then show it
-            if ( i == 0 || i == max )
-                return true;
-
-            //Middle range
-            var radius = 3,
-                    interval = [[100, 0.3], [100, 0.7], [1000, 0.1], [1000, 0.85]],
-                    in_middle_active = 0;
-
-            for (var a = 0; a < interval.length; a++) {
-                if ( max > interval[a][0] )
-                {
-                    var level = parseInt(max * interval[a][1]);
-                    if ( i >= level && i <= level + radius )
-                        return true;
-
-                    in_middle_active++;
-                }
-            }
-
-            var maxpages = this.pagination.maxpages - (in_middle_active * radius),
-                    maxpages = maxpages < 6 ? 6 : maxpages;
-
-            var offset = this.pagination.position < (maxpages/2) ? (maxpages/2) - this.pagination.position : 0,
-                    offset = max - this.pagination.position < ( maxpages / 2 ) ? (maxpages/2) - (max - this.pagination.position) : offset;
-
-            if ( this.pagination.position - offset >= i + (maxpages/2) || this.pagination.position <= i - (maxpages/2) - offset)
-                return false;
-
-            return true;
-        },
         setPosition(position, indicator){
+            if ( position == 0 || position == this.pagination.position || position > Math.ceil(this.rows.count/this.pagination.limit) )
+                return;
+
             this.pagination.position = position;
 
             //Load paginated rows...

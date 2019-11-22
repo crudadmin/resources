@@ -11,7 +11,7 @@
         </section>
 
         <!-- Main content -->
-        <section class="crudadmin-content" v-if="model">
+        <section class="crudadmin-wrapper" v-if="model">
             <model-builder :key="model.slug" :model_builder="model" :langid="langid" dusk="model-builder" :data-model="model.table"></model-builder>
         </section>
         <!-- /.content -->

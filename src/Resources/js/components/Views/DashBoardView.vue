@@ -1,36 +1,23 @@
 <template>
     <div>
-        <!-- Content Header (Page header) -->
+        <!-- Content Header (dashboard header) -->
         <section class="content-header">
-            <h1>
-                Dashboard
-                <small>{{ trans('welcome-in-admin') }}</small>
-            </h1>
             <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> {{ trans('admin') }}</a></li>
-                <li class="active">Dashboard</li>
+                <li class="active"><a class="active">Dashboard</a></li>
             </ol>
         </section>
 
         <!-- Main content -->
-        <section class="content" v-show="user">
-            <div class="row">
-                <!-- left column -->
-                <div class="col-md-12">
-
-                    <!-- Horizontal Form -->
-                    <div class="box box-info">
-                        <div class="box-body">
-                            <h2 v-if="!layout && user">{{ trans('welcome') }} {{ user.username }}</h2>
-                            <div v-html="layout"></div>
-                        </div>
+        <section class="crudadmin-wrapper" v-show="user">
+            <div class="box" v-if="!layout">
+                <div class="box-body">
+                    <div class="box-body-wrapper">
+                        <h2 v-if="user">{{ trans('welcome') }} {{ user.username }}</h2>
                     </div>
-                    <!-- /.box -->
-
                 </div>
-                <!--/.col (left) -->
             </div>
-            <!-- /.row -->
+
+            <div v-html="layout"></div>
         </section>
         <!-- /.content -->
     </div>

@@ -1,67 +1,65 @@
 <template>
-    <div class="gettext-table modal-open">
+    <div class="message-modal gettext-table modal-open">
         <!-- MODAL -->
-        <div class="example-modal">
-            <div class="modal modal-default" style="display: block">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" @click="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                            <h4 class="modal-title">{{ trans('gettext-update') }} - {{ gettext_editor.name }}</h4>
-                        </div>
-                        <div class="modal-body">
-                            <label>{{ trans('search') }}</label>
-                            <input type="text" class="form-control" :placeholder="trans('gettext-search')" v-model="query">
+        <div class="modal modal-default" style="display: block">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ trans('gettext-update') }} - {{ gettext_editor.name }}</h4>
+                        <button type="button" class="close" @click="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label>{{ trans('search') }}</label>
+                        <input type="text" class="form-control" :placeholder="trans('gettext-search')" v-model="query">
 
-                            <hr>
-                            <p v-if="loaded && resultLength == 0">{{ trans('gettext-no-match') }}</p>
+                        <hr>
+                        <p v-if="loaded && resultLength == 0">{{ trans('gettext-no-match') }}</p>
 
-                            <p v-if="!loaded" class="loading"><i class="fa fa-refresh fa-spin"></i> {{ trans('gettext-loading') }}</p>
+                        <p v-if="!loaded" class="loading"><i class="fa fa-refresh fa-spin"></i> {{ trans('gettext-loading') }}</p>
 
-                            <table v-show="resultLength > 0" class="table data-table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>{{ trans('gettext-source') }}</th>
-                                        <th>{{ trans('gettext-translation') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(values, key) in filtratedTranslates" :class="{ missing : isMissing(key) }">
-                                        <td>{{ key }}</td>
-                                        <td class="input" :class="{ edited : hasChange(key), plural : isPlural(key) }">
-                                            <textarea
-                                                data-toggle="tooltip"
-                                                class="form-control"
-                                                v-for="i in getPluralLength(key)"
-                                                :disabled="isMissing(key)"
-                                                :title="isMissing(key) ? trans('gettext-missing') : getPluralsPlaceholder(key, i-1)"
-                                                :class="{ long : getValue(values, i-1).length > 80 }"
-                                                :value="getValue(values, i-1)"
-                                                :placeholder="getPluralsPlaceholder(key, i-1)"
-                                                @input="changeText($event, key, i-1)">
-                                            </textarea>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <table v-show="resultLength > 0" class="table data-table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>{{ trans('gettext-source') }}</th>
+                                    <th>{{ trans('gettext-translation') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(values, key) in filtratedTranslates" :class="{ missing : isMissing(key) }">
+                                    <td>{{ key }}</td>
+                                    <td class="input" :class="{ edited : hasChange(key), plural : isPlural(key) }">
+                                        <textarea
+                                            data-toggle="tooltip"
+                                            class="form-control"
+                                            v-for="i in getPluralLength(key)"
+                                            :disabled="isMissing(key)"
+                                            :title="isMissing(key) ? trans('gettext-missing') : getPluralsPlaceholder(key, i-1)"
+                                            :class="{ long : getValue(values, i-1).length > 80 }"
+                                            :value="getValue(values, i-1)"
+                                            :placeholder="getPluralsPlaceholder(key, i-1)"
+                                            @input="changeText($event, key, i-1)">
+                                        </textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                            <div class="translation-actions">
-                                <a @click="showMissing = true" v-if="missing.length > 0 && showMissing == false">{{ trans('gettext-showmissing') }} ({{ missing.length }})</a>
-                                <a @click="limit = false" v-if="limit != false && fullCount > limit">{{ trans('gettext-count') }} ({{ fullCount }})</a>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" @click="saveAndClose" class="btn btn-primary">{{ trans('gettext-save') }}</button>
+                        <div class="translation-actions">
+                            <a @click="showMissing = true" v-if="missing.length > 0 && showMissing == false">{{ trans('gettext-showmissing') }} ({{ missing.length }})</a>
+                            <a @click="limit = false" v-if="limit != false && fullCount > limit">{{ trans('gettext-count') }} ({{ fullCount }})</a>
                         </div>
                     </div>
-                    <!-- /.modal-content -->
+                    <div class="modal-footer">
+                        <button type="button" @click="saveAndClose" class="btn btn-primary">{{ trans('gettext-save') }}</button>
+                    </div>
                 </div>
-                <!-- /.modal-dialog -->
+                <!-- /.modal-content -->
             </div>
-            <!-- /.modal -->
+            <!-- /.modal-dialog -->
         </div>
+        <!-- /.modal -->
     </div>
 </template>
 

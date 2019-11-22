@@ -29,7 +29,7 @@
                             <div class="dropdown">
                                 <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                     {{ getSearchingColumnName(search.column) }}
-                                    <i class="fa fa-angle-down"></i>
+                                    <i class="--icon-right fa fa-angle-down"></i>
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li data-field="" :class="{ active : !search.column }" @click="search.column = null">{{ trans('search-all') }}</li>

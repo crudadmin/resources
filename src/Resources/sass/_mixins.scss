@@ -3,6 +3,14 @@
   @return #{$remSize}rem;
 }
 
+@function minZero($size) {
+  @if $size < 0 {
+    @return 0px;
+  }
+
+  @return $size;
+}
+
 @mixin fontSize($size) {
   font-size: $size; //Fallback in px
   font-size: calculateRem($size);

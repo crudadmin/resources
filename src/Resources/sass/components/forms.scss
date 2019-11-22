@@ -1,3 +1,42 @@
+.crudadmin-form {
+    /*
+     * Fields groups
+     */
+    .card {
+        .inline-col {
+            & > div > .tab-content > .row > div > div { display: inline-block; }
+            &[data-fields="2"] > div > .tab-content > .row > div > div { width: calc(100% / 2) }
+            &[data-fields="3"] > div > .tab-content > .row > div > div { width: calc(100% / 3) }
+            &[data-fields="4"] > div > .tab-content > .row > div > div { width: calc(100% / 4) }
+            &[data-fields="5"] > div > .tab-content > .row > div > div { width: calc(100% / 5) }
+            &[data-fields="6"] > div > .tab-content > .row > div > div { width: calc(100% / 6) }
+            &[data-fields="7"] > div > .tab-content > .row > div > div { width: calc(100% / 7) }
+        }
+    }
+
+    .nav-tabs-custom {
+        > .nav-tabs > li > a {cursor: pointer}
+        > .nav-tabs > li[has-error] {border-top-color: #dd4939;}
+        > .nav-tabs > li[has-error] i {margin-left: -1px;}
+        > .nav-tabs > li[has-error] i.fa-exclamation-triangle ~ i {display: none}
+        > .nav-tabs > li[has-error] a {color: #dd4939}
+
+        .tab-pane > .row .model > .box { border-top: 0;     box-shadow: none; }
+        .tab-pane > .row .model > .box > .box-header h3 { display: none; }
+        .tab-pane > .row .model > .box > .box-header,
+        .tab-pane > .row .model > .box > .box-body { padding: 0; }
+        .tab-pane > .row .model > .box.single-mode { margin-bottom: 0px }
+        .tab-pane > .row .model > .box.single-mode > .box-header { display: none; }
+        .tab-pane > .row .model > .box.single-mode > .box-body > .row > .col > form > .box > .box-body { padding: 0; background: white; }
+        .tab-pane > .row .model > .box.single-mode > .box-body > .row > .col > form > .box > .box-footer { padding-left: 0; padding-bottom: 0; }
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box { box-shadow: none;border: none;padding: 0; }
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box > .box-body,
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box > .box-header { padding: 0; }
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box > .box-header > h3 { display: none }
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box.single-mode > .box-header { display: none }
+    }
+}
+
 .form-control {
     border-color: #DEE3E8;
     @include fontSize(14px);
@@ -10,7 +49,12 @@
 
 .form-group {
     label {
+        color: $blackText;
         @include fontSize(14px);
+    }
+
+    small {
+        color: $darkText;
     }
 
     &.has-error {

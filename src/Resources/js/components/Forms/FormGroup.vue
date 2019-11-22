@@ -1,12 +1,12 @@
 <template>
     <div class="fields-group" :group-id="group.id" :class="getGroupClass(group)" :data-fields="visibleFields.length">
-        <div :class="{ 'nav-tabs-custom' : canShowGroupName(group) }">
-            <h4 v-if="canShowGroupName(group)">
-                <i v-if="group.icon" :class="['fa', group.icon]"></i>
+        <div :class="{ card : canShowGroupName(group), 'card--form' : canShowGroupName(group) }">
+            <h4 class="card-header" v-if="canShowGroupName(group)">
+                <i v-if="group.icon" class="card-header--icon-left" :class="['fa', faMigrator(group.icon)]"></i>
                 <span v-html="group.name"></span>
             </h4>
 
-            <div class="tab-content">
+            <div :class="{ 'card-body' : canShowGroupName(group) }">
                 <div class="row">
                     <div v-if="hasTabs(group.fields)" class="col-lg-12">
                         <form-tabs-builder

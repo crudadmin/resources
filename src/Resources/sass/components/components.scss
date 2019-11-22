@@ -1,16 +1,13 @@
 .dropdown {
-    border: 1px solid $inputBorderColor;
-    border-radius: $inputRadius;
-    background: white;
-
     &, button {
         @include fontSize(14px);
         color: $darkText;
     }
 
     button {
-        padding: 11px 17px 11px 19px;
-        line-height: 100%;
+        background: white;
+        border: 1px solid $inputBorderColor;
+        border-radius: $inputRadius;
         display: flex;
         align-items: center;
 
@@ -20,8 +17,17 @@
         }
 
         i {
-            margin-left: 15px;
+            &.--icon-left { margin-right: 10px; }
+            &.--icon-right { margin-left: 10px; }
+
             @include fontSize(11px);
+        }
+
+        &.btn-sm {
+            i {
+                &.--icon-left { margin-right: 8px; }
+                &.--icon-right { margin-left: 8px; }
+            }
         }
 
         &:after {
@@ -29,16 +35,24 @@
         }
     }
 
-    ul {
+    ul, .dropdown-menu {
         width: 200px;
         padding: 0;
         margin-top: 3px;
 
-        li {
+        li, .dropdown-item {
             @include fontSize(14px);
             padding: 0 11px;
             color: $darkText;
             line-height: 40px;
+            cursor: pointer;
+
+            i {
+                &.--icon-left { margin-right: 3px; }
+                &.--icon-right { margin-left: 3px; }
+
+                @include fontSize(11px);
+            }
 
             a {
                 color: $darkText;
@@ -56,6 +70,103 @@
             &:not(:last-child) {
                 border-bottom: 1px solid $inputBorderColor;
             }
+        }
+    }
+}
+
+.card {
+    border-color: $navbarBorderColor;
+
+    .card-header {
+        padding: $navbarPadding / 2;
+        @include fontSize(16px);
+        background: $navbarBorderColor;
+        color: $blackText;
+        border-bottom: 0;
+
+        i.card-header--icon-left {
+            margin-right: 5px;
+        }
+    }
+
+    .card-body {
+        padding: $navbarPadding / 2;
+    }
+
+    &.card--form {
+        margin-bottom: $form-group-margin-bottom;
+
+        .card-body {
+            padding-bottom: minZero(($navbarPadding / 2) - $form-group-margin-bottom);
+        }
+    }
+}
+
+.nav-tabs {
+    .nav-item {
+        margin-bottom: 0;
+
+        .nav-link {
+            border: 0 !important;
+
+            &:hover {
+                background: #FCFCFC;
+            }
+
+            &.active {
+                background-color: $navbarBorderColor;
+            }
+
+            .nav-link--icon-left {
+                margin-right: 5px;
+            }
+        }
+    }
+
+    & + .tab-content {
+        padding: $navbarPadding / 2;
+        border: 1px solid $navbarBorderColor;
+        border-top: 0;
+
+        &.tab-content--form {
+            padding-bottom: minZero(($navbarPadding / 2) - $form-group-margin-bottom);
+            margin-bottom: $form-group-margin-bottom;
+        }
+    }
+}
+
+.pagination {
+    border-radius: 4px;
+    border: 1px solid $navbarBorderColor;
+    border-right: 0;
+    overflow: hidden;
+
+    a.page-link, .page-link {
+        border-color: $navbarBorderColor;
+        border-top: 0;
+        border-bottom: 0;
+        color: $darkText;
+        cursor: pointer;
+        font-weight: 600;
+        @include fontSize(12px);
+        user-select: none;
+
+        &:hover {
+            background: #FCFCFC;
+            color: $primary;
+        }
+    }
+
+    .active {
+        a.page-link, .page-link {
+            background: #F3F6F6;
+            color: $blackText;
+        }
+    }
+
+    .disabled {
+        a.page-link, .page-link {
+            color: lighten($darkText, 30%);
         }
     }
 }

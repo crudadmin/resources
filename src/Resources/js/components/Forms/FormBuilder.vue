@@ -1,28 +1,32 @@
 <template>
     <!-- Horizontal Form -->
-    <component :is="formType" method="post" action="" :id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form">
-        <div class="box-wrapper" :class="{ 'box-info' : isActive, 'box-warning' : !isActive }">
+    <component :is="formType" method="post" action="" :id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form crudadmin-form">
+        <div class="box" :class="{ 'box-info' : isActive, 'box-warning' : !isActive }">
 
             <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (isOpenedRow && model.history)) }">
-                <div class="table-header">
-                    <div class="left">
-                        <h3 class="box-title"><span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="fa fa-globe"></span> {{ title }}</h3>
+                <div class="box-header__actions">
+                    <div class="box-header__left">
+                        <h3 class="box-header__title">
+                            <span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="fa fa-globe"></span>
+                            {{ title }}
+                        </h3>
                     </div>
 
-                    <div class="right">
-                        <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor()" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-globe"></i> {{ trans('gettext-open') }}</button>
-                        <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="add-row-btn pull-right btn btn-default btn-sm"><i class="fa fa-plus"></i> {{ newRowTitle }}</button>
-                        <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i> {{ trans('history.show') }}</button>
+                    <div class="box-header__right">
+                        <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe"></i> {{ trans('gettext-open') }}</button>
+                        <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-plus"></i> {{ newRowTitle }}</button>
+                        <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i> {{ trans('history.show') }}</button>
 
-                        <div class="dropdown pull-right multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <i class="fa fa-globe"></i> <span class="text">{{ getLangName(selectedLanguage) }}</span>
-                                <span class="caret"></span>
+                        <div class="dropdown multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage">
+                            <button class="btn btn-default dropdown-toggle btn-sm" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <i class="--icon-left fa fa-globe"></i>
+                                <span class="text">{{ getLangName(selectedLanguage) }}</span>
+                                <i class="--icon-right fa fa-angle-down"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="languageDropdown">
                                 <li v-for="lang in languages" v-if="selectedLanguage.id != lang.id" :data-slug="lang.slug">
                                     <a href="#" @click.prevent="changeLanguage(lang.id)">
-                                        <i class="fa fa-exclamation-triangle"></i>{{ getLangName(lang) }}
+                                        <i class="--icon-left fa fa-exclamation-triangle"></i> {{ getLangName(lang) }}
                                     </a>
                                 </li>
                             </ul>
@@ -40,7 +44,7 @@
                 </component>
             </div>
 
-            <div class="box-body" :class="{ cantadd : !cansave }">
+            <div class="box-body box-body--form" :class="{ cantadd : !cansave }">
                 <component
                     v-for="name in getComponents('form-top')"
                     :key="name"
@@ -85,7 +89,7 @@
                     :rows="rows.data"
                     :is="name">
                 </component>
-                <div class="footer-wrapper">
+                <div class="box-footer__actions">
                     <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( isOpenedRow ? 'success' : 'primary')]"><i class="fa updating fa-refresh"></i> {{ isOpenedRow ? trans('saving') : trans('sending') }}</button>
                     <button v-if="!progress" type="submit" :data-action-type="isOpenedRow ? 'update' : 'create'" name="submit" class="btn btn-primary">{{ isOpenedRow ? saveButton : sendButton }}</button>
                 </div>
@@ -706,7 +710,7 @@ export default {
                         var active = $(this).parents('.nav-tabs-custom').find('> .nav-tabs > li.active[has-error]').not($(this).parent().find('> li'));
 
                         _this.removeActiveTab($([this].concat(active.toArray())), true);
-                    }).find('a').prepend('<i class="fa fa-exclamation-triangle"></i>');
+                    }).find('a').prepend('<i class="nav-link--icon-left fa fa-exclamation-triangle"></i>');
                 })
             });
         },
@@ -764,7 +768,7 @@ export default {
             }
         },
         openGettextEditor(){
-            this.gettext_editor = this.row;
+            this.$parent.gettext_editor = this.row;
         },
         isFieldSelect(column){
             return column && column in this.model.fields && (['select', 'radio'].indexOf(this.model.fields[column].type) > -1) ? true : false;

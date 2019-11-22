@@ -1,3 +1,5 @@
+import fontAwesomeMigrator from '../Helpers/FontAwesomeMigrator';
+
 const CrudAdmin = {
     computed : {
         getAvatar(){
@@ -14,6 +16,9 @@ const CrudAdmin = {
                 return this.$root.localization[key];
 
             return key;
+        },
+        faMigrator(icon){
+            return fontAwesomeMigrator(icon);
         }
     }
 }

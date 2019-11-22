@@ -1,11 +1,14 @@
 <template>
-    <div class="nav-tabs-custom" :class="{ default : hasNoTabs }">
-        <ul class="nav nav-tabs">
-            <li v-for="(tab, $index) in getTabs" v-if="isTab(tab) && !tab.model || isModel(tab)" v-show="isTabVisible(tab)" data-tabs :data-depth="depth_level" :default-tab="isModel(tab) && getModel(tab.model) ? false : ''" :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table" :class="{ active : activetab == $index, 'model-tab' : isModel(tab) }" @click="activetab = $index">
-                <a data-toggle="tab" aria-expanded="true"><i v-if="getTabIcon(tab)" :class="['fa', getTabIcon(tab)]"></i> {{ getTabName(tab)||trans('general-tab') }}</a>
+    <div :class="{ 'nav-tabs-custom' : hasTabsAvailable }">
+        <ul class="nav nav-tabs" v-if="hasTabsAvailable">
+            <li class="nav-item" :class="{ 'model-tab' : isModel(tab) }" v-for="(tab, $index) in getTabs" v-if="isTab(tab) && !tab.model || isModel(tab)" v-show="isTabVisible(tab)" data-tabs :data-depth="depth_level" :default-tab="isModel(tab) && getModel(tab.model) ? false : ''" :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table" @click="activetab = $index">
+                <a data-toggle="tab" class="nav-link" :class="{ active : activetab == $index }" aria-expanded="true">
+                    <i v-if="getTabIcon(tab)" class="fa nav-link--icon-left" :class="[faMigrator(getTabIcon(tab))]"></i>
+                    {{ getTabName(tab)||trans('general-tab') }}
+                </a>
             </li>
         </ul>
-        <div class="tab-content">
+        <div class="tab-content tab-content--form">
             <div v-for="(tab, $index) in getTabs" v-if="canRenderTab(tab)" class="tab-pane" :class="{ active : activetab == $index }" :data-tab-model="isModel(tab) ? getModel(tab.model).slug : ''" :data-tab-id="tab.id">
                 <div class="row">
                     <div v-if="hasTabs(tab.fields) || isModel(tab)" :class="{ model : isModel(tab) }" class="col-lg-12">
@@ -161,8 +164,8 @@ export default {
 
             return tabs;
         },
-        hasNoTabs(){
-            return this.getTabs.filter(function(item){
+        hasTabsAvailable(){
+            return !(this.getTabs.filter(function(item){
                 if ( ! this.isTab(item) )
                     return false;
 
@@ -170,7 +173,7 @@ export default {
                     return false;
 
                 return true;
-            }.bind(this)).length == 1 && this.getTabs[0].default === true;
+            }.bind(this)).length == 1 && this.getTabs[0].default === true);
         },
         isOpenedRow(){
             return this.row && 'id' in this.row;

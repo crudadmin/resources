@@ -19,7 +19,6 @@ var Fields = (Model) => {
     Model.prototype.optionsFilter = function(key, filter){
         this.fields[key].optionsFilter = filter;
     }
-
 };
 
 export default Fields;

@@ -112,6 +112,9 @@ aside.main-sidebar {
                     display: block;
                     width: 100%;
                     position: relative;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
 
                     i.icon {
                         @include fontSize(15px);
