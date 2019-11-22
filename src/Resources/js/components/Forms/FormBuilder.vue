@@ -31,7 +31,7 @@
                                 <span class="text">{{ getLangName(selectedLanguage) }}</span>
                                 <i class="--icon-right fa fa-angle-down"></i>
                             </button>
-                            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
                                 <li v-for="lang in languages" v-if="selectedLanguage.id != lang.id" :data-slug="lang.slug">
                                     <a href="#" @click.prevent="changeLanguage(lang.id)">
                                         <i class="--icon-left fa fa-exclamation-triangle"></i> {{ getLangName(lang) }}

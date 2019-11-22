@@ -9,4 +9,8 @@
 
 .btn-default {
     background: #DEE3E8;
+
+    &:hover {
+        background: darken(#DEE3E8, 10%);
+    }
 }

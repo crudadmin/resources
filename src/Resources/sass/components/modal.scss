@@ -1,6 +1,10 @@
 .message-modal .modal {
     background: rgba(0, 0, 0, 0.2);
 
+    > .modal {
+        z-index: 999;
+    }
+
     &.modal-success {
         .modal-content {
             background: #00a65a;
@@ -32,6 +36,17 @@
     .modal-body {
         p:last-child {
             margin-bottom: 0;
+        }
+
+        p > a, > a {
+            color: white;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        p > a:hover, > a:hover {
+            color: white;
+            text-decoration: none;
         }
     }
 }

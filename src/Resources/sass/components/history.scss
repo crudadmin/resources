@@ -1,1 +1,20 @@
 .th-history-buttons { width: 51px }
+
+.message-modal {
+    &--history {
+        .modal-dialog {
+            max-width: 700px;
+
+            table {
+                background: white;
+                width: 100%;
+                max-width: 700px;
+                margin-bottom: 0;
+            }
+
+            .modal-body {
+                max-height: 380px; overflow-y: auto;
+            }
+        }
+    }
+}

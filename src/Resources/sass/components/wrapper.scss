@@ -165,6 +165,27 @@
                     }
                 }
 
+                .btn {
+                    white-space: nowrap;
+                }
+
+                .admin-header__title {
+                    @include fontSize(20px);
+                    font-weight: 400;
+                    margin-bottom: 0;
+
+                    .--icon-left { margin-right: 5px; }
+                    .--icon-right { margin-left: 5px; }
+                }
+
+                .admin-header__description {
+                    display: block;
+                    @include fontSize(16px);
+                    color: $darkText;
+                    margin: 4px 0 0 0;
+                    font-weight: 400;
+                }
+
                 .search-bar {
                     margin-top: -1px;
                     margin-bottom: -1px;

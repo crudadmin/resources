@@ -32,6 +32,12 @@
                             <li v-for="(button, button_key) in availableButtons"><a @click="buttonAction(button_key, button)"><i class="fa" :class="button.icon"></i> {{ button.name }}</a></li>
                         </ul>
                     </div>
+
+                    <div class="pagination-limit" v-if="isPaginationEnabled" :title="trans('rows-count')">
+                        <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
+                            <option v-for="count in pagination.limits">{{ count }}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 

@@ -16,14 +16,16 @@
         </div>
 
         <div :data-depth="depth_level" :class="[ { 'single-mode' : model.isSingle(), 'is-in-parent' : model.isInParent(), 'box-warning' : model.isSingle() } ]" v-show="canShowForm || (hasRows && canShowRows || isSearching)">
-
             <div class="admin-header" :class="{ 'with-border' : model.isSingle() }" v-show="ischild && (!model.in_tab || isEnabledGrid || canShowSearchBar) || ( !model.isSingle() && (isEnabledGrid || canShowSearchBar))">
                 <div class="left">
-                    <h3 v-if="ischild" class="box-title">{{ model.name }}</h3>
-                    <span class="model-info" v-if="model.title && ischild" v-html="model.title"></span>
+                    <div>
+                        <h3 v-if="ischild" class="admin-header__title">{{ model.name }}</h3>
+                        <span class="admin-header__description" v-if="model.title && ischild" v-html="model.title"></span>
+                    </div>
                 </div>
 
                 <div class="right" v-if="!model.isSingle()">
+                    <!-- Search bar -->
                     <div class="search-bar" data-search-bar :class="{ interval : search.interval, resetRightBorders : canBeInterval || canResetSearch, hasResetButton : canResetSearch  }" :id="getFilterId" v-show="canShowSearchBar">
                         <div class="input-group">
                             <div class="dropdown">
@@ -72,11 +74,25 @@
                         </div>
                     </div>
 
+                    <!-- Grid size -->
                     <ul class="change-grid-size" v-if="isEnabledGrid" data-toggle="tooltip" :data-original-title="trans('edit-size')">
                         <li v-for="size in sizes" :data-size="size.key" :class="{ 'active' : size.active, 'disabled' : size.disabled }" @click="changeSize(size)">{{ size.name }}</li>
                     </ul>
 
-                    <button v-if="isOpenedRow && canAddRow && !model.isSingle()" data-create-new-row @click.prevent="resetForm(true)" type="button" class="btn--icon btn btn-primary">
+                    <!-- Choose language -->
+                    <div class="dropdown" v-if="hasLanguages && isActiveLanguageSwitch" data-global-language-switch>
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <i class="--icon-left fa fa-globe-americas"></i>
+                            {{ selectedRootLanguage ? getLangName(selectedRootLanguage) : trans('language-mutation') }}
+                            <i class="--icon-right fa fa-angle-down"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li v-for="language in languages" :class="{ active : langid == language.id }" @click="changeLanguage(language.id)">{{ getLangName(language) }}</li>
+                        </ul>
+                    </div>
+
+                    <!-- Add new row -->
+                    <button v-if="canAddRow && !model.isSingle()" data-create-new-row @click.prevent="resetForm(true, true)" type="button" class="btn--icon btn btn-primary">
                         <i class="fa fa-plus"></i>
                         {{ newRowTitle() }}
                     </button>
@@ -172,10 +188,10 @@
             return {
                 model: this.model_builder,
                 sizes : [
-                    { size : 8, key : 'small', name : 'Small', active : false, disabled : false },
-                    { size : 6, key : 'medium', name : 'Medium', active : false, disabled : false },
-                    { size : 4, key : 'big', name : 'Big', active : false, disabled : false },
-                    { size : 0, key : 'full', name : 'Full width', active : false, disabled : false },
+                    { size : 4, key : 'small', name : 'Veľky formulár', active : false, disabled : false },
+                    { size : 8, key : 'big', name : 'Veľká tabuľka', active : false, disabled : false },
+                    { size : 6, key : 'medium', name : 'Vedľa seba', active : false, disabled : false },
+                    { size : 0, key : 'full', name : 'Plná šírka', active : false, disabled : false },
                 ],
 
                 activeSize : null,
@@ -321,6 +337,12 @@
         },
 
         methods : {
+            changeLanguage(id){
+                this.$root.language_id = id;
+            },
+            getLangName(lang){
+                return this.$root.getLangName(lang);
+            },
             /*
              * Send all avaiable row events
              */
@@ -671,12 +693,14 @@
             newRowTitle(){
                 return this.$root.getModelProperty(this.model, 'settings.buttons.insert', this.trans('new-row'));
             },
-            resetForm(scroll){
-                //We do not want reset object is is already empty instance
-                //Because if component receives getParentRow, and then will be rewrited row observer
-                //Changes in this component wont be interactive
-                if ( ! _.isEqual(this.row, this.emptyRowInstance()) ) {
-                    this.row = this.emptyRowInstance();
+            resetForm(scroll, dontResetIfNotOpened){
+                if ( ! dontResetIfNotOpened || this.isOpenedRow ) {
+                    //We do not want reset object is is already empty instance
+                    //Because if component receives getParentRow, and then will be rewrited row observer
+                    //Changes in this component wont be interactive
+                    if ( ! _.isEqual(this.row, this.emptyRowInstance()) ) {
+                        this.row = this.emptyRowInstance();
+                    }
                 }
 
                 if ( scroll === true ) {
@@ -715,6 +739,15 @@
         },
 
         computed: {
+            selectedRootLanguage(){
+                return _.find(this.languages, { id : parseInt(this.langid) });
+            },
+            hasLanguages(){
+                return this.languages.length > 0;
+            },
+            isActiveLanguageSwitch(){
+                return this.$root.languages_active == true ? 1 : 0;
+            },
             formID(){
                 return 'form-' + this.depth_level + '-' + this.model.slug;
             },

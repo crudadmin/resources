@@ -1,24 +1,9 @@
 <template>
     <div>
         <section class="sidebar">
-            <div>
-                <ul class="sidebar-menu" v-if="hasLanguages && isActive">
-                    <li class="header">
-                        {{ trans('language-mutation') }}
-                        <div v-if="hasLanguages && isActive" class="form-group language_select" data-toggle="tooltip" title="" :data-original-title="trans('change-language')">
-                            <select @change="changeLanguage" class="form-control" data-global-language-switch>
-                                <option v-for="language in languages" :selected="langid == language.id" :value="language.id">{{ getLangName(language) }}</option>
-                            </select>
-                        </div>
-                    </li>
-                </ul>
-
-                <!-- Sidebar Menu -->
-                <ul class="sidebar-menu">
-                    <sidebar-row v-for="(row, key) in groups" :key="key" :row="row"></sidebar-row>
-                </ul>
-                <!-- /.sidebar-menu -->
-            </div>
+            <ul class="sidebar-menu">
+                <sidebar-row v-for="(row, key) in groups" :key="key" :row="row"></sidebar-row>
+            </ul>
         </section>
 
         <div class="footer-sidebar">
@@ -65,19 +50,10 @@ export default {
             }
 
             return groups;
-        },
-        hasLanguages(){
-            return this.languages.length > 0;
-        },
-        isActive(){
-            return this.$root.languages_active == true ? 1 : 0;
         }
     },
 
     methods: {
-        changeLanguage(e){
-            this.$parent.language_id = e.target.value;
-        },
         addActiveTreeClasses(){
             var owner = $('.sidebar li[data-slug="'+this.$router.currentRoute.params.model+'"]');
 
@@ -86,9 +62,6 @@ export default {
             $('.sidebar .treeview-menu a').click(function(){
                 $(this).parent().siblings('.active').removeClass('active').find('.menu-open').slideUp();
             });
-        },
-        getLangName(lang){
-            return this.$root.getLangName(lang);
         },
         hasActiveModule(modules){
             for ( var key in modules )

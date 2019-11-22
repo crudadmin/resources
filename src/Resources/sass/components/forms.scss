@@ -218,4 +218,21 @@
             max-width: inherit;
         }
     }
+
+    /*
+     * Selects
+     */
+    .chosen-container {
+        .search-choice {
+            background-image: none !important;
+
+            span {
+                color: $blackText;
+            }
+        }
+
+        .chosen-results li.highlighted {
+            background: $primary !important;
+        }
+    }
 }

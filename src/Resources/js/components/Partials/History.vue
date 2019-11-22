@@ -1,52 +1,50 @@
 <template>
-    <div class="history-table">
+    <div class="message-modal message-modal--history">
         <!-- MODAL -->
-        <div class="example-modal">
-            <div class="modal modal-default" style="display: block">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" @click="closeHistory" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                            <h4 class="modal-title">{{ trans('history.changes') }}</h4>
-                        </div>
-                        <div class="modal-body">
-                            <table class="table data-table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th class="td-id">{{ trans('number') }}</th>
-                                        <th>{{ trans('history.who') }}</th>
-                                        <th>{{ trans('history.count') }}</th>
-                                        <th>{{ trans('history.date') }}</th>
-                                        <th class="th-history-buttons"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(item, $index) in sortedHistory" :data-history-id="item.id">
-                                        <td class="td-id">{{ history.rows.length - $index }}</td>
-                                        <td>{{ item.user ? item.user.username : trans('history.system') }}</td>
-                                        <td data-changes-length>
-                                            <span data-toggle="tooltip" title="" :data-original-title="changedFields(item)">{{ item.changed_fields.length }} <i class="fa fa-eye"></i></span>
-                                        </td>
-                                        <td>{{ date(item.created_at) }}</td>
-                                        <td>
-                                            <div><button type="button" v-on:click="applyChanges(item)" class="btn btn-sm btn-success" v-bind:class="{ 'enabled-history' : history.history_id == item.id }" data-toggle="tooltip" :title="trans('history.show')" :data-original-title="trans('history.show-changes')"><i class="fa fa-eye"></i></button></div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" @click="closeHistory" class="btn btn-primary">{{ trans('close') }}</button>
-                        </div>
+        <div class="modal modal-default" style="display: block">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ trans('history.changes') }}</h4>
+                        <button type="button" class="close" @click="closeHistory" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
                     </div>
-                    <!-- /.modal-content -->
+                    <div class="modal-body">
+                        <table class="table data-table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="td-id">{{ trans('number') }}</th>
+                                    <th>{{ trans('history.who') }}</th>
+                                    <th>{{ trans('history.count') }}</th>
+                                    <th>{{ trans('history.date') }}</th>
+                                    <th class="th-history-buttons"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, $index) in sortedHistory" :data-history-id="item.id">
+                                    <td class="td-id">{{ history.rows.length - $index }}</td>
+                                    <td>{{ item.user ? item.user.username : trans('history.system') }}</td>
+                                    <td data-changes-length>
+                                        <span data-toggle="tooltip" title="" :data-original-title="changedFields(item)">{{ item.changed_fields.length }} <i class="fa fa-eye"></i></span>
+                                    </td>
+                                    <td>{{ date(item.created_at) }}</td>
+                                    <td>
+                                        <div><button type="button" v-on:click="applyChanges(item)" class="btn btn-sm btn-success" v-bind:class="{ 'enabled-history' : history.history_id == item.id }" data-toggle="tooltip" :title="trans('history.show')" :data-original-title="trans('history.show-changes')"><i class="fa fa-eye"></i></button></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" @click="closeHistory" class="btn btn-primary">{{ trans('close') }}</button>
+                    </div>
                 </div>
-                <!-- /.modal-dialog -->
+                <!-- /.modal-content -->
             </div>
-            <!-- /.modal -->
+            <!-- /.modal-dialog -->
         </div>
+        <!-- /.modal -->
     </div>
 </template>
 

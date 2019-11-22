@@ -4,11 +4,6 @@
 .data-table td {line-height: 198% !important;}
 .table { margin-bottom: 6px; }
 
-/* Modal links, for exports etc, from buttons response... */
-.message-modal > .modal { z-index: 99999999999; }
-.message-modal .modal-dialog .modal-body p > a, .message-modal .modal-dialog .modal-body > a { color: white; font-weight: 600; text-decoration: underline; }
-.message-modal modal-dialog .modal-body p > a:hover, .message-modal .modal-dialog .modal-body > a:hover { color: white; text-decoration: none; }
-
 @media screen and (min-width: 768px) {
     .content .box > .box-body > .box {
         margin-left: 40px;
@@ -80,7 +75,6 @@
 
 .sidebar-menu, .main-sidebar .user-panel, .sidebar-menu > li.header { overflow: visible; }
 
-.model-info { color: #888 }
 .form-group label i.localized { font-size: 12px; margin-right: 3px; }
 .form-group input.js_date, .search-bar input.js_date { background: white }
 .form-group textarea.js_editor { display: block;min-height: 321px;width: 100%;opacity: 0.2;padding: 10px; }
@@ -203,9 +197,6 @@ select[multiple] {height: 34px;color: white;}
 .form-group .modal > .modal-dialog > .modal-content > .modal-body > div > .box > .box-body {padding: 0;margin-bottom: -15px;}
 
 form label span.required { color: red; position: relative; top: 2px }
-
-.history-table table { background: white; width: 100%; max-width: 700px; margin-bottom: 0;}
-.history-table .modal-body { max-height: 380px; overflow-y: auto; }
 
 .gettext-table table { background: white; width: 100%; max-width: 700px; margin-bottom: 0;}
 .gettext-table .modal-body { overflow-y: auto; }
@@ -17143,6 +17134,10 @@ aside.main-sidebar .footer-sidebar p a {
   background: #DEE3E8;
 }
 
+.btn-default:hover {
+  background: #c0cad3;
+}
+
 .wrapper {
   display: flex;
   min-height: calc(100vh - 70px);
@@ -17335,6 +17330,34 @@ aside.main-sidebar .footer-sidebar p a {
   margin-right: 15px;
 }
 
+.wrapper .content-wrapper .crudadmin-wrapper .admin-header .btn {
+  white-space: nowrap;
+}
+
+.wrapper .content-wrapper .crudadmin-wrapper .admin-header .admin-header__title {
+  font-size: 20px;
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+.wrapper .content-wrapper .crudadmin-wrapper .admin-header .admin-header__title .\--icon-left {
+  margin-right: 5px;
+}
+
+.wrapper .content-wrapper .crudadmin-wrapper .admin-header .admin-header__title .\--icon-right {
+  margin-left: 5px;
+}
+
+.wrapper .content-wrapper .crudadmin-wrapper .admin-header .admin-header__description {
+  display: block;
+  font-size: 16px;
+  font-size: 1rem;
+  color: #8292A5;
+  margin: 4px 0 0 0;
+  font-weight: 400;
+}
+
 .wrapper .content-wrapper .crudadmin-wrapper .admin-header .search-bar {
   margin-top: -1px;
   margin-bottom: -1px;
@@ -17433,18 +17456,25 @@ aside.main-sidebar .footer-sidebar p a {
 .dropdown button {
   font-size: 14px;
   font-size: 0.875rem;
+}
+
+.dropdown:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger):not(.btn-info):not(.btn-dark):not(.btn-default),
+.dropdown button:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger):not(.btn-info):not(.btn-dark):not(.btn-default) {
   color: #8292A5;
 }
 
 .dropdown button {
-  background: white;
   border: 1px solid #DEE3E8;
   border-radius: 4px;
   display: flex;
   align-items: center;
 }
 
-.dropdown button:hover {
+.dropdown button:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger):not(.btn-info):not(.btn-dark):not(.btn-default) {
+  background: white;
+}
+
+.dropdown button:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger):not(.btn-info):not(.btn-dark):not(.btn-default):hover {
   background: #FCFCFC;
   color: #8292A5;
 }
@@ -17536,10 +17566,18 @@ aside.main-sidebar .footer-sidebar p a {
   text-decoration: none;
 }
 
-.dropdown ul li:hover,
-.dropdown ul .dropdown-item:hover,
-.dropdown .dropdown-menu li:hover,
-.dropdown .dropdown-menu .dropdown-item:hover {
+.dropdown ul li.active,
+.dropdown ul .dropdown-item.active,
+.dropdown .dropdown-menu li.active,
+.dropdown .dropdown-menu .dropdown-item.active {
+  background: #F3F6F6;
+  color: #41464C;
+}
+
+.dropdown ul li:not(.active):hover,
+.dropdown ul .dropdown-item:not(.active):hover,
+.dropdown .dropdown-menu li:not(.active):hover,
+.dropdown .dropdown-menu .dropdown-item:not(.active):hover {
   background: #FCFCFC;
 }
 
@@ -17957,6 +17995,9 @@ aside.main-sidebar .footer-sidebar p a {
   /*
    * Form in modal settings
    */
+  /*
+   * Selects
+   */
 }
 
 .form-group label {
@@ -18134,8 +18175,24 @@ aside.main-sidebar .footer-sidebar p a {
   }
 }
 
+.form-group .chosen-container .search-choice {
+  background-image: none !important;
+}
+
+.form-group .chosen-container .search-choice span {
+  color: #41464C;
+}
+
+.form-group .chosen-container .chosen-results li.highlighted {
+  background: #4A54E2 !important;
+}
+
 .message-modal .modal {
   background: rgba(0, 0, 0, 0.2);
+}
+
+.message-modal .modal > .modal {
+  z-index: 999;
 }
 
 .message-modal .modal.modal-success .modal-content {
@@ -18172,8 +18229,37 @@ aside.main-sidebar .footer-sidebar p a {
   margin-bottom: 0;
 }
 
+.message-modal .modal .modal-body p > a,
+.message-modal .modal .modal-body > a {
+  color: white;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.message-modal .modal .modal-body p > a:hover,
+.message-modal .modal .modal-body > a:hover {
+  color: white;
+  text-decoration: none;
+}
+
 .th-history-buttons {
   width: 51px;
+}
+
+.message-modal--history .modal-dialog {
+  max-width: 700px;
+}
+
+.message-modal--history .modal-dialog table {
+  background: white;
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 0;
+}
+
+.message-modal--history .modal-dialog .modal-body {
+  max-height: 380px;
+  overflow-y: auto;
 }
 
 body {

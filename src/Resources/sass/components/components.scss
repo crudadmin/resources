@@ -1,19 +1,25 @@
 .dropdown {
     &, button {
         @include fontSize(14px);
-        color: $darkText;
+
+        &:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger):not(.btn-info):not(.btn-dark):not(.btn-default) {
+            color: $darkText;
+        }
     }
 
     button {
-        background: white;
         border: 1px solid $inputBorderColor;
         border-radius: $inputRadius;
         display: flex;
         align-items: center;
 
-        &:hover {
-            background: #FCFCFC;
-            color: $darkText;
+        &:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger):not(.btn-info):not(.btn-dark):not(.btn-default) {
+            background: white;
+
+            &:hover {
+                background: #FCFCFC;
+                color: $darkText;
+            }
         }
 
         i {
@@ -63,7 +69,12 @@
                 }
             }
 
-            &:hover {
+            &.active {
+                background: #F3F6F6;
+                color: #41464C;
+            }
+
+            &:not(.active):hover {
                 background: #FCFCFC;
             }
 
