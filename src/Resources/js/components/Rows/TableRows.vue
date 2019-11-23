@@ -68,8 +68,9 @@ export default {
         this.resetAllowedColumns();
 
         //Automaticaly choose size of tables
-        if ( this.autoSize == false )
-            this.$parent.$parent.checkActiveSize( this.columns );
+        if ( this.autoSize == false ) {
+            this.$parent.$parent.checkActiveGridSize( this.columns );
+        }
 
         //On history change
         eventHub.$on('selectHistoryRow', this.selectHistoryRowEvent = data => {
@@ -554,9 +555,8 @@ export default {
             return k;
         },
         scrollToForm(){
-
             //Allow scroll form only on full width table
-            if ( this.$parent.$parent.activeSize != 0 )
+            if ( this.$parent.$parent.activeGridSize != 0 )
                 return;
 
             setTimeout(() => {

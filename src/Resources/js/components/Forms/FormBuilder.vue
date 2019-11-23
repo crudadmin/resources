@@ -74,6 +74,7 @@
                         :cansave="cansave"
                         :hasparentmodel="hasparentmodel"
                         :depth_level="depth_level"
+                        :parentActiveGridSize="parentActiveGridSize"
                         :history="history">
                     </form-tabs-builder>
                 </div>
@@ -113,7 +114,7 @@ import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
 export default {
     name : 'form-builder',
 
-    props : ['formID', 'model', 'row', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level'],
+    props : ['formID', 'model', 'row', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level', 'parentActiveGridSize'],
 
     components: { FormTabsBuilder },
 

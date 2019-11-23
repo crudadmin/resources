@@ -76,7 +76,7 @@
 
                     <!-- Grid size -->
                     <ul class="change-grid-size" v-if="isEnabledGrid" data-toggle="tooltip" :data-original-title="trans('edit-size')">
-                        <li v-for="size in sizes" :data-size="size.key" :class="{ 'active' : size.active, 'disabled' : size.disabled }" @click="changeSize(size)">{{ size.name }}</li>
+                        <li v-for="size in sizes" :data-size="size.key" v-if="!size.disabled" :class="{ 'active' : size.active, 'disabled' : size.disabled }" @click="changeSize(size)">{{ size.name }}</li>
                     </ul>
 
                     <!-- Choose language -->
@@ -92,7 +92,7 @@
                     </div>
 
                     <!-- Add new row -->
-                    <button v-if="canAddRow && !model.isSingle()" data-create-new-row @click.prevent="resetForm(true, true)" type="button" class="btn--icon btn btn-primary">
+                    <button v-if="canAddRow && !model.isSingle()" data-create-new-row @click.prevent="resetForm(true, true, true)" type="button" class="btn--icon btn btn-primary">
                         <i class="fa fa-plus"></i>
                         {{ newRowTitle() }}
                     </button>
@@ -100,9 +100,9 @@
             </div>
 
             <div class="admin-model__body">
-                <div :class="{ 'row' : true, 'grid-fullsize' : activeSize == 0 }">
+                <div :class="{ 'row' : true, 'grid-fullsize' : activeGridSize == 0 }">
                     <!-- left column -->
-                    <div :class="['col-lg-'+(12 - activeSize)]" class="col col--form col-md-12 col-sm-12" v-show="canShowForm" v-if="activetab!==false">
+                    <div :class="['col-lg-'+(12 - activeGridSize)]" class="col col--form col-md-12 col-sm-12" v-show="canShowForm" v-if="activetab!==false">
                         <form-builder
                             :formID="formID"
                             :progress.sync="progress"
@@ -115,13 +115,14 @@
                             :hasparentmodel="hasparentmodelMutated"
                             :gettext_editor.sync="gettext_editor"
                             :depth_level="depth_level"
+                            :parentActiveGridSize="activeGridSize"
                             :row.sync="row"
                         ></form-builder>
                     </div>
                     <!--/.col (left) -->
 
                     <!-- right column -->
-                    <div :class="['col-lg-'+(12-(12-activeSize))]" class="col col--rows col-md-12 col-sm-12" v-show="canShowRows">
+                    <div :class="['col-lg-'+(12-(12-activeGridSize))]" class="col col--rows col-md-12 col-sm-12" v-show="canShowRows">
                         <model-rows-builder
                             :model.sync="model"
                             :rows.sync="rows"
@@ -149,6 +150,7 @@
                     :langid="langid"
                     :ischild="true"
                     :model="getModel(child)"
+                    :parentActiveGridSize="activeGridSize"
                     :activetab="activetab"
                     :parentrow="row">
                 </model-builder>
@@ -178,7 +180,7 @@
     import ModelHelper from '../Helpers/ModelHelper.js';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel'],
+        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize'],
 
         name : 'model-builder',
 
@@ -193,8 +195,6 @@
                     { size : 6, key : 'medium', name : 'Vedľa seba', active : false, disabled : false },
                     { size : 0, key : 'full', name : 'Plná šírka', active : false, disabled : false },
                 ],
-
-                activeSize : null,
 
                 row : this.emptyRowInstance(this.model_builder),
 
@@ -262,6 +262,8 @@
             this.updateParentChildData();
 
             this.setModelEvents();
+
+            this.checkParentGridSize(this.parentActiveGridSize);
         },
 
         destroyed(){
@@ -269,25 +271,8 @@
         },
 
         watch : {
-            sizes : {
-                deep: true,
-                handler(data){
-                    this.activeSize = data.filter(function(row){
-
-                        if ( row.active == true )
-                        {
-                            var rows = this.getStorage();
-                                rows[ this.model.slug ] = row.size;
-                                rows[ this.model.slug + '_default' ] = this.$root.getModelProperty(this.model, 'settings.grid.default');
-
-                            localStorage.sizes = JSON.stringify( rows );
-                        }
-
-                        return row.active == true;
-                    }.bind(this))[0].size;
-
-                    this.activeSize;
-                }
+            parentActiveGridSize(parentSize){
+                this.checkParentGridSize(parentSize);
             },
             search : {
                 deep : true,
@@ -297,8 +282,9 @@
                 },
             },
             activetab(value){
-                if ( value === true )
+                if ( value === true ) {
                     this.sendRowsData();
+                }
             },
             parentrow(row, oldrow){
                 //When parent row has been changed, then load children rows
@@ -337,6 +323,32 @@
         },
 
         methods : {
+            checkParentGridSize(parentSize){
+                if ( [null, undefined].indexOf(parentSize) > -1 )
+                    return;
+
+                for ( var key in this.sizes ){
+                    //If grid parent size is on full width, then enable all grid sizes in this model
+                    if ( parentSize == 0 && this.depth_level <= 1 ) {
+                        this.sizes[key].disabled = false;
+                    }
+
+                    //If grid parent size has small form, or model is sub in third level, then disable all except full screen
+                    else if ( (parentSize == 8 || this.depth_level >= 2) && [0].indexOf(this.sizes[key].size) === -1 ) {
+                        this.sizes[key].disabled = true;
+                    }
+
+                    //Disable all small sizes
+                    else if ( [0, 6].indexOf(this.sizes[key].size) === -1  ) {
+                        this.sizes[key].disabled = true;
+                    }
+
+                    //Enable other options
+                    else {
+                        this.sizes[key].disabled = false;
+                    }
+                }
+            },
             changeLanguage(id){
                 this.$root.language_id = id;
             },
@@ -564,18 +576,16 @@
                 return $.parseJSON(localStorage.sizes||'{}')||{};
             },
             enableOnlyFullScreen(){
-                    for ( var key in this.sizes )
-                    {
-                        if ( key != 3 )
-                        {
-                            this.sizes[key].disabled = true;
-                            this.sizes[key].active = false;
-                        }
+                for ( var key in this.sizes ) {
+                    if ( key != 3 ) {
+                        this.sizes[key].disabled = true;
+                        this.sizes[key].active = false;
                     }
+                }
 
-                    return this.sizes[3].active = true;
+                return this.sizes[3].active = true;
             },
-            checkActiveSize(columns){
+            checkActiveGridSize(columns){
                 var data = this.getStorage(),
                     defaultValue = this.$root.getModelProperty(this.model, 'settings.grid.default');
 
@@ -693,7 +703,7 @@
             newRowTitle(){
                 return this.$root.getModelProperty(this.model, 'settings.buttons.insert', this.trans('new-row'));
             },
-            resetForm(scroll, dontResetIfNotOpened){
+            resetForm(scroll, dontResetIfNotOpened, resetActiveTab){
                 if ( ! dontResetIfNotOpened || this.isOpenedRow ) {
                     //We do not want reset object is is already empty instance
                     //Because if component receives getParentRow, and then will be rewrited row observer
@@ -708,10 +718,18 @@
 
                     this.pulseForm();
                 }
+
+                if ( resetActiveTab === true ) {
+                    eventHub.$emit('changeActiveTab', {
+                        table : this.model.table,
+                        depth_level : this.depth_level,
+                        activetab : 0,
+                    });
+                }
             },
             pulseForm(){
                 //If is not full grid, then animate form
-                if ( this.activeSize == 0 && this.canShowRows )
+                if ( this.activeGridSize == 0 && this.canShowRows && this.depth_level == 0 )
                     return;
 
                 var form = $('#'+this.formID);
@@ -759,6 +777,21 @@
         },
 
         computed: {
+            activeGridSize(){
+                var size = this.sizes.filter(row => {
+                    if ( row.active == true ) {
+                        var rows = this.getStorage();
+                            rows[ this.model.slug ] = row.size;
+                            rows[ this.model.slug + '_default' ] = this.$root.getModelProperty(this.model, 'settings.grid.default');
+
+                        localStorage.sizes = JSON.stringify( rows );
+                    }
+
+                    return row.active == true;
+                });
+
+                return size[0] ? size[0].size : null;
+            },
             canShowAdminHeader(){
                 return (
                     this.ischild
@@ -790,11 +823,11 @@
                 return 'form-' + this.depth_level + '-' + this.model.slug;
             },
             hasparentmodelMutated(){
-                    //If parent model builder does not exists
-                    if ( [null, undefined].indexOf(this.hasparentmodel) > -1 )
-                        return true;
+                //If parent model builder does not exists
+                if ( [null, undefined].indexOf(this.hasparentmodel) > -1 )
+                    return true;
 
-                    return this.hasparentmodel;
+                return this.hasparentmodel;
             },
             canBeInterval(){
                 var column = this.search.column;
@@ -824,6 +857,22 @@
             },
             //Checks if is enabled grid system
             isEnabledGrid(){
+                var enabled = _.filter(this.sizes, { disabled : false }),
+                    active = _.find(this.sizes, { active : true });
+
+                if ( enabled.length <= 1 || (active && active.disabled == true) ) {
+                    //Disable all active items
+                    _.filter(this.sizes, { active : true }).forEach(item => {
+                        item.active = false;
+                    })
+
+                    if ( enabled[0] ) {
+                        enabled[0].active = true;
+                    }
+
+                    return false;
+                }
+
                 if ( this.$root.getModelProperty(this.model, 'settings.grid.enabled') === false || this.$root.getModelProperty(this.model, 'settings.grid.disabled') === true )
                     return false;
 

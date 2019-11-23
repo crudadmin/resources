@@ -20562,11 +20562,10 @@ aside.main-sidebar .footer-sidebar p a {
 
 .wrapper .content-wrapper .crudadmin-wrapper .admin-model .admin-model__header ul.change-grid-size li {
   list-style: none;
-  height: 36px;
   background: white;
   display: flex;
   align-items: center;
-  padding: 0 15px;
+  padding: 7px 15px;
 }
 
 .wrapper .content-wrapper .crudadmin-wrapper .admin-model .admin-model__header ul.change-grid-size li:hover:not(.disabled):not(.active) {

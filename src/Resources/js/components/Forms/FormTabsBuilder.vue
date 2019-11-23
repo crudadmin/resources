@@ -32,6 +32,7 @@
                             :ischild="true"
                             :model_builder="getModel(tab.model)"
                             :activetab="isLoadedModel(getModel(tab.model), $index)"
+                            :parentActiveGridSize="parentActiveGridSize"
                             :parentrow="row">
                         </model-builder>
                     </div>
@@ -63,7 +64,7 @@ import ModelHelper from '../Helpers/ModelHelper.js';
 export default {
     name : 'form-tabs-builder',
 
-    props : ['model', 'row', 'history', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave', 'hasparentmodel', 'depth_level'],
+    props : ['model', 'row', 'history', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave', 'hasparentmodel', 'depth_level', 'parentActiveGridSize'],
 
     components : { FormGroup },
 
@@ -97,10 +98,18 @@ export default {
 
             this.$set(this.models_data, item.table, item);
         });
+
+        eventHub.$on('changeActiveTab', this.changeActiveTab = item => {
+            if ( this.depth_level != item.depth_level )
+                return;
+
+            this.activetab = item.activetab;
+        });
     },
 
     destroyed(){
         eventHub.$off('rowsChanged', this.rowsChangedEvent);
+        eventHub.$off('changeActiveTab', this.rowsChangedEvent);
     },
 
     watch: {
