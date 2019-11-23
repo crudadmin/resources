@@ -30,7 +30,7 @@
                             v-if="isField(item) && canRenderField(model.fields[item])"
                             v-for="langslug in getFieldLangs(model.fields[item])"
                             v-show="canShowField(model.fields[item]) && canShowLanguageField(model.fields[item], langslug, inputlang)"
-                            class="col-12">
+                            class="fields-group__item col-12">
                             <form-input-builder
                                 :key="item"
                                 :history="history"

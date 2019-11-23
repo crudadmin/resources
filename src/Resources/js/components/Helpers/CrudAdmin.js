@@ -20,10 +20,10 @@ const CrudAdmin = {
         faMigrator(icon){
             return fontAwesomeMigrator(icon);
         },
-        scrollTo(id){
+        scrollTo(id, callback){
             $('html, body').animate({
                 scrollTop: $(id).offset().top - 10
-            }, 500);
+            }, 500, callback);
         }
     }
 }

@@ -106,10 +106,6 @@
 
     &.card--form {
         margin-bottom: $form-group-margin-bottom;
-
-        .card-body {
-            padding-bottom: minZero(($navbarPadding / 2) - $form-group-margin-bottom);
-        }
     }
 }
 
@@ -119,6 +115,7 @@
 
         .nav-link {
             border: 0 !important;
+            border-radius: 0;
 
             &:hover {
                 background: #FCFCFC;
@@ -140,7 +137,6 @@
         border-top: 0;
 
         &.tab-content--form {
-            padding-bottom: minZero(($navbarPadding / 2) - $form-group-margin-bottom);
             margin-bottom: $form-group-margin-bottom;
         }
     }

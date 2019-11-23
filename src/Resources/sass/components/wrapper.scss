@@ -29,16 +29,6 @@
         .crudadmin-wrapper {
             padding: $navbarPadding;
 
-            .grid-fullsize {
-                .col.col--form {
-                    order: 2;
-                }
-
-                .col.col--rows {
-                    margin-bottom: $navbarPadding;
-                }
-            }
-
             .box {
                 background: white;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.13);
@@ -151,139 +141,177 @@
                 }
             }
 
-            .admin-header {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: $navbarPadding;
 
-                .left, .right {
+            .admin-model {
+                .admin-model__header {
                     display: flex;
-                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: $navbarPadding;
 
-                    > *:not(:last-child) {
-                        margin-right: $navbarPadding / 2;
-                    }
-                }
-
-                .btn {
-                    white-space: nowrap;
-                }
-
-                .admin-header__title {
-                    @include fontSize(20px);
-                    font-weight: 400;
-                    margin-bottom: 0;
-
-                    .--icon-left { margin-right: 5px; }
-                    .--icon-right { margin-left: 5px; }
-                }
-
-                .admin-header__description {
-                    display: block;
-                    @include fontSize(16px);
-                    color: $darkText;
-                    margin: 4px 0 0 0;
-                    font-weight: 400;
-                }
-
-                .search-bar {
-                    margin-top: -1px;
-                    margin-bottom: -1px;
-
-                    .dropdown {
-                        button {
-                            height: 100%;
-                            border-radius: $inputRadius 0 0 $inputRadius;
-                            border-right: 0;
-                        }
-                    }
-
-                    input.form-control {
-                        height: 38px;
-                        border-top-right-radius: $inputRadius;
-                        border-bottom-right-radius: $inputRadius;
-                    }
-
-                    &.hasResetButton {
-                        .form-control {
-                            border-radius: 0;
-                        }
-                    }
-
-                    &.resetRightBorders {
-                        .form-control:not([data-inerval-input]) {
-                            border-radius: 0;
-                        }
-                    }
-
-                    .interval-btn {
-                        display: flex;
-                        width: 30px;
-                        @include fontSize(14px);
-                        max-width: 350px;
-
-                        button {
-                            padding: 4px;
-                            border-radius: 0;
-                            border-left: 0;
-                            width: 100%;
-                            box-shadow: none;
-                        }
-                    }
-
-                    [data-reset-interval] button {
-                        border-top-left-radius: 0;
-                        border-bottom-left-radius: 0;
-                    }
-
-                    .btn i {
-                        @include fontSize(12px);
-                    }
-                }
-
-                ul.change-grid-size {
-                    display: flex;
-                    padding-left: 0;
-                    margin-bottom: 0;
-                    border: 1px solid $inputBorderColor;
-                    border-radius: $inputRadius;
-                    @include fontSize(14px);
-                    color: $darkText;
-                    cursor: pointer;
-                    margin-top: -1px;
-                    margin-bottom: -1px;
-                    overflow: hidden;
-
-                    li {
-                        list-style: none;
-                        height: 36px;
-                        background: white;
+                    .left, .right {
                         display: flex;
                         align-items: center;
-                        padding: 0 15px;
 
-                        &:hover:not(.disabled):not(.active) {
-                            background: #FCFCFC;
+                        > *:not(:last-child) {
+                            margin-right: $navbarPadding / 2;
+                        }
+                    }
+
+                    .btn {
+                        white-space: nowrap;
+                    }
+
+                    .admin-header__title {
+                        @include fontSize(20px);
+                        font-weight: 400;
+                        margin-bottom: 0;
+
+                        .--icon-left { margin-right: 5px; }
+                        .--icon-right { margin-left: 5px; }
+                    }
+
+                    .admin-header__description {
+                        display: block;
+                        @include fontSize(16px);
+                        color: $darkText;
+                        margin: 4px 0 0 0;
+                        font-weight: 400;
+                    }
+
+                    .search-bar {
+                        margin-top: -1px;
+                        margin-bottom: -1px;
+
+                        .dropdown {
+                            button {
+                                height: 100%;
+                                border-radius: $inputRadius 0 0 $inputRadius;
+                                border-right: 0;
+                            }
                         }
 
-                        &.disabled {
-                            background: #f7f7f7;
-                            cursor: not-allowed;
-                            pointer-events: all !important;
+                        input.form-control {
+                            height: 38px;
+                            border-top-right-radius: $inputRadius;
+                            border-bottom-right-radius: $inputRadius;
                         }
 
-                        &.active {
-                            background: $primary;
-                            color: white;
+                        &.hasResetButton {
+                            .form-control {
+                                border-radius: 0;
+                            }
                         }
 
-                        &:not(:last-child) {
-                            border-right: 1px solid $inputBorderColor;
+                        &.resetRightBorders {
+                            .form-control:not([data-inerval-input]) {
+                                border-radius: 0;
+                            }
+                        }
+
+                        .interval-btn {
+                            display: flex;
+                            width: 30px;
+                            @include fontSize(14px);
+                            max-width: 350px;
+
+                            button {
+                                padding: 4px;
+                                border-radius: 0;
+                                border-left: 0;
+                                width: 100%;
+                                box-shadow: none;
+                            }
+                        }
+
+                        [data-reset-interval] button {
+                            border-top-left-radius: 0;
+                            border-bottom-left-radius: 0;
+                        }
+
+                        .btn i {
+                            @include fontSize(12px);
+                        }
+                    }
+
+                    ul.change-grid-size {
+                        display: flex;
+                        padding-left: 0;
+                        margin-bottom: 0;
+                        border: 1px solid $inputBorderColor;
+                        border-radius: $inputRadius;
+                        @include fontSize(14px);
+                        color: $darkText;
+                        cursor: pointer;
+                        margin-top: -1px;
+                        margin-bottom: -1px;
+                        overflow: hidden;
+
+                        li {
+                            list-style: none;
+                            height: 36px;
+                            background: white;
+                            display: flex;
+                            align-items: center;
+                            padding: 0 15px;
+
+                            &:hover:not(.disabled):not(.active) {
+                                background: #FCFCFC;
+                            }
+
+                            &.disabled {
+                                background: #f7f7f7;
+                                cursor: not-allowed;
+                                pointer-events: all !important;
+                            }
+
+                            &.active {
+                                background: $primary;
+                                color: white;
+                            }
+
+                            &:not(:last-child) {
+                                border-right: 1px solid $inputBorderColor;
+                            }
+                        }
+                    }
+                }
+
+                .admin-model__body {
+                    .grid-fullsize {
+                        .col.col--form {
+                            order: 2;
+                        }
+
+                        .col.col--rows {
+                            margin-bottom: $navbarPadding;
+                        }
+                    }
+                }
+
+                /*
+                 * Single mode settings
+                 */
+                &.admin-model--single-mode {
+                    > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header:not(.visible) { display: none; }
+                    > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header h3 { display: none; }
+                }
+
+                /*
+                 * In parent mode
+                 */
+                &.admin-model--in-parent {
+                    > .admin-model__body {
+                        > .row > .col--form > .crudadmin-form > .box {
+                            box-shadow: none;
+
+                            > .box-body {
+                                padding: 0;
+                                border-bottom: 0;
+                            }
                         }
                     }
                 }
             }
-
         }
     }
 }

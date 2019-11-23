@@ -1,7 +1,7 @@
 <template>
     <!-- Horizontal Form -->
     <component :is="formType" method="post" action="" :id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form crudadmin-form">
-        <div class="box" :class="{ 'box-info' : isActive, 'box-warning' : !isActive }">
+        <div class="box" :class="{ 'box--active' : isActive }">
 
             <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (isOpenedRow && model.history)) }">
                 <div class="box-header__actions">

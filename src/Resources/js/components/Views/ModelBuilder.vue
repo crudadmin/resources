@@ -15,8 +15,8 @@
             <p>{{ trans('languages-missing') }}</p>
         </div>
 
-        <div :data-depth="depth_level" :class="[ { 'single-mode' : model.isSingle(), 'is-in-parent' : model.isInParent(), 'box-warning' : model.isSingle() } ]" v-show="canShowForm || (hasRows && canShowRows || isSearching)">
-            <div class="admin-header" :class="{ 'with-border' : model.isSingle() }" v-show="ischild && (!model.in_tab || isEnabledGrid || canShowSearchBar) || ( !model.isSingle() && (isEnabledGrid || canShowSearchBar))">
+        <div class="admin-model" :data-depth="depth_level" :class="{ 'admin-model--single-mode' : model.isSingle(), 'admin-model--in-parent' : model.isInParent() }" v-show="canShowForm || (canShowRows || isSearching)">
+            <div class="admin-model__header" :class="{ 'with-border' : model.isSingle() }" v-show="canShowAdminHeader">
                 <div class="left">
                     <div>
                         <h3 v-if="ischild" class="admin-header__title">{{ model.name }}</h3>
@@ -99,7 +99,7 @@
                 </div>
             </div>
 
-            <div>
+            <div class="admin-model__body">
                 <div :class="{ 'row' : true, 'grid-fullsize' : activeSize == 0 }">
                     <!-- left column -->
                     <div :class="['col-lg-'+(12 - activeSize)]" class="col col--form col-md-12 col-sm-12" v-show="canShowForm" v-if="activetab!==false">
@@ -121,7 +121,7 @@
                     <!--/.col (left) -->
 
                     <!-- right column -->
-                    <div :class="['col-lg-'+(12-(12-activeSize))]" class="col col--rows col-md-12 col-sm-12" v-show="hasRows && canShowRows">
+                    <div :class="['col-lg-'+(12-(12-activeSize))]" class="col col--rows col-md-12 col-sm-12" v-show="canShowRows">
                         <model-rows-builder
                             :model.sync="model"
                             :rows.sync="rows"
@@ -705,7 +705,27 @@
 
                 if ( scroll === true ) {
                     this.scrollTo('#'+this.formID);
+
+                    this.pulseForm();
                 }
+            },
+            pulseForm(){
+                //If is not full grid, then animate form
+                if ( this.activeSize == 0 && this.canShowRows )
+                    return;
+
+                var form = $('#'+this.formID);
+
+                form.addClass('animated shake');
+
+                if ( this.formPusling )
+                    return;
+
+                this.formPusling = setTimeout(() => {
+                    form.removeClass('animated shake');
+
+                    this.formPusling = null;
+                }, 1000);
             },
             emptyRowInstance(model){
                 var row = {},
@@ -739,6 +759,24 @@
         },
 
         computed: {
+            canShowAdminHeader(){
+                return (
+                    this.ischild
+                    && !this.model.isSingle()
+                    && (
+                        !this.model.in_tab
+                        || this.isEnabledGrid
+                        || this.canShowSearchBar
+                    )
+                    || (
+                        !this.model.isSingle()
+                        && (
+                            this.isEnabledGrid
+                            || this.canShowSearchBar
+                        )
+                    )
+                );
+            },
             selectedRootLanguage(){
                 return _.find(this.languages, { id : parseInt(this.langid) });
             },
@@ -792,6 +830,9 @@
                 return true;
             },
             canShowRows(){
+                if ( ! this.hasRows )
+                    return false;
+
                 if ( this.model.isSingle() ){
                     this.enableOnlyFullScreen();
 

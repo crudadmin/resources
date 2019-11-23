@@ -12,24 +12,6 @@
 }
 
 /*
- * Single mode settings
- */
-.content .single-mode > .box-body > .box { margin-top: 10px; width: calc(100% - 50px); }
-.content .single-mode > .box-body > .row > div.col > .form > .box { border: none; box-shadow: none; margin-bottom: 0; }
-.content .single-mode > .box-body > .row > div.col > .form > .box > .box-header:not(.visible) { display: none; }
-.content .single-mode > .box-body > .row > div.col > .form > .box > .box-header h3 { display: none; }
-.content .single-mode > .box-body,
-.content .single-mode > .box-footer { padding: 0 }
-
-/*
- * In parent mode
- */
-.content .is-in-parent { border: none; box-shadow: none; margin: 0; }
-.content .is-in-parent > .box-header:not(.visible) { display: none; }
-.content .is-in-parent > .box-body > .row > div.col > .form > .box { background: white; }
-.content .is-in-parent > .box-body > .row > div.col > .form > .box > .box-body { padding: 0 }
-
-/*
  * Header settings
  */
 .content .box-header { min-height: 51px }
