@@ -20190,7 +20190,9 @@ aside.main-sidebar .sidebar .sidebar-menu li a {
 aside.main-sidebar .sidebar .sidebar-menu li a i.icon {
   font-size: 15px;
   font-size: 0.9375rem;
-  margin-right: 21px;
+  margin-right: 15px;
+  width: 15px;
+  text-align: center;
 }
 
 aside.main-sidebar .sidebar .sidebar-menu li a .side-arrow {
