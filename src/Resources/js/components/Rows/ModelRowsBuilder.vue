@@ -20,7 +20,7 @@
                         </ul>
                     </div>
 
-                    <div class="dropdown actions-list fields-list" v-if="checked.length > 0" data-action-list>
+                    <div class="dropdown actions-list fields-list" v-if="checked.length > 0 && hasAnyActions" data-action-list>
                         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             {{ trans('action') }}
                             <i class="--icon-right fa fa-angle-down"></i>
@@ -283,6 +283,11 @@ export default {
     },
 
     computed: {
+        hasAnyActions(){
+            return this.hasButtons
+                   || this.model.publishable
+                   || this.model.deletable;
+        },
         availableButtons(){
             var buttons = {};
 

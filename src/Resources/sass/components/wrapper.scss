@@ -277,11 +277,11 @@
 
                 .admin-model__body {
                     .grid-fullsize {
-                        .col.col--form {
+                        > .col.col--form {
                             order: 2;
                         }
 
-                        .col.col--rows {
+                        > .col.col--rows {
                             margin-bottom: $navbarPadding;
                         }
                     }

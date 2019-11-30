@@ -20587,11 +20587,11 @@ aside.main-sidebar .footer-sidebar p a {
   border-right: 1px solid #DEE3E8;
 }
 
-.wrapper .content-wrapper .crudadmin-wrapper .admin-model .admin-model__body .grid-fullsize .col.col--form {
+.wrapper .content-wrapper .crudadmin-wrapper .admin-model .admin-model__body .grid-fullsize > .col.col--form {
   order: 2;
 }
 
-.wrapper .content-wrapper .crudadmin-wrapper .admin-model .admin-model__body .grid-fullsize .col.col--rows {
+.wrapper .content-wrapper .crudadmin-wrapper .admin-model .admin-model__body .grid-fullsize > .col.col--rows {
   margin-bottom: 30px;
 }
 
