@@ -103,10 +103,6 @@
     .card-body {
         padding: $navbarPadding / 2;
     }
-
-    &.card--form {
-        margin-bottom: $form-group-margin-bottom;
-    }
 }
 
 .nav-tabs {
@@ -138,6 +134,7 @@
 
         &.tab-content--form {
             margin-bottom: $form-group-margin-bottom;
+            padding-bottom: 0;
         }
     }
 }

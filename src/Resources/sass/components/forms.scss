@@ -1,19 +1,4 @@
 .crudadmin-form {
-    /*
-     * Fields groups
-     */
-    .card {
-        .inline-col {
-            & > div > .tab-content > .row > div > div { display: inline-block; }
-            &[data-fields="2"] > div > .tab-content > .row > div > div { width: calc(100% / 2) }
-            &[data-fields="3"] > div > .tab-content > .row > div > div { width: calc(100% / 3) }
-            &[data-fields="4"] > div > .tab-content > .row > div > div { width: calc(100% / 4) }
-            &[data-fields="5"] > div > .tab-content > .row > div > div { width: calc(100% / 5) }
-            &[data-fields="6"] > div > .tab-content > .row > div > div { width: calc(100% / 6) }
-            &[data-fields="7"] > div > .tab-content > .row > div > div { width: calc(100% / 7) }
-        }
-    }
-
     .nav-tabs-custom {
         > .nav-tabs > li > a {cursor: pointer}
         > .nav-tabs > li[has-error] {border-top-color: #dd4939;}
@@ -37,7 +22,28 @@
     }
 
     .fields-group {
-        .fields-group__item:last-child:not(:first-child) {
+        &.fields-group--inline {
+            > .fields-group__wrapper > div > .row {
+                flex-direction: row;
+
+                > .fields-group__item {
+                    flex: inherit;
+                }
+            }
+
+            &[data-fields="2"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 2); }
+            &[data-fields="3"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 3); }
+            &[data-fields="4"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 4); }
+            &[data-fields="5"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 5); }
+            &[data-fields="6"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 6); }
+            &[data-fields="7"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 7); }
+        }
+
+        .fields-group__wrapper {
+            margin-bottom: $form-group-margin-bottom;
+        }
+
+        .fields-group__item:last-child {
             .field-wrapper > .form-group:last-child {
                 margin-bottom: 0;
             }
