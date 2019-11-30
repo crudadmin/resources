@@ -54,9 +54,17 @@
                 // We need set data also on instance ready, because of bug in single admin model when switching pages...
                 // Somethimes data wont be loaded properly.
                 editor.on('instanceReady', () => {
-                    if ( _.trim(editor.getData()) != _.trim(value) ) {
-                        editor.setData(value);
+                    //If multiple ready events will be triggered, bing only last valid value from event.
+                    //If all events will be binded into ckeditor at same time. It may have buggy value.
+                    if ( this.onReadyInstance ){
+                        clearTimeout(this.onReadyInstance);
                     }
+
+                    this.onReadyInstance = setTimeout(() => {
+                        if ( _.trim(editor.getData()) != _.trim(value) ) {
+                            editor.setData(value);
+                        }
+                    }, 20);
                 });
             });
         },

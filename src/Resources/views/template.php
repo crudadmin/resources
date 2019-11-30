@@ -19,7 +19,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/chosen/chosen.css?v=').Admin::getAssetsVersion() ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datetimepicker/jquery.datetimepicker.css?v=').Admin::getAssetsVersion() ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/css/app.css?v=').Admin::getAssetsVersion() ?>">
-  <link rel="stylesheet" href="<?php echo admin_asset('/css/style.css?v=').Admin::getAssetsVersion() ?>">
 
   <?php foreach (array_merge((array)config('admin.styles', []), ((($customCssPath = public_path('/assets/admin/css/custom.css')) && file_exists($customCssPath)) ? [ asset('/assets/admin/css/custom.css') ] : [])) as $css) { ?>
   <link rel="stylesheet" type="text/css" href="<?php echo admin_asset($css, true) ?>">

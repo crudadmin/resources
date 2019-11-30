@@ -162,7 +162,11 @@ export default {
         //On create form instance, we need initialize given row.
         //For example if single model is loaded from database as relation, but FormBuilder is not loaded yet
         //Then we need insert row data after FormBuilder initialization.
-        this.initForm(this.row);
+        //We also does not want sent empty event for single model. Because CKEditor will be buggy with content. So this event
+        //can be triggered only when model is not single, or has any data.
+        // if ( ! this.model.isSingle() || this.row.id ){
+            this.initForm(this.row);
+        // }
     },
 
     destroyed(){
