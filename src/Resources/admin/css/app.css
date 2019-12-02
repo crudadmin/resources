@@ -3342,14 +3342,7 @@ form .is-changed-from-history .form-group .chosen-container > .chosen-choices,
 form .is-changed-from-history .form-group .chosen-container > .chosen-single { border: 1px solid #b900e2; }
 form .is-changed-from-history .form-group > .cke { border: 1px solid #b900e2; }
 button.enabled-history { background: #b900e2; color: white !important; border: 1px solid #80009c !important; }
-button.enabled-history:hover, button.enabled-history:focus, button.enabled-history:active, button.enabled-history:visited { background: #80009c !important }
-
-/*
- * Tabs
- */
-.box-warning > .box-body > .nav-tabs-custom > .nav-tabs li.active {border-top-color: #f39c12;}
-.box-warning > .box-body .nav-tabs-custom > h4 {border-top-color: #f39c12;}
-.box-warning > .box-body .nav-tabs-custom li.active {border-top-color: #f39c12;}@charset "UTF-8";
+button.enabled-history:hover, button.enabled-history:focus, button.enabled-history:active, button.enabled-history:visited { background: #80009c !important }@charset "UTF-8";
 
 @font-face {
   font-family: "Inter";
@@ -9483,7 +9476,7 @@ body {
   line-height: 1.6;
   color: #212529;
   text-align: left;
-  background-color: #F7F7F7;
+  background-color: #F3F6F6;
 }
 
 [tabindex="-1"]:focus {
@@ -9928,7 +9921,7 @@ mark,
 
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: #F7F7F7;
+  background-color: #F3F6F6;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   max-width: 100%;
@@ -13508,15 +13501,15 @@ input[type=button].btn-block {
 }
 
 .custom-range:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 1px #F7F7F7, 0 0 0 0.2rem rgba(74, 84, 226, 0.25);
+  box-shadow: 0 0 0 1px #F3F6F6, 0 0 0 0.2rem rgba(74, 84, 226, 0.25);
 }
 
 .custom-range:focus::-moz-range-thumb {
-  box-shadow: 0 0 0 1px #F7F7F7, 0 0 0 0.2rem rgba(74, 84, 226, 0.25);
+  box-shadow: 0 0 0 1px #F3F6F6, 0 0 0 0.2rem rgba(74, 84, 226, 0.25);
 }
 
 .custom-range:focus::-ms-thumb {
-  box-shadow: 0 0 0 1px #F7F7F7, 0 0 0 0.2rem rgba(74, 84, 226, 0.25);
+  box-shadow: 0 0 0 1px #F3F6F6, 0 0 0 0.2rem rgba(74, 84, 226, 0.25);
 }
 
 .custom-range::-moz-focus-outer {
@@ -13716,8 +13709,8 @@ input[type=button].btn-block {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #495057;
-  background-color: #F7F7F7;
-  border-color: #dee2e6 #dee2e6 #F7F7F7;
+  background-color: #F3F6F6;
+  border-color: #dee2e6 #dee2e6 #F3F6F6;
 }
 
 .nav-tabs .dropdown-menu {
@@ -20732,10 +20725,12 @@ aside.main-sidebar .footer-sidebar p a {
 
 .card {
   border-color: rgba(208, 215, 221, 0.7);
+  border-radius: 0;
 }
 
 .card .card-header {
-  padding: 15px;
+  border-radius: 0;
+  padding: 10px 15px;
   font-size: 16px;
   font-size: 1rem;
   background: rgba(208, 215, 221, 0.7);

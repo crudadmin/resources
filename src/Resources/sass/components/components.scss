@@ -87,9 +87,11 @@
 
 .card {
     border-color: $navbarBorderColor;
+    border-radius: 0;
 
     .card-header {
-        padding: $navbarPadding / 2;
+        border-radius: 0;
+        padding: 10px $navbarPadding / 2;
         @include fontSize(16px);
         background: $navbarBorderColor;
         color: $blackText;

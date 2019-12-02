@@ -587,7 +587,12 @@
             },
             checkActiveGridSize(columns){
                 var data = this.getStorage(),
-                    defaultValue = this.$root.getModelProperty(this.model, 'settings.grid.default');
+                    defaultValue = this.$root.getModelProperty(this.model, 'settings.grid.default'),
+                    columns = Object.keys(columns);
+
+                //Disable big table
+                if ( columns.length >= 5 )
+                    this.sizes[0].disabled = true;
 
                 //Full screen
                 if ( ! this.canShowForm || this.model.isSingle() ) {
@@ -603,7 +608,6 @@
                         }
                     }
                 } else if ( defaultValue !== null ){
-
                     // If model has default grid property
                     for ( var key in this.sizes ) {
                         if ( this.sizes[key].size == defaultValue || this.sizes[key].key == defaultValue ) {
@@ -615,11 +619,8 @@
                 /*
                  * When is localStorage value empty, then automatic chose the best grid value
                  */
-                columns = Object.keys(columns);
 
-                if ( columns.length >= 5 )
-                    this.sizes[2].disabled = true;
-
+                //Full screen
                 if ( this.hasChilds() > 0 )
                     return this.sizes[3].active = true;
 
@@ -627,12 +628,12 @@
                 if ( columns.length > 5 )
                     return this.sizes[3].active = true;
 
-                //Big
+                //50/50
                 if ( columns.length <= 1 )
                     return this.sizes[2].active = true;
 
                 //Small
-                if ( columns.length == 5 )
+                if ( columns.length == 4 )
                     return this.sizes[0].active = true;
 
                 //Small
