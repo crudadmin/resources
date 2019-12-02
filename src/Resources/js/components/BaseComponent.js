@@ -91,6 +91,10 @@ const BaseComponent = (router) => {
              * Boot whole app with data from API
              */
             bootApp(){
+                //If user is not logged in
+                if ( ! window.crudadmin.logged )
+                    return;
+
                 this.$http.get(window.crudadmin.baseURL+'/api/layout').then(response => {
                     var layout = response.data;
 

@@ -87,15 +87,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </div>
 
     <!-- Admin variables -->
-    <script type="text/javascript">
-      window.crudadmin = {
-        root : '<?php echo url('/') ?>',
-        baseURL : '<?php echo url('/admin') ?>',
-        path : '<?php echo Admin::getAdminAssetsPath() ?>',
-        dev : <?php echo env('APP_DEBUG') ? 'true' : 'false' ?>,
-        testing : <?php echo Admin::isTesting() ? 'true' : 'false' ?>
-      };
-    </script>
+    <?php echo $__env->make('admin::partials.crudadmin-props', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
     <!-- jQuery 2.1.4 -->
     <script src="<?php echo admin_asset('/js/manifest.js') ?>"></script>
