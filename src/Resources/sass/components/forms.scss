@@ -39,13 +39,13 @@
             &[data-fields="7"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 7); }
         }
 
-        .fields-group__wrapper {
+        > .fields-group__wrapper {
             margin-bottom: $form-group-margin-bottom;
-        }
 
-        .fields-group__item:last-child {
-            .field-wrapper > .form-group:last-child {
-                margin-bottom: 0;
+            > div > .row {
+                > .fields-group__item:last-child > .field-wrapper > .form-group:last-child {
+                    margin-bottom: 0;
+                }
             }
         }
     }

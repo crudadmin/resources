@@ -5,7 +5,7 @@
         z-index: 999;
     }
 
-    &.modal-success {
+    &.modal-success, &.modal-danger, &.modal-warning {
         .modal-content {
             background: #00a65a;
             color: white;
@@ -21,12 +21,15 @@
 
             .modal-header, .modal-footer { border-color: rgba(0, 0, 0, 0.2); }
 
-            .btn-secondary {
+            .btn-secondary, .btn-primary {
                 background: none;
                 border-color: white;
             }
         }
     }
+
+    &.modal-danger .modal-content { background: #d33724; }
+    &.modal-warning .modal-content { background: #f39c12; }
 
     .modal-title {
         font-weight: 400;
