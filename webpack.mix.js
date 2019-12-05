@@ -11,7 +11,7 @@ mix.js('src/Resources/js/app.js', 'src/Resources/admin/js')
 
 for ( key in config.paths )
 {
-    mix.copy('src/Resources/admin/js/manifest.js', config.paths[key] + '/manifest.js')
-       .copy('src/Resources/admin/js/vendor.js', config.paths[key] + '/vendor.js')
-       .copy('src/Resources/admin/js/app.js', config.paths[key] + '/app.js');
+    mix.copy('src/Resources/admin/js/manifest.js', config.paths[key] + '/js/manifest.js')
+       .copy('src/Resources/admin/js/vendor.js', config.paths[key] + '/js/vendor.js')
+       .copy('src/Resources/admin/js/app.js', config.paths[key] + '/js/app.js');
 }
