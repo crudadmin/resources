@@ -472,6 +472,18 @@ const BaseComponent = (router) => {
 
                 return data;
             },
+            canPassEventThrough(event, data, component){
+                if ( ['getParentRow'].indexOf(event) > -1 ) {
+                    var componentDepthLevel = component.$parent.depth_level||component.$parent.$parent.depth_level;
+
+                    //Does not receive events into component which are not from parent rows.
+                    if ( data.depth_level !== undefined && data.depth_level > componentDepthLevel ) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
             getComponentObject(data){
                 var obj = (new Function('return '+data))(),
                     _this = this;
@@ -502,7 +514,9 @@ const BaseComponent = (router) => {
                     for ( var key in proxyEventsReceive ) {
                         ((event) => {
                             eventHub.$on(event, events[event] = (data) => {
-                                this.$emit(event, data);
+                                if ( _this.canPassEventThrough(event, data, this) ) {
+                                    this.$emit(event, data);
+                                }
                             });
                         })(proxyEventsReceive[key]);
                     }
