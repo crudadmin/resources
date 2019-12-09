@@ -3,14 +3,14 @@ var Fields = (Model) => {
      * Hide input
      */
     Model.prototype.hideFromForm = function(key, value){
-        this.fields[key].hideFromForm = value;
+        Vue.set(this.fields[key], 'hideFromForm', value);
     }
 
     /*
      * Remove input
      */
     Model.prototype.removeFromForm = function(key, value){
-        this.fields[key].removeFromForm = value;
+        Vue.set(this.fields[key], 'removeFromForm', value);
     }
 
     /*

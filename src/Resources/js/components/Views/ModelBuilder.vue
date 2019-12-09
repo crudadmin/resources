@@ -363,7 +363,7 @@
                 this.emitRowData('getParentRow');
             },
             emitRowData(type, data){
-                if ( data && data.table != this.model.table )
+                if ( data && data.table && data.table != this.model.table )
                     return;
 
                 eventHub.$emit(type, {
@@ -373,6 +373,7 @@
                     rows : this.rows.data,
                     count : this.rows.count,
                     component : this,
+                    depth_level : this.depth_level,
                 });
             },
             setModelEvents(){
@@ -381,7 +382,6 @@
                 });
 
                 eventHub.$on('sendParentRow', this.sendParentRowEvent = (data) => {
-
                     //Skip child components
                     if ( !data || !(this.depth_level < data.depth_level) )
                         return;
