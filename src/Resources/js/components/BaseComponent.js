@@ -301,8 +301,9 @@ const BaseComponent = (router) => {
 
                         for ( var i = 0; i < matched_keys.length; i++ )
                         {
-                            var related_field = this.models[relation.split(',')[0]].fields[matched_keys[i].substr(1)],
-                                option_value = this.getLangValue(array[key][1][matched_keys[i].substr(1)], related_field);
+                            var keyName = matched_keys[i].substr(1),
+                                related_field = this.models[relation.split(',')[0]].fields[keyName],
+                                option_value = keyName == 'id' ? array[key][0] : this.getLangValue(array[key][1][keyName], related_field);
 
                             value = value.replace(new RegExp(matched_keys[i], 'g'), !option_value && option_value !== 0 ? '' : option_value);
                         }

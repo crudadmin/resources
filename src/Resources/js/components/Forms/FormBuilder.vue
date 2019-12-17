@@ -553,6 +553,10 @@ export default {
                     where = where.parent().children().last().prev();
                 }
 
+                else if ( $(this).is('input:checkbox') ){
+                    where = where.next();
+                }
+
                 else if ( $(this).is('input:radio') || $(this).parent().hasClass('label-wrapper') ){
                     where = where.parent().parent().parent();
 
@@ -562,18 +566,22 @@ export default {
                         where = null;
                 }
 
-                else if ( $(this).parent().hasClass('input-group') )
+                else if ( $(this).parent().hasClass('input-group') ) {
                     where = $(this).parent();
+                }
 
-                if ( where )
+                //Where should be placed error messageblock
+                if ( where ) {
                     where.after( '<span class="help-block">'+message+'</span>' );
+                }
 
                 //On first error
                 if ( i == 0 ){
                     var label = $(this).closest('div.form-group').addClass('has-error').find('> label');
 
-                    if ( label.find('.fa-times-circle').length == 0 )
+                    if ( label.find('.fa-times-circle').length == 0 ) {
                         label.prepend('<i class="far fa-times-circle"></i> ');
+                    }
                 }
             };
         },

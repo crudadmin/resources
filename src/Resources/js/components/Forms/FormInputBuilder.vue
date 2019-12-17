@@ -1,5 +1,12 @@
 <template>
-    <div :data-field="field_key" :data-model="model.slug" :data-lang="langslug" :data-history-changed="isChangedFromHistory" class="field-wrapper" :class="{ 'is-changed-from-history' : isChangedFromHistory }">
+    <div
+        :data-field="field_key"
+        :data-model="model.slug"
+        :data-lang="langslug"
+        :data-history-changed="isChangedFromHistory"
+        class="field-wrapper"
+        :class="{ 'is-changed-from-history' : isChangedFromHistory }">
+
         <string-field
             v-if="!hasComponent && (isString || isPassword)"
             :model="model"
