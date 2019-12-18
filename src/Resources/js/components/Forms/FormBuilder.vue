@@ -754,7 +754,7 @@ export default {
             }
         },
         openGettextEditor(){
-            this.gettext_editor = this.row;
+            this.$parent.gettext_editor = this.row;
         },
         isFieldSelect(column){
             return column && column in this.model.fields && (['select', 'radio'].indexOf(this.model.fields[column].type) > -1) ? true : false;
