@@ -19,6 +19,19 @@ var Fields = (Model) => {
     Model.prototype.optionsFilter = function(key, filter){
         this.fields[key].optionsFilter = filter;
     }
+
+    /*
+     * Get option from field by id
+     */
+    Model.prototype.getOptionValue = function(key, id){
+        var value = _.find(this.fields[key].options, { 0 : id });
+
+        if ( _.isNil(value) ) {
+            return null;
+        }
+
+        return value[1];
+    }
 };
 
 export default Fields;

@@ -368,7 +368,8 @@
 
                 eventHub.$emit(type, {
                     model : this.model,
-                    slug : this.model.slug,
+                    table : this.model.table,
+                    slug : this.model.table,
                     row : this.row,
                     rows : this.rows.data,
                     count : this.rows.count,
@@ -476,16 +477,7 @@
                 });
             },
             sendRowsData(){
-                var data = {
-                    table : this.model.slug,
-                    slug : this.model.slug,
-                    model : this.model,
-                    rows : this.rows.data,
-                    count : this.rows.count,
-                    depth_level : this.depth_level,
-                };
-
-                eventHub.$emit('rowsChanged', data);
+                this.emitRowData('rowsChanged');
             },
             resetSearchBar(){
                 //On change column reset input
