@@ -222,12 +222,14 @@
 
                 this.$watch('model.fields.'+this.getFilterBy[0]+'.value', function(value){
                     //If is empty value setted after reseting form, then set null or default field value
-                    if ( value === null )
+                    if ( value === null ) {
                         this.filterBy = this.$parent.defaultFieldValue(this.model.fields[this.getFilterBy[0]]);
+                    }
 
                     //If is empty value type '', or value, then set given input
-                    else
+                    else {
                         this.filterBy = value;
+                    }
                 });
 
                 this.filterBy = this.$parent.defaultFieldValue(this.model.fields[this.getFilterBy[0]]);

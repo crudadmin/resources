@@ -57,9 +57,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Your Page Content Here -->
           <!-- Content Wrapper. Contains page content -->
           <div class="content-wrapper">
-            <license></license>
-            <check-assets-version v-if="version"></check-assets-version>
-
             <router-view :langid="language_id"></router-view>
           </div>
           <!-- END CONTENT -->

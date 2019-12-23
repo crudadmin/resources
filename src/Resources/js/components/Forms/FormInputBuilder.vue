@@ -237,7 +237,9 @@
                     Vue.component(this.componentName, component);
             },
             defaultFieldValue(field){
-                var default_value = (field.value || field.value === 0 || field.value === false) ? field.value : field.default;
+                var default_value = field ? (
+                        (field.value || field.value === 0 || field.value === false) ? field.value : field.default
+                    ) : null;
 
                 if (
                     (!default_value && default_value !== false) //false is valid value, so we do not want to return empty string

@@ -3,8 +3,6 @@ import RequestHelper from './Helpers/RequestHelper';
 
 import RightNavbar from './Partials/RightNavbar.vue';
 import Sidebar from './Sidebar/Sidebar.vue';
-import License from './Partials/License.vue';
-import CheckAssetsVersion from './Partials/CheckAssetsVersion.vue';
 import Modal from './Partials/Modal.vue';
 import ModelHelper from './Helpers/ModelHelper.js';
 
@@ -16,6 +14,7 @@ const BaseComponent = (router) => {
             return {
                 csrf_token: null,
                 version : null,
+                version_resources : null,
                 version_assets : null,
                 gettext : null,
                 locale : null,
@@ -47,7 +46,7 @@ const BaseComponent = (router) => {
             }
         },
 
-        components: { Sidebar, RightNavbar, License, CheckAssetsVersion, Modal },
+        components: { Sidebar, RightNavbar, Modal },
 
         created(){
             this.reloadCSRFToken($('meta[name="csrf-token"]')[0].content);
@@ -99,6 +98,7 @@ const BaseComponent = (router) => {
                     var layout = response.data;
 
                     this.version = layout.version;
+                    this.version_resources = layout.version_resources;
                     this.version_assets = layout.version_assets;
                     this.gettext = layout.gettext;
                     this.locale = layout.locale;
