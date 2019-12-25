@@ -599,6 +599,10 @@ export default {
         },
         saveForm(e)
         {
+            //We does not want to trigger inparent model
+            if ( this.model.isInParent() )
+                return;
+
             //Devide if is updating or creating form
             var action = this.getFormAction;
 

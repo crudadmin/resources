@@ -79,12 +79,6 @@
                         _this.onGenerate(this, ct);
                     },
                     onChangeDateTime: this.onChangeDateTime,
-                    //Also update object of single date values
-                    onClose : (current_date_time) => {
-                        var pickedDate = moment(current_date_time).format(this.$root.fromPHPFormatToMoment(this.field.date_format));
-
-                        this.changeValue(null, pickedDate);
-                    },
                 });
             },
             onGenerate(el, ct){
@@ -107,20 +101,30 @@
                 }
             },
             onChangeDateTime(current_date_time){
-                if ( ! this.isMultipleDatepicker )
+                if ( ! current_date_time )
                     return;
 
-                var pickedDate = moment(current_date_time).format(this.field.type == 'time' ? 'HH:mm' : 'YYYY-MM-DD');
+                //Update multi date value
+                if ( this.isMultipleDatepicker ) {
+                    var pickedDate = moment(current_date_time).format(this.field.type == 'time' ? 'HH:mm' : 'YYYY-MM-DD');
 
-                var value = this.getMultiDates,
-                    index = value.indexOf(pickedDate);
+                    var value = this.getMultiDates,
+                        index = value.indexOf(pickedDate);
 
-                if ( index > -1 )
-                    value.splice(index, 1);
-                else
-                    value.push(pickedDate);
+                    if ( index > -1 )
+                        value.splice(index, 1);
+                    else
+                        value.push(pickedDate);
 
-                this.$parent.changeValue(null, value);
+                    this.changeValue(null, value);
+                }
+
+                //Update single date value
+                else {
+                    var pickedDate = moment(current_date_time).format(this.$root.fromPHPFormatToMoment(this.field.date_format));
+
+                    this.changeValue(null, pickedDate);
+                }
             },
             getMultiDateValue(time){
                 if ( this.field.type == 'time' && time.length == 5 && time[2] == ':' )
