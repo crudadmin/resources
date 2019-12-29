@@ -268,7 +268,7 @@
                 this.$watch('field.value', (value, oldvalue) => {
                     if (
                         is_change === true
-                        || ! value
+                        || _.isNil(value)
                         || (value === oldvalue || _.isEqual(value, oldvalue))
                     ){
                         is_change = false;
