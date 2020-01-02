@@ -188,7 +188,6 @@
 
         data : function(){
             return {
-                model: this.model_builder,
                 sizes : [
                     { size : 4, key : 'small', name : 'Veľky formulár', active : false, disabled : false },
                     { size : 8, key : 'big', name : 'Veľká tabuľka', active : false, disabled : false },
@@ -770,6 +769,10 @@
         },
 
         computed: {
+            //We want model reactive, when something changed in root models list
+            model(){
+                return this.model_builder;
+            },
             activeGridSize(){
                 var size = this.sizes.filter(row => {
                     if ( row.active == true ) {

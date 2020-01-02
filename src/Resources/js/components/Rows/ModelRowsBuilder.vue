@@ -568,8 +568,10 @@ export default {
                     continue
                 }
 
-                this.$root.models[this.model.table][key] = model[key];
+                // Rewrite model
+                this.$set(this.$root.models[this.model.table], key, model[key]);
             }
+
         },
         destroyTimeout(){
             if ( this.updateTimeout )

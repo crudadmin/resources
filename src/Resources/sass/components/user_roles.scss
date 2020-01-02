@@ -1,0 +1,25 @@
+.userRolesFormGroup {
+    .table {
+        border: 1px solid $inputBorderColor !important;
+    }
+
+    th:not(:first-child), td:not(:first-child) {
+        text-align: center;
+    }
+
+    td {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    label.checkbox {
+        margin-bottom: 0;
+        display: inline-block;
+        position: relative;
+        top: 3px;
+
+        > div {
+            margin: 0 0 !important;
+        }
+    }
+}
