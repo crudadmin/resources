@@ -492,6 +492,10 @@ export default {
                     return;
                 }
 
+                var requestModel = response.data.model;
+
+                this.updateModel(requestModel);
+
                 //Disable loader
                 this.pagination.refreshing = false;
 
@@ -512,7 +516,7 @@ export default {
 
                 if ( this.refresh.count == 0 ){
                     //Update field options
-                    this.updateFieldOptions(response.data.fields, response.data);
+                    this.updateFieldOptions(requestModel.fields, requestModel);
 
                     //Render additional layouts
                     this.$parent.layouts = response.data.layouts;
@@ -545,7 +549,7 @@ export default {
                 //Add next timeout
                 this.initTimeout(false, true);
 
-                //On first error
+                //On first error from response
                 if ( response.status == 500 && this.refresh.count == 0 && 'message' in response ){
                     this.$root.errorResponseLayer(response, null);
                 }
@@ -556,6 +560,16 @@ export default {
                     this.$root.errorResponseLayer(response, null);
                 }
             });
+        },
+        updateModel(model){
+            for ( var key in model ) {
+                //If key is missing in admin model, add new data
+                if ( (key in this.$root.originalModels[this.model.table]) ) {
+                    continue
+                }
+
+                this.$root.models[this.model.table][key] = model[key];
+            }
         },
         destroyTimeout(){
             if ( this.updateTimeout )

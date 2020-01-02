@@ -23,6 +23,7 @@ const BaseComponent = (router) => {
                 requests: {},
                 user : null,
                 tree: [],
+                originalModels : {},
                 models: {},
                 localization: {},
                 languages: [],
@@ -108,6 +109,7 @@ const BaseComponent = (router) => {
                     this.user = layout.user;
                     this.tree = layout.models;
                     this.models = this.flattenModelsWithChilds(layout.models);
+                    this.originalModels = this.flattenModelsWithChilds(layout.models);
                     this.localization = layout.localization||{};
                     this.languages = layout.languages||[];
 
