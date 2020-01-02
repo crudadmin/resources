@@ -35,6 +35,22 @@ return [
     'user-groups-placeholder' => 'Zadajte názov skupiny',
     'user-groups-modules' => 'Povolené moduly',
 
+    'roles-module' => 'Modul',
+    'roles-read' => 'Čítanie',
+    'roles-insert' => 'Vkladanie',
+    'roles-update' => 'Úprava',
+    'roles-publishable' => 'Publikácia',
+    'roles-delete' => 'Mazanie',
+    'roles-all' => 'Všetko',
+
+    'seoroutes-url' => 'Url adresa',
+    'seoroutes-newurl' => 'Nová url adresa',
+    'seoroutes-group' => 'Skupina',
+    'seoroutes-title' => 'Titulok stránky',
+    'seoroutes-keywords' => 'Kľúčové slova',
+    'seoroutes-description' => 'Popis stránky',
+    'seoroutes-images' => 'Obrázky stránky',
+
     'check-all' => 'Označiť všetky',
     'uncheck-all' => 'Odznačiť všetky',
     'show' => 'Zobraziť',

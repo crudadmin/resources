@@ -35,6 +35,22 @@ return [
     'user-groups-placeholder' => 'Fill group name',
     'user-groups-modules' => 'Allowed modules',
 
+    'roles-module' => 'Module',
+    'roles-read' => 'Read',
+    'roles-insert' => 'Insert',
+    'roles-update' => 'Edit',
+    'roles-publishable' => 'Publishable',
+    'roles-delete' => 'Delete',
+    'roles-all' => 'All',
+
+    'seoroutes-url' => 'Url Address',
+    'seoroutes-newurl' => 'New url address',
+    'seoroutes-group' => 'Group',
+    'seoroutes-title' => 'Page Title',
+    'seoroutes-keywords' => 'Keywords',
+    'seoroutes-description' => 'Page description',
+    'seoroutes-images' => 'Page images',
+
     'check-all' => 'Check all',
     'uncheck-all' => 'Uncheck all',
     'show' => 'Show',
