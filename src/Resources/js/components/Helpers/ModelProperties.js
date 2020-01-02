@@ -8,10 +8,19 @@ var ModelProperties = (Model) => {
     }
 
     Model.prototype.formPrefix = function(){
-        if ( this.isInParent() )
+        if ( this.isInParent() ) {
             return '$'+this.table+'_';
+        }
 
         return '';
+    }
+
+    Model.prototype.hasAccess = function(key){
+        if ( this.permissions[key] === true ) {
+            return true;
+        }
+
+        return false;
     }
 
 };

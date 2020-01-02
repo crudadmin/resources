@@ -15,6 +15,11 @@
             <p>{{ trans('languages-missing') }}</p>
         </div>
 
+        <div class="alert alert-danger" v-if="!model.hasAccess('read') && !model.hasAccess('insert')">
+            <strong>{{ trans('warning') }}!</strong>
+            <p>{{ trans('no-permissions') }}</p>
+        </div>
+
         <div class="admin-model" :data-depth="depth_level" :class="{ 'admin-model--single-mode' : model.isSingle(), 'admin-model--in-parent' : model.isInParent() }" v-show="canShowForm || (canShowRows || isSearching)">
             <div class="admin-model__header" :class="{ 'with-border' : model.isSingle() }" v-show="canShowAdminHeader">
                 <div class="left">
@@ -92,7 +97,7 @@
                     </div>
 
                     <!-- Add new row -->
-                    <button v-if="canAddRow && !model.isSingle()" data-create-new-row @click.prevent="resetForm(true, true, true)" type="button" class="btn--icon btn btn-primary">
+                    <button v-if="canAddRow && !model.isSingle() && model.hasAccess('insert')" data-create-new-row @click.prevent="resetForm(true, true, true)" type="button" class="btn--icon btn btn-primary">
                         <i class="fa fa-plus"></i>
                         {{ newRowTitle() }}
                     </button>
@@ -887,6 +892,10 @@
                 if ( ! this.hasRows )
                     return false;
 
+                if ( this.model.hasAccess('read') == false ) {
+                    return false;
+                }
+
                 if ( this.model.isSingle() ){
                     this.enableOnlyFullScreen();
 
@@ -911,6 +920,10 @@
             },
             canShowForm(){
                 if ( !this.isOpenedRow && !this.canAddRow || this.isOpenedRow && this.model.editable == false)
+                    return false;
+
+                //If user does not have write permissions
+                if ( !this.isOpenedRow && this.model.hasAccess('insert') == false )
                     return false;
 
                 return true;
