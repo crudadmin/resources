@@ -116,14 +116,25 @@ export default {
                 var options = this.model.fields[items[0]].options,
                     option = _.find(options, { 0 : parseInt(value) });
 
-                if ( option && option[1][items[1]] === items[2] )
+                if ( option && option[1][items[1]] === items[2] ) {
                     return true;
+                }
 
                 return false;
             }
 
             //If is simple value
             if ( items.length == 2 ) {
+                //If is empty value
+                if ( _.isNil(value) || value === '' ) {
+                    value = null;
+                }
+
+                //If is empty identifier
+                if ( _.isNil(items[1]) || items[1] === '' ) {
+                    items[1] = null;
+                }
+
                 return value == items[1];
             }
 
