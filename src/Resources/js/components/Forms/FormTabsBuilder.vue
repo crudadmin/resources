@@ -87,7 +87,11 @@ export default {
 
         //Reset tabs on change id
         this.$watch('row.id', function(){
-            this.activetab = 0;
+            var autoreset = this.$root.getModelProperty(this.model, 'settings.autoreset');
+
+            if ( autoreset !== false ) {
+                this.activetab = 0;
+            }
 
             this.models_loaded = [];
         });
