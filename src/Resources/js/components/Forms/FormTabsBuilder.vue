@@ -285,9 +285,6 @@ export default {
         isTab(group){
             return this.isGroup(group) && group.type == 'tab';
         },
-        canShowField(field){
-            return !('removeFromForm' in field);
-        },
         hasTabs(fields){
             return fields.filter(function(group) {
                 return this.isTab(group);

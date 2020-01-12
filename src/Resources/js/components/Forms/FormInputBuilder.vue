@@ -331,11 +331,10 @@
         },
 
         computed : {
-            isOpenedRow(){
+            isOpenedRow() {
                 return this.row && 'id' in this.row;
             },
-            getId()
-            {
+            getId() {
                 //Get parent model builder
                 var modelBuilder = this.getModelBuilder();
 
@@ -343,12 +342,10 @@
 
                 return 'id-' + this.model.slug + this.field_key + '-' + this.depth_level + '-' + parent + '-' + this.index + '-' + this.langslug;
             },
-            getFieldKey()
-            {
+            getFieldKey() {
                 return this.model.slug + '-' + this.field_key;
             },
-            getFieldName()
-            {
+            getFieldName() {
                 var key = this.field_key;
 
                 //If is localized key, add field locale key
@@ -358,64 +355,50 @@
 
                 return this.model.formPrefix()+key;
             },
-            getName()
-            {
+            getName() {
                 //Return confirmation name
                 if ( this.isConfirmation )
                     return this.field.name + ' ('+this.trans('confirmation')+')';
 
                 return this.field.name;
             },
-            isString()
-            {
+            isString() {
                 return this.field.type == 'string';
             },
-            isNumber()
-            {
+            isNumber() {
                 return ['integer', 'decimal'].indexOf(this.field.type) > -1;
             },
-            isText()
-            {
+            isText() {
                 return this.field.type == 'text' || this.field.type == 'longtext';
             },
-            isEditor()
-            {
+            isEditor() {
                 return this.field.type == 'editor'  || this.field.type == 'longeditor';
             },
-            isFile()
-            {
+            isFile() {
                 return this.field.type == 'file';
             },
-            isPassword()
-            {
+            isPassword() {
                 return this.field.type == 'password';
             },
-            isSelect()
-            {
+            isSelect() {
                 return this && this.field.type == 'select';
             },
-            isRadio()
-            {
+            isRadio() {
                 return this.field.type == 'radio';
             },
-            isConfirmation()
-            {
+            isConfirmation() {
                 return this.confirmation == true;
             },
-            isDatepicker()
-            {
+            isDatepicker() {
                 return this.isDatepickerField(this.field);
             },
-            isCheckbox()
-            {
+            isCheckbox() {
                 return this.field.type == 'checkbox';
             },
-            isDisabled()
-            {
-                return this.field.disabled == true;
+            isDisabled() {
+                return this.model.tryAttribute(this.field, 'disabled');
             },
-            isMultiple()
-            {
+            isMultiple() {
                 return this.isMultipleField(this.field);
             },
             hasComponent(){

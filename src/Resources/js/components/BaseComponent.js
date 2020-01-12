@@ -276,48 +276,61 @@ const BaseComponent = (router) => {
             languageOptions(array, field, filter, with_hidden){
                 var key,
                     relation,
-                    field_key,
-                    related_field,
-                    matched_keys,
+                    fieldKey,
+                    relatedField,
+                    matchedKeys,
                     items = [],
                     hasFilter = filter && Object.keys(filter).length > 0;
 
-                if ( field && (relation = field['belongsTo']||field['belongsToMany']) && (field_key = relation.split(',')[1]) ){
-                    matched_keys = field_key.replace(/\\:/g, '').match(new RegExp(/[\:^]([0-9,a-z,A-Z$_]+)+/, 'g'));
+                //Relation belongsTo/belongsToMany
+                if ( field && (relation = field['belongsTo']||field['belongsToMany']) && (fieldKey = relation.split(',')[1]) ){
+                    matchedKeys = fieldKey.replace(/\\:/g, '').match(new RegExp(/[\:^]([0-9,a-z,A-Z$_]+)+/, 'g'));
+                }
+
+                //Fixed options from option attribute
+                if ( field && field.option ){
+                    fieldKey = field.option;
+
+                    matchedKeys = fieldKey.replace(/\\:/g, '').match(new RegExp(/[\:^]([0-9,a-z,A-Z$_]+)+/, 'g'));
                 }
 
                 loop1:
-                for ( var key in array )
-                {
+                for ( var key in array ) {
                     //If select has filters
-                    if ( hasFilter )
-                        for ( var k in filter ){
-                            if ( array[key][1][k] != filter[k] || array[key][1][k] == null )
+                    if ( hasFilter ) {
+                        for ( var k in filter ) {
+                            if ( array[key][1][k] != filter[k] || array[key][1][k] == null ) {
                                 continue loop1;
+                            }
+                        }
                     }
 
-                    //Build value from multiple columns
-                    if ( matched_keys )
-                    {
-                        var value = field_key.replace(/\\:/g, ':');
+                    //Build value from multiple columns (multiple fields keys)
+                    if ( matchedKeys ) {
+                        var value = fieldKey.replace(/\\:/g, ':');
 
-                        for ( var i = 0; i < matched_keys.length; i++ )
+                        for ( var i = 0; i < matchedKeys.length; i++ )
                         {
-                            var keyName = matched_keys[i].substr(1),
-                                related_field = this.models[relation.split(',')[0]].fields[keyName],
-                                option_value = keyName == 'id' ? array[key][0] : this.getLangValue(array[key][1][keyName], related_field);
+                            let keyName = matchedKeys[i].substr(1),
+                                relatedField = relation ? this.models[relation.split(',')[0]].fields[keyName] : field,
+                                optionValue = keyName == 'id' ? array[key][0] : this.getLangValue(array[key][1][keyName], relatedField);
 
-                            value = value.replace(new RegExp(matched_keys[i], 'g'), !option_value && option_value !== 0 ? '' : option_value);
+                            value = value.replace(new RegExp(matchedKeys[i], 'g'), !optionValue && optionValue !== 0 ? '' : optionValue);
                         }
                     }
 
                     //Simple value by one column
                     else {
-                        if ( field_key )
-                            related_field = this.models[relation.split(',')[0]].fields[field_key];
+                        if ( fieldKey ) {
+                            relatedField = relation ? this.models[relation.split(',')[0]].fields[fieldKey] : field;
+                        }
 
                         //Get value of multiarray or simple array
-                        var value = typeof array[key][1] == 'object' && array[key][1]!==null ? this.getLangValue(array[key][1][field_key], related_field) : array[key][1];
+                        var value = (
+                            typeof array[key][1] == 'object' && array[key][1]!==null ?
+                                this.getLangValue(array[key][1][fieldKey], relatedField)
+                                : array[key][1]
+                        );
                     }
 
                     //Change undefined values on null values
@@ -327,11 +340,13 @@ const BaseComponent = (router) => {
 
                     //Skip hidden options
                     if ( hiddenOptions && with_hidden !== false ){
-                        if ( typeof hiddenOptions == 'object' && hiddenOptions.indexOf(array[key][0]) > -1 )
+                        if ( typeof hiddenOptions == 'object' && hiddenOptions.indexOf(array[key][0]) > -1 ) {
                             continue;
+                        }
 
-                        if ( typeof hiddenOptions == 'function' && hiddenOptions(array[key][0], value, array[key][1]) === false )
+                        if ( typeof hiddenOptions == 'function' && hiddenOptions(array[key][0], value, array[key][1]) === false ) {
                             continue;
+                        }
                     }
 
                     items.push([array[key][0], value]);

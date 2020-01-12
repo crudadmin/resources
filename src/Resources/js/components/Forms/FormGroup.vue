@@ -93,7 +93,6 @@ export default {
 
                 return typeof item !== 'string' || !(
                     field.invisible && field.invisible == true
-                    || field.removeFromForm && field.removeFromForm == true
                     || this.canRemoveAttribute(field)
                     || ! this.canShowField(field)
                 );
@@ -107,60 +106,20 @@ export default {
     },
 
     methods: {
-        hasFieldRemovableValue(params){
-            var items = (params||'').replace(/\./g, ',').split(','),
-                value = this.row[items[0]];
-
-            //If is key in item from options fields
-            if ( items.length == 3 ) {
-                var options = this.model.fields[items[0]].options,
-                    option = _.find(options, { 0 : parseInt(value) });
-
-                if ( option && option[1][items[1]] === items[2] ) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            //If is simple value
-            if ( items.length == 2 ) {
-                //If is empty value
-                if ( _.isNil(value) || value === '' ) {
-                    value = null;
-                }
-
-                //If is empty identifier
-                if ( _.isNil(items[1]) || items[1] === '' ) {
-                    items[1] = null;
-                }
-
-                return value == items[1];
-            }
-
-            return false;
-        },
         canRemoveAttribute(field){
-            let removeFromFormIf = field.removeFromFormIf,
-                removeFromFormIfNot = field.removeFromFormIfNot;
-
-            if ( removeFromFormIf ) {
-                return this.hasFieldRemovableValue(removeFromFormIf);
-            }
-
-            if ( removeFromFormIfNot ) {
-                return !this.hasFieldRemovableValue(removeFromFormIfNot);
-            }
-
-            return false;
+            return this.model.tryAttribute(field, 'removeField')
+                   || this.model.tryAttribute(field, 'removeFromForm');
+        },
+        canHideAttribute(field){
+            return this.model.tryAttribute(field, 'hideField')
+                   || this.model.tryAttribute(field, 'hideFromForm');
         },
         canRenderField(field){
-            return !('removeFromForm' in field && field.removeFromForm == true)
-                    && !('invisible' in field && field.invisible == true)
-                    && !this.canRemoveAttribute(field);
+            return !('invisible' in field && field.invisible == true)
+                   && !this.canRemoveAttribute(field);
         },
         canShowField(field){
-            if ( 'hideFromForm' in field && field.hideFromForm === true )
+            if ( this.canHideAttribute(field) )
                 return false;
 
             if ( (field.ifExists === true || field.hideOnCreate === true) && ! this.isOpenedRow )

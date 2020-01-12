@@ -37,8 +37,8 @@ export default {
         fieldValue()
         {
             var field = this.field in this.model.fields ? this.model.fields[this.field] : null,
-                    row = this.item,
-                    rowValue = this.field in row ? this.getMutatedValue(row[this.field], field) : '';
+                row = this.item,
+                rowValue = this.field in row ? this.getMutatedValue(row[this.field], field) : '';
 
             //Get select original value
             if ( field )
@@ -50,9 +50,9 @@ export default {
                     if ( 'multiple' in field && field.multiple == true && $.isArray(rowValue) && !isRadio )
                     {
                         var values = [],
-                                rows = rowValue,
-                                related_table = this.getRelatedModelTable(field),
-                                options = ! related_table ? field.options : this.getLanguageSelectOptions( field.options, this.getRelatedModelTable(field) );
+                            rows = rowValue,
+                            related_table = this.getRelatedModelTable(field),
+                            options = (!related_table && !field.option) ? field.options : this.getLanguageSelectOptions( field.options, this.getRelatedModelTable(field) );
 
                         for ( var i = 0; i < rows.length; i++ )
                         {
@@ -60,14 +60,15 @@ export default {
                                 return item[0] == rows[i];
                             }.bind(this));
 
-                            if ( searched.length > 0 )
+                            if ( searched.length > 0 ) {
                                 values.push( searched[0][1] );
+                            }
                         }
 
                         return values.join(', ');
                     } else {
                         var related_table = this.getRelatedModelTable(field),
-                                options = isRadio || !related_table ? field.options : this.getLanguageSelectOptions( field.options, related_table );
+                            options = isRadio || (!related_table && !field.option) ? field.options : this.getLanguageSelectOptions(field.options, related_table);
 
                         //Check if key exists in options
                         if ( ! options )
@@ -75,8 +76,9 @@ export default {
 
                         for ( var i = 0; i < options.length; i++ )
                         {
-                            if ( rowValue == options[i][0] )
+                            if ( rowValue == options[i][0] ) {
                                 return options[i][1];
+                            }
                         }
                     }
                 }
@@ -135,19 +137,16 @@ export default {
             var isReal = this.isRealField(this.field);
 
             //Check if column can be encoded
-            if ( isReal && this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.encode', true) == true )
-            {
+            if ( isReal && this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.encode', true) == true ) {
                 string = $(document.createElement('div')).text(string).html();
             }
 
-            if ( this.isRealField(this.field) && this.model.fields[this.field].type == 'text' && parseInt(this.model.fields[this.field].limit) === 0)
-            {
+            if ( this.isRealField(this.field) && this.model.fields[this.field].type == 'text' && parseInt(this.model.fields[this.field].limit) === 0) {
                 return string.replace(/\n/g, '<br>');
             }
 
             //Is phone number
-            if ( this.isRealField(this.field) && this.model.fields[this.field].type == 'string' && ('phone' in this.model.fields[this.field] || 'phone_link' in this.model.fields[this.field]) )
-            {
+            if ( this.isRealField(this.field) && this.model.fields[this.field].type == 'string' && ('phone' in this.model.fields[this.field] || 'phone_link' in this.model.fields[this.field]) ) {
                 return '<a href="tel:'+string+'">'+string+'</a>';
             }
 
@@ -156,8 +155,9 @@ export default {
         getRelatedModelTable(field){
             var table = field.belongsTo||field.belongsToMany;
 
-            if ( ! table )
+            if ( ! table ) {
                 return false;
+            }
 
             return table.split(',')[0];
         },
