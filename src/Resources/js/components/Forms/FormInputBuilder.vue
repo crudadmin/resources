@@ -506,6 +506,17 @@
                         return true;
                 }
 
+                //Required unless attribute
+                if ( this.field.required_unless )
+                {
+                    var parts = this.field.required_unless.split(','),
+                        value = this.row[parts[0]];
+
+                    if (value && parts.slice(1).indexOf(value) == -1){
+                        return true;
+                    }
+                }
+
                 //Required without attribute
                 if ( this.field.required_without )
                 {
