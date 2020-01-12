@@ -134,6 +134,7 @@
             :row="row"
             :field_key="getFieldName"
             :field_key_original="field_key"
+            :required="isRequired"
             :is="componentName">
         </component>
     </div>
@@ -178,8 +179,9 @@
                 return value;
             },
             getLocalizedValue(value, defaultValue){
-                if ( ! this.hasLocale )
+                if ( ! this.hasLocale ) {
                     return value||null;
+                }
 
                 if ( value && this.langslug in value )
                     return value[this.langslug];
@@ -236,40 +238,73 @@
                 if ( component )
                     Vue.component(this.componentName, component);
             },
+            isEmptyValue(value){
+                return _.isNil(value) || value === '';
+            },
             defaultFieldValue(field){
-                var default_value = field ? (
-                        (field.value || field.value === 0 || field.value === false) ? field.value : field.default
-                    ) : null;
+                var defaultValue = field ? (
+                    this.isEmptyValue(field.value) ? (field.defaultByOption||field.default) : field.value
+                ) : null;
 
                 if (
-                    (!default_value && default_value !== false) //false is valid value, so we do not want to return empty string
-                    || (['number', 'string', 'boolean'].indexOf(typeof default_value) === -1 && !this.isMultipleField(field))
+                    this.isEmptyValue(defaultValue)
+                    || (['number', 'string', 'boolean'].indexOf(typeof defaultValue) === -1
+                    && !this.isMultipleField(field))
                 ) {
                     return '';
                 }
 
                 //If is current date value in datepicker
-                if ( field.default && this.isDatepickerField(field) && field.default.toUpperCase() == 'CURRENT_TIMESTAMP' )
-                    default_value = moment().format(this.$root.fromPHPFormatToMoment(field.date_format));
+                if ( field.default && this.isDatepickerField(field) && field.default.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
+                    defaultValue = moment().format(this.$root.fromPHPFormatToMoment(field.date_format));
+                }
 
                 //Get value by other table
-                if ( field.default )
-                {
-                    var default_parts = field.default.split('.');
+                if ( field.default && this.isEmptyValue(field.value) ) {
+                    var defaultParts = field.default.split('.');
 
-                    if ( default_parts.length == 2 )
+                    if ( defaultParts.length == 2 )
                     {
-                        var model = this.getModelBuilder(default_parts[0]);
+                        var model = this.getModelBuilder(defaultParts[0]);
 
-                        if ( model && (default_parts[1] in model.row) )
-                            return model.row[default_parts[1]];
+                        if ( model && (defaultParts[1] in model.row) ) {
+                            defaultValue = model.row[defaultParts[1]];
+                        }
                     }
                 }
 
-                if ( this.isCheckbox )
-                    return default_value == true ? true : false;
+                //Get value by select option key
+                if ( field.defaultByOption && this.isSelect && this.isEmptyValue(field.value) ) {
+                    var option = field.defaultByOption.split(','),
+                        defaultOption;
 
-                return default_value||'';
+                    if ( option.length == 1 ) {
+                        defaultOption = _.find(field.options, { 1 : optionValue[0] });
+                    } else if ( option.length > 1 ) {
+                        defaultOption = field.options.filter(item => {
+                            return item[1][option[0]] == option[1];
+                        })[0];
+                    }
+
+                    defaultValue = defaultOption ? defaultOption[0] : '';
+                }
+
+                //Cast checkbox value
+                if ( this.isCheckbox ) {
+                    defaultValue == true ? true : false;
+                }
+
+                //Returns empty value
+                if ( this.isEmptyValue(defaultValue) ) {
+                    return '';
+                }
+
+                //If is not empty default value, and field value is empty, set this field value to this default value
+                else if ( _.isNil(this.field.value) ) {
+                    this.changeValue(null, defaultValue);
+                }
+
+                return defaultValue;
             },
             /*
              * Apply event on changed value
@@ -293,8 +328,9 @@
                 }
 
                 //Update field values
-                if ( no_field != true )
+                if ( no_field != true ) {
                     this.field.value = value;
+                }
 
                 var data = {};
                     data[this.field_key] = value;
@@ -331,10 +367,11 @@
         },
 
         computed : {
-            isOpenedRow() {
+            isOpenedRow(){
                 return this.row && 'id' in this.row;
             },
-            getId() {
+            getId()
+            {
                 //Get parent model builder
                 var modelBuilder = this.getModelBuilder();
 
@@ -342,10 +379,12 @@
 
                 return 'id-' + this.model.slug + this.field_key + '-' + this.depth_level + '-' + parent + '-' + this.index + '-' + this.langslug;
             },
-            getFieldKey() {
+            getFieldKey()
+            {
                 return this.model.slug + '-' + this.field_key;
             },
-            getFieldName() {
+            getFieldName()
+            {
                 var key = this.field_key;
 
                 //If is localized key, add field locale key
@@ -355,50 +394,64 @@
 
                 return this.model.formPrefix()+key;
             },
-            getName() {
+            getName()
+            {
                 //Return confirmation name
                 if ( this.isConfirmation )
                     return this.field.name + ' ('+this.trans('confirmation')+')';
 
                 return this.field.name;
             },
-            isString() {
+            isString()
+            {
                 return this.field.type == 'string';
             },
-            isNumber() {
+            isNumber()
+            {
                 return ['integer', 'decimal'].indexOf(this.field.type) > -1;
             },
-            isText() {
+            isText()
+            {
                 return this.field.type == 'text' || this.field.type == 'longtext';
             },
-            isEditor() {
+            isEditor()
+            {
                 return this.field.type == 'editor'  || this.field.type == 'longeditor';
             },
-            isFile() {
+            isFile()
+            {
                 return this.field.type == 'file';
             },
-            isPassword() {
+            isPassword()
+            {
                 return this.field.type == 'password';
             },
-            isSelect() {
+            isSelect()
+            {
                 return this && this.field.type == 'select';
             },
-            isRadio() {
+            isRadio()
+            {
                 return this.field.type == 'radio';
             },
-            isConfirmation() {
+            isConfirmation()
+            {
                 return this.confirmation == true;
             },
-            isDatepicker() {
+            isDatepicker()
+            {
                 return this.isDatepickerField(this.field);
             },
-            isCheckbox() {
+            isCheckbox()
+            {
                 return this.field.type == 'checkbox';
             },
-            isDisabled() {
-                return this.model.tryAttribute(this.field, 'disabled');
+            isDisabled()
+            {
+                return this.field.disabled == true;
             },
-            isMultiple() {
+            isMultiple()
+            {
                 return this.isMultipleField(this.field);
             },
             hasComponent(){
@@ -419,12 +472,14 @@
 
                 var value = this.parseArrayValue(this.field.value);
 
-                if ( this.isMultipleDatepicker )
+                if ( this.isMultipleDatepicker ) {
                     return JSON.stringify(value||[]);
+                }
 
                 //Localization field
-                if ( this.hasLocale )
+                if ( this.hasLocale ) {
                     return this.getLocalizedValue(value, this.defaultFieldValue(this.field));
+                }
 
                 //If row is not opened, then return default field value
                 if ( ! this.isOpenedRow ){
