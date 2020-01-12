@@ -42,6 +42,11 @@ var Fields = (Model) => {
             relatedField = this.fields[fieldOperator[0]]||this.fields[fieldOperator[0]+'_id'],
             value = relatedField.value;
 
+        //Empty filter values set as null
+        items = items.map(item => {
+            return _.isNil(item) || ['', 'NULL'].indexOf(item) > -1 ? null : item;
+        });
+
         //If is key in item from options fields
         if ( fieldOperator.length > 1 ) {
             var options = relatedField.options,
@@ -64,11 +69,6 @@ var Fields = (Model) => {
         //If is empty value
         if ( _.isNil(value) || value === '' ) {
             value = null;
-        }
-
-        //If is empty identifier
-        if ( _.isNil(items[1]) || items[1] === '' ) {
-            items[1] = null;
         }
 
         return isIn ? (items.slice(1).indexOf(value) > -1) : value == items[1];
