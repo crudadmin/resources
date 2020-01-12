@@ -51,6 +51,12 @@
             };
         },
 
+        watch: {
+            value(value){
+                this.$nextTick(this.reloadSelectWithMultipleOrders);
+            },
+        },
+
         mounted(){
             /*
              * Fix for double recursion in VueJS
@@ -320,7 +326,6 @@
 
                 //Rebuild multiple order into fake select which will send data into request
                 if ( this.isMultiple ){
-
                     //Set selection order into multiple select
                     if ( this.field.value ){
                         //Error exception when is some options missing, or filtrated by filters
