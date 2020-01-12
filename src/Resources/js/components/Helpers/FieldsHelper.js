@@ -80,7 +80,7 @@ var Fields = (Model) => {
     Model.prototype.tryAttribute = function(field, type){
         let param;
 
-        if ( (param == field[type]) && param === true ){
+        if ( (param = field[type]) && param === true ){
             return true;
         }
 
