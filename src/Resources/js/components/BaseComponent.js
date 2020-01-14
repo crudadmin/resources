@@ -445,6 +445,11 @@ const BaseComponent = (router) => {
                 var obj = (new Function('return '+data))(),
                     _this = this;
 
+                //If template is missing, render empty div
+                if ( ! obj.template ) {
+                    obj.template = '<div></div>';
+                }
+
                 //Fixed backwards compacitibility for vuejs1 components
                 if ( obj.ready && !obj.mounted )
                   obj.mounted = obj.ready;

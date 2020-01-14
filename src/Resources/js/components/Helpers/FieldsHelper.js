@@ -24,7 +24,11 @@ var Fields = (Model) => {
      * Get option from field by id
      */
     Model.prototype.getOptionValue = function(key, id){
-        var value = _.find(this.fields[key].options, { 0 : id });
+        var field = this.fields[key];
+
+        var value = field.options.filter(item => {
+            return item[0] == id;
+        })[0];
 
         if ( _.isNil(value) ) {
             return null;

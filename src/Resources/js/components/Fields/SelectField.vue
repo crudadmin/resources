@@ -409,7 +409,7 @@
                 for ( var key in this.model.fields )
                 {
                     var field = this.model.fields[key],
-                            fillBy = this.getFillBy(field);
+                        fillBy = this.getFillBy(field);
 
                     if ( ! fillBy || ! fillBy[0] || (fillBy[0] != this.field_key && fillBy[0] + '_id' != this.field_key) )
                         continue;
@@ -422,11 +422,10 @@
                         if ( options[k][0] != value )
                             continue;
 
-                        this.$set(row, key, options[k][1][fillBy[1]||key]);
+                        this.$set(this.row, key, options[k][1][fillBy[1]||key]);
 
                         break;
                     }
-
                 }
             },
             getFillBy(field){
