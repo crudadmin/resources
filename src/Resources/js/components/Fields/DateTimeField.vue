@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled, 'multiple-date' : isMultipleDatepicker }">
+    <div class="form-group" :class="{ disabled : disabled, 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
             {{ field_name }} <span v-if="required" class="required">*</span>

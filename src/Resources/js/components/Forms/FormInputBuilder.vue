@@ -16,6 +16,7 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </string-field>
 
@@ -28,6 +29,7 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </number-field>
 
@@ -40,6 +42,7 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </date-time-field>
 
@@ -52,6 +55,7 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </checkbox-field>
 
@@ -65,6 +69,7 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </text-field>
 
@@ -80,6 +85,7 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </file-field>
 
@@ -96,6 +102,7 @@
             :langid="langid"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </select-field>
 
@@ -111,6 +118,7 @@
             :langid="langid"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </radio-field>
 
@@ -135,6 +143,8 @@
             :field_key="getFieldName"
             :field_key_original="field_key"
             :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
             :is="componentName">
         </component>
     </div>
@@ -291,7 +301,7 @@
 
                 //Cast checkbox value
                 if ( this.isCheckbox ) {
-                    defaultValue == true ? true : false;
+                    defaultValue = defaultValue == true ? true : false;
                 }
 
                 //Returns empty value
@@ -363,7 +373,19 @@
             },
             isDatepickerField(field){
                 return ['date', 'datetime', 'time'].indexOf(field.type) > -1;
-            }
+            },
+            //Change bools to string values
+            fixBoolValue(value){
+                if ( value === true ) {
+                    return '1';
+                }
+
+                if ( value === false ) {
+                    return '0';
+                }
+
+                return value;
+            },
         },
 
         computed : {
@@ -448,7 +470,11 @@
             },
             isDisabled()
             {
-                return this.field.disabled == true;
+                return this.model.tryAttribute(this.field, 'disabled');
+            },
+            isReadonly()
+            {
+                return this.model.tryAttribute(this.field, 'readonly');
             },
             isMultiple()
             {
@@ -489,8 +515,9 @@
                 return value;
             },
             isRequired(){
-                if ( this.isOpenedRow && this.field.type == 'password' )
+                if ( this.isOpenedRow && this.field.type == 'password' ) {
                     return false;
+                }
 
                 //Basic required attribute
                 if ( 'required' in this.field && this.field.required == true )
@@ -500,7 +527,7 @@
                 if ( this.field.required_if )
                 {
                     var parts = this.field.required_if.split(','),
-                        value = this.row[parts[0]];
+                        value = this.fixBoolValue(this.row[parts[0]]);
 
                     if (value && parts.slice(1).indexOf(value) > -1)
                         return true;
@@ -510,7 +537,7 @@
                 if ( this.field.required_unless )
                 {
                     var parts = this.field.required_unless.split(','),
-                        value = this.row[parts[0]];
+                        value = this.fixBoolValue(this.row[parts[0]]);
 
                     if (value && parts.slice(1).indexOf(value) == -1){
                         return true;
@@ -522,8 +549,7 @@
                 {
                     var parts = this.field.required_without.split(',');
 
-                    for ( var i = 0; i < parts.length; i++ )
-                    {
+                    for ( var i = 0; i < parts.length; i++ ) {
                         if ( ! this.row[parts[i]] )
                             return true;
                     }
@@ -534,8 +560,7 @@
                 {
                     var parts = this.field.required_with.split(',');
 
-                    for ( var i = 0; i < parts.length; i++ )
-                    {
+                    for ( var i = 0; i < parts.length; i++ ) {
                         if ( this.row[parts[i]] )
                             return true;
                     }

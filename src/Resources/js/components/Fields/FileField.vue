@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled }">
+    <div class="form-group" :class="{ disabled : disabled }" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
             {{ field_name }}

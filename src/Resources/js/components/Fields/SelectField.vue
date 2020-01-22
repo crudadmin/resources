@@ -1,12 +1,18 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled || hasNoFilterValues }" v-show="required || !hasNoFilterValues">
+    <div class="form-group" :class="{ disabled : disabled || readonly || hasNoFilterValues }" v-show="required || !hasNoFilterValues" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
             {{ field.name }}
             <span v-if="required || isRequiredIfHasValues" class="required">*</span>
         </label>
         <div :class="{ 'can-add-select' : canAddRow }">
-            <select ref="select" :disabled="disabled" :name="!isMultiple ? field_key : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
+            <select v-if="readonly" :name="!isMultiple ? field_key : ''" class="d-none">
+                <option v-if="!isMultiple" value=""></option>
+                <option v-for="mvalue in missingValueInSelectOptions" :value="mvalue" :selected="hasValue(mvalue, value, isMultiple)"></option>
+                <option v-for="data in fieldOptions" :selected="hasValue(data[0], value, isMultiple)" :value="data[0]">{{ data[0] }}</option>
+            </select>
+
+            <select ref="select" :disabled="disabled || readonly" :name="!isMultiple ? field_key : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
                 <option v-if="!isMultiple" value="">{{ trans('select-option') }}</option>
                 <option v-for="mvalue in missingValueInSelectOptions" :value="mvalue" :selected="hasValue(mvalue, value, isMultiple)">{{ mvalue }}</option>
                 <option v-for="data in fieldOptions" :selected="hasValue(data[0], value, isMultiple)" :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
@@ -42,7 +48,7 @@
     import ModelBuilder from '../Views/ModelBuilder.vue';
 
     export default {
-        props: ['id', 'row', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'inputlang', 'langid', 'depth_level'],
+        props: ['id', 'row', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'inputlang', 'langid', 'depth_level'],
 
         data(){
             return {
@@ -53,6 +59,13 @@
 
         watch: {
             value(value){
+                this.$nextTick(this.reloadSelectWithMultipleOrders);
+            },
+            //If disabled state has been changed, we need reload field
+            disabled(){
+                this.$nextTick(this.reloadSelectWithMultipleOrders);
+            },
+            readonly(){
                 this.$nextTick(this.reloadSelectWithMultipleOrders);
             },
         },
@@ -293,7 +306,7 @@
                 {
                     if ( value.indexOf( $.isNumeric(key) ? parseInt(key) : key ) > -1 )
                         return true;
-                } else if ((key || key == 0) && value && key == value) {
+                } else if ((key || key == 0) && (value || value == 0) && key == value) {
                     return true;
                 }
 

@@ -71,6 +71,27 @@
         color: $darkText;
     }
 
+    &.disabled, &.readonly {
+        label {
+            opacity: 0.5;
+        }
+
+        .chosen-disabled {
+            opacity: 1 !important;
+        }
+    }
+
+    .form-control:disabled,
+    .form-control[readonly],
+    .chosen-disabled .chosen-single {
+        background: #fbfbfb;
+        border-color: #e8e8e8;
+
+        &, &::placeholder {
+            color: #b1b1b1;
+        }
+    }
+
     &.has-error {
         & > .cke,
         .chosen-container > .chosen-single,
@@ -237,6 +258,23 @@
      * Selects
      */
     .chosen-container {
+        .chosen-single {
+            border-color: $inputBorderColor;
+            height: $input-height;
+            @include border-radius($input-border-radius, 0);
+
+            > span {
+                margin-top: 0;
+                display: flex;
+                align-items: center;
+                height: 100%;
+            }
+        }
+
+        .chosen-drop {
+            border-color: $inputBorderColor;
+        }
+
         .search-choice {
             background-image: none !important;
 
