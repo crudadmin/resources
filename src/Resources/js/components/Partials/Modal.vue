@@ -12,7 +12,7 @@
         <div class="modal-body">
           <p v-if="alert.message" v-html="alert.message"></p>
           <component
-            v-if="alert.component"
+            v-if="isRegistredComponent(alert.component)"
             :model="alert.component.model"
             :rows="alert.component.rows"
             :row="alert.component.row"
@@ -37,6 +37,11 @@
 export default {
     props : ['alert'],
 
+    data(){
+        return {
+            registredComponents : [],
+        };
+    },
 
     mounted(){
         this.$watch('alert.component', component => {
@@ -53,6 +58,16 @@ export default {
     },
 
     methods: {
+        isRegistredComponent(component){
+            if ( ! component || !component.name ){
+                return;
+            }
+
+            return this.registredComponents.indexOf(this.$root.getComponentName(component.name)) > -1;
+        },
+        getComponentName(name){
+            return this.$root.getComponentName(name);
+        },
         checkAlertEvents(){
             $(window).keyup(e => {
 
@@ -89,7 +104,7 @@ export default {
 
                     this.$options.components[obj.name] = obj;
 
-                    console.log('component registred', this.$root.getComponentName(component.name), component);
+                    this.registredComponents.push(obj.name)
                 } catch(error){
                     console.error('Syntax error in component button component.' + "\n", error);
 
