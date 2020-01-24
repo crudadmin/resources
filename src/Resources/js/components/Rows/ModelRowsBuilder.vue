@@ -204,15 +204,22 @@ export default {
 
             for ( var key in this.rows.data )
             {
-                if ( this.rows.data[key].id != row.id )
+                if ( this.rows.data[key].id != row.id ) {
                     continue;
+                }
 
-                for ( var k in row )
+                for ( var k in row ) {
                     this.$parent.rows.data[key][k] = row[k];
+                }
             }
 
             //Reset history on update row
             this.$parent.closeHistory();
+
+            //Reload rows on row update event
+            if ( this.$root.getModelProperty(this.model, 'settings.reloadOnUpdate') == true ) {
+                this.loadRows();
+            }
         });
 
         /*
@@ -702,10 +709,10 @@ export default {
         },
         getRefreshInterval(){
             var interval = this.$root.getModelProperty(this.model, 'settings.refresh_interval', 10000);
-
             //Infinity interval
-            if ( interval == false )
+            if ( interval == false ) {
                 interval = 3600 * 1000;
+            }
 
             return interval;
         },
