@@ -379,9 +379,11 @@ export default {
         enabledColumnsList(){
             var allowed = [];
 
-            for ( var key in this.enabled_columns||{} )
-                if ( this.enabled_columns[key].enabled == true && this.default_columns.indexOf(key) == -1 )
+            for ( var key in this.enabled_columns||{} ) {
+                if ( this.enabled_columns[key].enabled == true && this.default_columns.indexOf(key) == -1 ) {
                     allowed.push(key);
+                }
+            }
 
             return allowed;
         }

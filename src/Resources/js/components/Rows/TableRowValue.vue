@@ -45,17 +45,14 @@ export default {
             {
                 var isRadio = field.type == 'radio';
 
-                if ( field.type == 'select' || isRadio )
-                {
-                    if ( 'multiple' in field && field.multiple == true && $.isArray(rowValue) && !isRadio )
-                    {
+                if ( field.type == 'select' || isRadio ) {
+                    if ( 'multiple' in field && field.multiple == true && $.isArray(rowValue) && !isRadio ) {
                         var values = [],
                             rows = rowValue,
                             related_table = this.getRelatedModelTable(field),
                             options = (!related_table && !field.option) ? field.options : this.getLanguageSelectOptions( field.options, this.getRelatedModelTable(field) );
 
-                        for ( var i = 0; i < rows.length; i++ )
-                        {
+                        for ( var i = 0; i < rows.length; i++ ) {
                             var searched = options.filter(function(item){
                                 return item[0] == rows[i];
                             }.bind(this));
@@ -83,28 +80,25 @@ export default {
                     }
                 }
 
-                else if ( field.type == 'checkbox' )
-                {
+                else if ( field.type == 'checkbox' ) {
                     return rowValue == 1 ? this.trans('yes') : this.trans('no');
                 }
 
                 //Multi date format values
                 else if ( field.type == 'date' && field.multiple === true ) {
-                    rowValue = (rowValue||[]).map(item => {
-                        var date = moment(item);
-
-                        return date._isValid ? date.format('DD.MM.YYYY') : item;
-                    }).join(', ');
+                    rowValue = this.returnDateFormat(rowValue);
                 }
 
                 //Multi time format values
                 else if ( field.type == 'time' && field.multiple === true ) {
                     rowValue = (rowValue||[]).join(', ');
                 }
+            } else if ( ['created_at', 'updated_at'].indexOf(this.field) > -1 ) {
+                return this.returnDateFormat([rowValue]);
             }
 
             var add_before = this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.add_before'),
-                    add_after = this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.add_after');
+                add_after = this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.add_after');
 
             //If is object
             if ( typeof rowValue == 'object' )
@@ -125,6 +119,13 @@ export default {
     },
 
     methods: {
+        returnDateFormat(rowValue){
+            return (rowValue||[]).map(item => {
+                var date = moment(item);
+
+                return date._isValid ? date.format('DD.MM.YYYY') : item;
+            }).join(', ');
+        },
         stringLimit(string){
             var limit = this.getFieldLimit(Object.keys(this.$parent.$parent.columns).length < 5 ? 40 : 20);
 

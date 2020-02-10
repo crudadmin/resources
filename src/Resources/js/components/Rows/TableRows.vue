@@ -101,8 +101,9 @@ export default {
                 key = this.model.columns[i];
 
                 //If is column hidden
-                if (this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.hidden'))
+                if (this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.hidden')) {
                     continue;
+                }
 
                 if (
                     this.hidden.indexOf( key ) == -1
@@ -114,14 +115,12 @@ export default {
                                 && this.model.fields[key].invisible != true
                             )
                     )
-                )
-                {
+                ) {
                     data[ this.model.columns[i] ] = this.fieldName( this.model.columns[i] );
                 }
             }
 
             var columns = this.$root.getModelProperty(this.model, 'settings.columns');
-
 
             /*
              * Check if can be added column after other column
@@ -261,18 +260,19 @@ export default {
                 model_keys = Object.keys(this.model.fields);
 
             //Add allowed keys
-            for ( var key in columns )
+            for ( var key in columns ) {
                 enabled[key] = {
                     name : columns[key],
                     enabled : true,
                 };
+            }
 
             //After allowed keys, add all hidden
-            for ( var key in this.model.fields )
-            {
+            for ( var key in this.model.fields ) {
                 //Skip existing columns
-                if ( key in enabled )
+                if ( key in enabled ) {
                     continue;
+                }
 
                 var add_index = null,
                     after = true,
@@ -313,8 +313,9 @@ export default {
             }
 
             var correctOrder = {};
-            for ( var i = 0; i < order.length; i++ )
+            for ( var i = 0; i < order.length; i++ ) {
                 correctOrder[order[i]] = enabled[order[i]];
+            }
 
             this.$parent.enabled_columns = this.enabled_columns = correctOrder;
         },

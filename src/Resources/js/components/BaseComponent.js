@@ -253,22 +253,11 @@ const BaseComponent = (router) => {
             },
             //Check specifics property in model
             getModelProperty(model, key, value){
-                var path = key.split('.');
-
-                if ( ! model )
+                if ( ! model ) {
                     return null;
-
-                for ( var i = 0; i < path.length; i++ )
-                {
-                    if ( ! ( path[i] in model ) )
-                    {
-                        return value ? value : null;
-                    }
-
-                    model = model[path[i]];
                 }
 
-                return model;
+                return model.getModelProperty(key, value);
             },
             /*
             * Returns correct values into multilangual select
