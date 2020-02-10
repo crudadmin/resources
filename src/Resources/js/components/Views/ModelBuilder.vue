@@ -196,10 +196,10 @@
                 model : this.model_builder,
 
                 sizes : [
-                    { size : 4, key : 'small', name : 'Veľky formulár', active : false, disabled : false },
-                    { size : 8, key : 'big', name : 'Veľká tabuľka', active : false, disabled : false },
-                    { size : 6, key : 'medium', name : 'Vedľa seba', active : false, disabled : false },
-                    { size : 0, key : 'full', name : 'Plná šírka', active : false, disabled : false },
+                    { size : 4, key : 'small', name : this.trans('grid-small'), active : false, disabled : false },
+                    { size : 8, key : 'big', name : this.trans('grid-big'), active : false, disabled : false },
+                    { size : 6, key : 'medium', name : this.trans('grid-medium'), active : false, disabled : false },
+                    { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : false },
                 ],
 
                 row : this.emptyRowInstance(this.model_builder),

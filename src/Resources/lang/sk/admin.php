@@ -160,4 +160,9 @@ return [
     'gettext-missing' => 'Tento preklad bol odstránený, v aplikácii sa už nevyužíva.',
     'gettext-loading' => 'Preklady sa načitávajú, prosím počkajte.',
     'gettext-save' => 'Uložiť a zatvoriť',
+
+    'grid-small' => 'Veľky formulár',
+    'grid-big' => 'Veľká tabuľka',
+    'grid-medium' => 'Vedľa seba',
+    'grid-full' => 'Plná šírka',
 ];

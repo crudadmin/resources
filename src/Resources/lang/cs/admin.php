@@ -160,4 +160,9 @@ return [
     'gettext-missing' => 'Tento překlad byl odstraněn, tím pádem se již nevyužívá.',
     'gettext-loading' => 'Překlady se načitávajú, prosím počkejte.',
     'gettext-save' => 'Uložit a zavřít',
+
+    'grid-small' => 'Velky formulář',
+    'grid-big' => 'Velká tabulka',
+    'grid-medium' => 'Vedle sebe',
+    'grid-full' => 'Plná šířka',
 ];

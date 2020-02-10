@@ -160,4 +160,9 @@ return [
     'gettext-missing' => 'This translation has been deleted from application.',
     'gettext-loading' => 'The translations are loading, please wait.',
     'gettext-save' => 'Save and close',
+
+    'grid-small' => 'Big form',
+    'grid-big' => 'Big table',
+    'grid-medium' => '50% / 50%',
+    'grid-full' => 'Full width',
 ];
