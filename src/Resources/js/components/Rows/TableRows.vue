@@ -27,15 +27,15 @@
                 </td>
 
                 <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
-                    <div class="buttons-options__item"  v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="trans('edit')"><i class="far fa-edit"></i></button></div>
-                    <div class="buttons-options__item"  v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
-                    <div class="buttons-options__item"  v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
-                    <div class="buttons-options__item" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
-                    <div class="buttons-options__item"  v-for="(button, button_key) in getButtonsForRow(item)">
+                    <div class="buttons-options__item" v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="trans('edit')"><i class="far fa-edit"></i></button></div>
+                    <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
+                    <div class="buttons-options__item" v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
+                    <div class="buttons-options__item" v-if="canShowInfo" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
+                    <div class="buttons-options__item" v-for="(button, button_key) in getButtonsForRow(item)">
                         <button type="button" :data-button="'action-'+button.key" v-on:click="buttonAction(button_key, button, item)" :class="['btn', 'btn-sm', button.class]" data-toggle="tooltip" title="" :data-original-title="button.name"><i :class="['fa', button_loading == getButtonKey(item.id, button_key) ? 'fa-sync-alt' : faMigrator(button.icon), { 'fa-spin' : button_loading == getButtonKey(item.id, button_key) }]"></i></button>
                     </div>
-                    <div class="buttons-options__item"  v-if="model.publishable && model.hasAccess('publishable')"><button data-button="publishable" type="button" v-on:click="togglePublishedAt(item)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
-                    <div class="buttons-options__item"  v-if="model.deletable && count > model.minimum && model.hasAccess('delete')">
+                    <div class="buttons-options__item" v-if="model.publishable && model.hasAccess('publishable')"><button data-button="publishable" type="button" v-on:click="togglePublishedAt(item)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
+                    <div class="buttons-options__item" v-if="model.deletable && count > model.minimum && model.hasAccess('delete')">
                         <button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button>
                     </div>
                 </td>
@@ -197,6 +197,13 @@ export default {
 
             return false;
         },
+        canShowInfo(){
+            if ( this.model.getSettings('dates') == false ) {
+                return false;
+            }
+
+            return true;
+        },
         formID(){
             return 'form-' + this.depth_level + '-' + this.model.slug;
         },
@@ -324,10 +331,11 @@ export default {
         },
         buttonsCount(item){
             var buttons = this.getButtonsForRow(item),
-                    additional = 0;
+                additional = 0;
 
             additional += this.isEnabledHistory ? 1 : 0;
             additional += this.canShowGettext ? 1 : 0;
+            additional -= !this.canShowGettext ? 1 : 0;
             additional -= !this.model.publishable ? 1 : 0;
 
             return Object.keys(buttons||{}).length + additional;
@@ -337,12 +345,12 @@ export default {
                 return {};
 
             var data = {},
-                    buttons = this.rows.buttons[item.id];
+                buttons = this.rows.buttons[item.id];
 
-            for ( var key in buttons )
-            {
-                if ( ['button', 'both', 'multiple'].indexOf(buttons[key].type) > -1 )
+            for ( var key in buttons ) {
+                if ( ['button', 'both', 'multiple'].indexOf(buttons[key].type) > -1 ) {
                     data[key] = buttons[key];
+                }
             }
 
             return data;

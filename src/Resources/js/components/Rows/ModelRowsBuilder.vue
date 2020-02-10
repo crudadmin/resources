@@ -182,8 +182,9 @@ export default {
                     rows = rows.slice(0, this.pagination.limit);
 
                 //Update buttons
-                for ( var key in array.buttons )
+                for ( var key in array.buttons ) {
                     this.rows.buttons[key] = array.buttons[key];
+                }
 
                 this.rows.data = rows;
                 this.rows.count += array.rows.length;
