@@ -12,7 +12,7 @@ return [
     'unknown-error' => 'An error occurred unexpectedly, please try again later',
 
     'navigation' => 'Navigation',
-    'language-mutation' => 'Language version',
+    'language-mutation' => 'Language versions',
     'language-title' => 'Modify language settings. Set your default language by placing it on the first position.',
     'languages-add-new' => 'Add new language',
     'languages-update' => 'You are editing language: name',
