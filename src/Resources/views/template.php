@@ -46,6 +46,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Left side column. contains the logo and sidebar -->
           <aside class="main-sidebar">
             <sidebar
+              :author="<?php echo config('admin.author', true) ? 'true' : 'false' ?>"
               :rows="tree"
               :version="version"
               :languages="languages"

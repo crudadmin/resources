@@ -7,9 +7,9 @@
         </section>
 
         <div class="footer-sidebar">
-            <p>Developed by <a href="https://www.marekgogol.sk" target="_blank">Marek Gogoľ</a></p>
+            <p v-if="author !== false">Developed by <a href="https://www.marekgogol.sk" target="_blank">Marek Gogoľ</a></p>
             <p>&copy; 2016 - {{ year }} <a href="https://www.crudadmin.com" target="_blank">CrudAdmin</a></p>
-            <br>
+            <br v-if="author !== false">
             <p>Version <a target="_blank" :href="'https://packagist.org/packages/crudadmin/crudadmin#'+version">{{ version }}</a></p>
           </strong>
         </div>
@@ -20,7 +20,7 @@
 import SidebarRow from './SidebarRow.vue';
 
 export default {
-    props: ['rows', 'languages', 'langid', 'user', 'version'],
+    props: ['rows', 'languages', 'langid', 'user', 'version', 'author'],
 
     components: { SidebarRow },
 

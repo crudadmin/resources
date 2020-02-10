@@ -75,7 +75,7 @@ var Fields = (Model) => {
             value = null;
         }
 
-        return isIn ? (items.slice(1).indexOf(value) > -1) : value == items[1];
+        return isIn ? (items.slice(1).filter(item => item == value).length > 0) : value == items[1];
     }
 
     /*
