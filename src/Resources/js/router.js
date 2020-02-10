@@ -9,6 +9,7 @@ var Router = new VueRouter({
     routes : [
         {
             path : '*',
+            name : 'dashboard',
             component: DashboardView,
         },
         {

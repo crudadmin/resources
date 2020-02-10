@@ -18,7 +18,7 @@ return [
     'languages-update' => 'You are editing language: name',
     'languages-name' => 'Language name',
     'languages-title' => 'Enter the language name',
-    'languages-prefix' => 'Language abbreviation',
+    'languages-prefix' => 'Language slug',
     'languages-prefix-title' => 'Enter your language (en, sk, de, cz) ...',
     'languages-po-name' => 'Translation .po file for poedit',
     'languages-mo-name' => 'Translation .mo file for poedit',

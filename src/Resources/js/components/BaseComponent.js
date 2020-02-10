@@ -69,6 +69,16 @@ const BaseComponent = (router) => {
         },
 
         methods : {
+            setDefaultRoute(){
+                if ( router.currentRoute.name == 'dashboard' ) {
+                    for ( var key in this.models ) {
+                        if ( this.models[key].getSettings('default', false) === true ) {
+                            router.push({ name : 'admin-model', params : { model : 'submissions' } });
+                            return;
+                        }
+                    }
+                }
+            },
             bootTooltips(){
                 $('body').tooltip({
                   selector: "[data-toggle='tooltip']",
@@ -114,6 +124,7 @@ const BaseComponent = (router) => {
                     this.languages = layout.languages||[];
 
                     this.bootLanguages();
+                    this.setDefaultRoute();
                 }).catch(error => {
                     this.errorResponseLayer(error);
                 });
