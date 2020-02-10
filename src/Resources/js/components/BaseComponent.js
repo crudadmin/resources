@@ -73,7 +73,7 @@ const BaseComponent = (router) => {
                 if ( router.currentRoute.name == 'dashboard' ) {
                     for ( var key in this.models ) {
                         if ( this.models[key].getSettings('default', false) === true ) {
-                            router.push({ name : 'admin-model', params : { model : 'submissions' } });
+                            router.push({ name : 'admin-model', params : { model : this.models[key].table } });
                             return;
                         }
                     }
