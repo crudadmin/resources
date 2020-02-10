@@ -22,7 +22,7 @@ return [
     'languages-prefix-title' => 'Enter your language (en, sk, de, cz) ...',
     'languages-po-name' => 'Translation .po file for poedit',
     'languages-mo-name' => 'Translation .mo file for poedit',
-    'languages' => 'Language mutation',
+    'languages' => 'Language versions',
     'languages-missing' => 'There are no inserted languages in the administration. Please add at least one language.',
     'languages-field' => 'This input is translated into multiple languages.',
     'change-language' => 'Change language mutation. WARNING! Changing your language may discard your currently delineated changes.',
