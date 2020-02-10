@@ -8,16 +8,16 @@ return [
 
     'auth-disabled' => 'Your account has been disabled.',
     'admin-user' => 'Administrator',
-    'auto-logout' => 'You were automatically logged off. Please sign in again.',
+    'auto-logout' => 'You\'ve been automatically logged off. Please sign in again.',
     'unknown-error' => 'An error occurred unexpectedly, please try again later',
 
     'navigation' => 'Navigation',
     'language-mutation' => 'Language version',
-    'language-title' => 'Modify language mutation settings. Also, set your default language by placing your language in the first position.',
+    'language-title' => 'Modify language settings. Set your default language by placing it on the first position.',
     'languages-add-new' => 'Add new language',
     'languages-update' => 'You are editing language: name',
     'languages-name' => 'Language name',
-    'languages-title' => 'Enter the name of the language',
+    'languages-title' => 'Enter the language name',
     'languages-prefix' => 'Language abbreviation',
     'languages-prefix-title' => 'Enter your language (en, sk, de, cz) ...',
     'languages-po-name' => 'Translation .po file for poedit',
@@ -89,7 +89,7 @@ return [
     'cannot-publish' => 'This row can not be unpublished.',
     'cannot-sort' => 'This row can not be moved.',
     'success-created' => 'Record successfully added',
-    'success-save' => 'Record Saved successfully',
+    'success-save' => 'Record saved successfully',
     'with-errors' => 'with the following errors',
 
     'multilanguages' => 'This record is multilanguage',
@@ -118,7 +118,7 @@ return [
 
     'edit-size' => 'Adjust the width of the form view for a more readable display of records',
     'search' => 'Search',
-    'search-all' => 'Search everywhere',
+    'search-all' => 'All',
     'get-value' => 'Select value',
     'reset' => 'Reset',
     'on' => 'Off',
