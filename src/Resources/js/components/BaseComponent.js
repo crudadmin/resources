@@ -83,6 +83,11 @@ const BaseComponent = (router) => {
                 $('body').tooltip({
                   selector: "[data-toggle='tooltip']",
                 });
+
+                //Destroy tooltips on click
+                $('body').click(() => {
+                    $('[data-toggle="tooltip"]').tooltip('dispose');
+                });
             },
             reloadCSRFToken(token){
                 this.csrf_token = token;

@@ -10,7 +10,7 @@
         </div>
 
         <!-- Table value -->
-        <span v-else :data-toggle="fieldValue.length > 20 ? 'tooltip' : ''" :data-original-title="onlyEncodedTitle" v-html="fieldValueLimitedAndEncoded"></span>
+        <span v-else :data-toggle="fieldValue.length > getStringLimit ? 'tooltip' : ''" :data-original-title="onlyEncodedTitle" v-html="fieldValueLimitedAndEncoded"></span>
     </div>
 </template>
 
@@ -116,6 +116,9 @@ export default {
         fieldValueLimitedAndEncoded(){
             return this.encodeValue(this.stringLimit(this.fieldValue));
         },
+        getStringLimit(){
+            return this.getFieldLimit(Object.keys(this.$parent.$parent.columns).length < 5 ? 40 : 20)
+        },
     },
 
     methods: {
@@ -127,7 +130,7 @@ export default {
             }).join(', ');
         },
         stringLimit(string){
-            var limit = this.getFieldLimit(Object.keys(this.$parent.$parent.columns).length < 5 ? 40 : 20);
+            var limit = this.getStringLimit;
 
             if ( limit != 0 && string.length > limit && this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.encode', true) !== false )
                 return string.substr(0, limit) + '...';

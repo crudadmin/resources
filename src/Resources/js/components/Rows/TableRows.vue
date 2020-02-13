@@ -2,8 +2,11 @@
     <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="depth_level" :class="['table', { 'sortable' : model.sortable && orderby[0] == '_order' }]">
         <thead data-table-head>
             <tr>
-                <th @click="toggleAllCheckboxes" v-if="multipleCheckbox">
-                    <i data-toggle="tooltip" :data-original-title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')" :class="isCheckedAll ? 'fa-check-square-o' : 'fa-square-o'" class="fa"></i>
+                <th class="select-row-checkbox" @click="toggleAllCheckboxes">
+                    <div class="checkbox-box" @click="checkRow(item.id)" data-toggle="tooltip" :title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')">
+                        <input type="checkbox" :checked="isCheckedAll">
+                        <span class="checkmark"></span>
+                    </div>
                 </th>
                 <th v-for="(name, field) in columns" :class="'th-'+field" @click="toggleSorting(field)">
                     <i class="arrow-sorting fa fa-angle-up" v-if="orderby[0] == field && orderby[1] == 0"></i>
@@ -15,7 +18,7 @@
         </thead>
         <draggable tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
             <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id">
-                <td class="select-row-checkbox" v-if="multipleCheckbox">
+                <td class="select-row-checkbox">
                     <div class="checkbox-box" @click="checkRow(item.id)">
                         <input type="checkbox" :checked="checked.indexOf(item.id) > -1">
                         <span class="checkmark"></span>
