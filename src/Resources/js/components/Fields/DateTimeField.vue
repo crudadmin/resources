@@ -71,7 +71,7 @@
                     datepicker: this.field.type != 'time',
                     scrollInput: false,
                     timepickerScrollbar: false,
-                    step : this.field.date_step||30,
+                    step : this.field.date_step ? parseInt(this.field.date_step) : 30,
                     scrollMonth: false,
                     scrollYear: false,
                     inline : this.isMultipleDatepicker,
