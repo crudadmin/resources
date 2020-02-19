@@ -72,7 +72,7 @@ const BaseComponent = (router) => {
             setDefaultRoute(){
                 if ( router.currentRoute.name == 'dashboard' ) {
                     for ( var key in this.models ) {
-                        if ( this.models[key].getSettings('default', false) === true ) {
+                        if ( this.models[key].hasAccess('read') && this.models[key].getSettings('default', false) === true ) {
                             router.push({ name : 'admin-model', params : { model : this.models[key].table } });
                             return;
                         }
