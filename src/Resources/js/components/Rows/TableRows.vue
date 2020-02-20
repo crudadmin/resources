@@ -201,11 +201,11 @@ export default {
             return false;
         },
         canShowInfo(){
-            if ( this.model.getSettings('dates') == false ) {
-                return false;
+            if ( this.model.getSettings('dates') == true ) {
+                return true;
             }
 
-            return true;
+            return false;
         },
         formID(){
             return 'form-' + this.depth_level + '-' + this.model.slug;
