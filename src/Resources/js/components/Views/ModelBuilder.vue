@@ -628,26 +628,20 @@
                 /*
                  * When is localStorage value empty, then automatic chose the best grid value
                  */
-
                 //Full screen
-                if ( this.hasChilds() > 0 )
+                if ( this.hasChilds() > 0 || columns.length > this.fullSizeByColumns() ) {
                     return this.sizes[3].active = true;
-
-                //Full screen
-                if ( columns.length > 5 )
-                    return this.sizes[3].active = true;
+                }
 
                 //50/50
-                if ( columns.length <= 1 )
-                    return this.sizes[2].active = true;
+                this.sizes[2].active = true;
+            },
+            fullSizeByColumns(){
+                if ( window.innerWidth < 1500 ) {
+                    return 4;
+                }
 
-                //Small
-                if ( columns.length == 4 )
-                    return this.sizes[0].active = true;
-
-                //Small
-                this.sizes[1].active = true;
-
+                return 5;
             },
             changeSize(row){
                 if ( row.disabled == true )
