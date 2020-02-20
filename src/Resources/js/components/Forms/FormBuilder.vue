@@ -253,7 +253,7 @@ export default {
             return this.$root.getModelProperty(this.model, 'settings.buttons.update') || this.trans('save');
         },
         sendButton(){
-            return this.$root.getModelProperty(this.model, 'settings.buttons.create') || this.trans('send');
+            return this.$root.getModelProperty(this.model, 'settings.buttons.insert') || this.trans('send');
         },
         hasLocaleFields(){
             for ( var key in this.model.fields )

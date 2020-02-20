@@ -705,7 +705,7 @@
                 }
             },
             newRowTitle(){
-                return this.$root.getModelProperty(this.model, 'settings.buttons.insert', this.trans('new-row'));
+                return this.$root.getModelProperty(this.model, 'settings.buttons.create', this.trans('new-row'));
             },
             resetForm(scroll, dontResetIfNotOpened, resetActiveTab){
                 if ( ! dontResetIfNotOpened || this.isOpenedRow ) {
