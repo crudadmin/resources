@@ -34,7 +34,7 @@
                             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
                                 <li v-for="lang in languages" v-if="selectedLanguage.id != lang.id" :data-slug="lang.slug">
                                     <a href="#" @click.prevent="changeLanguage(lang.id)">
-                                        <i class="--icon-left fa fa-exclamation-triangle"></i> {{ getLangName(lang) }}
+                                        {{ getLangName(lang) }}
                                     </a>
                                 </li>
                             </ul>
