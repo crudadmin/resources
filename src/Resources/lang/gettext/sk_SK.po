@@ -1,0 +1,464 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Translations powered by CrudAdmin.com for sangreazul.test project.\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2020-02-20T16:45:18+00:00\n"
+"PO-Revision-Date: 2020-02-20 17:47+0100\n"
+"Language: sk_SK\n"
+"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n >= 2 && n <= 4) ? 1 : 2);\n"
+"X-Generator: Poedit 2.2.3\n"
+
+msgid "Súbory s prekladmi"
+msgstr ""
+
+msgid "Zadali skratku jazyka v nesprávnom formáte."
+msgstr ""
+
+msgid "Skratku jazyka nie je možné po jej vytvorení premenovať."
+msgstr ""
+
+msgid "Stiahnuť súbor s prekladmi"
+msgstr ""
+
+msgid "Nový článok"
+msgstr ""
+
+msgid "Upravujete článok č. :id"
+msgstr ""
+
+msgid "Administrácia"
+msgstr ""
+
+msgid "Odhlásiť sa"
+msgstr ""
+
+msgid "Vitajte"
+msgstr ""
+
+msgid "Vitajte v administrácii"
+msgstr ""
+
+msgid "Váš účet bol deaktivovaný."
+msgstr ""
+
+msgid "Administrátor"
+msgstr ""
+
+msgid "Boli ste automatický odhlásený. Prosím, znova sa prihláste."
+msgstr ""
+
+msgid "Nastala nečakaná chyba, skúste neskôr prosím."
+msgstr ""
+
+msgid "Navigácia"
+msgstr ""
+
+msgid "Jazyková verzia"
+msgstr ""
+
+msgid "Upravte si nastavenia jazykových mutácii. Taktiež si nastavte predvolený jazyk umiestnením jazyka na prvú pozíciu."
+msgstr ""
+
+msgid "Pridať nový jazyk"
+msgstr ""
+
+msgid "Upravujete jazyk :name"
+msgstr ""
+
+msgid "Názov jazyka"
+msgstr ""
+
+msgid "Zadajte názov jazyka"
+msgstr ""
+
+msgid "Skratka jazyka"
+msgstr ""
+
+msgid "Zadajte skratku jazyka (en, sk, de, cz)..."
+msgstr ""
+
+msgid "Preklad .po súboru"
+msgstr ""
+
+msgid "Preklad .mo súboru"
+msgstr ""
+
+msgid "Jazyková mutácia"
+msgstr ""
+
+msgid "V administrácii sa nenachádzajú žiadne jazykové mutácie, ku ktorým by mohli byť záznamy naviazané. Prosím, pridajte aspoň jeden jazyk."
+msgstr ""
+
+msgid "Tento vstup je prekladaný do viacerých jazykov."
+msgstr ""
+
+msgid "Zmena jazykovej mutácie. Pozor! Zmena jazyka môže zahodiť Vaše aktuálne rozpísane zmeny."
+msgstr ""
+
+msgid "Super administrátor"
+msgstr ""
+
+msgid "Administrátorská skupina"
+msgstr ""
+
+msgid "Používateľské skupiny"
+msgstr ""
+
+msgid "Upravte používateľské skupiny a ich obmedzenie, do ktorých budú následne priradený useristrátori"
+msgstr ""
+
+msgid "Názov skupiny"
+msgstr ""
+
+msgid "Zadajte názov skupiny"
+msgstr ""
+
+msgid "Povolené moduly"
+msgstr ""
+
+msgid "Modul"
+msgstr ""
+
+msgid "Čítanie"
+msgstr ""
+
+msgid "Vkladanie"
+msgstr ""
+
+msgid "Úprava"
+msgstr ""
+
+msgid "Publikácia"
+msgstr ""
+
+msgid "Mazanie"
+msgstr ""
+
+msgid "Všetko"
+msgstr ""
+
+msgid "Url adresa"
+msgstr ""
+
+msgid "Nová url adresa"
+msgstr ""
+
+msgid "Skupina"
+msgstr ""
+
+msgid "Titulok stránky"
+msgstr ""
+
+msgid "Kľúčové slova"
+msgstr ""
+
+msgid "Popis stránky"
+msgstr ""
+
+msgid "Obrázky stránky"
+msgstr ""
+
+msgid "Označiť všetky"
+msgstr ""
+
+msgid "Odznačiť všetky"
+msgstr ""
+
+msgid "Zobraziť"
+msgstr ""
+
+msgid "Zobraziť obrázok"
+msgstr ""
+
+msgid "Stiahnuť"
+msgstr ""
+
+msgid "Stiahnuť dokument"
+msgstr ""
+
+msgid "Stiahnuť súbor"
+msgstr ""
+
+msgid "História zmien"
+msgstr ""
+
+msgid "Zmeny vykonal"
+msgstr ""
+
+msgid "Počet zmien"
+msgstr ""
+
+msgid "Dátum zmeny"
+msgstr ""
+
+msgid "Systém"
+msgstr ""
+
+msgid "Zobraziť zmeny"
+msgstr ""
+
+msgid "Zatvoriť"
+msgstr ""
+
+msgid "Potvrdiť"
+msgstr ""
+
+msgid "Načítavam dáta..."
+msgstr ""
+
+msgid "Vytvorené"
+msgstr ""
+
+msgid "Vytvorené dňa"
+msgstr ""
+
+msgid "Posledná zmena"
+msgstr ""
+
+msgid "Publikované dňa"
+msgstr ""
+
+msgid "Informácia"
+msgstr ""
+
+msgid "Upozornenie"
+msgstr ""
+
+msgid "Informácie o zázname"
+msgstr ""
+
+msgid "Informácie o zázname č."
+msgstr ""
+
+msgid "V aktuálnom zázname neboli vykonané žiadne zmeny."
+msgstr ""
+
+msgid "Naozaj chcete vymazať daný záznam?"
+msgstr ""
+
+msgid "Nie je možné pridať nový záznam."
+msgstr ""
+
+msgid "Tento záznam nie je možné upravovať."
+msgstr ""
+
+msgid "Tento záznam nie je možné vymazať."
+msgstr ""
+
+msgid "Jeden zo záznamov nie je možné vymazať."
+msgstr ""
+
+msgid "Tento záznam nie je možné znepublikovať."
+msgstr ""
+
+msgid "Tento záznam nie je možné presúvať."
+msgstr ""
+
+msgid "Záznam bol úspešne pridaný"
+msgstr ""
+
+msgid "Záznam bol úspešne uložený"
+msgstr ""
+
+msgid "s nasledujúcimi chybami"
+msgstr ""
+
+msgid "Tento záznam je viacjazyčný"
+msgstr ""
+
+msgid "Záznamy"
+msgstr ""
+
+msgid "Ukladá sa"
+msgstr ""
+
+msgid "Uložiť"
+msgstr ""
+
+msgid "Odoslať"
+msgstr ""
+
+msgid "Odosiela sa"
+msgstr ""
+
+msgid "Upraviť záznam č."
+msgstr ""
+
+msgid "Nový záznam"
+msgstr ""
+
+msgid "Všeobecné"
+msgstr ""
+
+msgid "č."
+msgstr ""
+
+msgid "Zoznam stĺpcov"
+msgstr ""
+
+msgid "Predvolené"
+msgstr ""
+
+msgid "Upraviť"
+msgstr ""
+
+msgid "Skryť"
+msgstr ""
+
+msgid "Akcia"
+msgstr ""
+
+msgid "Publikovať/Skryť"
+msgstr ""
+
+msgid "Vymazať"
+msgstr ""
+
+msgid "Vymazať súbor"
+msgstr ""
+
+msgid "Vyberte jednu z možností"
+msgstr ""
+
+msgid "Vyberte zo zoznamu možností"
+msgstr ""
+
+msgid "Žiadna možnosť"
+msgstr ""
+
+msgid "Upravte šírku zobrazenia formulára pre prehľadnejšie zobrazenie záznamov"
+msgstr ""
+
+msgid "Vyhľadajte"
+msgstr ""
+
+msgid "Hľadať všade"
+msgstr ""
+
+msgid "Vyberte hodnotu"
+msgstr ""
+
+msgid "Resetovať"
+msgstr ""
+
+msgid "Vypnuté"
+msgstr ""
+
+msgid "Zapnuté"
+msgstr ""
+
+msgid "Áno"
+msgstr ""
+
+msgid "Nie"
+msgstr ""
+
+msgid "Počet záznamov v tabuľke"
+msgstr ""
+
+msgid "Zobraziť všetko"
+msgstr ""
+
+msgid "overenie znova"
+msgstr ""
+
+msgid "Zmeny boli úspešne uložené"
+msgstr ""
+
+msgid "Nemáte právomoc k pristúpeniu do tejto sekcie."
+msgstr ""
+
+msgid "Nastala nečakaná chyba, pravdepodobne ste nespustili migráciu modelov pomocou príkazu:"
+msgstr ""
+
+msgid "Nastala nečakaná chyba. Váš administrátor pravdepodobne zabudol aktualizovať databázu. Ak táto chyba pretrváva, kontaktujte ho."
+msgstr ""
+
+msgid "Záznam neexistuje, pravdepodobne už bol vymazaný."
+msgstr ""
+
+msgid "Komponenta s názvom <strong>%s</strong> pre vstup <strong>%s</strong> nebol nájdený."
+msgstr ""
+
+msgid "Hodnoty predvoleného jazyka sú povinné. Prosíme, skontrolujte vyplnené hodnoty."
+msgstr ""
+
+msgid "Prihlásiť sa"
+msgstr ""
+
+msgid "Heslo"
+msgstr ""
+
+msgid "Heslo znova"
+msgstr ""
+
+msgid "Prosím, prihláste sa pomocou emailu a hesla"
+msgstr ""
+
+msgid "Zapamätať si"
+msgstr ""
+
+msgid "Zabudol som heslo"
+msgstr ""
+
+msgid "Odoslať potvrdzovací link na email"
+msgstr ""
+
+msgid "Žiadosť o reset hesla"
+msgstr ""
+
+msgid "Resetovať heslo"
+msgstr ""
+
+msgid "Záložka nemá vyplnené povinné údaje."
+msgstr ""
+
+msgid "Upraviť jazykové mutácie"
+msgstr ""
+
+msgid "Upraviť preklady"
+msgstr ""
+
+msgid "Vyhľadajte pomocou výrazu"
+msgstr ""
+
+msgid "V prekladoch nebola nájdená žiadna zhoda."
+msgstr ""
+
+msgid "Základný text"
+msgstr ""
+
+msgid "Preklad"
+msgstr ""
+
+msgid "Zobraziť všetky preklady"
+msgstr ""
+
+msgid "Zobraziť odstránené preklady"
+msgstr ""
+
+msgid "Tento preklad bol odstránený, v aplikácii sa už nevyužíva."
+msgstr ""
+
+msgid "Preklady sa načitávajú, prosím počkajte."
+msgstr ""
+
+msgid "Uložiť a zatvoriť"
+msgstr ""
+
+msgid "Veľky formulár"
+msgstr ""
+
+msgid "Veľká tabuľka"
+msgstr ""
+
+msgid "Vedľa seba"
+msgstr ""
+
+msgid "Plná šírka"
+msgstr ""

@@ -11,6 +11,7 @@ import Fragment from 'vue-fragment'
 Vue.use(VueResource);
 Vue.use(Fragment.Plugin);
 Vue.use(VueRouter);
+Vue.use(Gettext);
 
 // Components
 import BaseComponent from './components/BaseComponent.js';
