@@ -195,8 +195,9 @@ export default {
             return this.model.history == true;
         },
         canShowGettext(){
-            if ( this.model.slug == 'languages' && this.$root.gettext == true )
+            if ( ['languages', 'admin_languages'].indexOf(this.model.slug) > -1 && this.$root.gettext == true ) {
                 return true;
+            }
 
             return false;
         },
@@ -495,6 +496,7 @@ export default {
         },
         openGettextEditor(item){
             this.$parent.$parent.gettext_editor = item;
+            this.$parent.$parent.gettext_table = this.model.table;
         },
         showHistory(row){
             this.$parent.$parent.showHistory(row);

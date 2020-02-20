@@ -11,7 +11,16 @@
                 <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? field_key + '[]' : field_key" @change="addFile" class="form-control" :placeholder="field.placeholder || field_name">
                 <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+field_key" :value="1">
 
-                <button v-if="value && !isMultipleUpload || !file_from_server" @click.prevent="removeFile" type="button" class="btn btn-danger remove-file" data-toggle="tooltip" title="" :data-original-title="trans('delete-file')"><i class="far fa-trash-alt"></i></button>
+                <button
+                    v-if="canFileBeDeleted"
+                    @click.prevent="removeFile"
+                    type="button"
+                    class="btn btn-danger remove-file"
+                    data-toggle="tooltip"
+                    title=""
+                    :data-original-title="trans('delete-file')">
+                    <i class="far fa-trash-alt"></i>
+                </button>
             </div>
 
             <div v-show="(isMultiple && !isMultirows) && getFiles.length > 0">
@@ -22,7 +31,7 @@
 
             <small>{{ field.title }}</small>
 
-            <span v-if="value && !hasMultipleFilesValue && file_from_server && !isMultiple">
+            <span v-if="canFileBeDownloaded">
                 <file :file="value" :field="field_key_original" :model="model"></file>
             </span>
 
@@ -81,6 +90,14 @@
         },
 
         computed: {
+            canFileBeDeleted(){
+                return (this.value && !this.isMultipleUpload || !this.file_from_server)
+                    && this.model.getSettings('fields.'+this.field_key+'.canDelete', true);
+            },
+            canFileBeDownloaded(){
+                return (this.value && !this.hasMultipleFilesValue && this.file_from_server && !this.isMultiple)
+                    && this.model.getSettings('fields.'+this.field_key+'.canDownload', true);
+            },
             isOpenedRow(){
                 return this.row && 'id' in this.row;
             },

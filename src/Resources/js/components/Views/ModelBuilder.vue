@@ -172,7 +172,11 @@
         </component>
 
         <history v-if="history.id" :history="history"></history>
-        <gettext-extension v-if="gettext_editor" :gettext_editor.sync="gettext_editor"></gettext-extension>
+        <gettext-extension
+            v-if="gettext_editor"
+            :gettext_editor="gettext_editor"
+            :gettext_table="gettext_table"
+            ></gettext-extension>
     </div>
 </template>
 
@@ -247,6 +251,7 @@
 
                 depth_level : 0,
                 gettext_editor: null,
+                gettext_table: null,
             };
         },
 

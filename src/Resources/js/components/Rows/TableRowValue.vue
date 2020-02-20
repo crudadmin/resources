@@ -97,8 +97,8 @@ export default {
                 return this.returnDateFormat([rowValue]);
             }
 
-            var add_before = this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.add_before'),
-                add_after = this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.add_after');
+            var add_before = this.model.getModelProperty('settings.columns.'+this.field+'.add_before'),
+                add_after = this.model.getModelProperty('settings.columns.'+this.field+'.add_after');
 
             //If is object
             if ( typeof rowValue == 'object' )
@@ -108,7 +108,7 @@ export default {
         },
         onlyEncodedTitle(){
             //If is not encoded column, then return empty value
-            if ( this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.encode', true) === false )
+            if ( this.model.getModelProperty('settings.columns.'+this.field+'.encode', true) === false )
                 return '';
 
             return this.fieldValue;
@@ -132,7 +132,7 @@ export default {
         stringLimit(string){
             var limit = this.getStringLimit;
 
-            if ( limit != 0 && string.length > limit && this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.encode', true) !== false )
+            if ( limit != 0 && string.length > limit && this.model.getModelProperty('settings.columns.'+this.field+'.encode', true) !== false )
                 return string.substr(0, limit) + '...';
 
             return string;
@@ -141,7 +141,7 @@ export default {
             var isReal = this.isRealField(this.field);
 
             //Check if column can be encoded
-            if ( isReal && this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.encode', true) == true ) {
+            if ( isReal && this.model.getModelProperty('settings.columns.'+this.field+'.encode', true) == true ) {
                 string = $(document.createElement('div')).text(string).html();
             }
 
@@ -235,17 +235,17 @@ export default {
                 }
 
                 else {
-                    limit = this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.limit', defaultLimit);
+                    limit = this.model.getModelProperty('settings.columns.'+this.field+'.limit', defaultLimit);
                 }
 
                 return limit || limit === 0 ? limit : defaultLimit;
             } else {
-                return this.$root.getModelProperty(this.model, 'settings.columns.'+this.field+'.limit', defaultLimit);
+                return this.model.getModelProperty('settings.columns.'+this.field+'.limit', defaultLimit);
             }
         },
         isEncodedValue(key)
         {
-            return this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.encode', true);
+            return this.model.getModelProperty('settings.columns.'+key+'.encode', true);
         }
     }
 }

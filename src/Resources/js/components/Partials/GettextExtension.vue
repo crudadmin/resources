@@ -67,7 +67,7 @@
 export default {
     name : 'gettext-extension',
 
-    props : ['gettext_editor'],
+    props : ['gettext_editor', 'gettext_table'],
 
     data(){
         return {
@@ -131,13 +131,13 @@ export default {
         },
         getPluralsIntervals(){
             var forms = this.plural_forms.split(';')[1].replace('plural=', ''),
-                    plurals = [],
-                    is_double = this.pluralLength == 2;
+                plurals = [],
+                is_double = this.pluralLength == 2;
 
             for ( var i = 0; i < this.pluralLength; i++ )
             {
                 var start = null,
-                        end = null;
+                    end = null;
 
                 for ( var a = 1; a < 100; a++ )
                 {
@@ -151,12 +151,14 @@ export default {
                             is_double && ((i == 0 && condition === false) || (i > 0 && condition === true))
                             || result === i
                         )
-                    )
+                    ) {
                         start = a;
+                    }
 
                     if ( start !== null && end === null && (!is_double && result != i) ){
-                        if ( i > 0 )
+                        if ( i > 0 ) {
                             end = a - 1;
+                        }
 
                         break;
                     }
@@ -183,7 +185,10 @@ export default {
             this.$parent.gettext_editor = null;
         },
         loadTranslations(){
-            this.$http.get(this.$root.requests.translations.replace(':id', this.gettext_editor.id)).then(function(response){
+            var url = this.$root.requests.translations
+                          .replace(':id', this.gettext_editor.id)
+                          .replace(':table', this.gettext_table);
+            this.$http.get(url).then(function(response){
                 var messages = response.data.messages;
 
                 this.missing = response.data.missing;
@@ -242,7 +247,7 @@ export default {
             this.translates[src][i] = value;
         },
         saveAndClose(){
-            var url = this.$root.requests.get('update_translations', { id : this.gettext_editor.id});
+            var url = this.$root.requests.get('update_translations', { id : this.gettext_editor.id, table : this.gettext_table });
 
             this.$http.post(url, { changes : JSON.stringify(this.changes) }).then(() => {
                 this.close();
