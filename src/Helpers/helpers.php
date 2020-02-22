@@ -23,3 +23,8 @@ if (! function_exists('isActiveController')) {
         return \Admin\Helpers\Helper::isActive($controller, $text);
     }
 }
+
+function crudadmin_resources_path($path = null)
+{
+    return __DIR__.'/../Resources/'.$path;
+}
