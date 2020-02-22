@@ -1,0 +1,25 @@
+.CA-TEditor--Pencil {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: black;
+    border-radius: 100%;
+    text-align: center;
+    line-height: 0;
+    z-index: 999999999;
+    pointer-events: none;
+
+    &:hover {
+        background: #555;
+    }
+
+    &:before {
+        content : '';
+        background: url('../images/icons/pencil-alt-solid.svg') no-repeat;
+        width: 9px;
+        height: 9px;
+        display: inline-block;
+        position: relative;
+        top: 5px;
+    }
+}

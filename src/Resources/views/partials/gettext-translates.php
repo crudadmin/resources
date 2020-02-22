@@ -9,30 +9,355 @@
  * for simple global scope integration into VueJs use Vue.use(Gettext)
  */
 (function(){
-  var a = new Translator(<?php echo $translations ?>),
-      selectors = Object.keys(a.__proto__).concat(['_', 'Gettext']),
-      getSelector = function(selector){
-        return function(){
-          var s = (selector in a) ? selector : '__';
+    window.CrudAdminTranslates = <?php echo $translations ?>;
 
-          return a[s].apply(a, arguments);
+    var a = new Translator(CrudAdminTranslates),
+        selectors = Object.keys(a.__proto__).concat(['_', 'Gettext']),
+        getSelector = function(selector){
+            return function(){
+                var s = (selector in a) ? selector : '__';
+
+                return a[s].apply(a, arguments);
+            };
         };
-      };
 
   selectors.map(function(selector){
     //If window variable is used, for example by lodash library
-    if ( selector in window )
-      return;
+    if ( selector in window ) {
+        return;
+    }
 
     var f = window[selector] = getSelector(selector)
 
     //Vue.js installation
     f.install = function (Vue, options) {
-      for ( var i = 0; i < selectors.length; i++ ){
-          Vue.prototype[selectors[i]] = getSelector(selectors[i]);
-      }
+        for ( var i = 0; i < selectors.length; i++ ) {
+            Vue.prototype[selectors[i]] = getSelector(selectors[i]);
+        }
     };
   });
 
   window.GettextTranslates = a;
 })();
+
+<?php if ( admin() && Admin::isAdmin() == false ){ ?>
+/*
+ * CrudAdmin auto translatable
+ */
+(function(){
+    var tEditor = {
+        allTranslates : CrudAdminTranslates.messages[''],
+        translatedTree : [],
+        duplicates : [],
+        matchedElements : [],
+        maxTranslateLength : 0,
+
+        init : function(){
+            this.getTranslationsTree();
+            this.getTranslatableElements();
+            this.pencils.init();
+        },
+
+        refresh : function(){
+            this.getTranslatableElements();
+            this.pencils.refresh();
+        },
+
+        /*
+         * We want build tree with keys as translations and values as original texts.
+         * For better performance for searching elements.
+         */
+        getTranslationsTree : function(){
+            //Build translates tree
+            for ( var key in this.allTranslates ) {
+                var translate = this.allTranslates[key][0]||key;
+
+                //We need save duplicate translates
+                if ( translate in this.translatedTree ) {
+                    this.duplicates.push(translate);
+                }
+
+                this.translatedTree[translate] = key;
+
+                if ( translate.length > this.maxTranslateLength ) {
+                    this.maxTranslateLength = translate.length;
+                }
+            }
+        },
+        getTranslatableElements : function(){
+            var elements = document.querySelectorAll('*');
+
+            //Get all elements with innerhtml from translates
+            for ( var i = 0; i < elements.length; i++ ){
+                var html = elements[i].innerHTML.trim();
+
+                //We want skip long texts
+                if ( (html||'').length > this.maxTranslateLength ) {
+                    continue;
+                }
+
+                //Add element into array if has not been added already and has translation
+                if ( this.translatedTree[html] !== undefined && elements[i]._CAOriginTranslate === undefined ) {
+                    //Bind original translate into element property
+                    elements[i]._CAOriginTranslate = this.translatedTree[html];
+
+                    this.matchedElements.push(elements[i]);
+                }
+            }
+        },
+        observer : {
+            MutationObserver : window.MutationObserver || window.WebKitMutationObserver,
+
+            observeDOM : function(obj, originalCallback){
+                if( !obj || !obj.nodeType === 1 )
+                    return;
+
+                var timeout,
+                    callback = (mutations) => {
+                        if ( timeout ) {
+                            clearTimeout(timeout);
+                        }
+
+                        timeout = setTimeout(() => {
+                            originalCallback(mutations);
+                        }, 1);
+                    };
+
+                if( this.MutationObserver ){
+                    // define a new observer
+                    var obs = new this.MutationObserver(function(mutations, observer){
+                        callback(mutations);
+                    })
+                    // have the observer observe foo for changes in children
+                    obs.observe( obj, { childList:true, subtree:true });
+                }
+
+                else if( window.addEventListener ){
+                    obj.addEventListener('DOMNodeInserted', callback, false);
+                    obj.addEventListener('DOMNodeRemoved', callback, false);
+                }
+            }
+        },
+        pencils : {
+            className : 'CA-TEditor--Pencil',
+
+            init(){
+                this.initHovers();
+                this.initClicks();
+                this.buildPencils();
+                this.observeNewElements();
+            },
+
+            refresh(){
+                this.buildPencils();
+            },
+
+            buildPencils(){
+                //Add pencils
+                for ( var i = 0; i < tEditor.matchedElements.length; i++ ) {
+                    var element = tEditor.matchedElements[i];
+
+                    //If element already has pencil, skip it.
+                    //Also pdate position of pencil, because element may be deleted.
+                    if ( element._CAPencil ) {
+                        this.bindPositions(element);
+                        continue;
+                    }
+
+                    element._CAPencil = this.createPencil(element, i);
+
+                    this.bindPositions(element);
+                }
+            },
+            /*
+             * Check hovers of all elements for creating and hidding pencils.
+             * Because on hover elements some pencil may dissapear or may be visible...
+             */
+            initHovers(){
+                var allElements = document.getElementsByTagName('*');
+
+                var checkHoverChanges = function(e){
+                    var hoveredParent = e.target,
+                        childs = hoveredParent.getElementsByTagName('*'),
+                        elementsToMove = [];
+
+                    //Add parent element if does have pencil
+                    if ( hoveredParent._CAPencil ) {
+                        elementsToMove.push(hoveredParent);
+                    }
+
+                    //Merge childs with parent
+                    for ( var i = 0; i < childs.length; i++ ) {
+                        //If child has pencil
+                        if ( childs[i]._CAPencil ) {
+                            elementsToMove.push(childs[i]);
+                        }
+                    }
+
+                    //See for position changed of every element till position wont changes.
+                    for ( var i = 0; i < elementsToMove.length; i++ ) {
+                        (function(element){
+                            var prevPositionKey = null,
+                                checkPosition = function(){
+                                    var position = element.getBoundingClientRect(),
+                                        positionKey = position.x+'-'+position.y;
+
+                                    if ( prevPositionKey != positionKey ) {
+                                        tEditor.pencils.bindPositions(element);
+
+                                        prevPositionKey = positionKey;
+
+                                        setTimeout(checkPosition, 50);
+                                    }
+                                }
+
+                            checkPosition();
+                        })(elementsToMove[i]);
+                    }
+                };
+
+                for ( var i = 0; i < allElements.length; i++ ) {
+                    allElements[i].addEventListener('mouseenter', checkHoverChanges);
+                    allElements[i].addEventListener('mouseleave', checkHoverChanges);
+                }
+            },
+            initClicks(){
+                document.body.addEventListener('click', function(e){
+                    var clickX = e.pageX,
+                        clickY = e.pageY,
+                        allElements = document.getElementsByTagName('*'),
+                        list = [];
+
+                    for ( var i = 0; i < allElements.length; i++ ) {
+                        var rect = allElements[i].getBoundingClientRect(),
+                            offset = {
+                              top: rect.top + window.scrollY,
+                              left: rect.left + window.scrollX
+                            },
+                            range = {
+                                x : [ offset.left, offset.left + allElements[i].offsetWidth ],
+                                y : [ offset.top, offset.top + allElements[i].offsetHeight ]
+                            };
+
+                        if ( (clickX >= range.x[0] && clickX <= range.x[1]) && (clickY >= range.y[0] && clickY <= range.y[1]) ) {
+                            list.push(allElements[i]);
+                        }
+                    }
+
+                    for ( var i = 0; i < list.length; i++ ) {
+                        if ( list[i].className === tEditor.pencils.className ) {
+                            (function(pencil){
+                                var element = pencil._CAElement,
+                                    actualValue = (element.innerHTML||'').trim();
+
+                                //We cant allow update duplicate translates. Because change may be updated on right source translate.
+                                if ( tEditor.duplicates.indexOf(actualValue) > -1 ) {
+                                    alert('<?php echo _('Tento text je možné upraviť len z administrácie v sekcii Jazykové mutácie.') ?>');
+                                    return;
+                                }
+
+                                var newText = prompt('<?php echo _('Upravte preklad') ?>', actualValue);
+
+                                //On cancel
+                                if ( newText == null ) {
+                                    return;
+                                }
+
+                                element.innerHTML = newText;
+
+                                tEditor.pencils.movePencils();
+                            })(list[i]);
+
+                            e.preventDefault();
+                            break;
+                        }
+                    }
+
+                    return false;
+                });
+            },
+            movePencils(){
+                for ( var i = 0; i < tEditor.matchedElements.length; i++ ) {
+                    tEditor.pencils.bindPositions(tEditor.matchedElements[i]);
+                }
+            },
+            createPencil(element, key){
+                var e = document.createElement('div');
+                    e.setAttribute('data-key', key);
+                    e.setAttribute('data-translate', element._CAOriginTranslate);
+                    e.className = tEditor.pencils.className;
+                    e._CAElement = element;
+
+                document.getElementsByTagName('body')[0].appendChild(e);
+
+                return e;
+            },
+            bindPositions : function(element){
+                var pencil = element._CAPencil;
+
+                //If element does not have pencil
+                if ( pencil === undefined ){
+                    return;
+                }
+
+                var position = position = element.getBoundingClientRect();
+                    positionX = position.x,
+                    positionY = position.y;
+
+                //Check if element is visible
+                pencil.style.display = (position.y === 0 && position.x === 0) ? 'none' : 'block';
+
+                //Get position of text node
+                var textNode = element.firstChild,
+                    rects;
+
+                //If textnode is present
+                if ( textNode ) {
+                    var range = document.createRange();
+                        range.selectNodeContents(textNode);
+                        rects = range.getClientRects();
+                }
+
+                //Get real position of textNode
+                if (rects && rects.length > 0) {
+                    positionX = rects[0].x + rects[0].width;
+                    positionY = rects[0].y;
+                }
+
+                //Try guess position
+                else {
+                    var styles = getComputedStyle(element),
+                        textAlign = styles['text-align'],
+                        paddingLeft = parseFloat(styles['padding-left'].replace('px', '')),
+                        paddingRight = parseFloat(styles['padding-right'].replace('px', '')),
+                        paddingTop = parseFloat(styles['padding-top'].replace('px', ''));
+
+                    //Add paddings offset
+                    positionX += paddingLeft;
+                    positionY += paddingTop;
+
+                    //Icons are aligned on the left, so we need move pencil to the edge
+                    positionX -= pencil.offsetWidth;
+
+                    //Point pencil on center of text
+                    if ( textAlign == 'center' ){
+                        positionX += (element.offsetWidth - paddingLeft - paddingRight) / 2;
+                    }
+                }
+
+                pencil.style.left = (window.scrollX + positionX)+'px';
+                pencil.style.top = (window.scrollY + positionY - pencil.offsetHeight)+'px';
+            },
+            observeNewElements(){
+                tEditor.observer.observeDOM(document.body, function(e){
+                    tEditor.refresh();
+                });
+            },
+        },
+    };
+
+    window.addEventListener('load', function(){
+        tEditor.init();
+    });
+})();
+<?php } ?>
