@@ -88,6 +88,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <?php echo $__env->make('admin::partials.crudadmin-props', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
     <script src="<?php echo Gettext::getJSPlugin(AdminLocalization::class) ?>"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="<?php echo admin_asset('css/frontend.css') ?>"> -->
 
     <!-- jQuery 2.1.4 -->
     <script src="<?php echo admin_asset('/js/manifest.js') ?>"></script>

@@ -372,12 +372,10 @@
                     if ( textAlign == 'center' ){
                         positionX += (element.offsetWidth - paddingLeft - paddingRight) / 2;
                     }
-                } else {
-                    return;
                 }
 
                 //Check if element is visible
-                pencil.style.display = (positionY === 0 || positionX === 0) ? 'none' : 'block';
+                pencil.style.display = (!positionY || !positionX || positionY == 0 || positionX === 0) ? 'none' : 'block';
 
                 pencil.style.left = (window.scrollX + positionX)+'px';
                 pencil.style.top = (window.scrollY + positionY - pencil.offsetHeight)+'px';
@@ -385,6 +383,15 @@
             observeNewElements(){
                 tEditor.observer.observeDOM(document.body, function(e){
                     tEditor.refresh();
+
+                    //If removed element had pencil
+                    for ( var i = 0; i < e.length; i++ ) {
+                        for ( var r = 0; r < e[i].removedNodes.length; r++ ) {
+                            if ( e[i].removedNodes[r]._CAPencil ) {
+                                e[i].removedNodes[r]._CAPencil.remove();
+                            }
+                        }
+                    }
                 });
             },
         },
