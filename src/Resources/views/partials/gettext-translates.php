@@ -40,13 +40,13 @@
   window.GettextTranslates = a;
 })();
 
-<?php if ( admin() && Admin::isAdmin() == false ){ ?>
+<?php if ( isAllowedEditorMode() ){ ?>
 /*
  * CrudAdmin auto translatable
  */
 (function(){
     var tEditor = {
-        allTranslates : CrudAdminTranslates.messages[''],
+        allTranslates : CrudAdminTranslates.messages ? CrudAdminTranslates.messages[''] : {},
         translatedTree : [],
         duplicates : [],
         matchedElements : [],
@@ -85,9 +85,14 @@
             }
         },
         nodeValue(e){
-            var value = e.nodeName == '#text' ? e.data : e.innerHTML;
+            var value = e.nodeName == '#text' ? e.data : e.innerHTML,
+                value = value||'';
 
-            return (value||'').trim();
+            //We need replace &nbsp; for empty spaces. Because if we push empty chart
+            //it will change to this encoded value.
+            value = value.replace(new RegExp('&nbsp;', 'g'), ' ');
+
+            return value.trim();
         },
         getTranslatableElements : function(){
             var elements = document.querySelectorAll('*');
@@ -356,7 +361,21 @@
 
                 element.hasBindedEvents = true;
 
-                element.addEventListener('keyup', function(){
+                element.addEventListener('keydown', function(e){
+                    setTimeout(function(){
+                        //When first char will be typed, remove last empty chart
+                        if ( e.target.innerHTML.length == 7 && e.target.innerHTML.substr(-6) == '&nbsp;' ) {
+                            e.target.innerHTML = e.target.innerHTML.substr(0, e.target.innerHTML.length - 6);
+                            tEditor.pencils.placeCaretAtEnd(e.target);
+                        }
+
+                        //Add empty char when element is empty, because browser is buggy
+                        if ( e.target.innerHTML === '' ) {
+                            e.target.innerHTML = '&nbsp;';
+                        }
+                    }, 1);
+                });
+                element.addEventListener('keyup', function(e){
                     var pencil = element._CAPencil;
 
                     //Remove saved classname
