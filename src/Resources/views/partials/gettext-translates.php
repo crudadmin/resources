@@ -339,6 +339,34 @@
                     return false;
                 });
             },
+            disableFormatting(e){
+                var ret = true;
+                if(e.ctrlKey || e.metaKey){
+                    switch(e.keyCode){
+                        case 66: //ctrl+B or ctrl+b
+                        case 98:
+                            ret=false;
+                        break;
+                        case 73: //ctrl+I or ctrl+i
+                        case 105:
+                            ret=false;
+                        break;
+                        case 85: //ctrl+U or ctrl+u
+                        case 117:
+                            ret=false;
+                        break;
+                    }
+                }
+                return ret;
+            },
+            setEditorByTranslateType(element){
+                element.addEventListener('keydown', function(e){
+                    //Disable enter (new-line)
+                    if ( e.keyCode === 13 || tEditor.pencils.disableFormatting(e) === false ){
+                        e.preventDefault();
+                    }
+                });
+            },
             makeEditableNode(element, actualValue){
                 //If given element is textNode, we need wrap it into inline div
                 if ( element.nodeName == '#text' ) {
@@ -353,6 +381,7 @@
 
                 element.innerHTML = actualValue;
                 element.contentEditable = true;
+                this.setEditorByTranslateType(element);
                 tEditor.pencils.placeCaretAtEnd(element);
 
                 if ( element.hasBindedEvents ) {
@@ -449,7 +478,9 @@
                     positionY = position ? position.y : null;
 
                 //Get position of text node
-                var textNode = element.nodeName == '#text' ? element : element.firstChild,
+                var textNode = element.nodeName == '#text' ? element : (
+                        element.childNodes.length == 1 ? element.firstChild : null //we want position with elements with one textNode
+                    ),
                     rects;
 
                 //If textnode is present
