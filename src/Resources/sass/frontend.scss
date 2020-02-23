@@ -1,4 +1,4 @@
-.CA-TEditor--Pencil {
+.CAEditor--Pencil {
     position: absolute;
     width: 20px;
     height: 20px;
@@ -23,7 +23,7 @@
         top: 5px;
     }
 
-    &.CA-TEditor--Pencil--saved {
+    &.CAEditor--Pencil--saved {
         background: #00a200;
         &:before {
             background: url('../images/icons/check-solid.svg') no-repeat;
