@@ -249,7 +249,9 @@ export default {
         saveAndClose(){
             var url = this.$root.requests.get('update_translations', { id : this.gettext_editor.id, table : this.gettext_table });
 
-            this.$http.post(url, { changes : JSON.stringify(this.changes) }).then(() => {
+            this.$http.post(url, {
+                changes : this.changes
+            }).then(() => {
                 this.close();
             });
         },

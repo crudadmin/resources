@@ -22,4 +22,11 @@
         position: relative;
         top: 5px;
     }
+
+    &.CA-TEditor--Pencil--saved {
+        background: #00a200;
+        &:before {
+            background: url('../images/icons/check-solid.svg') no-repeat;
+        }
+    }
 }

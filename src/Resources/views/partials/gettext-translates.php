@@ -96,8 +96,9 @@
             for ( var i = 0; i < elements.length; i++ ){
                 var html = this.nodeValue(elements[i]);
 
-                //We want skip long texts
-                if ( (html||'').length > this.maxTranslateLength ) {
+                //We want skip longer texts than 50%
+                //Because some tags may be encoded...
+                if ( (html||'').length > this.maxTranslateLength * 1.5 ) {
                     continue;
                 }
 
@@ -186,6 +187,7 @@
         },
         pencils : {
             className : 'CA-TEditor--Pencil',
+            classNameSaved : 'CA-TEditor--Pencil--saved',
 
             init(){
                 this.initHovers();
@@ -267,6 +269,23 @@
                     allElements[i].addEventListener('mouseleave', checkHoverChanges);
                 }
             },
+            placeCaretAtEnd(el) {
+                el.focus();
+                if (typeof window.getSelection != "undefined"
+                        && typeof document.createRange != "undefined") {
+                    var range = document.createRange();
+                    range.selectNodeContents(el);
+                    range.collapse(false);
+                    var sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                } else if (typeof document.body.createTextRange != "undefined") {
+                    var textRange = document.body.createTextRange();
+                    textRange.moveToElementText(el);
+                    textRange.collapse(false);
+                    textRange.select();
+                }
+            },
             initClicks(){
                 document.body.addEventListener('click', function(e){
                     var clickX = e.pageX,
@@ -296,27 +315,8 @@
                                 var element = pencil._CAElement,
                                     actualValue = tEditor.nodeValue(element);
 
-                                //We cant allow update duplicate translates. Because change may be updated on right source translate.
-                                if ( tEditor.duplicates.indexOf(actualValue) > -1 ) {
-                                    alert('<?php echo _('Tento text je možné upraviť len z administrácie v sekcii Jazykové mutácie.') ?>');
-                                    return;
-                                }
-
-                                var newText = prompt('<?php echo _('Upravte preklad') ?>', actualValue);
-
-                                //On cancel
-                                if ( newText == null ) {
-                                    return;
-                                }
-
-                                //We need update node, or innerHTML tag value
-                                if ( element.nodeName == '#text' ) {
-                                    element.data = newText;
-                                } else {
-                                    element.innerHTML = newText;
-                                }
-
-                                tEditor.pencils.movePencils();
+                                tEditor.pencils.makeEditableNode(element, actualValue);
+                                // tEditor.pencils.openAlertModal(element, actualValue);
                             })(list[i]);
 
                             e.preventDefault();
@@ -327,7 +327,57 @@
                     return false;
                 });
             },
-            movePencils(){
+            makeEditableNode(element, actualValue){
+                if ( element.nodeName == '#text' ) {
+                    element = element.parentElement;
+                }
+
+                element.innerHTML = actualValue;
+                element.contentEditable = true;
+                tEditor.pencils.placeCaretAtEnd(element);
+                element.addEventListener('keyup', function(){
+                    var pencil = element._CAPencil;
+
+                    //Remove saved classname
+                    pencil.className = pencil.className.replace(new RegExp(tEditor.pencils.classNameSaved, 'g'), '')
+
+
+                    tEditor.pencils.repaintPencils();
+                    tEditor.pencils.updateTranslation(element);
+                });
+
+                //Paste as plain text
+                element.addEventListener("paste", function(e) {
+                    e.preventDefault();
+                    var text = e.clipboardData.getData("text/plain");
+                    document.execCommand("insertHTML", false, text);
+                });
+            },
+            openAlertModal(element, actualValue){
+                //We cant allow update duplicate translates. Because change may be updated on right source translate.
+                if ( tEditor.duplicates.indexOf(actualValue) > -1 ) {
+                    alert('<?php echo _('Tento text je možné upraviť len z administrácie v sekcii Jazykové mutácie.') ?>');
+                    return;
+                }
+
+                var newText = prompt('<?php echo _('Upravte preklad') ?>', actualValue);
+
+                //On cancel
+                if ( newText == null ) {
+                    return;
+                }
+
+                //We need update node, or innerHTML tag value
+                if ( element.nodeName == '#text' ) {
+                    element.data = newText;
+                } else {
+                    element.innerHTML = newText;
+                }
+
+                tEditor.pencils.repaintPencils();
+                tEditor.pencils.updateTranslation(element);
+            },
+            repaintPencils(){
                 for ( var i = 0; i < tEditor.matchedElements.length; i++ ) {
                     tEditor.pencils.bindPositions(tEditor.matchedElements[i]);
                 }
@@ -414,7 +464,43 @@
                     }
                 });
             },
+            htmlEntities(str) {
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            },
+            updateTranslation(e){
+                var data = { changes : {} };
+                    data.changes[e._CAOriginTranslate] = tEditor.nodeValue(e);
+
+                //Clear previous key change
+                if ( this._ajaxSend ) {
+                    clearTimeout(this._ajaxSend);
+                }
+
+                this._ajaxSend = setTimeout(function(){
+                    var url = '<?php echo action('\Admin\Controllers\GettextController@updateTranslations', request('lang')) ?>';
+
+                    tEditor.ajax.post(url, data, function(xhr){
+                        e._CAPencil.className += ' '+tEditor.pencils.classNameSaved;
+                    });
+                }, 500);
+
+            }
         },
+        ajax : {
+            post(url, data, callback){
+                var request = new XMLHttpRequest();
+                request.open('POST', url, true);
+                request.setRequestHeader('Content-type', 'application/json');
+                request.setRequestHeader('X-CSRF-TOKEN', window.CACSRFToken);
+                request.send(JSON.stringify(data));
+
+                request.onreadystatechange = function() {
+                    if(callback && request.readyState == 4 && request.status == 200) {
+                        callback(request)
+                    }
+                }
+            }
+        }
     };
 
     window.addEventListener('load', function(){
