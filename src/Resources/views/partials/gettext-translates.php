@@ -362,7 +362,6 @@
                     //Remove saved classname
                     pencil.className = pencil.className.replace(new RegExp(tEditor.pencils.classNameSaved, 'g'), '')
 
-
                     tEditor.pencils.repaintPencils();
                     tEditor.pencils.updateTranslation(element);
                 });
@@ -391,6 +390,15 @@
 
                 tEditor.pencils.repaintPencils();
                 tEditor.pencils.updateTranslation(element);
+            },
+            updateSameTranslationElements(element){
+                for ( var i = 0; i < tEditor.matchedElements.length; i++ ) {
+                    if ( tEditor.matchedElements[i]._CAOriginTranslate == element._CAOriginTranslate ) {
+                        if ( tEditor.matchedElements[i] != element ) {
+                            tEditor.matchedElements[i].innerHTML = element.innerHTML;
+                        }
+                    }
+                }
             },
             repaintPencils(){
                 for ( var i = 0; i < tEditor.matchedElements.length; i++ ) {
@@ -497,6 +505,8 @@
                     tEditor.ajax.post(url, data, function(xhr){
                         e._CAPencil.className += ' '+tEditor.pencils.classNameSaved;
                     });
+
+                    tEditor.pencils.updateSameTranslationElements(e);
                 }, 500);
 
             }
