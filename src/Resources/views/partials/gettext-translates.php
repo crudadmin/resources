@@ -310,13 +310,20 @@
                     }
 
                     for ( var i = 0; i < list.length; i++ ) {
-                        if ( list[i].className === tEditor.pencils.className ) {
+                        if ( list[i].className.indexOf(tEditor.pencils.className) > -1 ) {
                             (function(pencil){
                                 var element = pencil._CAElement,
                                     actualValue = tEditor.nodeValue(element);
 
-                                tEditor.pencils.makeEditableNode(element, actualValue);
+                                //We cant allow update duplicate translates. Because change may be updated on right source translate.
+                                if ( tEditor.duplicates.indexOf(actualValue) > -1 ) {
+                                    alert('<?php echo _('Tento text je možné upraviť len z administrácie v sekcii Jazykové mutácie.') ?>');
+                                    return;
+                                }
+
+                                //Text node can be edited in DOM
                                 // tEditor.pencils.openAlertModal(element, actualValue);
+                                tEditor.pencils.makeEditableNode(element, actualValue);
                             })(list[i]);
 
                             e.preventDefault();
@@ -328,13 +335,27 @@
                 });
             },
             makeEditableNode(element, actualValue){
+                //If given element is textNode, we need wrap it into inline div
                 if ( element.nodeName == '#text' ) {
-                    element = element.parentElement;
+                    var wrapper = document.createElement('div');
+                        wrapper.className = 'CA--InlineWrapper';
+
+                    element.parentNode.insertBefore(wrapper, element);
+                    wrapper.appendChild(element);
+
+                    element = wrapper;
                 }
 
                 element.innerHTML = actualValue;
                 element.contentEditable = true;
                 tEditor.pencils.placeCaretAtEnd(element);
+
+                if ( element.hasBindedEvents ) {
+                    return;
+                }
+
+                element.hasBindedEvents = true;
+
                 element.addEventListener('keyup', function(){
                     var pencil = element._CAPencil;
 
@@ -347,19 +368,13 @@
                 });
 
                 //Paste as plain text
-                element.addEventListener("paste", function(e) {
+                element.addEventListener('paste', function(e) {
                     e.preventDefault();
-                    var text = e.clipboardData.getData("text/plain");
-                    document.execCommand("insertHTML", false, text);
+                    var text = e.clipboardData.getData('text/plain');
+                    document.execCommand('insertHTML', false, text);
                 });
             },
             openAlertModal(element, actualValue){
-                //We cant allow update duplicate translates. Because change may be updated on right source translate.
-                if ( tEditor.duplicates.indexOf(actualValue) > -1 ) {
-                    alert('<?php echo _('Tento text je možné upraviť len z administrácie v sekcii Jazykové mutácie.') ?>');
-                    return;
-                }
-
                 var newText = prompt('<?php echo _('Upravte preklad') ?>', actualValue);
 
                 //On cancel
