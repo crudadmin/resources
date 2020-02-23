@@ -113,7 +113,9 @@
 
                         html = this.nodeValue(node);
 
-                        this.registerTranslatableElement(node, html);
+                        if ( this.translatedTree[html] !== undefined ) {
+                            this.registerTranslatableElement(node, html);
+                        }
                     }
                 }
             }
