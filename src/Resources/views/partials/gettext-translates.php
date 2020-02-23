@@ -84,12 +84,17 @@
                 }
             }
         },
+        nodeValue(e){
+            var value = e.nodeName == '#text' ? e.data : e.innerHTML;
+
+            return (value||'').trim();
+        },
         getTranslatableElements : function(){
             var elements = document.querySelectorAll('*');
 
             //Get all elements with innerhtml from translates
             for ( var i = 0; i < elements.length; i++ ){
-                var html = elements[i].innerHTML.trim();
+                var html = this.nodeValue(elements[i]);
 
                 //We want skip long texts
                 if ( (html||'').length > this.maxTranslateLength ) {
@@ -97,13 +102,34 @@
                 }
 
                 //Add element into array if has not been added already and has translation
-                if ( this.translatedTree[html] !== undefined && elements[i]._CAOriginTranslate === undefined ) {
-                    //Bind original translate into element property
-                    elements[i]._CAOriginTranslate = this.translatedTree[html];
+                if ( this.translatedTree[html] !== undefined ) {
+                    this.registerTranslatableElement(elements[i], html);
+                } else {
+                    for ( var n = 0; n < elements[i].childNodes.length; n++ ){
+                        var node = elements[i].childNodes[n];
+                        if ( node.nodeName !== '#text' ) {
+                            continue;
+                        }
 
-                    this.matchedElements.push(elements[i]);
+                        if ( html.indexOf('Where to find us') > -1 ) {
+                            html = this.nodeValue(node);
+
+                            this.registerTranslatableElement(node, html);
+                        }
+                    }
                 }
             }
+        },
+        registerTranslatableElement(element, html){
+            //Element has been registered already
+            if ( element._CAOriginTranslate ) {
+                return;
+            }
+
+            //Bind original translate into element property
+            element._CAOriginTranslate = this.translatedTree[html];
+
+            this.matchedElements.push(element);
         },
         observer : {
             MutationObserver : window.MutationObserver || window.WebKitMutationObserver,
@@ -248,7 +274,7 @@
                         if ( list[i].className === tEditor.pencils.className ) {
                             (function(pencil){
                                 var element = pencil._CAElement,
-                                    actualValue = (element.innerHTML||'').trim();
+                                    actualValue = tEditor.nodeValue(element);
 
                                 //We cant allow update duplicate translates. Because change may be updated on right source translate.
                                 if ( tEditor.duplicates.indexOf(actualValue) > -1 ) {
@@ -263,7 +289,12 @@
                                     return;
                                 }
 
-                                element.innerHTML = newText;
+                                //We need update node, or innerHTML tag value
+                                if ( element.nodeName == '#text' ) {
+                                    element.data = newText;
+                                } else {
+                                    element.innerHTML = newText;
+                                }
 
                                 tEditor.pencils.movePencils();
                             })(list[i]);
@@ -300,15 +331,13 @@
                     return;
                 }
 
-                var position = position = element.getBoundingClientRect();
-                    positionX = position.x,
-                    positionY = position.y;
-
-                //Check if element is visible
-                pencil.style.display = (position.y === 0 && position.x === 0) ? 'none' : 'block';
+                //textNode does not have getBoundingClientRect
+                var position = element.getBoundingClientRect ? element.getBoundingClientRect() : null;
+                    positionX = position ? position.x : null,
+                    positionY = position ? position.y : null;
 
                 //Get position of text node
-                var textNode = element.firstChild,
+                var textNode = element.nodeName == '#text' ? element : element.firstChild,
                     rects;
 
                 //If textnode is present
@@ -325,7 +354,7 @@
                 }
 
                 //Try guess position
-                else {
+                else if ( position ) {
                     var styles = getComputedStyle(element),
                         textAlign = styles['text-align'],
                         paddingLeft = parseFloat(styles['padding-left'].replace('px', '')),
@@ -343,7 +372,12 @@
                     if ( textAlign == 'center' ){
                         positionX += (element.offsetWidth - paddingLeft - paddingRight) / 2;
                     }
+                } else {
+                    return;
                 }
+
+                //Check if element is visible
+                pencil.style.display = (positionY === 0 || positionX === 0) ? 'none' : 'block';
 
                 pencil.style.left = (window.scrollX + positionX)+'px';
                 pencil.style.top = (window.scrollY + positionY - pencil.offsetHeight)+'px';
