@@ -5,6 +5,12 @@ var config = {
     paths : [
         '/volumes/ssd/www/{path-to-your-project}/public/vendor/crudadmin',
     ],
+
+    setMixConfig(mix){
+        mix.config.resourceRoot = '/vendor/crudadmin';
+        mix.config.publicPath = 'src/Resources/admin';
+        mix.config.fileLoaderDirs.fonts = 'fonts';
+    }
 };
 
 module.exports = config;

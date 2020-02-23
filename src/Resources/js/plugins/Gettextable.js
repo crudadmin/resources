@@ -1,3 +1,5 @@
+require('./Gettextable/Plugins');
+
 /*
  * CrudAdmin Binder into global variables and VueJS 2
  * for simple global scope integration into VueJs use Vue.use(Gettext)

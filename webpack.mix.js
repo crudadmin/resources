@@ -1,31 +1,12 @@
-const mix = require('laravel-mix');
+let mix = require('laravel-mix'),
+    section = process.env.npm_config_section||'admin';
 
-//Where sould be compiled assets
-var config = require('./config.js');
-
-mix.js('src/Resources/js/app.js', 'src/Resources/admin/js')
-   .js('src/Resources/js/plugins/TranslatableEditor.js', 'src/Resources/admin/js')
-   .js('src/Resources/js/plugins/Gettextable.js', 'src/Resources/admin/js')
-   .sass('src/Resources/sass/app.scss', 'src/Resources/admin/css')
-   .sass('src/Resources/sass/frontend.scss', 'src/Resources/admin/css')
-   .extract([
-        'vue', 'jquery', 'lodash', 'js-md5', 'moment', 'vue-router', 'vue-fragment',
-        'vue-resource', 'vuedraggable', 'jquery-datetimepicker', 'bootstrap'
-    ]);
-
-mix.config.resourceRoot = '/vendor/crudadmin';
-mix.config.publicPath = 'src/Resources/admin';
-mix.config.fileLoaderDirs.fonts = 'fonts';
-
-for ( key in config.paths )
-{
-    mix.copy('src/Resources/admin/js/manifest.js', config.paths[key] + '/js/manifest.js')
-       .copy('src/Resources/admin/js/vendor.js', config.paths[key] + '/js/vendor.js')
-       .copy('src/Resources/admin/js/app.js', config.paths[key] + '/js/app.js')
-       .copy('src/Resources/admin/js/Gettextable.js', config.paths[key] + '/js/Gettextable.js')
-       .copy('src/Resources/admin/js/TranslatableEditor.js', config.paths[key] + '/js/TranslatableEditor.js')
-       .copy('src/Resources/admin/css/app.css', config.paths[key] + '/css/app.css')
-       .copy('src/Resources/admin/css/frontend.css', config.paths[key] + '/css/frontend.css')
-       .copy('src/Resources/admin/images', config.paths[key] + '/images')
-       .copy('src/Resources/admin/fonts', config.paths[key] + '/fonts');
+if (['admin', 'web'].includes(section)) {
+  require(`${__dirname}/webpack.${section}.mix.js`)
+} else {
+  console.log(
+    '\x1b[41m%s\x1b[0m',
+    'Provide correct --section argument to build command: admin, web'
+  )
+  throw new Error('Provide correct --section argument to build command!')
 }
