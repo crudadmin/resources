@@ -111,11 +111,9 @@
                             continue;
                         }
 
-                        if ( html.indexOf('Where to find us') > -1 ) {
-                            html = this.nodeValue(node);
+                        html = this.nodeValue(node);
 
-                            this.registerTranslatableElement(node, html);
-                        }
+                        this.registerTranslatableElement(node, html);
                     }
                 }
             }
