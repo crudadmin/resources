@@ -1,1 +1,624 @@
-!function(t){var e={};function n(r){if(e[r])return e[r].exports;var i=e[r]={i:r,l:!1,exports:{}};return t[r].call(i.exports,i,i.exports,n),i.l=!0,i.exports}n.m=t,n.c=e,n.d=function(t,e,r){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var i in t)n.d(r,i,function(e){return t[e]}.bind(null,i));return r},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="/",n(n.s=1)}([,function(t,e,n){t.exports=n(2)},function(t,e,n){var r,i,o;n(3),r=new Translator(CATranslates.translates),i=Object.keys(r.__proto__).concat(["_","Gettext"]),o=function(t){return function(){var e=t in r?t:"__";return r[e].apply(r,arguments)}},i.map((function(t){t in window||((window[t]=o(t)).install=function(t,e){for(var n=0;n<i.length;n++)t.prototype[i[n]]=o(i[n])})})),window.GettextTranslates=r},function(t,e,n){var r,i;!function(){"use strict";function r(t){return s(function(t){if(l[t])return l[t];for(var e,n=t,r=[],i=0;n;){if(null!==(e=a.text.exec(n)))r.push(e[0]);else if(null!==(e=a.modulo.exec(n)))r.push("%");else{if(null===(e=a.placeholder.exec(n)))throw new SyntaxError("[sprintf] unexpected placeholder");if(e[2]){i|=1;var o=[],s=e[2],u=[];if(null===(u=a.key.exec(s)))throw new SyntaxError("[sprintf] failed to parse named argument key");for(o.push(u[1]);""!==(s=s.substring(u[0].length));)if(null!==(u=a.key_access.exec(s)))o.push(u[1]);else{if(null===(u=a.index_access.exec(s)))throw new SyntaxError("[sprintf] failed to parse named argument key");o.push(u[1])}e[2]=o}else i|=2;if(3===i)throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported");r.push(e)}n=n.substring(e[0].length)}return l[t]=r}(t),arguments)}function o(t,e){return r.apply(null,[t].concat(e||[]))}function s(t,e){var n,i,o,s,l,u,c,p,f,d=1,g=t.length,h="";for(i=0;i<g;i++)if("string"==typeof t[i])h+=t[i];else if(Array.isArray(t[i])){if((s=t[i])[2])for(n=e[d],o=0;o<s[2].length;o++){if(!n.hasOwnProperty(s[2][o]))throw new Error(r('[sprintf] property "%s" does not exist',s[2][o]));n=n[s[2][o]]}else n=s[1]?e[s[1]]:e[d++];if(a.not_type.test(s[8])&&a.not_primitive.test(s[8])&&n instanceof Function&&(n=n()),a.numeric_arg.test(s[8])&&"number"!=typeof n&&isNaN(n))throw new TypeError(r("[sprintf] expecting number but found %T",n));switch(a.number.test(s[8])&&(p=n>=0),s[8]){case"b":n=parseInt(n,10).toString(2);break;case"c":n=String.fromCharCode(parseInt(n,10));break;case"d":case"i":n=parseInt(n,10);break;case"j":n=JSON.stringify(n,null,s[6]?parseInt(s[6]):0);break;case"e":n=s[7]?parseFloat(n).toExponential(s[7]):parseFloat(n).toExponential();break;case"f":n=s[7]?parseFloat(n).toFixed(s[7]):parseFloat(n);break;case"g":n=s[7]?String(Number(n.toPrecision(s[7]))):parseFloat(n);break;case"o":n=(parseInt(n,10)>>>0).toString(8);break;case"s":n=String(n),n=s[7]?n.substring(0,s[7]):n;break;case"t":n=String(!!n),n=s[7]?n.substring(0,s[7]):n;break;case"T":n=Object.prototype.toString.call(n).slice(8,-1).toLowerCase(),n=s[7]?n.substring(0,s[7]):n;break;case"u":n=parseInt(n,10)>>>0;break;case"v":n=n.valueOf(),n=s[7]?n.substring(0,s[7]):n;break;case"x":n=(parseInt(n,10)>>>0).toString(16);break;case"X":n=(parseInt(n,10)>>>0).toString(16).toUpperCase()}a.json.test(s[8])?h+=n:(!a.number.test(s[8])||p&&!s[3]?f="":(f=p?"+":"-",n=n.toString().replace(a.sign,"")),u=s[4]?"0"===s[4]?"0":s[4].charAt(1):" ",c=s[6]-(f+n).length,l=s[6]&&c>0?u.repeat(c):"",h+=s[5]?f+n+l:"0"===u?f+l+n:l+f+n)}return h}var a={not_string:/[^s]/,not_bool:/[^t]/,not_type:/[^T]/,not_primitive:/[^v]/,number:/[diefg]/,numeric_arg:/[bcdiefguxX]/,json:/[j]/,not_json:/[^j]/,text:/^[^\x25]+/,modulo:/^\x25{2}/,placeholder:/^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijostTuvxX])/,key:/^([a-z_][a-z_\d]*)/i,key_access:/^\.([a-z_][a-z_\d]*)/i,index_access:/^\[(\d+)\]/,sign:/^[\+\-]/},l=Object.create(null);e.sprintf=r,e.vsprintf=o,"undefined"!=typeof window&&(window.sprintf=r,window.vsprintf=o,void 0===(i=function(){return{sprintf:r,vsprintf:o}}.call(e,n,e,t))||(t.exports=i))}(),r=[n(4)],void 0===(i=function(t){return function(t){function e(t){this.dictionary={},this.plurals={},this.domain=null,t&&this.loadTranslations(t)}function n(t,e,n,r){return n=n||"",!!(t[e]&&t[e][n]&&t[e][n][r])&&t[e][n][r]}function r(e,n){return n.length?n[0]instanceof Array?t(e,n[0]):t(e,n):e}return e.prototype={loadTranslations:function(t){var e=t.domain||"";if(null===this.domain&&(this.domain=e),this.dictionary[e])return function(t,e){for(var n in e)if(t[n])for(var r in e[n])t[n][r]=e[n][r];else t[n]=e[n]}(this.dictionary[e],t.messages),this;if(t.fn)this.plurals[e]={fn:t.fn};else if(t["plural-forms"]){var n=t["plural-forms"].split(";",2);this.plurals[e]={count:parseInt(n[0].replace("nplurals=","")),code:n[1].replace("plural=","return ")+";"}}return this.dictionary[e]=t.messages,this},defaultDomain:function(t){return this.domain=t,this},gettext:function(t){return this.dpgettext(this.domain,null,t)},ngettext:function(t,e,n){return this.dnpgettext(this.domain,null,t,e,n)},dngettext:function(t,e,n,r){return this.dnpgettext(t,null,e,n,r)},npgettext:function(t,e,n,r){return this.dnpgettext(this.domain,t,e,n,r)},pgettext:function(t,e){return this.dpgettext(this.domain,t,e)},dgettext:function(t,e){return this.dpgettext(t,null,e)},dpgettext:function(t,e,r){var i=n(this.dictionary,t,e,r);return!1!==i&&""!==i[0]?i[0]:r},dnpgettext:function(t,e,r,i,o){var s=function(t,e,n){return t[e]?(t[e].fn||(t[e].fn=new Function("n",t[e].code)),t[e].fn.call(this,n)+0):1==n?0:1}(this.plurals,t,o),a=n(this.dictionary,t,e,r);return a[s]&&""!==a[s]?a[s]:0===s?r:i},__:function(t){return r(this.gettext(t),Array.prototype.slice.call(arguments,1))},n__:function(t,e,n){return r(this.ngettext(t,e,n),Array.prototype.slice.call(arguments,3))},p__:function(t,e){return r(this.pgettext(t,e),Array.prototype.slice.call(arguments,2))},d__:function(t,e){return r(this.dgettext(t,e),Array.prototype.slice.call(arguments,2))},dp__:function(t,e,n){return r(this.dgettext(t,e,n),Array.prototype.slice.call(arguments,3))},np__:function(t,e,n,i){return r(this.npgettext(t,e,n,i),Array.prototype.slice.call(arguments,4))},dnp__:function(t,e,n,i,o){return r(this.dnpgettext(t,e,n,i,o),Array.prototype.slice.call(arguments,5))}},e}(t.vsprintf)}.apply(e,r))||(t.exports=i)},function(t,e,n){!function(t){var n={not_string:/[^s]/,number:/[diefg]/,json:/[j]/,not_json:/[^j]/,text:/^[^\x25]+/,modulo:/^\x25{2}/,placeholder:/^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijosuxX])/,key:/^([a-z_][a-z_\d]*)/i,key_access:/^\.([a-z_][a-z_\d]*)/i,index_access:/^\[(\d+)\]/,sign:/^[\+\-]/};function r(){var t=arguments[0],e=r.cache;return e[t]&&e.hasOwnProperty(t)||(e[t]=r.parse(t)),r.format.call(null,e[t],arguments)}r.format=function(t,e){var o,s,a,l,u,c,p,f,d=1,g=t.length,h="",x=[],y=!0,b="";for(s=0;s<g;s++)if("string"===(h=i(t[s])))x[x.length]=t[s];else if("array"===h){if((l=t[s])[2])for(o=e[d],a=0;a<l[2].length;a++){if(!o.hasOwnProperty(l[2][a]))throw new Error(r("[sprintf] property '%s' does not exist",l[2][a]));o=o[l[2][a]]}else o=l[1]?e[l[1]]:e[d++];if("function"==i(o)&&(o=o()),n.not_string.test(l[8])&&n.not_json.test(l[8])&&"number"!=i(o)&&isNaN(o))throw new TypeError(r("[sprintf] expecting number but found %s",i(o)));switch(n.number.test(l[8])&&(y=o>=0),l[8]){case"b":o=o.toString(2);break;case"c":o=String.fromCharCode(o);break;case"d":case"i":o=parseInt(o,10);break;case"j":o=JSON.stringify(o,null,l[6]?parseInt(l[6]):0);break;case"e":o=l[7]?o.toExponential(l[7]):o.toExponential();break;case"f":o=l[7]?parseFloat(o).toFixed(l[7]):parseFloat(o);break;case"g":o=l[7]?parseFloat(o).toPrecision(l[7]):parseFloat(o);break;case"o":o=o.toString(8);break;case"s":o=(o=String(o))&&l[7]?o.substring(0,l[7]):o;break;case"u":o>>>=0;break;case"x":o=o.toString(16);break;case"X":o=o.toString(16).toUpperCase()}n.json.test(l[8])?x[x.length]=o:(!n.number.test(l[8])||y&&!l[3]?b="":(b=y?"+":"-",o=o.toString().replace(n.sign,"")),c=l[4]?"0"===l[4]?"0":l[4].charAt(1):" ",p=l[6]-(b+o).length,u=l[6]&&p>0?(f=c,Array(p+1).join(f)):"",x[x.length]=l[5]?b+o+u:"0"===c?b+u+o:u+b+o)}return x.join("")},r.cache={},r.parse=function(t){for(var e=t,r=[],i=[],o=0;e;){if(null!==(r=n.text.exec(e)))i[i.length]=r[0];else if(null!==(r=n.modulo.exec(e)))i[i.length]="%";else{if(null===(r=n.placeholder.exec(e)))throw new SyntaxError("[sprintf] unexpected placeholder");if(r[2]){o|=1;var s=[],a=r[2],l=[];if(null===(l=n.key.exec(a)))throw new SyntaxError("[sprintf] failed to parse named argument key");for(s[s.length]=l[1];""!==(a=a.substring(l[0].length));)if(null!==(l=n.key_access.exec(a)))s[s.length]=l[1];else{if(null===(l=n.index_access.exec(a)))throw new SyntaxError("[sprintf] failed to parse named argument key");s[s.length]=l[1]}r[2]=s}else o|=2;if(3===o)throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported");i[i.length]=r}e=e.substring(r[0].length)}return i};function i(t){return Object.prototype.toString.call(t).slice(8,-1).toLowerCase()}e.sprintf=r,e.vsprintf=function(t,e,n){return(n=(e||[]).slice(0)).splice(0,0,t),r.apply(null,n)}}("undefined"==typeof window||window)}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./node_modules/sprintf-js/src/sprintf.js":
+/*!************************************************!*\
+  !*** ./node_modules/sprintf-js/src/sprintf.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function(window) {
+    var re = {
+        not_string: /[^s]/,
+        number: /[diefg]/,
+        json: /[j]/,
+        not_json: /[^j]/,
+        text: /^[^\x25]+/,
+        modulo: /^\x25{2}/,
+        placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijosuxX])/,
+        key: /^([a-z_][a-z_\d]*)/i,
+        key_access: /^\.([a-z_][a-z_\d]*)/i,
+        index_access: /^\[(\d+)\]/,
+        sign: /^[\+\-]/
+    }
+
+    function sprintf() {
+        var key = arguments[0], cache = sprintf.cache
+        if (!(cache[key] && cache.hasOwnProperty(key))) {
+            cache[key] = sprintf.parse(key)
+        }
+        return sprintf.format.call(null, cache[key], arguments)
+    }
+
+    sprintf.format = function(parse_tree, argv) {
+        var cursor = 1, tree_length = parse_tree.length, node_type = "", arg, output = [], i, k, match, pad, pad_character, pad_length, is_positive = true, sign = ""
+        for (i = 0; i < tree_length; i++) {
+            node_type = get_type(parse_tree[i])
+            if (node_type === "string") {
+                output[output.length] = parse_tree[i]
+            }
+            else if (node_type === "array") {
+                match = parse_tree[i] // convenience purposes only
+                if (match[2]) { // keyword argument
+                    arg = argv[cursor]
+                    for (k = 0; k < match[2].length; k++) {
+                        if (!arg.hasOwnProperty(match[2][k])) {
+                            throw new Error(sprintf("[sprintf] property '%s' does not exist", match[2][k]))
+                        }
+                        arg = arg[match[2][k]]
+                    }
+                }
+                else if (match[1]) { // positional argument (explicit)
+                    arg = argv[match[1]]
+                }
+                else { // positional argument (implicit)
+                    arg = argv[cursor++]
+                }
+
+                if (get_type(arg) == "function") {
+                    arg = arg()
+                }
+
+                if (re.not_string.test(match[8]) && re.not_json.test(match[8]) && (get_type(arg) != "number" && isNaN(arg))) {
+                    throw new TypeError(sprintf("[sprintf] expecting number but found %s", get_type(arg)))
+                }
+
+                if (re.number.test(match[8])) {
+                    is_positive = arg >= 0
+                }
+
+                switch (match[8]) {
+                    case "b":
+                        arg = arg.toString(2)
+                    break
+                    case "c":
+                        arg = String.fromCharCode(arg)
+                    break
+                    case "d":
+                    case "i":
+                        arg = parseInt(arg, 10)
+                    break
+                    case "j":
+                        arg = JSON.stringify(arg, null, match[6] ? parseInt(match[6]) : 0)
+                    break
+                    case "e":
+                        arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential()
+                    break
+                    case "f":
+                        arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg)
+                    break
+                    case "g":
+                        arg = match[7] ? parseFloat(arg).toPrecision(match[7]) : parseFloat(arg)
+                    break
+                    case "o":
+                        arg = arg.toString(8)
+                    break
+                    case "s":
+                        arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg)
+                    break
+                    case "u":
+                        arg = arg >>> 0
+                    break
+                    case "x":
+                        arg = arg.toString(16)
+                    break
+                    case "X":
+                        arg = arg.toString(16).toUpperCase()
+                    break
+                }
+                if (re.json.test(match[8])) {
+                    output[output.length] = arg
+                }
+                else {
+                    if (re.number.test(match[8]) && (!is_positive || match[3])) {
+                        sign = is_positive ? "+" : "-"
+                        arg = arg.toString().replace(re.sign, "")
+                    }
+                    else {
+                        sign = ""
+                    }
+                    pad_character = match[4] ? match[4] === "0" ? "0" : match[4].charAt(1) : " "
+                    pad_length = match[6] - (sign + arg).length
+                    pad = match[6] ? (pad_length > 0 ? str_repeat(pad_character, pad_length) : "") : ""
+                    output[output.length] = match[5] ? sign + arg + pad : (pad_character === "0" ? sign + pad + arg : pad + sign + arg)
+                }
+            }
+        }
+        return output.join("")
+    }
+
+    sprintf.cache = {}
+
+    sprintf.parse = function(fmt) {
+        var _fmt = fmt, match = [], parse_tree = [], arg_names = 0
+        while (_fmt) {
+            if ((match = re.text.exec(_fmt)) !== null) {
+                parse_tree[parse_tree.length] = match[0]
+            }
+            else if ((match = re.modulo.exec(_fmt)) !== null) {
+                parse_tree[parse_tree.length] = "%"
+            }
+            else if ((match = re.placeholder.exec(_fmt)) !== null) {
+                if (match[2]) {
+                    arg_names |= 1
+                    var field_list = [], replacement_field = match[2], field_match = []
+                    if ((field_match = re.key.exec(replacement_field)) !== null) {
+                        field_list[field_list.length] = field_match[1]
+                        while ((replacement_field = replacement_field.substring(field_match[0].length)) !== "") {
+                            if ((field_match = re.key_access.exec(replacement_field)) !== null) {
+                                field_list[field_list.length] = field_match[1]
+                            }
+                            else if ((field_match = re.index_access.exec(replacement_field)) !== null) {
+                                field_list[field_list.length] = field_match[1]
+                            }
+                            else {
+                                throw new SyntaxError("[sprintf] failed to parse named argument key")
+                            }
+                        }
+                    }
+                    else {
+                        throw new SyntaxError("[sprintf] failed to parse named argument key")
+                    }
+                    match[2] = field_list
+                }
+                else {
+                    arg_names |= 2
+                }
+                if (arg_names === 3) {
+                    throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported")
+                }
+                parse_tree[parse_tree.length] = match
+            }
+            else {
+                throw new SyntaxError("[sprintf] unexpected placeholder")
+            }
+            _fmt = _fmt.substring(match[0].length)
+        }
+        return parse_tree
+    }
+
+    var vsprintf = function(fmt, argv, _argv) {
+        _argv = (argv || []).slice(0)
+        _argv.splice(0, 0, fmt)
+        return sprintf.apply(null, _argv)
+    }
+
+    /**
+     * helpers
+     */
+    function get_type(variable) {
+        return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase()
+    }
+
+    function str_repeat(input, multiplier) {
+        return Array(multiplier + 1).join(input)
+    }
+
+    /**
+     * export to either browser or node.js
+     */
+    if (true) {
+        exports.sprintf = sprintf
+        exports.vsprintf = vsprintf
+    }
+    else {}
+})(typeof window === "undefined" ? this : window);
+
+
+/***/ }),
+
+/***/ "./src/Resources/js/plugins/Gettextable.js":
+/*!*************************************************!*\
+  !*** ./src/Resources/js/plugins/Gettextable.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ./Gettextable/Plugins */ "./src/Resources/js/plugins/Gettextable/Plugins.js");
+/*
+ * CrudAdmin Binder into global variables and VueJS 2
+ * for simple global scope integration into VueJs use Vue.use(Gettext)
+ */
+
+
+(function () {
+  var a = new Translator(CATranslates.translates),
+      selectors = Object.keys(a.__proto__).concat(['_', 'Gettext']),
+      getSelector = function getSelector(selector) {
+    return function () {
+      var s = selector in a ? selector : '__';
+      return a[s].apply(a, arguments);
+    };
+  };
+
+  selectors.map(function (selector) {
+    //If window variable is used, for example by lodash library
+    if (selector in window) {
+      return;
+    }
+
+    var f = window[selector] = getSelector(selector); //Vue.js installation
+
+    f.install = function (Vue, options) {
+      for (var i = 0; i < selectors.length; i++) {
+        Vue.prototype[selectors[i]] = getSelector(selectors[i]);
+      }
+    };
+  });
+  window.GettextTranslates = a;
+})();
+
+/***/ }),
+
+/***/ "./src/Resources/js/plugins/Gettextable/Plugins.js":
+/*!*********************************************************!*\
+  !*** ./src/Resources/js/plugins/Gettextable/Plugins.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+/*! sprintf-js v1.1.1 | Copyright (c) 2007-present, Alexandru Mărășteanu <hello@alexei.ro> | BSD-3-Clause */
+!function () {
+  "use strict";
+
+  function e(e) {
+    return r(n(e), arguments);
+  }
+
+  function t(t, r) {
+    return e.apply(null, [t].concat(r || []));
+  }
+
+  function r(t, r) {
+    var n,
+        i,
+        a,
+        o,
+        p,
+        c,
+        u,
+        f,
+        l,
+        d = 1,
+        g = t.length,
+        b = "";
+
+    for (i = 0; i < g; i++) {
+      if ("string" == typeof t[i]) b += t[i];else if (Array.isArray(t[i])) {
+        if ((o = t[i])[2]) for (n = r[d], a = 0; a < o[2].length; a++) {
+          if (!n.hasOwnProperty(o[2][a])) throw new Error(e('[sprintf] property "%s" does not exist', o[2][a]));
+          n = n[o[2][a]];
+        } else n = o[1] ? r[o[1]] : r[d++];
+        if (s.not_type.test(o[8]) && s.not_primitive.test(o[8]) && n instanceof Function && (n = n()), s.numeric_arg.test(o[8]) && "number" != typeof n && isNaN(n)) throw new TypeError(e("[sprintf] expecting number but found %T", n));
+
+        switch (s.number.test(o[8]) && (f = n >= 0), o[8]) {
+          case "b":
+            n = parseInt(n, 10).toString(2);
+            break;
+
+          case "c":
+            n = String.fromCharCode(parseInt(n, 10));
+            break;
+
+          case "d":
+          case "i":
+            n = parseInt(n, 10);
+            break;
+
+          case "j":
+            n = JSON.stringify(n, null, o[6] ? parseInt(o[6]) : 0);
+            break;
+
+          case "e":
+            n = o[7] ? parseFloat(n).toExponential(o[7]) : parseFloat(n).toExponential();
+            break;
+
+          case "f":
+            n = o[7] ? parseFloat(n).toFixed(o[7]) : parseFloat(n);
+            break;
+
+          case "g":
+            n = o[7] ? String(Number(n.toPrecision(o[7]))) : parseFloat(n);
+            break;
+
+          case "o":
+            n = (parseInt(n, 10) >>> 0).toString(8);
+            break;
+
+          case "s":
+            n = String(n), n = o[7] ? n.substring(0, o[7]) : n;
+            break;
+
+          case "t":
+            n = String(!!n), n = o[7] ? n.substring(0, o[7]) : n;
+            break;
+
+          case "T":
+            n = Object.prototype.toString.call(n).slice(8, -1).toLowerCase(), n = o[7] ? n.substring(0, o[7]) : n;
+            break;
+
+          case "u":
+            n = parseInt(n, 10) >>> 0;
+            break;
+
+          case "v":
+            n = n.valueOf(), n = o[7] ? n.substring(0, o[7]) : n;
+            break;
+
+          case "x":
+            n = (parseInt(n, 10) >>> 0).toString(16);
+            break;
+
+          case "X":
+            n = (parseInt(n, 10) >>> 0).toString(16).toUpperCase();
+        }
+
+        s.json.test(o[8]) ? b += n : (!s.number.test(o[8]) || f && !o[3] ? l = "" : (l = f ? "+" : "-", n = n.toString().replace(s.sign, "")), c = o[4] ? "0" === o[4] ? "0" : o[4].charAt(1) : " ", u = o[6] - (l + n).length, p = o[6] && u > 0 ? c.repeat(u) : "", b += o[5] ? l + n + p : "0" === c ? l + p + n : p + l + n);
+      }
+    }
+
+    return b;
+  }
+
+  function n(e) {
+    if (i[e]) return i[e];
+
+    for (var t, r = e, n = [], a = 0; r;) {
+      if (null !== (t = s.text.exec(r))) n.push(t[0]);else if (null !== (t = s.modulo.exec(r))) n.push("%");else {
+        if (null === (t = s.placeholder.exec(r))) throw new SyntaxError("[sprintf] unexpected placeholder");
+
+        if (t[2]) {
+          a |= 1;
+          var o = [],
+              p = t[2],
+              c = [];
+          if (null === (c = s.key.exec(p))) throw new SyntaxError("[sprintf] failed to parse named argument key");
+
+          for (o.push(c[1]); "" !== (p = p.substring(c[0].length));) {
+            if (null !== (c = s.key_access.exec(p))) o.push(c[1]);else {
+              if (null === (c = s.index_access.exec(p))) throw new SyntaxError("[sprintf] failed to parse named argument key");
+              o.push(c[1]);
+            }
+          }
+
+          t[2] = o;
+        } else a |= 2;
+
+        if (3 === a) throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported");
+        n.push(t);
+      }
+      r = r.substring(t[0].length);
+    }
+
+    return i[e] = n;
+  }
+
+  var s = {
+    not_string: /[^s]/,
+    not_bool: /[^t]/,
+    not_type: /[^T]/,
+    not_primitive: /[^v]/,
+    number: /[diefg]/,
+    numeric_arg: /[bcdiefguxX]/,
+    json: /[j]/,
+    not_json: /[^j]/,
+    text: /^[^\x25]+/,
+    modulo: /^\x25{2}/,
+    placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijostTuvxX])/,
+    key: /^([a-z_][a-z_\d]*)/i,
+    key_access: /^\.([a-z_][a-z_\d]*)/i,
+    index_access: /^\[(\d+)\]/,
+    sign: /^[\+\-]/
+  },
+      i = Object.create(null);
+   true && (exports.sprintf = e, exports.vsprintf = t), "undefined" != typeof window && (window.sprintf = e, window.vsprintf = t,  true && !(__WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+    return {
+      sprintf: e,
+      vsprintf: t
+    };
+  }).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)));
+}();
+/* https://github.com/oscarotero/Gettext */
+
+!function (t, n) {
+   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! sprintf-js */ "./node_modules/sprintf-js/src/sprintf.js")], __WEBPACK_AMD_DEFINE_RESULT__ = (function (t) {
+    return n(t.vsprintf);
+  }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : undefined;
+}(this, function (t) {
+  function n(t) {
+    this.dictionary = {}, this.plurals = {}, this.domain = null, t && this.loadTranslations(t);
+  }
+
+  function e(t, n, e, i) {
+    return e = e || "", !!(t[n] && t[n][e] && t[n][e][i]) && t[n][e][i];
+  }
+
+  function i(n, e) {
+    return e.length ? e[0] instanceof Array ? t(n, e[0]) : t(n, e) : n;
+  }
+
+  return n.prototype = {
+    loadTranslations: function loadTranslations(t) {
+      var n = t.domain || "";
+      if (null === this.domain && (this.domain = n), this.dictionary[n]) return function (t, n) {
+        for (var e in n) {
+          if (t[e]) for (var i in n[e]) {
+            t[e][i] = n[e][i];
+          } else t[e] = n[e];
+        }
+      }(this.dictionary[n], t.messages), this;
+      if (t.fn) this.plurals[n] = {
+        fn: t.fn
+      };else if (t["plural-forms"]) {
+        var e = t["plural-forms"].split(";", 2);
+        this.plurals[n] = {
+          count: parseInt(e[0].replace("nplurals=", "")),
+          code: e[1].replace("plural=", "return ") + ";"
+        };
+      }
+      return this.dictionary[n] = t.messages, this;
+    },
+    defaultDomain: function defaultDomain(t) {
+      return this.domain = t, this;
+    },
+    gettext: function gettext(t) {
+      return this.dpgettext(this.domain, null, t);
+    },
+    ngettext: function ngettext(t, n, e) {
+      return this.dnpgettext(this.domain, null, t, n, e);
+    },
+    dngettext: function dngettext(t, n, e, i) {
+      return this.dnpgettext(t, null, n, e, i);
+    },
+    npgettext: function npgettext(t, n, e, i) {
+      return this.dnpgettext(this.domain, t, n, e, i);
+    },
+    pgettext: function pgettext(t, n) {
+      return this.dpgettext(this.domain, t, n);
+    },
+    dgettext: function dgettext(t, n) {
+      return this.dpgettext(t, null, n);
+    },
+    dpgettext: function dpgettext(t, n, i) {
+      var r = e(this.dictionary, t, n, i);
+      return !1 !== r && "" !== r[0] ? r[0] : i;
+    },
+    dnpgettext: function dnpgettext(t, n, i, r, o) {
+      var s = function (t, n, e) {
+        if (!t[n]) return 1 == e ? 0 : 1;
+        t[n].fn || (t[n].fn = new Function("n", t[n].code));
+        return t[n].fn.call(this, e) + 0;
+      }(this.plurals, t, o),
+          u = e(this.dictionary, t, n, i);
+
+      return u[s] && "" !== u[s] ? u[s] : 0 === s ? i : r;
+    },
+    __: function __(t) {
+      return i(this.gettext(t), Array.prototype.slice.call(arguments, 1));
+    },
+    n__: function n__(t, n, e) {
+      return i(this.ngettext(t, n, e), Array.prototype.slice.call(arguments, 3));
+    },
+    p__: function p__(t, n) {
+      return i(this.pgettext(t, n), Array.prototype.slice.call(arguments, 2));
+    },
+    d__: function d__(t, n) {
+      return i(this.dgettext(t, n), Array.prototype.slice.call(arguments, 2));
+    },
+    dp__: function dp__(t, n, e) {
+      return i(this.dgettext(t, n, e), Array.prototype.slice.call(arguments, 3));
+    },
+    np__: function np__(t, n, e, r) {
+      return i(this.npgettext(t, n, e, r), Array.prototype.slice.call(arguments, 4));
+    },
+    dnp__: function dnp__(t, n, e, r, o) {
+      return i(this.dnpgettext(t, n, e, r, o), Array.prototype.slice.call(arguments, 5));
+    }
+  }, n;
+});
+
+/***/ }),
+
+/***/ 1:
+/*!*******************************************************!*\
+  !*** multi ./src/Resources/js/plugins/Gettextable.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! /Volumes/SSD/www/root/home/projects/admin/dependencies/resources/src/Resources/js/plugins/Gettextable.js */"./src/Resources/js/plugins/Gettextable.js");
+
+
+/***/ })
+
+/******/ });

@@ -1,5 +1,17 @@
 var Editor = {
     isDisabledFormationAction(e){
+        //If edited text is raw HTML
+        if ( CAEditor.rawTranslates.indexOf(e.target._CAOriginTranslate) > -1 ) {
+
+            //Enter single br on new line
+            if ( e.keyCode == 13 ) {
+                document.execCommand('insertHTML', false, '<br>');
+                e.preventDefault();
+            }
+
+            return true;
+        }
+
         var ret = true;
 
         //Disable new line

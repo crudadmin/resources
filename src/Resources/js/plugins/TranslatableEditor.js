@@ -6,6 +6,7 @@ import Pencils from './Editor/Pencils';
 (function(){
     window.CAEditor = {
         allTranslates : CATranslates.translates.messages ? CATranslates.translates.messages[''] : {},
+        rawTranslates : CATranslates.rawTranslates,
         translatedTree : [],
         duplicates : [],
         matchedElements : [],
@@ -86,8 +87,12 @@ import Pencils from './Editor/Pencils';
             }
         },
         isInEditorElement(element){
-            if ( element && element.nodeName != '#text' ) {
-                if ( element.getAttribute('data-crudadmin-editor') === '' ) {
+            if ( element ) {
+                if ( element._CAOriginTranslate ) {
+                    return true;
+                }
+
+                if ( element.nodeName != '#text' && element.getAttribute('data-crudadmin-editor') === '' ) {
                     return true;
                 }
 

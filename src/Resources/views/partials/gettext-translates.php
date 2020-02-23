@@ -1,5 +1,6 @@
 window.CATranslates = {
     translates : <?php echo $translations ?>,
+    rawTranslates : <?php echo $rawTranslations ?>,
     requests : {
         update : '<?php echo action('\Admin\Controllers\GettextController@updateTranslations', request('lang')) ?>',
     },
