@@ -1,3 +1,6 @@
+import Observer from './Observer';
+import Editor from './Editor';
+
 var Pencils = {
     className : 'CAEditor--Pencil',
     classNameSaved : 'CAEditor--Pencil--saved',
@@ -6,7 +9,7 @@ var Pencils = {
         this.initHovers();
         this.initClicks();
         this.buildPencils();
-        this.observeNewElements();
+        Observer.observeNewElements();
     },
 
     refresh(){
@@ -37,7 +40,7 @@ var Pencils = {
     initHovers(){
         var allElements = document.getElementsByTagName('*');
 
-        var checkHoverChanges = function(e){
+        var checkHoverChanges = (e) => {
             var hoveredParent = e.target,
                 childs = hoveredParent.getElementsByTagName('*'),
                 elementsToMove = [];
@@ -57,9 +60,9 @@ var Pencils = {
 
             //See for position changed of every element till position wont changes.
             for ( var i = 0; i < elementsToMove.length; i++ ) {
-                (function(element){
+                ((element) => {
                     var prevPositionKey = null,
-                        checkPosition = function(){
+                        checkPosition = () => {
                             var position = element.getBoundingClientRect(),
                                 positionKey = position.x+'-'+position.y;
 
@@ -99,8 +102,12 @@ var Pencils = {
             textRange.select();
         }
     },
+    /*
+     * We need have this super complicated clics handler, because pencils may not be visible in some ceses.
+     * That's why pencils are user-select none. And not all the time are on the top of z-index.
+     */
     initClicks(){
-        document.body.addEventListener('click', function(e){
+        document.body.addEventListener('click', (e) => {
             var clickX = e.pageX,
                 clickY = e.pageY,
                 allElements = document.getElementsByTagName('*'),
@@ -124,7 +131,7 @@ var Pencils = {
 
             for ( var i = 0; i < list.length; i++ ) {
                 if ( list[i].className.indexOf(Pencils.className) > -1 ) {
-                    (function(pencil){
+                    ((pencil) => {
                         var element = pencil._CAElement,
                             actualValue = CAEditor.nodeValue(element);
 
@@ -136,7 +143,7 @@ var Pencils = {
 
                         //Text node can be edited in DOM
                         // Pencils.openAlertModal(element, actualValue);
-                        Pencils.makeEditableNode(element, actualValue);
+                        Editor.makeEditableNode(element, actualValue);
                     })(list[i]);
 
                     e.preventDefault();
@@ -145,88 +152,6 @@ var Pencils = {
             }
 
             return false;
-        });
-    },
-    disableFormatting(e){
-        var ret = true;
-        if(e.ctrlKey || e.metaKey){
-            switch(e.keyCode){
-                case 66: //ctrl+B or ctrl+b
-                case 98:
-                    ret=false;
-                break;
-                case 73: //ctrl+I or ctrl+i
-                case 105:
-                    ret=false;
-                break;
-                case 85: //ctrl+U or ctrl+u
-                case 117:
-                    ret=false;
-                break;
-            }
-        }
-        return ret;
-    },
-    seCAEditorByTranslateType(element){
-        element.addEventListener('keydown', function(e){
-            //Disable enter (new-line)
-            if ( e.keyCode === 13 || Pencils.disableFormatting(e) === false ){
-                e.preventDefault();
-            }
-        });
-    },
-    makeEditableNode(element, actualValue){
-        //If given element is textNode, we need wrap it into inline div
-        if ( element.nodeName == '#text' ) {
-            var wrapper = document.createElement('div');
-                wrapper.className = 'CA--InlineWrapper';
-
-            element.parentNode.insertBefore(wrapper, element);
-            wrapper.appendChild(element);
-
-            element = wrapper;
-        }
-
-        element.innerHTML = actualValue;
-        element.contentEditable = true;
-        this.seCAEditorByTranslateType(element);
-        Pencils.placeCaretAtEnd(element);
-
-        if ( element.hasBindedEvents ) {
-            return;
-        }
-
-        element.hasBindedEvents = true;
-
-        element.addEventListener('keydown', function(e){
-            setTimeout(function(){
-                //When first char will be typed, remove last empty chart
-                if ( e.target.innerHTML.length == 7 && e.target.innerHTML.substr(-6) == '&nbsp;' ) {
-                    e.target.innerHTML = e.target.innerHTML.substr(0, e.target.innerHTML.length - 6);
-                    Pencils.placeCaretAtEnd(e.target);
-                }
-
-                //Add empty char when element is empty, because browser is buggy
-                if ( e.target.innerHTML === '' ) {
-                    e.target.innerHTML = '&nbsp;';
-                }
-            }, 1);
-        });
-        element.addEventListener('keyup', function(e){
-            var pencil = element._CAPencil;
-
-            //Remove saved classname
-            pencil.className = pencil.className.replace(new RegExp(Pencils.classNameSaved, 'g'), '')
-
-            Pencils.repaintPencils();
-            Pencils.updateTranslation(element);
-        });
-
-        //Paste as plain text
-        element.addEventListener('paste', function(e) {
-            e.preventDefault();
-            var text = e.clipboardData.getData('text/plain');
-            document.execCommand('insertHTML', false, text);
         });
     },
     openAlertModal(element, actualValue){
@@ -272,7 +197,7 @@ var Pencils = {
 
         return e;
     },
-    bindPositions : function(element){
+    bindPositions(element){
         var pencil = element._CAPencil;
 
         //If element does not have pencil
@@ -330,23 +255,6 @@ var Pencils = {
 
         pencil.style.left = (window.scrollX + positionX)+'px';
         pencil.style.top = (window.scrollY + positionY - pencil.offsetHeight)+'px';
-    },
-    observeNewElements(){
-        CAEditor.observer.observeDOM(document.body, function(e){
-            CAEditor.refresh();
-
-            //If removed element had pencil
-            for ( var i = 0; i < e.length; i++ ) {
-                for ( var r = 0; r < e[i].removedNodes.length; r++ ) {
-                    if ( e[i].removedNodes[r]._CAPencil ) {
-                        e[i].removedNodes[r]._CAPencil.remove();
-                    }
-                }
-            }
-        });
-    },
-    htmlEntities(str) {
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     },
     updateTranslation(e){
         var data = { changes : {} };

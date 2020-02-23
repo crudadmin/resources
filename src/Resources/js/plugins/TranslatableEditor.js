@@ -11,13 +11,13 @@ import Pencils from './Editor/Pencils';
         matchedElements : [],
         maxTranslateLength : 0,
 
-        init : function(){
+        init(){
             this.getTranslationsTree();
             this.getTranslatableElements();
             this.pencils.init();
         },
 
-        refresh : function(){
+        refresh(){
             this.getTranslatableElements();
             this.pencils.refresh();
         },
@@ -26,7 +26,7 @@ import Pencils from './Editor/Pencils';
          * We want build tree with keys as translations and values as original texts.
          * For better performance for searching elements.
          */
-        getTranslationsTree : function(){
+        getTranslationsTree(){
             //Build translates tree
             for ( var key in this.allTranslates ) {
                 var translate = this.allTranslates[key][0]||key;
@@ -53,7 +53,7 @@ import Pencils from './Editor/Pencils';
 
             return value.trim();
         },
-        getTranslatableElements : function(){
+        getTranslatableElements(){
             var elements = document.querySelectorAll('*');
 
             //Get all elements with innerhtml from translates
@@ -116,39 +116,6 @@ import Pencils from './Editor/Pencils';
 
             this.matchedElements.push(element);
         },
-        observer : {
-            MutationObserver : window.MutationObserver || window.WebKitMutationObserver,
-
-            observeDOM : function(obj, originalCallback){
-                if( !obj || !obj.nodeType === 1 )
-                    return;
-
-                var timeout,
-                    callback = (mutations) => {
-                        if ( timeout ) {
-                            clearTimeout(timeout);
-                        }
-
-                        timeout = setTimeout(() => {
-                            originalCallback(mutations);
-                        }, 1);
-                    };
-
-                if( this.MutationObserver ){
-                    // define a new observer
-                    var obs = new this.MutationObserver(function(mutations, observer){
-                        callback(mutations);
-                    })
-                    // have the observer observe foo for changes in children
-                    obs.observe( obj, { childList:true, subtree:true });
-                }
-
-                else if( window.addEventListener ){
-                    obj.addEventListener('DOMNodeInserted', callback, false);
-                    obj.addEventListener('DOMNodeRemoved', callback, false);
-                }
-            }
-        },
         pencils : Pencils,
         ajax : {
             post(url, data, callback){
@@ -158,7 +125,7 @@ import Pencils from './Editor/Pencils';
                 request.setRequestHeader('X-CSRF-TOKEN', window.CACSRFToken);
                 request.send(JSON.stringify(data));
 
-                request.onreadystatechange = function() {
+                request.onreadystatechange = () => {
                     if(callback && request.readyState == 4 && request.status == 200) {
                         callback(request)
                     }
@@ -167,7 +134,7 @@ import Pencils from './Editor/Pencils';
         }
     };
 
-    window.addEventListener('load', function(){
+    window.addEventListener('load', () => {
         CAEditor.init();
     });
 })();
