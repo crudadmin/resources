@@ -120,9 +120,29 @@
                 }
             }
         },
+        isInEditorElement(element){
+            if ( element && element.nodeName != '#text' ) {
+                if ( element.getAttribute('data-crudadmin-editor') === '' ) {
+                    return true;
+                }
+
+                if ( element.parentElement ) {
+                    return this.isInEditorElement(element.parentElement);
+                }
+            }
+
+            return false;
+        },
         registerTranslatableElement(element, html){
+            var isTextFromEditor = false;
+
             //Element has been registered already
-            if ( element._CAOriginTranslate ) {
+            if ( element._CAOriginTranslate || (isTextFromEditor = this.isInEditorElement(element)) ) {
+                //Prevent check next time...
+                if ( isTextFromEditor ) {
+                    element._CAOriginTranslate = true;
+                }
+
                 return;
             }
 
