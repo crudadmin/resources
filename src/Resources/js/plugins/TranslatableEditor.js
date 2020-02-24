@@ -1,11 +1,13 @@
 import Pencils from './Editor/Pencils';
 import Editor from './Editor/Editor';
+import Navigation from './Editor/Navigation';
 
 /*
  * CrudAdmin auto translatable
  */
 (function(){
     window.CAEditor = {
+        state : false,
         config : window.CAEditorConfig,
         allTranslates : null,
         rawTranslates : null,
@@ -15,6 +17,12 @@ import Editor from './Editor/Editor';
         maxTranslateLength : 0,
 
         init(TAObject){
+            Navigation.init();
+
+            this.bootTranslates(TAObject);
+        },
+
+        bootTranslates(TAObject){
             //Bind given translates
             this.allTranslates = TAObject.translates.messages ? TAObject.translates.messages[''] : {};
             this.rawTranslates = TAObject.rawTranslates;
@@ -27,27 +35,45 @@ import Editor from './Editor/Editor';
             this.getTranslationsTree();
             this.getTranslatableElements();
             this.pencils.init();
+
+            this.state = true;
         },
 
         enable(){
-            //If pencils are hidden, just show them.
+            //If editor has been booted already, pencils are just hidden, so we need show them.
             if ( this.config.active === true ) {
                 Pencils.showAllPencils();
+
+                this.state = true;
+
+                //Send ajax that state is on
+                this.ajax.post(this.config.requests.changeState, { state : true });
             } else {
+                //We need set active/boot status to true
                 this.config.active = true;
 
                 //Turn on state and get the newest translates with all raw texts
                 this.ajax.post(this.config.requests.changeState, {
                     state : true,
+                    response : true,
                 }, (response) => {
-                    CAEditor.init(eval(response.response));
+                    CAEditor.bootTranslates(eval(response.response));
                 })
+            }
+        },
+
+        toggle(){
+            if ( this.state === false ) {
+                this.enable();
+            } else {
+                this.destroy();
             }
         },
 
         destroy(){
             Pencils.hideAllPencils();
             Editor.turnOffAllEditors();
+            this.state = false;
 
             //Turn of state
             this.ajax.post(this.config.requests.changeState, {

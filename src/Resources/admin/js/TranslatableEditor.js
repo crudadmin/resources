@@ -96,6 +96,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var Editor = {
+  inlineClass: 'CAE__InlineWrapper',
   isDisabledFormationAction: function isDisabledFormationAction(e) {
     //If edited text is raw HTML
     if (CAEditor.rawTranslates.indexOf(e.target._CAOriginTranslate) > -1) {
@@ -186,7 +187,7 @@ var Editor = {
     //If given element is textNode, we need wrap it into inline div
     if (element.nodeName == '#text') {
       var wrapper = document.createElement('div');
-      wrapper.className = 'CA--InlineWrapper';
+      wrapper.className = this.inlineClass;
       element.parentNode.insertBefore(wrapper, element);
       wrapper.appendChild(element);
       element = wrapper;
@@ -217,6 +218,39 @@ var Editor = {
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (Editor);
+
+/***/ }),
+
+/***/ "./src/Resources/js/plugins/Editor/Navigation.js":
+/*!*******************************************************!*\
+  !*** ./src/Resources/js/plugins/Editor/Navigation.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var Navigation = {
+  wrapperClassName: 'CAE_Navigation',
+  init: function init() {
+    this.addNavigation();
+    this.bindTranslatesToggle();
+  },
+  addNavigation: function addNavigation() {
+    var node = document.createElement('div');
+    node.className = this.wrapperClassName;
+    node.innerHTML = "\n            <div class=\"CAE_Navigation_button\">\n                <button></button>\n                <div class=\"CAE_Navigation_navbar\">\n                    <ul>\n                        <li><a class=\"CAE_Icons\" href=\"".concat(CAEditor.config.requests.admin, "\" target=\"_blank\">Administr\xE1cia webu <i class=\"CAE_Icon--link\"></i></a></li>\n                        <li id=\"CAE_ToggleState\">\n                            <label class=\"CAE_Checkbox CAE_Icons\">\n                                Re\u017Eim prekladate\u013Ea\n                                <input type=\"checkbox\">\n                                <div><div></div></div>\n                            </label>\n                        </li>\n                    </ul>\n                </div>\n            </div>\n        ");
+    document.getElementsByTagName('body')[0].appendChild(node);
+  },
+  bindTranslatesToggle: function bindTranslatesToggle() {
+    var toggle = document.getElementById('CAE_ToggleState');
+    toggle.getElementsByTagName('input')[0].checked = CAEditor.config.active;
+    toggle.addEventListener('change', function (e) {
+      CAEditor.toggle();
+    });
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (Navigation);
 
 /***/ }),
 
@@ -292,9 +326,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var Pencils = {
-  className: 'CAEPencil',
-  classNameSaved: 'CAEPencil--saved',
-  classNameHidden: 'CAEPencil--hidden',
+  className: 'CAE_Pencil',
+  classNameSaved: 'CAE_Pencil--saved',
+  classNameHidden: 'CAE_Pencil--hidden',
   init: function init() {
     this.initHovers();
     this.initClicks();
@@ -311,12 +345,12 @@ var Pencils = {
       //Also pdate position of pencil, because element may be deleted.
 
       if (element._CAPencil) {
-        this.bindPositions(element);
+        this.bindPosition(element);
         continue;
       }
 
       element._CAPencil = this.createPencil(element, i);
-      this.bindPositions(element);
+      this.bindPosition(element);
     }
   },
 
@@ -353,7 +387,7 @@ var Pencils = {
                 positionKey = position.x + '-' + position.y;
 
             if (prevPositionKey != positionKey) {
-              Pencils.bindPositions(element);
+              Pencils.bindPosition(element);
               prevPositionKey = positionKey;
               setTimeout(checkPosition, 50);
             }
@@ -466,7 +500,7 @@ var Pencils = {
   },
   repaintPencils: function repaintPencils() {
     for (var i = 0; i < CAEditor.matchedElements.length; i++) {
-      Pencils.bindPositions(CAEditor.matchedElements[i]);
+      Pencils.bindPosition(CAEditor.matchedElements[i]);
     }
   },
   createPencil: function createPencil(element, key) {
@@ -478,8 +512,10 @@ var Pencils = {
     document.getElementsByTagName('body')[0].appendChild(e);
     return e;
   },
-  bindPositions: function bindPositions(element) {
-    var pencil = element._CAPencil; //If element does not have pencil
+  bindPosition: function bindPosition(element) {
+    var pencil = element._CAPencil,
+        pencilHeight = 20,
+        pencilWidth = 20; //If element does not have pencil
 
     if (pencil === undefined) {
       return;
@@ -515,17 +551,18 @@ var Pencils = {
         positionX += paddingLeft;
         positionY += paddingTop; //Icons are aligned on the left, so we need move pencil to the edge
 
-        positionX -= pencil.offsetWidth; //Point pencil on center of text
+        positionX -= pencilWidth; //Point pencil on center of text
 
         if (textAlign == 'center') {
           positionX += (element.offsetWidth - paddingLeft - paddingRight) / 2;
         }
-      } //Check if element is visible
+      }
 
+    console.log(element); //Check if element is visible
 
     pencil.style.display = !positionY || !positionX || positionY == 0 || positionX === 0 ? 'none' : 'block';
     pencil.style.left = window.scrollX + positionX + 'px';
-    pencil.style.top = window.scrollY + positionY - pencil.offsetHeight + 'px';
+    pencil.style.top = window.scrollY + positionY - pencilHeight + 'px';
   },
   updateTranslation: function updateTranslation(e) {
     var data = {
@@ -560,6 +597,7 @@ var Pencils = {
 
       if (pencil) {
         pencil.className = pencil.className.replace(new RegExp(Pencils.classNameHidden, 'g'), '');
+        this.bindPosition(CAEditor.matchedElements[i]);
       }
     }
   }
@@ -579,6 +617,8 @@ var Pencils = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Editor_Pencils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Editor/Pencils */ "./src/Resources/js/plugins/Editor/Pencils.js");
 /* harmony import */ var _Editor_Editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Editor/Editor */ "./src/Resources/js/plugins/Editor/Editor.js");
+/* harmony import */ var _Editor_Navigation__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Editor/Navigation */ "./src/Resources/js/plugins/Editor/Navigation.js");
+
 
 
 /*
@@ -587,6 +627,7 @@ __webpack_require__.r(__webpack_exports__);
 
 (function () {
   window.CAEditor = {
+    state: false,
     config: window.CAEditorConfig,
     allTranslates: null,
     rawTranslates: null,
@@ -595,6 +636,10 @@ __webpack_require__.r(__webpack_exports__);
     matchedElements: [],
     maxTranslateLength: 0,
     init: function init(TAObject) {
+      _Editor_Navigation__WEBPACK_IMPORTED_MODULE_2__["default"].init();
+      this.bootTranslates(TAObject);
+    },
+    bootTranslates: function bootTranslates(TAObject) {
       //Bind given translates
       this.allTranslates = TAObject.translates.messages ? TAObject.translates.messages[''] : {};
       this.rawTranslates = TAObject.rawTranslates; //Editor is not allowed
@@ -606,24 +651,40 @@ __webpack_require__.r(__webpack_exports__);
       this.getTranslationsTree();
       this.getTranslatableElements();
       this.pencils.init();
+      this.state = true;
     },
     enable: function enable() {
-      //If pencils are hidden, just show them.
+      //If editor has been booted already, pencils are just hidden, so we need show them.
       if (this.config.active === true) {
         _Editor_Pencils__WEBPACK_IMPORTED_MODULE_0__["default"].showAllPencils();
-      } else {
-        this.config.active = true; //Turn on state and get the newest translates with all raw texts
+        this.state = true; //Send ajax that state is on
 
         this.ajax.post(this.config.requests.changeState, {
           state: true
-        }, function (response) {
-          CAEditor.init(eval(response.response));
         });
+      } else {
+        //We need set active/boot status to true
+        this.config.active = true; //Turn on state and get the newest translates with all raw texts
+
+        this.ajax.post(this.config.requests.changeState, {
+          state: true,
+          response: true
+        }, function (response) {
+          CAEditor.bootTranslates(eval(response.response));
+        });
+      }
+    },
+    toggle: function toggle() {
+      if (this.state === false) {
+        this.enable();
+      } else {
+        this.destroy();
       }
     },
     destroy: function destroy() {
       _Editor_Pencils__WEBPACK_IMPORTED_MODULE_0__["default"].hideAllPencils();
-      _Editor_Editor__WEBPACK_IMPORTED_MODULE_1__["default"].turnOffAllEditors(); //Turn of state
+      _Editor_Editor__WEBPACK_IMPORTED_MODULE_1__["default"].turnOffAllEditors();
+      this.state = false; //Turn of state
 
       this.ajax.post(this.config.requests.changeState, {
         state: false

@@ -1,4 +1,6 @@
 var Editor = {
+    inlineClass : 'CAE__InlineWrapper',
+
     isDisabledFormationAction(e){
         //If edited text is raw HTML
         if ( CAEditor.rawTranslates.indexOf(e.target._CAOriginTranslate) > -1 ) {
@@ -85,7 +87,7 @@ var Editor = {
         //If given element is textNode, we need wrap it into inline div
         if ( element.nodeName == '#text' ) {
             var wrapper = document.createElement('div');
-                wrapper.className = 'CA--InlineWrapper';
+                wrapper.className = this.inlineClass;
 
             element.parentNode.insertBefore(wrapper, element);
             wrapper.appendChild(element);

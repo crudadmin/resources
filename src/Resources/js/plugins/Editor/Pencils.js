@@ -2,9 +2,9 @@ import Observer from './Observer';
 import Editor from './Editor';
 
 var Pencils = {
-    className : 'CAEPencil',
-    classNameSaved : 'CAEPencil--saved',
-    classNameHidden : 'CAEPencil--hidden',
+    className : 'CAE_Pencil',
+    classNameSaved : 'CAE_Pencil--saved',
+    classNameHidden : 'CAE_Pencil--hidden',
 
     init(){
         this.initHovers();
@@ -25,13 +25,13 @@ var Pencils = {
             //If element already has pencil, skip it.
             //Also pdate position of pencil, because element may be deleted.
             if ( element._CAPencil ) {
-                this.bindPositions(element);
+                this.bindPosition(element);
                 continue;
             }
 
             element._CAPencil = this.createPencil(element, i);
 
-            this.bindPositions(element);
+            this.bindPosition(element);
         }
     },
     /*
@@ -68,7 +68,7 @@ var Pencils = {
                                 positionKey = position.x+'-'+position.y;
 
                             if ( prevPositionKey != positionKey ) {
-                                Pencils.bindPositions(element);
+                                Pencils.bindPosition(element);
 
                                 prevPositionKey = positionKey;
 
@@ -184,7 +184,7 @@ var Pencils = {
     },
     repaintPencils(){
         for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
-            Pencils.bindPositions(CAEditor.matchedElements[i]);
+            Pencils.bindPosition(CAEditor.matchedElements[i]);
         }
     },
     createPencil(element, key){
@@ -198,8 +198,10 @@ var Pencils = {
 
         return e;
     },
-    bindPositions(element){
-        var pencil = element._CAPencil;
+    bindPosition(element){
+        var pencil = element._CAPencil,
+            pencilHeight = 20,
+            pencilWidth = 20;
 
         //If element does not have pencil
         if ( pencil === undefined ){
@@ -243,7 +245,7 @@ var Pencils = {
             positionY += paddingTop;
 
             //Icons are aligned on the left, so we need move pencil to the edge
-            positionX -= pencil.offsetWidth;
+            positionX -= pencilWidth;
 
             //Point pencil on center of text
             if ( textAlign == 'center' ){
@@ -255,7 +257,7 @@ var Pencils = {
         pencil.style.display = (!positionY || !positionX || positionY == 0 || positionX === 0) ? 'none' : 'block';
 
         pencil.style.left = (window.scrollX + positionX)+'px';
-        pencil.style.top = (window.scrollY + positionY - pencil.offsetHeight)+'px';
+        pencil.style.top = (window.scrollY + positionY - pencilHeight)+'px';
     },
     updateTranslation(e){
         var data = { changes : {} };
@@ -293,6 +295,8 @@ var Pencils = {
             //We need remove all pencils
             if ( pencil ) {
                 pencil.className = pencil.className.replace(new RegExp(Pencils.classNameHidden, 'g'), '');
+
+                this.bindPosition(CAEditor.matchedElements[i]);
             }
         }
     }
