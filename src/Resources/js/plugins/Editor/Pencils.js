@@ -2,8 +2,9 @@ import Observer from './Observer';
 import Editor from './Editor';
 
 var Pencils = {
-    className : 'CAEditor--Pencil',
-    classNameSaved : 'CAEditor--Pencil--saved',
+    className : 'CAEPencil',
+    classNameSaved : 'CAEPencil--saved',
+    classNameHidden : 'CAEPencil--hidden',
 
     init(){
         this.initHovers();
@@ -137,7 +138,7 @@ var Pencils = {
 
                         //We cant allow update duplicate translates. Because change may be updated on right source translate.
                         if ( CAEditor.duplicates.indexOf(actualValue) > -1 ) {
-                            alert(CATranslates.texts.cannotUpdate);
+                            alert(CAEditor.texts.cannotUpdate);
                             return;
                         }
 
@@ -155,7 +156,7 @@ var Pencils = {
         });
     },
     openAlertModal(element, actualValue){
-        var newText = prompt(CATranslates.texts.update, actualValue);
+        var newText = prompt(CAEditor.texts.update, actualValue);
 
         //On cancel
         if ( newText == null ) {
@@ -266,7 +267,7 @@ var Pencils = {
         }
 
         this._ajaxSend = setTimeout(function(){
-            var url = CATranslates.requests.update;
+            var url = CAEditor.config.requests.updateText;
 
             CAEditor.ajax.post(url, data, function(xhr){
                 e._CAPencil.className += ' '+Pencils.classNameSaved;
@@ -274,7 +275,26 @@ var Pencils = {
 
             Pencils.updateSameTranslationElements(e);
         }, 500);
+    },
+    hideAllPencils(){
+        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+            var pencil = CAEditor.matchedElements[i]._CAPencil;
 
+            //We need remove all pencils
+            if ( pencil ) {
+                pencil.className += ' '+Pencils.classNameHidden;
+            }
+        }
+    },
+    showAllPencils(){
+        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+            var pencil = CAEditor.matchedElements[i]._CAPencil;
+
+            //We need remove all pencils
+            if ( pencil ) {
+                pencil.className = pencil.className.replace(new RegExp(Pencils.classNameHidden, 'g'), '');
+            }
+        }
     }
 }
 

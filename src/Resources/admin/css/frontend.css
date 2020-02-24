@@ -1,4 +1,4 @@
-.CAEditor--Pencil {
+.CAEPencil {
   position: absolute;
   width: 20px;
   height: 20px;
@@ -10,11 +10,11 @@
   pointer-events: none;
 }
 
-.CAEditor--Pencil:hover {
+.CAEPencil:hover {
   background: #555;
 }
 
-.CAEditor--Pencil:before {
+.CAEPencil:before {
   content: "";
   background: url(/vendor/crudadmin/images/pencil-alt-solid.svg?84172c879a11ad1d905c3eda9a621644) no-repeat;
   width: 9px;
@@ -24,12 +24,16 @@
   top: 5px;
 }
 
-.CAEditor--Pencil.CAEditor--Pencil--saved {
+.CAEPencil.CAEPencil--saved {
   background: #00a200;
 }
 
-.CAEditor--Pencil.CAEditor--Pencil--saved:before {
+.CAEPencil.CAEPencil--saved:before {
   background: url(/vendor/crudadmin/images/check-solid.svg?615db268ed684067d1ab8b3cf04cb09a) no-repeat;
+}
+
+.CAEPencil.CAEPencil--hidden {
+  display: none !important;
 }
 
 .CA--InlineWrapper {

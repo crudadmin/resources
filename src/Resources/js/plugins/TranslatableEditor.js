@@ -1,10 +1,12 @@
 import Pencils from './Editor/Pencils';
+import Editor from './Editor/Editor';
 
 /*
  * CrudAdmin auto translatable
  */
 (function(){
     window.CAEditor = {
+        config : window.CAEditorConfig,
         allTranslates : CATranslates.translates.messages ? CATranslates.translates.messages[''] : {},
         rawTranslates : CATranslates.rawTranslates,
         translatedTree : [],
@@ -13,14 +15,42 @@ import Pencils from './Editor/Pencils';
         maxTranslateLength : 0,
 
         init(){
+            this.config.active = true;
+
+            //Editor is not allowed
+            if ( this.config.active === false ) {
+                return;
+            }
+
             this.getTranslationsTree();
             this.getTranslatableElements();
             this.pencils.init();
+            this.fetchNewestTranslates();
+        },
+
+        enable(){
+            //If pencils are hidden, just show them.
+            if ( this.config.active === true ) {
+                Pencils.showAllPencils();
+            } else {
+                this.config.active = true;
+
+                this.init();
+            }
+        },
+
+        destroy(){
+            Pencils.hideAllPencils();
+            Editor.turnOffAllEditors();
         },
 
         refresh(){
             this.getTranslatableElements();
             this.pencils.refresh();
+        },
+
+        fetchNewestTranslates(){
+            console.log('fetching');
         },
 
         /*
@@ -127,7 +157,7 @@ import Pencils from './Editor/Pencils';
                 var request = new XMLHttpRequest();
                 request.open('POST', url, true);
                 request.setRequestHeader('Content-type', 'application/json');
-                request.setRequestHeader('X-CSRF-TOKEN', window.CACSRFToken);
+                request.setRequestHeader('X-CSRF-TOKEN', CAEditor.config.token);
                 request.send(JSON.stringify(data));
 
                 request.onreadystatechange = () => {

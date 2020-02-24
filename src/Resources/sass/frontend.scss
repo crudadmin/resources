@@ -1,4 +1,4 @@
-.CAEditor--Pencil {
+.CAEPencil {
     position: absolute;
     width: 20px;
     height: 20px;
@@ -23,11 +23,15 @@
         top: 5px;
     }
 
-    &.CAEditor--Pencil--saved {
+    &.CAEPencil--saved {
         background: #00a200;
         &:before {
             background: url('../images/icons/check-solid.svg') no-repeat;
         }
+    }
+
+    &.CAEPencil--hidden {
+        display: none !important;
     }
 }
 

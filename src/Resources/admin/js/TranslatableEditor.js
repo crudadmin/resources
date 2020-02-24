@@ -205,6 +205,15 @@ var Editor = {
     this.fixEmptyStrings(element);
     this.disableRichPaste(element);
     this.enableAutoSave(element);
+  },
+  turnOffAllEditors: function turnOffAllEditors() {
+    for (var i = 0; i < CAEditor.matchedElements.length; i++) {
+      var element = CAEditor.matchedElements[i]; //If is content editable
+
+      if (element.isContentEditable == true) {
+        element.contentEditable = false;
+      }
+    }
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (Editor);
@@ -283,8 +292,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var Pencils = {
-  className: 'CAEditor--Pencil',
-  classNameSaved: 'CAEditor--Pencil--saved',
+  className: 'CAEPencil',
+  classNameSaved: 'CAEPencil--saved',
+  classNameHidden: 'CAEPencil--hidden',
   init: function init() {
     this.initHovers();
     this.initClicks();
@@ -411,7 +421,7 @@ var Pencils = {
                 actualValue = CAEditor.nodeValue(element); //We cant allow update duplicate translates. Because change may be updated on right source translate.
 
             if (CAEditor.duplicates.indexOf(actualValue) > -1) {
-              alert(CATranslates.texts.cannotUpdate);
+              alert(CAEditor.texts.cannotUpdate);
               return;
             } //Text node can be edited in DOM
             // Pencils.openAlertModal(element, actualValue);
@@ -429,7 +439,7 @@ var Pencils = {
     });
   },
   openAlertModal: function openAlertModal(element, actualValue) {
-    var newText = prompt(CATranslates.texts.update, actualValue); //On cancel
+    var newText = prompt(CAEditor.texts.update, actualValue); //On cancel
 
     if (newText == null) {
       return;
@@ -528,12 +538,30 @@ var Pencils = {
     }
 
     this._ajaxSend = setTimeout(function () {
-      var url = CATranslates.requests.update;
+      var url = CAEditor.config.requests.updateText;
       CAEditor.ajax.post(url, data, function (xhr) {
         e._CAPencil.className += ' ' + Pencils.classNameSaved;
       });
       Pencils.updateSameTranslationElements(e);
     }, 500);
+  },
+  hideAllPencils: function hideAllPencils() {
+    for (var i = 0; i < CAEditor.matchedElements.length; i++) {
+      var pencil = CAEditor.matchedElements[i]._CAPencil; //We need remove all pencils
+
+      if (pencil) {
+        pencil.className += ' ' + Pencils.classNameHidden;
+      }
+    }
+  },
+  showAllPencils: function showAllPencils() {
+    for (var i = 0; i < CAEditor.matchedElements.length; i++) {
+      var pencil = CAEditor.matchedElements[i]._CAPencil; //We need remove all pencils
+
+      if (pencil) {
+        pencil.className = pencil.className.replace(new RegExp(Pencils.classNameHidden, 'g'), '');
+      }
+    }
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (Pencils);
@@ -550,6 +578,8 @@ var Pencils = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Editor_Pencils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Editor/Pencils */ "./src/Resources/js/plugins/Editor/Pencils.js");
+/* harmony import */ var _Editor_Editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Editor/Editor */ "./src/Resources/js/plugins/Editor/Editor.js");
+
 
 /*
  * CrudAdmin auto translatable
@@ -557,6 +587,7 @@ __webpack_require__.r(__webpack_exports__);
 
 (function () {
   window.CAEditor = {
+    config: window.CAEditorConfig,
     allTranslates: CATranslates.translates.messages ? CATranslates.translates.messages[''] : {},
     rawTranslates: CATranslates.rawTranslates,
     translatedTree: [],
@@ -564,13 +595,36 @@ __webpack_require__.r(__webpack_exports__);
     matchedElements: [],
     maxTranslateLength: 0,
     init: function init() {
+      this.config.active = true; //Editor is not allowed
+
+      if (this.config.active === false) {
+        return;
+      }
+
       this.getTranslationsTree();
       this.getTranslatableElements();
       this.pencils.init();
+      this.fetchNewestTranslates();
+    },
+    enable: function enable() {
+      //If pencils are hidden, just show them.
+      if (this.config.active === true) {
+        _Editor_Pencils__WEBPACK_IMPORTED_MODULE_0__["default"].showAllPencils();
+      } else {
+        this.config.active = true;
+        this.init();
+      }
+    },
+    destroy: function destroy() {
+      _Editor_Pencils__WEBPACK_IMPORTED_MODULE_0__["default"].hideAllPencils();
+      _Editor_Editor__WEBPACK_IMPORTED_MODULE_1__["default"].turnOffAllEditors();
     },
     refresh: function refresh() {
       this.getTranslatableElements();
       this.pencils.refresh();
+    },
+    fetchNewestTranslates: function fetchNewestTranslates() {
+      console.log('fetching');
     },
 
     /*
@@ -671,7 +725,7 @@ __webpack_require__.r(__webpack_exports__);
         var request = new XMLHttpRequest();
         request.open('POST', url, true);
         request.setRequestHeader('Content-type', 'application/json');
-        request.setRequestHeader('X-CSRF-TOKEN', window.CACSRFToken);
+        request.setRequestHeader('X-CSRF-TOKEN', CAEditor.config.token);
         request.send(JSON.stringify(data));
 
         request.onreadystatechange = function () {

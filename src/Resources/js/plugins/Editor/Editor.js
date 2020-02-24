@@ -108,6 +108,16 @@ var Editor = {
         this.disableRichPaste(element);
         this.enableAutoSave(element);
     },
+    turnOffAllEditors(){
+        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+            var element = CAEditor.matchedElements[i];
+
+            //If is content editable
+            if ( element.isContentEditable == true ) {
+                element.contentEditable = false;
+            }
+        }
+    },
 }
 
 export default Editor;
