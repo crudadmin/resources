@@ -7,15 +7,17 @@ import Editor from './Editor/Editor';
 (function(){
     window.CAEditor = {
         config : window.CAEditorConfig,
-        allTranslates : CATranslates.translates.messages ? CATranslates.translates.messages[''] : {},
-        rawTranslates : CATranslates.rawTranslates,
+        allTranslates : null,
+        rawTranslates : null,
         translatedTree : [],
         duplicates : [],
         matchedElements : [],
         maxTranslateLength : 0,
 
-        init(){
-            this.config.active = true;
+        init(TAObject){
+            //Bind given translates
+            this.allTranslates = TAObject.translates.messages ? TAObject.translates.messages[''] : {};
+            this.rawTranslates = TAObject.rawTranslates;
 
             //Editor is not allowed
             if ( this.config.active === false ) {
@@ -25,7 +27,6 @@ import Editor from './Editor/Editor';
             this.getTranslationsTree();
             this.getTranslatableElements();
             this.pencils.init();
-            this.fetchNewestTranslates();
         },
 
         enable(){
@@ -35,22 +36,28 @@ import Editor from './Editor/Editor';
             } else {
                 this.config.active = true;
 
-                this.init();
+                //Turn on state and get the newest translates with all raw texts
+                this.ajax.post(this.config.requests.changeState, {
+                    state : true,
+                }, (response) => {
+                    CAEditor.init(eval(response.response));
+                })
             }
         },
 
         destroy(){
             Pencils.hideAllPencils();
             Editor.turnOffAllEditors();
+
+            //Turn of state
+            this.ajax.post(this.config.requests.changeState, {
+                state : false,
+            });
         },
 
         refresh(){
             this.getTranslatableElements();
             this.pencils.refresh();
-        },
-
-        fetchNewestTranslates(){
-            console.log('fetching');
         },
 
         /*
@@ -170,6 +177,6 @@ import Editor from './Editor/Editor';
     };
 
     window.addEventListener('load', () => {
-        CAEditor.init();
+        CAEditor.init(window.CATranslates);
     });
 })();

@@ -588,14 +588,16 @@ __webpack_require__.r(__webpack_exports__);
 (function () {
   window.CAEditor = {
     config: window.CAEditorConfig,
-    allTranslates: CATranslates.translates.messages ? CATranslates.translates.messages[''] : {},
-    rawTranslates: CATranslates.rawTranslates,
+    allTranslates: null,
+    rawTranslates: null,
     translatedTree: [],
     duplicates: [],
     matchedElements: [],
     maxTranslateLength: 0,
-    init: function init() {
-      this.config.active = true; //Editor is not allowed
+    init: function init(TAObject) {
+      //Bind given translates
+      this.allTranslates = TAObject.translates.messages ? TAObject.translates.messages[''] : {};
+      this.rawTranslates = TAObject.rawTranslates; //Editor is not allowed
 
       if (this.config.active === false) {
         return;
@@ -604,27 +606,32 @@ __webpack_require__.r(__webpack_exports__);
       this.getTranslationsTree();
       this.getTranslatableElements();
       this.pencils.init();
-      this.fetchNewestTranslates();
     },
     enable: function enable() {
       //If pencils are hidden, just show them.
       if (this.config.active === true) {
         _Editor_Pencils__WEBPACK_IMPORTED_MODULE_0__["default"].showAllPencils();
       } else {
-        this.config.active = true;
-        this.init();
+        this.config.active = true; //Turn on state and get the newest translates with all raw texts
+
+        this.ajax.post(this.config.requests.changeState, {
+          state: true
+        }, function (response) {
+          CAEditor.init(eval(response.response));
+        });
       }
     },
     destroy: function destroy() {
       _Editor_Pencils__WEBPACK_IMPORTED_MODULE_0__["default"].hideAllPencils();
-      _Editor_Editor__WEBPACK_IMPORTED_MODULE_1__["default"].turnOffAllEditors();
+      _Editor_Editor__WEBPACK_IMPORTED_MODULE_1__["default"].turnOffAllEditors(); //Turn of state
+
+      this.ajax.post(this.config.requests.changeState, {
+        state: false
+      });
     },
     refresh: function refresh() {
       this.getTranslatableElements();
       this.pencils.refresh();
-    },
-    fetchNewestTranslates: function fetchNewestTranslates() {
-      console.log('fetching');
     },
 
     /*
@@ -737,7 +744,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   };
   window.addEventListener('load', function () {
-    CAEditor.init();
+    CAEditor.init(window.CATranslates);
   });
 })();
 
