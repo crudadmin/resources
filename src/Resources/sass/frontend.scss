@@ -207,7 +207,7 @@ $textColor: #8292A5;
     line-height: 0;
     transition: all 0.2s ease;
 
-    &:hover, &.active {
+    &:hover, &.CAE_Pencil--active {
         border: 4px solid white;
         width: 24px;
         height: 24px;
@@ -220,6 +220,10 @@ $textColor: #8292A5;
 
     &.CAE_Pencil--hidden {
         display: none !important;
+    }
+
+    &.CAE_Pencil--moving {
+        transition: all 0.05s linear !important;
     }
 }
 

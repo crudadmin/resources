@@ -1,3 +1,6 @@
+import Helpers from './Helpers';
+import Pencils from './Pencils';
+
 var Editor = {
     inlineClass : 'CAE__InlineWrapper',
 
@@ -18,6 +21,8 @@ var Editor = {
 
         //Disable new line
         if ( e.keyCode == 13 ) {
+            this.turnOffEditor(element);
+
             return false;
         }
 
@@ -42,7 +47,7 @@ var Editor = {
     allowFormatingByTranslateType(element){
         element.addEventListener('keydown', (e) => {
             //Disable formating
-            if ( this.isDisabledFormationAction(e) === false ){
+            if ( this.isDisabledFormationAction(e, element) === false ){
                 e.preventDefault();
             }
         });
@@ -99,6 +104,9 @@ var Editor = {
         element.contentEditable = true;
         CAEditor.pencils.placeCaretAtEnd(element);
 
+        //Add active class
+        Helpers.addClass(element._CAPencil, Pencils.classNameActive);
+
         if ( element.hasBindedEvents ) {
             return;
         }
@@ -109,17 +117,28 @@ var Editor = {
         this.fixEmptyStrings(element);
         this.disableRichPaste(element);
         this.enableAutoSave(element);
+        this.onUnblur(element);
+    },
+    onUnblur(element){
+        element.addEventListener('blur', e => {
+            this.turnOffEditor(element);
+        })
     },
     turnOffAllEditors(){
         for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
             var element = CAEditor.matchedElements[i];
 
-            //If is content editable
-            if ( element.isContentEditable == true ) {
-                element.contentEditable = false;
-            }
+            this.turnOffEditor(element);
         }
     },
+    turnOffEditor(element){
+        //If is content editable
+        if ( element.isContentEditable == true ) {
+            element.contentEditable = false;
+
+            Helpers.removeClass(element._CAPencil, Pencils.classNameActive);
+        }
+    }
 }
 
 export default Editor;

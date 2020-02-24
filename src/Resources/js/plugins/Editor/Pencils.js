@@ -1,14 +1,17 @@
 import Observer from './Observer';
 import Editor from './Editor';
+import Helpers from './Helpers';
 
 var Pencils = {
     className : 'CAE_Pencil',
     classNameSaved : 'CAE_Pencil--saved',
     classNameHidden : 'CAE_Pencil--hidden',
+    classNameMoving : 'CAE_Pencil--moving',
+    classNameActive : 'CAE_Pencil--active',
 
     init(){
         this.initHovers();
-        this.initClicks();
+        this.registerClicks();
         this.buildPencils();
         Observer.observeNewElements();
     },
@@ -51,7 +54,7 @@ var Pencils = {
                 elementsToMove.push(hoveredParent);
             }
 
-            //Merge childs with parent
+            //Add all childs with pencil into potentionaly moved elements
             for ( var i = 0; i < childs.length; i++ ) {
                 //If child has pencil
                 if ( childs[i]._CAPencil ) {
@@ -61,23 +64,7 @@ var Pencils = {
 
             //See for position changed of every element till position wont changes.
             for ( var i = 0; i < elementsToMove.length; i++ ) {
-                ((element) => {
-                    var prevPositionKey = null,
-                        checkPosition = () => {
-                            var position = element.getBoundingClientRect(),
-                                positionKey = position.x+'-'+position.y;
-
-                            if ( prevPositionKey != positionKey ) {
-                                Pencils.bindPosition(element);
-
-                                prevPositionKey = positionKey;
-
-                                setTimeout(checkPosition, 50);
-                            }
-                        }
-
-                    checkPosition();
-                })(elementsToMove[i]);
+                this.observePencilMovement(elementsToMove[i]);
             }
         };
 
@@ -85,6 +72,33 @@ var Pencils = {
             allElements[i].addEventListener('mouseenter', checkHoverChanges);
             allElements[i].addEventListener('mouseleave', checkHoverChanges);
         }
+    },
+    observePencilMovement(element){
+        var prevPositionKey = null,
+            checkPosition = () => {
+                var position = element.getBoundingClientRect(),
+                    positionKey = position.x+'-'+position.y;
+
+                if ( prevPositionKey != positionKey ) {
+                    Pencils.bindPosition(element);
+
+                    prevPositionKey = positionKey;
+
+                    setTimeout(checkPosition, 100);
+                }
+
+                //Position is not moving
+                //We want remove moving class
+                else {
+                    element._CAPencil.className = element._CAPencil.className.replace(this.classNameMoving, '').trim();
+                }
+            }
+
+        if ( element._CAPencil.className.indexOf(this.classNameMoving) === - 1 ) {
+            element._CAPencil.className += ' '+this.classNameMoving;
+        }
+
+        checkPosition();
     },
     placeCaretAtEnd(el) {
         el.focus();
@@ -107,7 +121,7 @@ var Pencils = {
      * We need have this super complicated clics handler, because pencils may not be visible in some ceses.
      * That's why pencils are user-select none. And not all the time are on the top of z-index.
      */
-    initClicks(){
+    registerClicks(){
         document.body.addEventListener('click', (e) => {
             var clickX = e.pageX,
                 clickY = e.pageY,
@@ -131,21 +145,9 @@ var Pencils = {
             }
 
             for ( var i = 0; i < list.length; i++ ) {
-                if ( list[i].className.indexOf(Pencils.className) > -1 ) {
-                    ((pencil) => {
-                        var element = pencil._CAElement,
-                            actualValue = CAEditor.nodeValue(element);
-
-                        //We cant allow update duplicate translates. Because change may be updated on right source translate.
-                        if ( CAEditor.duplicates.indexOf(actualValue) > -1 ) {
-                            alert(CAEditor.texts.cannotUpdate);
-                            return;
-                        }
-
-                        //Text node can be edited in DOM
-                        // Pencils.openAlertModal(element, actualValue);
-                        Editor.makeEditableNode(element, actualValue);
-                    })(list[i]);
+                //Check if is pencil element
+                if ( Helpers.hasClass(list[i], Pencils.className) ) {
+                    Pencils.onClick(list[i]);
 
                     e.preventDefault();
                     break;
@@ -155,8 +157,41 @@ var Pencils = {
             return false;
         });
     },
+    isInvisibleElement(element){
+        //If is textNode
+        if ( element.nodeName == '#text' ) {
+            element = element.parentElement;
+        }
+
+        var css = window.getComputedStyle(element),
+            opacity = parseInt(css.opacity);
+
+        //If is invisible element
+        if ( opacity <= 0.5 ) {
+            return true;
+        }
+
+        return false;
+    },
+    onClick(pencil){
+        var element = pencil._CAElement,
+            actualValue = CAEditor.nodeValue(element);
+
+        //We cant allow update duplicate translates. Because change may be updated on right source translate.
+        if ( CAEditor.duplicates.indexOf(actualValue) > -1 ) {
+            alert(CAEditor.texts.cannotUpdate);
+            return;
+        }
+
+        //Invisible element cannot be edited in editor style
+        if ( this.isInvisibleElement(element) ) {
+            this.openAlertModal(element, actualValue);
+        } else {
+            Editor.makeEditableNode(element, actualValue);
+        }
+    },
     openAlertModal(element, actualValue){
-        var newText = prompt(CAEditor.texts.update, actualValue);
+        var newText = prompt(CATranslates.texts.update, actualValue);
 
         //On cancel
         if ( newText == null ) {
@@ -253,11 +288,31 @@ var Pencils = {
             }
         }
 
+        pencil.style.left = (window.scrollX + positionX)+'px';
+        pencil.style.top = (window.scrollY + positionY - pencilHeight)+'px';
+
         //Check if element is visible
         pencil.style.display = (!positionY || !positionX || positionY == 0 || positionX === 0) ? 'none' : 'block';
 
-        pencil.style.left = (window.scrollX + positionX)+'px';
-        pencil.style.top = (window.scrollY + positionY - pencilHeight)+'px';
+        //Automatically set zIndex of point
+        this.setPencilZindex(element, pencil);
+    },
+    setPencilZindex(element, pencil){
+        var maxZindex = 'auto';
+
+        while(element.parentElement) {
+            var zIndex = element.nodeType == 1 ? parseInt(window.document.defaultView.getComputedStyle(element).zIndex) : NaN;
+
+            element = element.parentElement;
+
+            if ( isNaN(zIndex) ) {
+                continue;
+            }
+
+            maxZindex = zIndex;
+        }
+
+        pencil.style.zIndex = maxZindex;
     },
     updateTranslation(e){
         var data = { changes : {} };

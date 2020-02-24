@@ -213,7 +213,7 @@
 }
 
 .CAE_Pencil:hover,
-.CAE_Pencil.active {
+.CAE_Pencil.CAE_Pencil--active {
   border: 4px solid white;
   width: 24px;
   height: 24px;
@@ -227,6 +227,11 @@
 
 .CAE_Pencil.CAE_Pencil--hidden {
   display: none !important;
+}
+
+.CAE_Pencil.CAE_Pencil--moving {
+  -webkit-transition: all 0.05s linear !important;
+  transition: all 0.05s linear !important;
 }
 
 .CAE__InlineWrapper {
