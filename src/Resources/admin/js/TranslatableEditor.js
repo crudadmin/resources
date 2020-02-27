@@ -101,7 +101,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var Editor = {
   inlineClass: 'CAE__InlineWrapper',
-  isDisabledFormationAction: function isDisabledFormationAction(e, element) {
+  isDisabledFormationAction: function isDisabledFormationAction(e) {
     //If edited text is raw HTML
     if (CAEditor.rawTranslates.indexOf(e.target._CAOriginTranslate) > -1) {
       //Enter single br on new line
@@ -214,12 +214,21 @@ var Editor = {
     this.disableRichPaste(element);
     this.enableAutoSave(element);
     this.onUnblur(element);
+    this.onClick(element);
   },
   onUnblur: function onUnblur(element) {
     var _this2 = this;
 
     element.addEventListener('blur', function (e) {
       _this2.turnOffEditor(element);
+    });
+  },
+  onClick: function onClick(element) {
+    element.addEventListener('click', function (e) {
+      //If element is editable, disable redirects an all actions
+      if (e.target.isContentEditable == true) {
+        e.preventDefault();
+      }
     });
   },
   turnOffAllEditors: function turnOffAllEditors() {

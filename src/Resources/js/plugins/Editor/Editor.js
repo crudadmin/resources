@@ -118,10 +118,19 @@ var Editor = {
         this.disableRichPaste(element);
         this.enableAutoSave(element);
         this.onUnblur(element);
+        this.onClick(element);
     },
     onUnblur(element){
         element.addEventListener('blur', e => {
             this.turnOffEditor(element);
+        })
+    },
+    onClick(element){
+        element.addEventListener('click', e => {
+            //If element is editable, disable redirects an all actions
+            if ( e.target.isContentEditable == true ) {
+                e.preventDefault();
+            }
         })
     },
     turnOffAllEditors(){
