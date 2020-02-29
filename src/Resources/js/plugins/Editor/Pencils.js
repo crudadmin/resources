@@ -315,8 +315,16 @@ var Pencils = {
         pencil.style.zIndex = maxZindex;
     },
     updateTranslation(e){
-        var data = { changes : {} };
-            data.changes[e._CAOriginTranslate] = CAEditor.nodeValue(e);
+        var data = { changes : {} },
+            value = CAEditor.nodeValue(e);
+
+        //If is not raw text, we can save unencoded value
+        //Because double encodion would be applied from laravel side
+        if ( Editor.hasAllowedFormation(e) === false ) {
+            value = Helpers.htmlspecialcharsDecode(value);
+        }
+
+        data.changes[e._CAOriginTranslate] = value;
 
         //Clear previous key change
         if ( this._ajaxSend ) {

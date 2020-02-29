@@ -1,4 +1,5 @@
 import Pencils from './Editor/Pencils';
+import Helpers from './Editor/Helpers';
 import Editor from './Editor/Editor';
 import Navigation from './Editor/Navigation';
 
@@ -141,6 +142,14 @@ import Navigation from './Editor/Navigation';
                         }
 
                         html = this.nodeValue(node);
+
+                        //If is only one textnode child in parent,
+                        //then we want boot translation into parent element.
+                        //This is because innerHTML in parent element may be escaped, and wont be matched
+                        //with translation. But value in textNode is correct for this element.
+                        if ( elements[i].childNodes.length === 1 ) {
+                            node = node.parentElement;
+                        }
 
                         if ( this.translatedTree[html] !== undefined ) {
                             this.registerTranslatableElement(node, html);

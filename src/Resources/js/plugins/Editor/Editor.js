@@ -4,9 +4,13 @@ import Pencils from './Pencils';
 var Editor = {
     inlineClass : 'CAE__InlineWrapper',
 
-    isDisabledFormationAction(e){
+    hasAllowedFormation(element){
+        return CAEditor.rawTranslates.indexOf(element._CAOriginTranslate) > -1;
+    },
+
+    isDisabledFormationActionEvent(e, element){
         //If edited text is raw HTML
-        if ( CAEditor.rawTranslates.indexOf(e.target._CAOriginTranslate) > -1 ) {
+        if ( this.hasAllowedFormation(e.target) ) {
 
             //Enter single br on new line
             if ( e.keyCode == 13 ) {
@@ -47,7 +51,7 @@ var Editor = {
     allowFormatingByTranslateType(element){
         element.addEventListener('keydown', (e) => {
             //Disable formating
-            if ( this.isDisabledFormationAction(e, element) === false ){
+            if ( this.isDisabledFormationActionEvent(e, element) === false ){
                 e.preventDefault();
             }
         });
@@ -82,7 +86,7 @@ var Editor = {
             var pencil = element._CAPencil;
 
             //Remove saved classname
-            pencil.className = pencil.className.replace(new RegExp(CAEditor.pencils.classNameSaved, 'g'), '')
+            Helpers.removeClass(pencil, CAEditor.pencils.classNameSaved);
 
             CAEditor.pencils.repaintPencils();
             CAEditor.pencils.updateTranslation(element);
@@ -90,7 +94,7 @@ var Editor = {
     },
     makeEditableNode(element, actualValue){
         //If given element is textNode, we need wrap it into inline div
-        if ( element.nodeName == '#text' ) {
+        if ( element.nodeName == '#text' && element._CAOriginTranslate ) {
             var wrapper = document.createElement('div');
                 wrapper.className = this.inlineClass;
 
