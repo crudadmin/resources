@@ -11,7 +11,7 @@
     "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
     "prod": "npm run production --section=web && npm run production --section=admin --kill-others-on-fail",
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "precommit": "npm run production && git add src/Resources/admin/js/* && git add src/Resources/admin/css/*"
+    "precommit": "npm run prod && git add src/Resources/admin/js/* && git add src/Resources/admin/css/*"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
