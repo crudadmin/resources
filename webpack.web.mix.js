@@ -8,6 +8,7 @@ config.setMixConfig(mix);
 mix.sass('src/Resources/sass/frontend.scss', mix.config.publicPath+'/css')
    .js('src/Resources/js/plugins/TranslatableEditor.js', mix.config.publicPath+'/js')
    .scripts([
+    'src/Resources/js/plugins/Frontend/Encryptable.js',
     'src/Resources/js/plugins/Gettextable/Plugins.js',
     'src/Resources/js/plugins/Gettextable.js',
    ], mix.config.publicPath+'/js/Gettextable.js');
