@@ -97,7 +97,7 @@
                 return 'form-relation-modal-'+this.id;
             },
             relationTable(){
-                return (this.field.belongsTo||this.field.belongsToMany).split(',')[0];
+                return (this.field.belongsTo||this.field.belongsToMany||'').split(',')[0];
             },
             getRelationModel(){
                 if ( ! this.canAddRow ) {
@@ -135,10 +135,13 @@
              * and also when is filter activated, then show just when is filter also selected
              */
             canAddRow(){
+                if ( this.field.canAdd == false ){
+                    return;
+                }
+
                 var relatedModel = this.$root.models[this.relationTable];
 
                 return (!relatedModel || relatedModel.hasAccess('insert'))
-                        && this.field.canAdd === true
                         && this.$parent.hasparentmodel !== false
                         && (!this.getFilterBy || this.filterBy);
             },
