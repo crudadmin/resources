@@ -71,7 +71,7 @@ export default {
             return false;
         },
         isActive(){
-            return this.row.active !== false;
+            return this.row.active !== false && this.row.in_menu !== false;
         }
     },
 
