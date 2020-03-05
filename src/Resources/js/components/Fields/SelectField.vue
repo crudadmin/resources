@@ -135,8 +135,8 @@
              * and also when is filter activated, then show just when is filter also selected
              */
             canAddRow(){
-                if ( this.field.canAdd == false ){
-                    return;
+                if ( !this.field.canAdd ){
+                    return false;
                 }
 
                 var relatedModel = this.$root.models[this.relationTable];
