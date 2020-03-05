@@ -27,7 +27,7 @@ return [
     'languages-field' => _('Tento vstup je prekladaný do viacerých jazykov.'),
     'change-language' => _('Zmena jazykovej mutácie. Pozor! Zmena jazyka môže zahodiť Vaše aktuálne rozpísane zmeny.'),
 
-    'super-admin' => _('Super administrátor'),
+    'super-admin' => _('Plný prístup'),
     'admin-group' => _('Administrátorská skupina'),
     'user-groups' => _('Používateľské skupiny'),
     'user-groups-title' => _('Upravte používateľské skupiny a ich obmedzenie, do ktorých budú následne priradený useristrátori'),

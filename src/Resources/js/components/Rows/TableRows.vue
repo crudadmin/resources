@@ -30,7 +30,7 @@
                 </td>
 
                 <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
-                    <div class="buttons-options__item" v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="hasEditableAccess ? trans('edit') : trans('show')"><i class="far fa-edit"></i></button></div>
+                    <div class="buttons-options__item" v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') ? trans('edit') : trans('show')"><i class="far fa-edit"></i></button></div>
                     <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowInfo" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
@@ -184,11 +184,6 @@ export default {
         },
         avaliableColumns(){
             return ['id'].concat( Object.keys( this.model.fields ) );
-        },
-        hasEditableAccess(){
-            if ( this.model.hasAccess('update') == false ) {
-                return false;
-            }
         },
         isEditable(){
             return this.model.editable || this.$parent.$parent.hasChilds() > 0;

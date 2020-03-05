@@ -27,9 +27,9 @@ return [
     'languages-field' => 'This input is translated into multiple languages.',
     'change-language' => 'Change language mutation. WARNING! Changing your language may discard your currently delineated changes.',
 
-    'super-admin' => 'Super Admin',
-    'admin-group' => 'Allowed admin models',
-    'user-groups' => 'Admin groups',
+    'super-admin' => 'Full access',
+    'admin-group' => 'Allowed roles',
+    'user-groups' => 'Admin roles',
     'user-groups-title' => 'Change group permissions',
     'user-groups-name' => 'Group name',
     'user-groups-placeholder' => 'Fill group name',
