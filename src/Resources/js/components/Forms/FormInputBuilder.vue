@@ -470,6 +470,10 @@
             },
             isDisabled()
             {
+                if ( this.model.hasAccess('update') == false ){
+                    return true;
+                }
+
                 return this.model.tryAttribute(this.field, 'disabled');
             },
             isReadonly()

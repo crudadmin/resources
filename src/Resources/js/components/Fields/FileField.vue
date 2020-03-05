@@ -91,7 +91,8 @@
 
         computed: {
             canFileBeDeleted(){
-                return (this.value && !this.isMultipleUpload || !this.file_from_server)
+                return !this.disabled
+                    && (this.value && !this.isMultipleUpload || !this.file_from_server)
                     && this.model.getSettings('fields.'+this.field_key+'.canDelete', true);
             },
             canFileBeDownloaded(){
