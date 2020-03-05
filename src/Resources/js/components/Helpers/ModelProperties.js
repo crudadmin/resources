@@ -29,7 +29,7 @@ var ModelProperties = (Model) => {
 
         for ( var i = 0; i < path.length; i++ ) {
             if ( ! ( path[i] in obj ) ) {
-                return value ? value : null;
+                return !_.isNil(value) ? value : null;
             }
 
             obj = obj[path[i]];

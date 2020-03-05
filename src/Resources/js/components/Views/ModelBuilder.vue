@@ -200,10 +200,10 @@
                 model : this.model_builder,
 
                 sizes : [
-                    { size : 4, key : 'small', name : this.trans('grid-small'), active : false, disabled : false },
-                    { size : 8, key : 'big', name : this.trans('grid-big'), active : false, disabled : false },
-                    { size : 6, key : 'medium', name : this.trans('grid-medium'), active : false, disabled : false },
-                    { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : false },
+                    { size : 4, key : 'small', name : this.trans('grid-small'), active : false, disabled : this.model_builder.getSettings('grid.small.disabled', false) },
+                    { size : 8, key : 'big', name : this.trans('grid-big'), active : false, disabled : this.model_builder.getSettings('grid.big.disabled', false) },
+                    { size : 6, key : 'medium', name : this.trans('grid-medium'), active : false, disabled : this.model_builder.getSettings('grid.medium.disabled', false) },
+                    { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : this.model_builder.getSettings('grid.full.disabled', false) },
                 ],
 
                 row : this.emptyRowInstance(this.model_builder),
@@ -212,7 +212,7 @@
                  * Search engine
                  */
                 search : {
-                    column : this.$root.getModelProperty(this.model_builder, 'settings.search.column', null),
+                    column : this.model_builder.getModelProperty('settings.search.column', null),
                     query : null,
                     query_to : null,
                     used : false,
@@ -601,7 +601,7 @@
             },
             checkActiveGridSize(columns){
                 var data = this.getStorage(),
-                    defaultValue = this.$root.getModelProperty(this.model, 'settings.grid.default'),
+                    defaultValue = this.model.getSettings('grid.default'),
                     columns = Object.keys(columns);
 
                 //Disable big table
@@ -710,7 +710,7 @@
                 }
             },
             newRowTitle(){
-                return this.$root.getModelProperty(this.model, 'settings.buttons.create', this.trans('new-row'));
+                return this.model.getSettings('buttons.create', this.trans('new-row'));
             },
             resetForm(scroll, dontResetIfNotOpened, resetActiveTab){
                 if ( ! dontResetIfNotOpened || this.isOpenedRow ) {
@@ -791,7 +791,7 @@
                     if ( row.active == true ) {
                         var rows = this.getStorage();
                             rows[ this.model.slug ] = row.size;
-                            rows[ this.model.slug + '_default' ] = this.$root.getModelProperty(this.model, 'settings.grid.default');
+                            rows[ this.model.slug + '_default' ] = this.model.getSettings('grid.default');
 
                         localStorage.sizes = JSON.stringify( rows );
                     }
@@ -882,7 +882,7 @@
                     return false;
                 }
 
-                if ( this.$root.getModelProperty(this.model, 'settings.grid.enabled') === false || this.$root.getModelProperty(this.model, 'settings.grid.disabled') === true )
+                if ( this.model.getSettings('grid.enabled') === false || this.model.getSettings('grid.disabled') === true )
                     return false;
 
                 return true;
@@ -938,7 +938,7 @@
              * Show search if has been at least one time used, or if is not single row, or if is more then 10 rows
              */
             canShowSearchBar(){
-                var searching = this.$root.getModelProperty(this.model, 'settings.search.enabled', null),
+                var searching = this.model.getSettings('search.enabled', null),
                     minimum = 2;
 
                 //If is forced showing searchbar

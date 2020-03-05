@@ -23,4 +23,95 @@
             -webkit-transition-duration: 0s !important;
         }
     }
+
+    .userRolesFormGroup__other {
+        position: relative;
+
+        i {
+            background: lighten($inputBorderColor, 5%);
+            padding: 2px 12px;
+            border-radius: 15px;
+            border: 1px solid #cecece;
+            color: #a0a0a0;
+            transition: all 0.2s ease-in-out;
+
+            &.active {
+                background-color: lighten(#00e359, 30%);
+                border-color: lighten(#00a23f, 10%);
+                color: white;
+
+                &.activeAll {
+                    background-color: #00e359;
+                    border-color: #00a23f;
+                }
+            }
+        }
+
+        &:hover {
+            i:not(.active) {
+                background: $inputBorderColor;
+            }
+
+            .userRolesFormGroup__other__wrapper {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        .userRolesFormGroup__other__wrapper {
+            position: absolute;
+            z-index: 1;
+            width: 300px;
+            padding-bottom: 9px;
+            bottom: 20px;
+            left: calc(50% - 150px);
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.1s ease-in-out;
+
+            ul {
+                margin: 0;
+                padding: 0;
+                display: block;
+                background: white;
+                padding: 20px;
+                border: 2px solid $inputBorderColor;
+                border-radius: 5px;
+                position: relative;
+
+                &:before {
+                    content: "";
+                    width: 10px;
+                    height: 10px;
+                    border-bottom: 2px solid $inputBorderColor;
+                    border-right: 2px solid $inputBorderColor;
+                    position: absolute;
+                    left: calc(50% - 5px);
+                    bottom: -7px;
+                    -webkit-transform: rotate(45deg);
+                    transform: rotate(45deg);
+                    background: #fff;
+                }
+
+                li {
+                    list-style: none;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+
+                    > span {
+                        text-align: left;
+                        margin-right: 30px;
+                        width: 200px;
+                        cursor: pointer;
+                        user-select: none;
+                    }
+
+                    &:not(:last-child) {
+                        padding-bottom: 15px;
+                    }
+                }
+            }
+        }
+    }
 }
