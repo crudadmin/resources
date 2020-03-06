@@ -135,7 +135,7 @@
             :confirmation="true"></form-input-builder>
 
         <component
-            v-if="hasComponent"
+            v-if="hasComponent || hasEmptyComponent"
             :model="model"
             :field="field"
             :history_changed="isChangedFromHistory"
@@ -216,8 +216,9 @@
                 });
             },
             registerComponents(){
-                if ( !('component' in this.field) )
+                if ( !('component' in this.field) ) {
                     return;
+                }
 
                 var components = this.field.component.split(','),
                     component = null;
@@ -231,22 +232,24 @@
                     try {
                         obj = this.$root.getComponentObject(data);
                     } catch(error){
-                        console.error('Syntax error in component ' + component[i] + '.Vue' + "\n", error);
+                        console.error('Syntax error in component '+(components[i])+'.Vue' + "\n", error);
                         continue;
                     }
 
                     if ( ! component )
                         component = obj;
                     else {
-                        if ( !('components' in component) )
+                        if ( !('components' in component) ){
                             component.components = {};
+                        }
 
                         component.components[components[i]] = obj;
                     }
                 }
 
-                if ( component )
+                if ( component ) {
                     Vue.component(this.componentName, component);
+                }
             },
             isEmptyValue(value){
                 return _.isNil(value) || value === '';
@@ -485,13 +488,30 @@
                 return this.isMultipleField(this.field);
             },
             hasComponent(){
-                return 'component' in this.field && this.field.component;
+                return 'component' in this.field && this.field.component && !this.hasEmptyComponent;
+            },
+            hasEmptyComponent(){
+                if ( !this.componentName ){
+                    return false;
+                }
+
+                try {
+                    var data = this.model.components[this.componentName],
+                        obj = (new Function('return '+data))();
+                } catch(e){
+                    return false;
+                }
+
+                return obj.template == '';
             },
             componentName(){
-                if ( ! this.hasComponent )
-                    return;
+                var parts = (this.field.component||'').split(',').filter(item => item);
 
-                return this.field.component.split(',')[0].toLowerCase();
+                if ( parts.length == 0 ){
+                    return;
+                }
+
+                return parts[0].toLowerCase();
             },
             getValueOrDefault()
             {
