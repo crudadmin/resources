@@ -7,11 +7,13 @@ var Pencils = {
     classNameSaved : 'CAE_Pencil--saved',
     classNameHidden : 'CAE_Pencil--hidden',
     classNameMoving : 'CAE_Pencil--moving',
+    classNameAppears : 'CAE_Pencil--appears',
     classNameActive : 'CAE_Pencil--active',
 
     init(){
         this.initHovers();
         this.registerClicks();
+        this.registerResize();
         this.buildPencils();
         Observer.observeNewElements();
     },
@@ -90,13 +92,12 @@ var Pencils = {
                 //Position is not moving
                 //We want remove moving class
                 else {
-                    element._CAPencil.className = element._CAPencil.className.replace(this.classNameMoving, '').trim();
+                    Helpers.removeClass(element._CAPencil, this.classNameMoving);
                 }
             }
 
-        if ( element._CAPencil.className.indexOf(this.classNameMoving) === - 1 ) {
-            element._CAPencil.className += ' '+this.classNameMoving;
-        }
+        //We want turn off moving animation for smother effect
+        Helpers.addClass(element._CAPencil, this.classNameMoving);
 
         checkPosition();
     },
@@ -155,6 +156,17 @@ var Pencils = {
             }
 
             return false;
+        });
+    },
+    registerResize(){
+        var resize;
+
+        window.addEventListener('resize', () => {
+            if ( resize ) {
+                clearTimeout(resize);
+            }
+
+            resize = setTimeout(this.repaintPencils, 100);
         });
     },
     isInvisibleElement(element){
@@ -288,14 +300,34 @@ var Pencils = {
             }
         }
 
-        pencil.style.left = (window.scrollX + positionX)+'px';
-        pencil.style.top = (window.scrollY + positionY - pencilHeight)+'px';
+        var isFixed = this.isPositionFixed(element),
+            isHidden = (!positionY || !positionX || positionY == 0 || positionX === 0);
+
+        pencil.style.position = isFixed ? 'fixed' : 'absolute';
+        pencil.style.left = ((isFixed ? 0 : window.scrollX) + positionX)+'px';
+        pencil.style.top = ((isFixed ? 0 : window.scrollY) + positionY - pencilHeight)+'px';
 
         //Check if element is visible
-        pencil.style.display = (!positionY || !positionX || positionY == 0 || positionX === 0) ? 'none' : 'block';
+        pencil.style.display = isHidden ? 'none' : 'block';
 
         //Automatically set zIndex of point
         this.setPencilZindex(element, pencil);
+    },
+    isPositionFixed(element, pencil){
+        var fixed = false;
+
+        while(element.parentElement) {
+            var position = element.nodeType == 1 ? window.document.defaultView.getComputedStyle(element).position : null;
+
+            if ( position == 'fixed' ) {
+                fixed = true;
+                break;
+            }
+
+            element = element.parentElement;
+        }
+
+        return fixed;
     },
     setPencilZindex(element, pencil){
         var maxZindex = 'auto';
@@ -347,7 +379,7 @@ var Pencils = {
 
             //We need remove all pencils
             if ( pencil ) {
-                pencil.className += ' '+Pencils.classNameHidden;
+                Helpers.addClass(pencil, Pencils.classNameHidden);
             }
         }
     },
@@ -357,7 +389,7 @@ var Pencils = {
 
             //We need remove all pencils
             if ( pencil ) {
-                pencil.className = pencil.className.replace(new RegExp(Pencils.classNameHidden, 'g'), '');
+                Helpers.removeClass(pencil, Pencils.classNameHidden);
 
                 this.bindPosition(CAEditor.matchedElements[i]);
             }
