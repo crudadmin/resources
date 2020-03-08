@@ -16,10 +16,10 @@ var Navigation = {
                 <button></button>
                 <div class="CAE_Navigation_navbar">
                     <ul>
-                        <li><a class="CAE_Icons" href="${CAEditor.config.requests.admin}" target="_blank">Administrácia webu <i class="CAE_Icon--link"></i></a></li>
+                        <li><a class="CAE_Icons" href="${CAEditor.config.requests.admin}" target="_blank">${__("Administrácia webu")} <i class="CAE_Icon--link"></i></a></li>
                         <li id="CAE_ToggleState">
                             <label class="CAE_Checkbox CAE_Icons">
-                                Režim prekladateľa
+                                ${__("Režim upravovania")}
                                 <input type="checkbox">
                                 <div><div></div></div>
                             </label>

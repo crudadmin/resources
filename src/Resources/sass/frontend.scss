@@ -226,6 +226,53 @@ $textColor: #8292A5;
     &.CAE_Pencil--moving {
         transition: all 0.05s linear !important;
     }
+
+    &.CAE_Pencil--image {
+        width: 40px;
+        height: 40px;
+        transform: translateX(-8px) translateY(-8px);
+
+        &:after {
+            content: '';
+            background: url('../images/caeditor/image-regular.svg');
+            width: 17px;
+            height: 18px;
+            display: block;
+            margin: 0 auto;
+            top: calc(50% - 9px);
+            position: relative;
+        }
+    }
+
+    &.CAE_Pencil--loading {
+        width: 60px;
+        height: 60px;
+        transform: translateX(-18px) translateY(-18px);
+
+        &:after {
+            display: none;
+        }
+
+        &:before {
+            content: '';
+            background: url('../images/caeditor/spinner-solid.svg');
+            width: 30px;
+            height: 30px;
+            display: block;
+            margin: 0 auto;
+            top: calc(50% - 15px);
+            position: relative;
+            animation-name: spin;
+            animation-duration: 2000ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+
+        @keyframes spin {
+        from { transform:rotate(0deg); }
+        to { transform:rotate(360deg); }
+    }
+    }
 }
 
 .CAE__InlineWrapper {

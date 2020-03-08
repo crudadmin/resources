@@ -1,16 +1,22 @@
 import Observer from './Observer';
-import Editor from './Editor';
 import Helpers from './Helpers';
 
 var Pencils = {
+    wrapperId : 'CAE_Pencils__wrapper',
     className : 'CAE_Pencil',
     classNameSaved : 'CAE_Pencil--saved',
     classNameHidden : 'CAE_Pencil--hidden',
     classNameMoving : 'CAE_Pencil--moving',
     classNameAppears : 'CAE_Pencil--appears',
     classNameActive : 'CAE_Pencil--active',
+    classNameLoading : 'CAE_Pencil--loading',
+    classNameImage : 'CAE_Pencil--image',
+
+    //Wrapper element
+    pointersWrapper : null,
 
     init(){
+        this.createPointersWrapper();
         this.initHovers();
         this.registerClicks();
         this.registerResize();
@@ -20,6 +26,15 @@ var Pencils = {
 
     refresh(){
         this.buildPencils();
+    },
+
+    createPointersWrapper(){
+        var e = document.createElement('div');
+            e.id = Pencils.wrapperId;
+
+        document.getElementsByTagName('body')[0].appendChild(e);
+
+        this.pointersWrapper = e;
     },
 
     buildPencils(){
@@ -169,64 +184,12 @@ var Pencils = {
             resize = setTimeout(this.repaintPencils, 100);
         });
     },
-    isInvisibleElement(element){
-        //If is textNode
-        if ( element.nodeName == '#text' ) {
-            element = element.parentElement;
-        }
-
-        var css = window.getComputedStyle(element),
-            opacity = parseInt(css.opacity);
-
-        //If is invisible element
-        if ( opacity <= 0.5 ) {
-            return true;
-        }
-
-        return false;
-    },
     onClick(pencil){
         var element = pencil._CAElement,
-            actualValue = CAEditor.nodeValue(element);
+            handler = element.getPointerSetting('onPointerClick');
 
-        //We cant allow update duplicate translates. Because change may be updated on right source translate.
-        if ( CAEditor.duplicates.indexOf(actualValue) > -1 ) {
-            alert(CAEditor.texts.cannotUpdate);
-            return;
-        }
-
-        //Invisible element cannot be edited in editor style
-        if ( this.isInvisibleElement(element) ) {
-            this.openAlertModal(element, actualValue);
-        } else {
-            Editor.makeEditableNode(element, actualValue);
-        }
-    },
-    openAlertModal(element, actualValue){
-        var newText = prompt(CATranslates.texts.update, actualValue);
-
-        //On cancel
-        if ( newText == null ) {
-            return;
-        }
-
-        //We need update node, or innerHTML tag value
-        if ( element.nodeName == '#text' ) {
-            element.data = newText;
-        } else {
-            element.innerHTML = newText;
-        }
-
-        Pencils.repaintPencils();
-        Pencils.updateTranslation(element);
-    },
-    updateSameTranslationElements(element){
-        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
-            if ( CAEditor.matchedElements[i]._CAOriginTranslate == element._CAOriginTranslate ) {
-                if ( CAEditor.matchedElements[i] != element ) {
-                    CAEditor.matchedElements[i].innerHTML = element.innerHTML;
-                }
-            }
+        if ( handler ) {
+            handler(element, pencil);
         }
     },
     repaintPencils(){
@@ -237,11 +200,16 @@ var Pencils = {
     createPencil(element, key){
         var e = document.createElement('div');
             e.setAttribute('data-key', key);
-            e.setAttribute('data-translate', element._CAOriginTranslate);
             e.className = Pencils.className;
             e._CAElement = element;
 
-        document.getElementsByTagName('body')[0].appendChild(e);
+        //Fire onCreate event
+        var onCreate = element.getPointerSetting('onPointerCreate');
+        if ( onCreate ) {
+            onCreate(e, element, key);
+        }
+
+        this.pointersWrapper.appendChild(e);
 
         return e;
     },
@@ -291,8 +259,13 @@ var Pencils = {
             positionX += paddingLeft;
             positionY += paddingTop;
 
-            //Icons are aligned on the left, so we need move pencil to the edge
-            positionX -= pencilWidth;
+            //We want show images on the right side
+            if ( element.nodeName === 'IMG' ){
+                positionX = positionX + element.clientWidth;
+            } else {
+                //Icons are aligned on the left, so we need move pencil to the edge
+                positionX -= pencilWidth;
+            }
 
             //Point pencil on center of text
             if ( textAlign == 'center' ){
@@ -345,33 +318,6 @@ var Pencils = {
         }
 
         pencil.style.zIndex = maxZindex;
-    },
-    updateTranslation(e){
-        var data = { changes : {} },
-            value = CAEditor.nodeValue(e);
-
-        //If is not raw text, we can save unencoded value
-        //Because double encodion would be applied from laravel side
-        if ( Editor.hasAllowedFormation(e) === false ) {
-            value = Helpers.htmlspecialcharsDecode(value);
-        }
-
-        data.changes[e._CAOriginTranslate] = value;
-
-        //Clear previous key change
-        if ( this._ajaxSend ) {
-            clearTimeout(this._ajaxSend);
-        }
-
-        this._ajaxSend = setTimeout(function(){
-            var url = CAEditor.config.requests.updateText;
-
-            CAEditor.ajax.post(url, data, function(xhr){
-                e._CAPencil.className += ' '+Pencils.classNameSaved;
-            });
-
-            Pencils.updateSameTranslationElements(e);
-        }, 500);
     },
     hideAllPencils(){
         for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {

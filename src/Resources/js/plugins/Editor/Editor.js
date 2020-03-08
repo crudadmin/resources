@@ -1,11 +1,12 @@
 import Helpers from './Helpers';
 import Pencils from './Pencils';
+import Translatable from './Translatable';
 
 var Editor = {
     inlineClass : 'CAE__InlineWrapper',
 
     hasAllowedFormation(element){
-        return CAEditor.rawTranslates.indexOf(element._CAOriginTranslate) > -1;
+        return CAEditor.translatable.rawTranslates.indexOf(element.getPointerSetting('originalTranslate')) > -1;
     },
 
     isDisabledFormationActionEvent(e, element){
@@ -89,12 +90,12 @@ var Editor = {
             Helpers.removeClass(pencil, CAEditor.pencils.classNameSaved);
 
             CAEditor.pencils.repaintPencils();
-            CAEditor.pencils.updateTranslation(element);
+            Translatable.updateTranslation(element);
         });
     },
     makeEditableNode(element, actualValue){
         //If given element is textNode, we need wrap it into inline div
-        if ( element.nodeName == '#text' && element._CAOriginTranslate ) {
+        if ( element.nodeName == '#text' && element.getPointerSetting('originalTranslate') ) {
             var wrapper = document.createElement('div');
                 wrapper.className = this.inlineClass;
 
