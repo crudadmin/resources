@@ -3,7 +3,7 @@ import Pencils from './Pencils';
 import Helpers from './Helpers';
 
 var Uploadable = {
-    queryKey : 'ca_img_key',
+    queryKey : 'ca_table_name',
     sizesKey : 'sizes',
 
     classNameUploadableWrapper : 'CAE_Uploadable_wrapper',
@@ -35,17 +35,14 @@ var Uploadable = {
     getQueryPart(url, part){
         var parts = url.split(part+'=');
 
-        return parts.length > 1 ? parts[1].split('&')[0] : null;
+        return parts.length > 1 ? decodeURIComponent(parts[1].split('&')[0]) : null;
     },
 
     registerImageElement(element){
-        var imageUrl = element.src,
-            imageKey = this.getQueryPart(imageUrl, this.queryKey),
-            imageSizes = this.getQueryPart(imageUrl, this.sizesKey);
+        var imageUrl = element.src;
 
         CAEditor.pushPointerElement(element, 'uploadable', {
-            imageKey,
-            imageSizes,
+            defaultUrl : imageUrl,
             onPointerCreate : this.events.onPointerCreate.bind(this),
             onPointerClick : this.events.onPointerClick.bind(this),
         });
@@ -66,6 +63,25 @@ var Uploadable = {
         this.uploadWrapper = e;
     },
 
+    buildRequest(e){
+        var data = new FormData(),
+            imageUrl = Uploadable.imageElement.getPointerSetting('defaultUrl'),
+            sizes = this.getQueryPart(imageUrl, 'sizes');
+
+        data.append('table', this.getQueryPart(imageUrl, this.queryKey));
+        data.append('key', this.getQueryPart(imageUrl, 'ca_field_name'));
+        data.append('id', this.getQueryPart(imageUrl, 'ca_row_id'));
+        data.append(this.getQueryPart(imageUrl, 'ca_field_name'), e.target.files[0]);
+        data.append('hash', this.getQueryPart(imageUrl, 'ca_hash'));
+
+        //If resizing is avialable
+        if ( sizes ){
+            data.append('sizes', sizes);
+        }
+
+        return data;
+    },
+
     bindEvents(){
         this.uploadWrapper.addEventListener('change', (e) => {
             //Reset actual image key
@@ -73,39 +89,63 @@ var Uploadable = {
                 Uploadable.imageElement = null;
             }
 
+            var pointer = Uploadable.imageElement._CAPencil;
+
+            //Remove previous success state
+            Helpers.removeClass(pointer, Pencils.classNameSaved);
+
             //Add loading class
-            Helpers.addClass(Uploadable.imageElement._CAPencil, Pencils.classNameLoading);
+            Helpers.addClass(pointer, Pencils.classNameLoading);
             Uploadable.imageElement.style.opacity = 0.5;
 
-            var data = new FormData(),
-                sizes = Uploadable.imageElement.getPointerSetting('imageSizes');
+            var data = this.buildRequest(e);
 
-                data.append('key', Uploadable.imageElement.getPointerSetting('imageKey'));
-                data.append('image', e.target.files[0]);
+            var resetLoading = (img) => {
+                //Remove loading class
+                Helpers.removeClass(img._CAPencil, Pencils.classNameLoading);
 
-                //If resizing is avialable
-                if ( sizes ){
-                    data.append('sizes', sizes);
-                }
+                //Reset image element
+                img.style.opacity = 1;
+            };
 
             Ajax.post(CAEditor.config.requests.updateImage, data, {
-                success(response){
-                    Uploadable.imageElement.src = response.response;
+                success : (response) => {
+                    this.updateImagesWithSameSrc(response, Uploadable.imageElement);
 
-                    ((img) => {
-                        img.onload = () => {
-                            //Remove loading class
-                            Helpers.removeClass(img._CAPencil, Pencils.classNameLoading);
+                    //Add green state
+                    Helpers.addClass(pointer, Pencils.classNameSaved);
 
-                            //Reset image element
-                            img.style.opacity = 1;
-                        }
-                    })(Uploadable.imageElement);
+                    //When image will be loaded, reset loader state
+                    Uploadable.imageElement.onload = (e) => {
+                        resetLoading(e.target);
+                    }
 
-                    Uploadable.imageElement = null;;
+                    Uploadable.imageElement = null;
+                },
+                error : (response) => {
+                    //Add red pointer color
+                    Helpers.addClass(pointer, Pencils.classNameError);
+
+                    //Reset loading and image
+                    resetLoading(Uploadable.imageElement);
+                    Uploadable.imageElement = null;
                 }
             })
         });
+    },
+
+    //Update all images with same source image
+    updateImagesWithSameSrc(response, image){
+        CAEditor.allMatchedElements('uploadable').forEach(item => {
+            if ( item.getPointerSetting('defaultUrl') == image.getPointerSetting('defaultUrl') ) {
+                item.src = response.responseJSON.url;
+
+                //We want remove srcset attribute
+                if ( item.srcset ) {
+                    item.removeAttribute('srcset');
+                }
+            }
+        })
     },
 
     events : {

@@ -219,6 +219,10 @@ $textColor: #8292A5;
         background: #00a200;
     }
 
+    &.CAE_Pencil--error {
+        background: red;
+    }
+
     &.CAE_Pencil--hidden {
         display: none !important;
     }

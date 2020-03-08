@@ -1,5 +1,5 @@
 var Ajax = {
-    post(url, data, callback){
+    post(url, data, callback, errorCallback){
         var request = new XMLHttpRequest();
         request.open('POST', url, true);
         request.setRequestHeader('X-CSRF-TOKEN', CAEditor.config.token);
@@ -13,12 +13,29 @@ var Ajax = {
 
         request.onreadystatechange = () => {
             if(callback && request.readyState == 4 && request.status == 200) {
+                //If is json type
+                if ( request.getResponseHeader('Content-Type') == 'application/json' ) {
+                    try {
+                        request.responseJSON = JSON.parse(request.response);
+                    } catch(e){
+                        console.error(e);
+                    }
+                }
+
                 if ( typeof callback == 'function' ) {
-                    callback(request)
+                    callback(request);
                 }
 
                 if ( typeof callback == 'object' && callback.success ) {
-                    callback.success(request)
+                    callback.success(request);
+                }
+            } else if ( request.readyState == 4 ) {
+                if ( typeof errorCallback == 'function' ) {
+                    errorCallback(request);
+                }
+
+                if ( typeof callback == 'object' && callback.error ) {
+                    callback.error(request);
                 }
             }
         }

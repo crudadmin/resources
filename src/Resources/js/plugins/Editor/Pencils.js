@@ -8,6 +8,7 @@ var Pencils = {
     classNameHidden : 'CAE_Pencil--hidden',
     classNameMoving : 'CAE_Pencil--moving',
     classNameAppears : 'CAE_Pencil--appears',
+    classNameError : 'CAE_Pencil--error',
     classNameActive : 'CAE_Pencil--active',
     classNameLoading : 'CAE_Pencil--loading',
     classNameImage : 'CAE_Pencil--image',
@@ -187,6 +188,9 @@ var Pencils = {
     onClick(pencil){
         var element = pencil._CAElement,
             handler = element.getPointerSetting('onPointerClick');
+
+        //Reset error state on click
+        Helpers.removeClass(pencil, Pencils.classNameError);
 
         if ( handler ) {
             handler(element, pencil);

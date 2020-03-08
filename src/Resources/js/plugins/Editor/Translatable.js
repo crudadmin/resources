@@ -161,11 +161,20 @@ var Translatable = {
             clearTimeout(this._ajaxSend);
         }
 
+        //Remove error class before sending ajax
+        Helpers.removeClass(e._CAPencil, Pencils.classNameError);
+
         this._ajaxSend = setTimeout(() => {
             var url = CAEditor.config.requests.updateText;
 
-            CAEditor.ajax.post(url, data, (xhr) => {
-                e._CAPencil.className += ' '+Pencils.classNameSaved;
+            CAEditor.ajax.post(url, data, {
+                success(response){
+                    Helpers.addClass(e._CAPencil, Pencils.classNameSaved);
+                },
+                error(response){
+                    //Add red pointer color
+                    Helpers.addClass(e._CAPencil, Pencils.classNameError);
+                }
             });
 
             this.updateSameTranslationElements(e);

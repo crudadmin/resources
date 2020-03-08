@@ -128,6 +128,19 @@ import Uploadable from './Editor/Uploadable';
             this.matchedElements.push(element);
         },
         ajax : Ajax,
+
+        //Returns matched elements by given type
+        allMatchedElements(type){
+            var elements = [];
+
+            for ( var i = 0; i < this.matchedElements.length; i++ ) {
+                if ( this.matchedElements[i].getPointerSetting('type') == type ){
+                    elements.push(this.matchedElements[i]);
+                }
+            }
+
+            return elements;
+        }
     };
 
     window.addEventListener('load', () => {
