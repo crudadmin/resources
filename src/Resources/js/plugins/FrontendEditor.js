@@ -131,6 +131,10 @@ import Uploadable from './Editor/Uploadable';
 
         //Returns matched elements by given type
         allMatchedElements(type){
+            if ( ! type ){
+                return this.matchedElements;
+            }
+
             var elements = [];
 
             for ( var i = 0; i < this.matchedElements.length; i++ ) {

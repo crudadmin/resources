@@ -108,8 +108,22 @@ var Uploadable = {
                 img.style.opacity = 1;
             };
 
+            var onError = (response) => {
+                //Add red pointer color
+                Helpers.addClass(pointer, Pencils.classNameError);
+
+                //Reset loading and image
+                resetLoading(Uploadable.imageElement);
+                Uploadable.imageElement = null;
+            };
+
             Ajax.post(CAEditor.config.requests.updateImage, data, {
                 success : (response) => {
+                    if ( !response.responseJSON ) {
+                        onError(response);
+                        return;
+                    }
+
                     this.updateImagesWithSameSrc(response, Uploadable.imageElement);
 
                     //Add green state
@@ -122,14 +136,7 @@ var Uploadable = {
 
                     Uploadable.imageElement = null;
                 },
-                error : (response) => {
-                    //Add red pointer color
-                    Helpers.addClass(pointer, Pencils.classNameError);
-
-                    //Reset loading and image
-                    resetLoading(Uploadable.imageElement);
-                    Uploadable.imageElement = null;
-                }
+                error : onError
             })
         });
     },

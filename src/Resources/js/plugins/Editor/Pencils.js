@@ -94,10 +94,21 @@ var Pencils = {
     observePencilMovement(element){
         var prevPositionKey = null,
             checkPosition = () => {
-                var position = element.getBoundingClientRect(),
-                    positionKey = position.x+'-'+position.y;
+                var position;
 
-                if ( prevPositionKey != positionKey ) {
+                //Get element position by node type
+                if ( element.nodeName == '#text' ) {
+                    var range = document.createRange();
+                        range.selectNodeContents(element);
+
+                    position = range.getClientRects()[0];
+                } else {
+                    position = element.getBoundingClientRect();
+                }
+
+                var positionKey = position ? position.x+'-'+position.y : null;
+
+                if ( position && prevPositionKey != positionKey ) {
                     Pencils.bindPosition(element);
 
                     prevPositionKey = positionKey;
@@ -172,6 +183,14 @@ var Pencils = {
             }
 
             return false;
+        });
+
+        document.body.addEventListener('mouseup', (e) => {
+            var elements = CAEditor.allMatchedElements();
+
+            elements.forEach(item => {
+                this.observePencilMovement(item);
+            });
         });
     },
     registerResize(){
@@ -265,15 +284,15 @@ var Pencils = {
 
             //We want show images on the right side
             if ( element.nodeName === 'IMG' ){
-                positionX = positionX + element.clientWidth;
+                positionX = positionX + element.getBoundingClientRect().width;
             } else {
                 //Icons are aligned on the left, so we need move pencil to the edge
                 positionX -= pencilWidth;
-            }
 
-            //Point pencil on center of text
-            if ( textAlign == 'center' ){
-                positionX += (element.offsetWidth - paddingLeft - paddingRight) / 2;
+                //Point pencil on center of text
+                if ( textAlign == 'center' ){
+                    positionX += (element.offsetWidth - paddingLeft - paddingRight) / 2;
+                }
             }
         }
 
