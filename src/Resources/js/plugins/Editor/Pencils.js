@@ -285,6 +285,15 @@ var Pencils = {
             //We want show images on the right side
             if ( element.nodeName === 'IMG' ){
                 positionX = positionX + element.getBoundingClientRect().width;
+
+                var windowWidth = window.outerWidth,
+                    maxRadiusAfterWidth = windowWidth + pencilWidth;
+
+                //If position of image pointer is just above window width
+                //Show this pointer on right corner. Not after screen width.
+                if ( positionX >= windowWidth && positionX <= maxRadiusAfterWidth ) {
+                    positionX = windowWidth - pencilWidth;
+                }
             } else {
                 //Icons are aligned on the left, so we need move pencil to the edge
                 positionX -= pencilWidth;
@@ -333,7 +342,7 @@ var Pencils = {
 
             element = element.parentElement;
 
-            if ( isNaN(zIndex) ) {
+            if ( isNaN(zIndex) || zIndex < 0 ) {
                 continue;
             }
 
