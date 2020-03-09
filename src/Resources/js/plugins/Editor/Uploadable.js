@@ -137,6 +137,9 @@ var Uploadable = {
                     //When image will be loaded, reset loader state
                     Uploadable.imageElement.onload = (e) => {
                         resetLoading(e.target);
+
+                        //On image load, repaint all pencils. Because they may been moved.
+                        CAEditor.pencils.repaintPencils();
                     }
 
                     Uploadable.imageElement = null;

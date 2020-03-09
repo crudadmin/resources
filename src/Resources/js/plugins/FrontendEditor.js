@@ -20,6 +20,7 @@ import Uploadable from './Editor/Uploadable';
         //Translatable class
         translatable : Translatable,
 
+        //Uploadable class
         uploadable : Uploadable,
 
         //All elementws with assigned pencil
@@ -38,18 +39,20 @@ import Uploadable from './Editor/Uploadable';
             }
 
             this.boot(TAObject);
-
-            this.state = true;
         },
 
         //On First boot
-        boot(TAObject){
+        boot(TAObject, onAjax){
             //Boot translations
-            Translatable.boot(TAObject);
+            Translatable.boot(TAObject, onAjax);
+
+            //Boot uploadable
             Uploadable.boot();
 
             //Boot pencils
             this.pencils.init();
+
+            this.state = true;
         },
 
         enable(){
@@ -70,7 +73,9 @@ import Uploadable from './Editor/Uploadable';
                     state : true,
                     response : true,
                 }, (response) => {
-                    this.boot(eval(response.response));
+                    var JSONObject = eval(response.response);
+
+                    this.boot(JSONObject, true);
                 })
             }
         },

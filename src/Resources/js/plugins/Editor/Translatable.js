@@ -9,7 +9,12 @@ var Translatable = {
     duplicates : [],
     maxTranslateLength : 0,
 
-    boot(TAObject){
+    boot(TAObject, onAjax){
+        //Turn on translatable if translate object will returns
+        if ( typeof TAObject === 'object' && TAObject.translates && onAjax == true ) {
+            CAEditor.config.translatable = true;
+        }
+
         //If uploadable is not allowed
         if ( CAEditor.config.translatable === false ){
             return;
