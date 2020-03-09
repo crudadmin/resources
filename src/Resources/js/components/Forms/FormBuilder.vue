@@ -299,8 +299,13 @@ export default {
             return this.cansave;
         },
         canShowGettext(){
-            if ( this.model.slug == 'languages' && this.$root.gettext )
+            if (
+                ['languages', 'admin_languages'].indexOf(this.model.slug)
+                && this.$root.gettext
+                && this.model.hasAccess('update')
+            ) {
                 return true;
+            }
 
             return false;
         },

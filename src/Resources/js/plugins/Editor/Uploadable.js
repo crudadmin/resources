@@ -15,6 +15,11 @@ var Uploadable = {
     imageElement : null,
 
     boot(){
+        //If uploadable is not allowed
+        if ( CAEditor.config.uploadable === false ){
+            return;
+        }
+
         this.registerAllImages();
         this.buildUploadWrapper();
         this.bindEvents();

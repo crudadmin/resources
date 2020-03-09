@@ -192,7 +192,11 @@ export default {
             return this.model.history == true;
         },
         canShowGettext(){
-            if ( ['languages', 'admin_languages'].indexOf(this.model.slug) > -1 && this.$root.gettext == true ) {
+            if (
+                ['languages', 'admin_languages'].indexOf(this.model.slug) > -1
+                && this.$root.gettext == true
+                && this.model.hasAccess('update')
+            ) {
                 return true;
             }
 

@@ -9,7 +9,12 @@ var Translatable = {
     duplicates : [],
     maxTranslateLength : 0,
 
-    bootTranslates(TAObject){
+    boot(TAObject){
+        //If uploadable is not allowed
+        if ( CAEditor.config.translatable === false ){
+            return;
+        }
+
         //Bind given translates
         this.allTranslates = TAObject.translates.messages ? TAObject.translates.messages[''] : {};
         this.rawTranslates = TAObject.rawTranslates;

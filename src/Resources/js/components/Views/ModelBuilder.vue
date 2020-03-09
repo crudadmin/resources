@@ -905,15 +905,18 @@
             },
             canAddRow(){
                 //Disabled adding new rows
-                if ( this.model.insertable == false )
+                if ( this.model.insertable == false || !this.model.hasAccess('insert') ) {
                     return false;
+                }
 
                 //Unlimited allowed rows
-                if ( this.model.maximum == 0 )
+                if ( this.model.maximum == 0 ) {
                     return true;
+                }
 
-                if ( this.model.maximum <= this.rows.count )
+                if ( this.model.maximum <= this.rows.count ) {
                     return false;
+                }
 
                 return true;
             },

@@ -45,7 +45,7 @@ import Uploadable from './Editor/Uploadable';
         //On First boot
         boot(TAObject){
             //Boot translations
-            Translatable.bootTranslates(TAObject);
+            Translatable.boot(TAObject);
             Uploadable.boot();
 
             //Boot pencils
