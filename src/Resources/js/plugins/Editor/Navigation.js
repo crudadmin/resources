@@ -10,6 +10,15 @@ var Navigation = {
     addNavigation(){
         var node = document.createElement('div');
 
+        let editorLIText = __("Režim upravovania"),
+            editorLI = CAEditor.config.enabled ? `<li id="CAE_ToggleState">
+                            <label class="CAE_Checkbox CAE_Icons">
+                                ${editorLIText}
+                                <input type="checkbox">
+                                <div><div></div></div>
+                            </label>
+                        </li>` : '';
+
         node.className = this.wrapperClassName;
         node.innerHTML = `
             <div class="CAE_Navigation_button">
@@ -17,13 +26,7 @@ var Navigation = {
                 <div class="CAE_Navigation_navbar">
                     <ul>
                         <li><a class="CAE_Icons" href="${CAEditor.config.requests.admin}" target="_blank">${__("Administrácia webu")} <i class="CAE_Icon--link"></i></a></li>
-                        <li id="CAE_ToggleState">
-                            <label class="CAE_Checkbox CAE_Icons">
-                                ${__("Režim upravovania")}
-                                <input type="checkbox">
-                                <div><div></div></div>
-                            </label>
-                        </li>
+                        ${editorLI}
                     </ul>
                 </div>
             </div>
@@ -34,6 +37,11 @@ var Navigation = {
 
     bindTranslatesToggle(){
         var toggle = document.getElementById('CAE_ToggleState');
+
+        //If editor is turned off
+        if ( !toggle ){
+            return;
+        }
 
         toggle.getElementsByTagName('input')[0].checked = CAEditor.config.active;
 
