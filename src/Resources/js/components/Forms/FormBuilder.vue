@@ -300,7 +300,7 @@ export default {
         },
         canShowGettext(){
             if (
-                ['languages', 'admin_languages'].indexOf(this.model.slug)
+                ['languages', 'admin_languages'].indexOf(this.model.slug) > -1
                 && this.$root.gettext
                 && this.model.hasAccess('update')
             ) {
