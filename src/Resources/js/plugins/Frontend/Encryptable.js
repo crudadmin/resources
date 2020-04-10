@@ -35,13 +35,14 @@
             };
 
         //Decrypt text + href
-        for ( var i = 0; i < elementsToFullDecrypt.length; i++ ){
-            var element = elementsToFullDecrypt[i];
+        //We need use while, because getElementsByClassName is dynamic and elements would be removed dynamicaly in for
+        while(elementsToFullDecrypt.length > 0){
+            var element = elementsToFullDecrypt[0];
 
             element.innerHTML = decryptText(element.innerHTML);
-            element.classList.remove(toEncryptClass);
-
             decryptHref(element);
+
+            element.classList.remove(toEncryptClass);
         }
 
         //Decrypt href

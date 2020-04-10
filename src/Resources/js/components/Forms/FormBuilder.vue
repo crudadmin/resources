@@ -16,10 +16,6 @@
                         <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
                             {{ trans('gettext-open') }}
                         </button>
-                        <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="btn--icon btn btn-default btn-sm">
-                            <i class="fa fa-plus"></i>
-                            {{ newRowTitle }}
-                        </button>
                         <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
                             <i class="fa fa-history"></i>
                             {{ trans('history.show') }}
@@ -39,6 +35,11 @@
                                 </li>
                             </ul>
                         </div>
+
+                        <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="btn--icon btn btn-default btn-sm">
+                            <i class="fa fa-plus"></i>
+                            {{ newRowTitle }}
+                        </button>
                     </div>
                 </div>
 
