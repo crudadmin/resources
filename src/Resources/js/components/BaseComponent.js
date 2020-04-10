@@ -304,8 +304,22 @@ const BaseComponent = (router) => {
                     //If select has filters
                     if ( hasFilter ) {
                         for ( var k in filter ) {
-                            if ( array[key][1][k] != filter[k] || array[key][1][k] == null ) {
+                            if ( array[key][1][k] == null ){
                                 continue loop1;
+                            }
+
+                            //Support for inArray values for belongsToMany
+                            if ( typeof filter[k] == 'object' ) {
+                                if ( filter[k].indexOf(array[key][1][k]) == -1 ) {
+                                    continue loop1;
+                                }
+                            }
+
+                            //Compare single values key
+                            else {
+                                if ( array[key][1][k] != filter[k] ) {
+                                    continue loop1;
+                                }
                             }
                         }
                     }
