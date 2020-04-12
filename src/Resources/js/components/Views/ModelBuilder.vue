@@ -570,8 +570,9 @@
                 if ( this.hasparentmodelMutated && typeof this.hasparentmodelMutated == 'object' && 'slug' in this.hasparentmodelMutated )
                     return this.hasparentmodelMutated.slug;
 
-                if ( force !== true && ((!row || !( 'id' in row )) || this.hasparentmodelMutated === false) )
+                if ( force !== true && ((!row || !( 'id' in row )) || this.hasparentmodelMutated === false) ) {
                     return 0;
+                }
 
                 return this.$parent.model.slug;
             },

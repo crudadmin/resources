@@ -317,8 +317,14 @@ export default {
             };
 
             //Check if form belongs to other form
-            if ( this.model.foreign_column != null && this.$parent.parentrow )
+            if ( this.model.foreign_column != null && this.$parent.parentrow ) {
                 data[this.model.foreign_column[this.$parent.getParentTableName()]] = this.$parent.parentrow.id;
+            }
+
+            if ( this.model.global_relation && this.$parent.parentrow && this.$parent.getParentTableName(true) ) {
+                data['_table'] = this.$parent.getParentTableName(true);
+                data['_row_id'] = this.$parent.parentrow.id;
+            }
 
             //If is updating, then add row ID
             if ( this.getFormAction == 'update' )
@@ -327,12 +333,14 @@ export default {
                 data['_method'] = 'put';
             } else {
                 //Check if is enabled language
-                if ( this.langid )
+                if ( this.langid ) {
                     data['language_id'] = this.langid;
+                }
 
                 //Push saved childs without actual parent row
-                if ( this.hasParentModel() && this.$parent.rows.save_children.length > 0 )
+                if ( this.hasParentModel() && this.$parent.rows.save_children.length > 0 ) {
                     data['_save_children'] = JSON.stringify(this.$parent.rows.save_children);
+                }
             }
 
             //If we need mutate keys of additional form data
@@ -630,8 +638,9 @@ export default {
                             model = this.$root.models[response.data[key].model];
 
                         //Reset actual items buffer
-                        if ( isParentRow && this.hasParentModel() )
+                        if ( isParentRow && this.hasParentModel() ) {
                             this.saveParentChilds(response.data[key].rows);
+                        }
 
                         var eventData = this.buildEventData({
                             row : clonedRow,
