@@ -310,7 +310,7 @@
             },
             parentrow(row, oldrow){
                 //When parent row has been changed, then load children rows
-                if ( ! _.isEqual(row, oldrow) ){
+                if ( ! _.isEqual(row, oldrow) && row.id != oldrow.id ){
                     var children = null;
 
                     //Get rows builder child
@@ -803,6 +803,10 @@
                 return size[0] ? size[0].size : null;
             },
             canShowAdminHeader(){
+                if ( this.model.getSettings('grid.header', true) === false ){
+                    return false;
+                }
+
                 return (
                     this.ischild
                     && !this.model.isSingle()

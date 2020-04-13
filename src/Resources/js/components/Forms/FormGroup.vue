@@ -1,5 +1,5 @@
 <template>
-    <div class="fields-group" :group-id="group.id" :class="getGroupClass(group)" :data-fields="visibleFields.length">
+    <div v-show="isGroupVisible(group)" class="fields-group" :group-id="group.id" :class="getGroupClass(group)" :data-fields="visibleFields.length">
         <div :class="{ card : canShowGroupName(group), 'fields-group__wrapper' : canShowGroupName(group) || 1 }">
             <h4 class="card-header" v-if="canShowGroupName(group)">
                 <i v-if="group.icon" class="card-header--icon-left" :class="['fa', faMigrator(group.icon)]"></i>
@@ -176,6 +176,13 @@ export default {
 
             return inputlang.slug == slug;
         },
+        isGroupVisible(group){
+            if ( ! group.id ) {
+                return true;
+            }
+
+            return (this.model.hidden_groups||[]).indexOf(group.id) === -1;
+        }
     },
 }
 </script>

@@ -435,6 +435,14 @@ export default {
             this.form.find('.multi-languages .has-error').firstLevelForm(this.form[0]).removeClass('has-error');
             this.removeActiveTab(this.form.find('.nav-tabs li[has-error]').firstLevelForm(this.form[0]));
             this.$parent.progress = false;
+
+            if ( this.form._errorElements ){
+                for ( var i = 0; i < this.form._errorElements.length; i++ ){
+                    this.form._errorElements[i].remove();
+                }
+
+                this.form._errorElements = [];
+            }
         },
         sendForm(e, action, callback)
         {
@@ -593,6 +601,8 @@ export default {
                 //Where should be placed error messageblock
                 if ( where ) {
                     where.after( '<span class="help-block">'+message+'</span>' );
+
+                    component.addErrorElement(where.next());
                 }
 
                 //On first error
@@ -604,6 +614,13 @@ export default {
                     }
                 }
             };
+        },
+        addErrorElement(element){
+            if ( !this.form._errorElements ){
+                this.form._errorElements = [];
+            }
+
+            this.form._errorElements.push(element);
         },
         buildEventData(data, model, isChild){
             var model = model||this.model;

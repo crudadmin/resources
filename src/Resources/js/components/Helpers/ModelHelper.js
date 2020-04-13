@@ -1,4 +1,5 @@
 import Tabs from './TabsHelper.js';
+import Groups from './GroupsHelper.js';
 import Fields from './FieldsHelper';
 import ModelProperties from './ModelProperties';
 
@@ -6,6 +7,7 @@ const Model = () => {};
 
 var extensions = [
     Tabs,
+    Groups,
     Fields,
     ModelProperties,
 ];

@@ -9,7 +9,7 @@
             </li>
         </ul>
         <div class="tab-content tab-content--form">
-            <div v-for="(tab, $index) in getTabs" v-if="canRenderTab(tab)" class="tab-pane" :class="{ active : activetab == $index }" :data-tab-model="isModel(tab) ? getModel(tab.model).slug : ''" :data-tab-id="tab.id">
+            <div v-for="(tab, $index) in getTabs" v-if="canRenderTab(tab)" class="tab-pane" :class="{ active : activetab == $index }" :data-tab-model="isModel(tab) ? getModel(tab.model).slug : false" :data-tab-id="tab.id">
                 <div class="row">
                     <div v-if="hasTabs(tab.fields) || isModel(tab)" :class="{ model : isModel(tab) }" class="col-lg-12">
                         <form-tabs-builder
@@ -344,7 +344,7 @@ export default {
                 return false;
 
             return (this.model.hidden_tabs||[]).indexOf(tab.model||tab.id) === -1;
-        }
+        },
     }
 }
 </script>

@@ -137,6 +137,10 @@
         &.tab-content--form {
             margin-bottom: $form-group-margin-bottom;
             padding-bottom: 0;
+
+            > [data-tab-model].tab-pane {
+                margin-bottom: $form-group-margin-bottom;
+            }
         }
     }
 }
@@ -181,4 +185,14 @@
     p {
         margin-bottom: 0;
     }
+}
+
+.status-dott {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+
+    &.--active { background: #32AB45; }
+    &.--inactive { background: #E7492E; }
 }

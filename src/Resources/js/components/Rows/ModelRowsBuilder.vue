@@ -8,7 +8,7 @@
 
                 <div class="box-header__right">
                     <div class="dropdown fields-list" fields-list>
-                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" v-if="model.getSettings('table.switchcolumns', true) != false">
                             {{ trans('rows-list') }}
                             <i class="--icon-right fa fa-angle-down"></i>
                         </button>
@@ -111,7 +111,7 @@ export default {
 
     data : function(){
         //Load pagination limit from localStorage
-        var limit = this.iswithoutparent ? 500 : ('limit' in localStorage ? localStorage.limit : this.$root.getModelProperty(this.model, 'settings.pagination.limit', 10));
+        var limit = this.iswithoutparent ? 500 : ('limit' in localStorage ? localStorage.limit : this.model.getSettings('pagination.limit', 10));
 
         return {
             table : null,
@@ -145,7 +145,7 @@ export default {
 
     created() {
         //For file paths
-        this.root = this.$root.$http.options.root;
+        this.root = window.crudadmin.root;
 
         //Set default order rows
         this.setOrder();
