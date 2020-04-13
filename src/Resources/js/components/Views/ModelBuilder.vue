@@ -115,7 +115,7 @@
                             :history="history"
                             :model="model"
                             :langid="selected_language_id ? selected_language_id : langid"
-                            :selectedlangid.sync="selected_language_id"
+                            :selectedlangid.sync="selected_language_id ? selected_language_id : langid"
                             :canaddrow="canAddRow"
                             :hasparentmodel="hasparentmodelMutated"
                             :gettext_editor.sync="gettext_editor"
