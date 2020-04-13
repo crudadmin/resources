@@ -249,8 +249,9 @@ export default {
                 this.initTimeout(false);
         },
         langid(langid){
-            if ( this.model.localization == true )
-                this.setPosition(1);
+            if ( this.model.localization == true ) {
+                this.setPosition(1, true);
+            }
         },
         activetab(value){
             if ( value == true )
@@ -702,8 +703,10 @@ export default {
             this.orderBy = [this.model.orderBy[0], this.model.orderBy[1].toLowerCase().replace('asc', 0).replace('desc', 1)];
         },
         setPosition(position, indicator){
-            if ( position == 0 || position > Math.ceil(this.rows.count/this.pagination.limit) )
+            //We need allow reload position 1 also when max pages are 0 (when zero rows)
+            if ( position == 0 || (this.rows.count > 0 && position > Math.ceil(this.rows.count/this.pagination.limit)) ) {
                 return;
+            }
 
             this.pagination.position = position;
 

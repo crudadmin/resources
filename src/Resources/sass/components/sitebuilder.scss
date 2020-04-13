@@ -45,6 +45,7 @@
                 cursor: pointer;
                 box-shadow: 0 1px 2px rgba(65, 70, 76, 0.14);
                 padding: 10px;
+                text-align: center;
 
                 span {
                     margin-top: 10px;
@@ -60,7 +61,7 @@
 
     &.--selected {
         .sb_add_items .sb_add_item {
-            height: 70px;
+            height: 80px;
             padding: 10px;
 
             span {
