@@ -53,6 +53,7 @@
                             :model="model"
                             :row="row"
                             :hasparentmodel="hasparentmodel"
+                            :inputlang="inputlang"
                             :history="history"
                             :depth_level="depth_level">
                         </form-group>
