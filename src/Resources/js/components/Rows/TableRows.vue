@@ -497,7 +497,6 @@ export default {
         },
         openGettextEditor(item){
             this.$parent.$parent.gettext_editor = item;
-            this.$parent.$parent.gettext_table = this.model.table;
         },
         showHistory(row){
             this.$parent.$parent.showHistory(row);

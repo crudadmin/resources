@@ -175,7 +175,7 @@
         <gettext-extension
             v-if="gettext_editor"
             :gettext_editor="gettext_editor"
-            :gettext_table="gettext_table"
+            :gettext_table="model.table"
             ></gettext-extension>
     </div>
 </template>
@@ -251,7 +251,6 @@
 
                 depth_level : 0,
                 gettext_editor: null,
-                gettext_table: null,
             };
         },
 
