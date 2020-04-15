@@ -231,6 +231,16 @@ export default {
                             }
                     }
 
+                    //Return localized value
+                    if ( typeof value == 'object' ) {
+                        for ( var k in value ) {
+                            if ( value[k] ){
+                                value = value[k];
+                                break;
+                            }
+                        }
+                    }
+
                     title = title.replace(':'+key, value);
                 }
 
