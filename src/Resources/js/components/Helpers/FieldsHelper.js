@@ -46,9 +46,14 @@ var Fields = (Model) => {
             relatedField = this.fields[fieldOperator[0]]||this.fields[fieldOperator[0]+'_id'],
             value = relatedField.value;
 
-        //Empty filter values set as null
+        //Cast values
         items = items.map(item => {
-            return _.isNil(item) || ['', 'NULL'].indexOf(item) > -1 ? null : item;
+            var value = item;
+                value = _.isNil(item) || ['', 'NULL'].indexOf(item) > -1 ? null : value;
+                value = ['TRUE'].indexOf(item) > -1 ? true : value;
+                value = ['FALSE'].indexOf(item) > -1 ? false : value;
+
+            return value;
         });
 
         //If is key in item from options fields
@@ -62,7 +67,7 @@ var Fields = (Model) => {
                     return true;
                 }
             } else {
-                if ( option && option[1][fieldOperator[1]] === items[2] ) {
+                if ( option && option[1][fieldOperator[1]] === items[1] ) {
                     return true;
                 }
             }
