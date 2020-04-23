@@ -23,13 +23,15 @@ var Observer = {
             })
             // have the observer observe foo for changes in children
             obs.observe( obj, {
+                attributes: true,
                 childList:true,
-                subtree:true
+                subtree:true,
             });
         }
 
         else if( window.addEventListener ){
             obj.addEventListener('DOMNodeInserted', callback, false);
+            obj.addEventListener('DOMAttrModified', callback, false);
             obj.addEventListener('DOMNodeRemoved', callback, false);
         }
     },

@@ -95,7 +95,8 @@ var Pencils = {
     observePencilMovement(element){
         var prevPositionKey = null,
             checkPosition = () => {
-                var position;
+                var position,
+                    style;
 
                 //Get element position by node type
                 if ( element.nodeName == '#text' ) {
@@ -103,11 +104,13 @@ var Pencils = {
                         range.selectNodeContents(element);
 
                     position = range.getClientRects()[0];
+                    style = getComputedStyle(element.parentElement);
                 } else {
                     position = element.getBoundingClientRect();
+                    style = getComputedStyle(element);
                 }
 
-                var positionKey = position ? position.x+'-'+position.y : null;
+                var positionKey = position ? [position.x, position.y, style.opacity, style.visibility].join('-') : null;
 
                 if ( position && prevPositionKey != positionKey ) {
                     Pencils.bindPosition(element);
@@ -322,7 +325,7 @@ var Pencils = {
 
         //Check if position is visible
         if ( !isHidden ) {
-            isHidden = (!positionY || !positionX || positionY == 0 || positionX == 0);
+            isHidden = (!positionY || !positionX || positionY == 0 || positionX == 0) || this.isHiddenElement(element);
         }
 
         pencil.style.position = isFixed ? 'fixed' : 'absolute';
@@ -350,6 +353,30 @@ var Pencils = {
         }
 
         return fixed;
+    },
+    isHiddenElement(element, pencil){
+        var hidden = false;
+
+        while(element.parentElement) {
+            var styles = element.nodeType == 1 ? window.document.defaultView.getComputedStyle(element) : null;
+
+            if ( styles && (styles.opacity < 0.2 || styles.visibility == 'hidden') ) {
+                hidden = true;
+
+                if ( !element.observer ) {
+                    Observer.observeDOM(element, () => {
+                        this.observePencilMovement(element);
+                    });
+
+                    element.observer = true;
+                }
+                break;
+            }
+
+            element = element.parentElement;
+        }
+
+        return hidden;
     },
     setPencilZindex(element, pencil){
         var maxZindex = 'auto';
