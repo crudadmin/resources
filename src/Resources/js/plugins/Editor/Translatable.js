@@ -54,6 +54,7 @@ var Translatable = {
 
             onPointerCreate : this.events.onPointerCreate.bind(this),
             onPointerClick : this.events.onPointerClick.bind(this),
+            onPointerHide : this.events.onPointerHide.bind(this),
         });
     },
 
@@ -223,7 +224,7 @@ var Translatable = {
             opacity = parseInt(css.opacity);
 
         //If is invisible element
-        if ( opacity <= 0.5 ) {
+        if ( opacity <= 0.5 || css.visibility == 'hidden' || css.fontSize == 0 ) {
             return true;
         }
 
@@ -274,6 +275,20 @@ var Translatable = {
                 Editor.makeEditableNode(element, actualValue);
             }
         },
+        onPointerHide(element, pencil){
+            //If element is beign edite state, we want open alert instead.
+            //Because propably this elements has been hidden
+            if ( element.isContentEditable !== true ){
+                return;
+            }
+
+            var actualValue = this.nodeValue(element);
+
+            Editor.turnOffEditor(element);
+
+            //When element is hidden and is being editing state. We want open alert editor
+            this.openAlertModal(element, actualValue);
+        }
     }
 }
 

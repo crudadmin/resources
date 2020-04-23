@@ -104,7 +104,9 @@ var Pencils = {
                         range.selectNodeContents(element);
 
                     position = range.getClientRects()[0];
-                    style = getComputedStyle(element.parentElement);
+
+                    style = element.parentElement ? getComputedStyle(element.parentElement) : {};
+
                 } else {
                     position = element.getBoundingClientRect();
                     style = getComputedStyle(element);
@@ -332,8 +334,18 @@ var Pencils = {
         pencil.style.left = ((isFixed ? 0 : window.scrollX) + positionX)+'px';
         pencil.style.top = ((isFixed ? 0 : window.scrollY) + positionY - pencilHeight)+'px';
 
+        //If element is gonne be hidden
+        if ( pencil.style.display != 'none' && isHidden ) {
+            var handler = element.getPointerSetting('onPointerHide');
+
+            if ( handler ){
+                handler(element, pencil);
+            }
+        }
+
         //Check if element is visible
         pencil.style.display = isHidden ? 'none' : 'block';
+
 
         //Automatically set zIndex of point
         this.setPencilZindex(element, pencil);
