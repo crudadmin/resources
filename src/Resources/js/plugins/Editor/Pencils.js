@@ -265,6 +265,7 @@ var Pencils = {
 
         //textNode does not have getBoundingClientRect
         var isHidden = false,
+            hasNoPosition = false,
             position = element.getBoundingClientRect ? element.getBoundingClientRect() : null,
             positionX = position ? position.x : null,
             positionY = position ? position.y : null;
@@ -327,25 +328,43 @@ var Pencils = {
 
         //Check if position is visible
         if ( !isHidden ) {
-            isHidden = (!positionY || !positionX || positionY == 0 || positionX == 0) || this.isHiddenElement(element);
+            hasNoPosition = (!positionY || !positionX || positionY == 0 || positionX == 0);
+
+            isHidden = hasNoPosition || this.isHiddenElement(element);
         }
 
         pencil.style.position = isFixed ? 'fixed' : 'absolute';
         pencil.style.left = ((isFixed ? 0 : window.scrollX) + positionX)+'px';
         pencil.style.top = ((isFixed ? 0 : window.scrollY) + positionY - pencilHeight)+'px';
 
-        //If element is gonne be hidden
-        if ( pencil.style.display != 'none' && isHidden ) {
+        //If element is gonne be hidden and has been visible in previosu state
+        if ( pencil.style.display && pencil.style.display != 'none' && isHidden && !hasNoPosition ) {
             var handler = element.getPointerSetting('onPointerHide');
 
             if ( handler ){
                 handler(element, pencil);
             }
+
+            //When dot has been visible, we want hide this dot after one second delay
+            //Because element may dissapear, but we may edit content in alert.
+            if ( pencil.disappearTimaout ) {
+                clearTimeout(pencil.disappearTimaout);
+            }
+
+            //We want dessapear dott after 750ms
+            pencil.disappearTimaout = setTimeout(() => {
+                //Check if element is visible
+                pencil.style.display = isHidden ? 'none' : 'block';
+            }, 750);
+        } else {
+            //Check if element is visible
+            pencil.style.display = isHidden ? 'none' : 'block';
+
+            //If element is visible again, we want turn off dissappear from previous state
+            if ( !isHidden ){
+                clearTimeout(pencil.disappearTimaout);
+            }
         }
-
-        //Check if element is visible
-        pencil.style.display = isHidden ? 'none' : 'block';
-
 
         //Automatically set zIndex of point
         this.setPencilZindex(element, pencil);
