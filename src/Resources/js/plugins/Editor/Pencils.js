@@ -321,8 +321,8 @@ var Pencils = {
         var isFixed = this.isPositionFixed(element);
 
         //Check if position is visible
-        if ( isHidden ) {
-            isHidden = (!positionY || !positionX || positionY == 0 || positionX === 0);
+        if ( !isHidden ) {
+            isHidden = (!positionY || !positionX || positionY == 0 || positionX == 0);
         }
 
         pencil.style.position = isFixed ? 'fixed' : 'absolute';
