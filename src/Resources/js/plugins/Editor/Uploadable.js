@@ -178,14 +178,15 @@ var Uploadable = {
             if ( item.getPointerSetting('defaultUrl') == image.getPointerSetting('defaultUrl') ) {
                 if ( item.nodeName == 'IMG' ) {
                     item.src = response.responseJSON.url;
+
+                    //We want remove srcset attribute
+                    if ( item.srcset ) {
+                        item.srcset = response.responseJSON.url+' 1x';
+                    }
                 } else {
                     item.style.backgroundImage = 'url("'+response.responseJSON.url+'")';
                 }
 
-                //We want remove srcset attribute
-                if ( item.srcset ) {
-                    item.removeAttribute('srcset');
-                }
             }
         })
     },
