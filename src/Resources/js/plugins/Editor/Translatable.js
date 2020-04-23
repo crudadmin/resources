@@ -264,7 +264,7 @@ var Translatable = {
 
             //We cant allow update duplicate translates. Because change may be updated on right source translate.
             if ( this.duplicates.indexOf(actualValue) > -1 ) {
-                alert(CAEditor.texts.cannotUpdate);
+                alert(CATranslates.texts.cannotUpdate);
                 return;
             }
 
