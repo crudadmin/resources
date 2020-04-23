@@ -25,14 +25,35 @@ var Uploadable = {
         this.bindEvents();
     },
 
-    registerAllImages(){
-        var images = document.getElementsByTagName('img');
+    isUploadableImage(src){
+        return src && (src.indexOf('?'+this.queryKey) > -1 || src.indexOf('&'+this.queryKey) > -1);
+    },
 
+    registerAllImages(){
+        var images = document.getElementsByTagName('img'),
+            allElements = document.getElementsByTagName('*');
+
+        //Add support for img src="" images
         for ( var i = 0; i < images.length; i++ ){
             var src = images[i].src;
 
-            if ( src && (src.indexOf('?'+this.queryKey) > -1 || src.indexOf('&'+this.queryKey) > -1) ) {
-                this.registerImageElement(images[i]);
+            if ( this.isUploadableImage(src) ) {
+                this.registerImageElement(images[i], src);
+            }
+        }
+
+        //Add support for background-image images
+        for ( var i = 0; i < allElements.length; i++ ){
+            let element = allElements[i];
+
+            if ( ! element.getAttribute('style') || !element.style.backgroundImage ) {
+                continue;
+            }
+
+            let url = element.style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+
+            if ( this.isUploadableImage(url) ){
+                this.registerImageElement(element, url);
             }
         }
     },
@@ -43,11 +64,9 @@ var Uploadable = {
         return parts.length > 1 ? decodeURIComponent(parts[1].split('&')[0]) : null;
     },
 
-    registerImageElement(element){
-        var imageUrl = element.src;
-
+    registerImageElement(element, url){
         CAEditor.pushPointerElement(element, 'uploadable', {
-            defaultUrl : imageUrl,
+            defaultUrl : url,
             onPointerCreate : this.events.onPointerCreate.bind(this),
             onPointerClick : this.events.onPointerClick.bind(this),
         });
@@ -135,11 +154,15 @@ var Uploadable = {
                     Helpers.addClass(pointer, Pencils.classNameSaved);
 
                     //When image will be loaded, reset loader state
-                    Uploadable.imageElement.onload = (e) => {
-                        resetLoading(e.target);
+                    if ( Uploadable.imageElement.nodeName == 'IMG' ) {
+                        Uploadable.imageElement.onload = (e) => {
+                            resetLoading(e.target);
 
-                        //On image load, repaint all pencils. Because they may been moved.
-                        CAEditor.pencils.repaintPencils();
+                            //On image load, repaint all pencils. Because they may been moved.
+                            CAEditor.pencils.repaintPencils();
+                        }
+                    } else {
+                        resetLoading(Uploadable.imageElement);
                     }
 
                     Uploadable.imageElement = null;
@@ -153,7 +176,11 @@ var Uploadable = {
     updateImagesWithSameSrc(response, image){
         CAEditor.allMatchedElements('uploadable').forEach(item => {
             if ( item.getPointerSetting('defaultUrl') == image.getPointerSetting('defaultUrl') ) {
-                item.src = response.responseJSON.url;
+                if ( item.nodeName == 'IMG' ) {
+                    item.src = response.responseJSON.url;
+                } else {
+                    item.style.backgroundImage = 'url("'+response.responseJSON.url+'")';
+                }
 
                 //We want remove srcset attribute
                 if ( item.srcset ) {

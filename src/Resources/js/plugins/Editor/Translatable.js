@@ -62,6 +62,9 @@ var Translatable = {
      * For better performance for searching elements.
      */
     getTranslationsTree(){
+        //Debug given texts
+        var debugText = [];
+
         //Build translates tree
         for ( var key in this.allTranslates ) {
             var translate = this.allTranslates[key][0]||key;
@@ -69,6 +72,11 @@ var Translatable = {
             //We need save duplicate translates
             if ( translate in this.translatedTree ) {
                 this.duplicates.push(translate);
+            }
+
+            //Debug only given texts
+            if ( debugText.length > 0 && debugText.indexOf(translate) === -1 ) {
+                continue;
             }
 
             this.translatedTree[translate] = key;

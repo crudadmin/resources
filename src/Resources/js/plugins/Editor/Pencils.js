@@ -21,6 +21,7 @@ var Pencils = {
         this.initHovers();
         this.registerClicks();
         this.registerResize();
+        this.registerScroll();
         this.buildPencils();
         Observer.observeNewElements();
     },
@@ -204,6 +205,17 @@ var Pencils = {
             resize = setTimeout(this.repaintPencils, 100);
         });
     },
+    registerScroll(){
+        var scroll;
+
+        window.addEventListener('scroll', () => {
+            if ( scroll ) {
+                clearTimeout(scroll);
+            }
+
+            scroll = setTimeout(this.repaintPencils, 30);
+        });
+    },
     onClick(pencil){
         var element = pencil._CAElement,
             handler = element.getPointerSetting('onPointerClick');
@@ -247,7 +259,8 @@ var Pencils = {
         }
 
         //textNode does not have getBoundingClientRect
-        var position = element.getBoundingClientRect ? element.getBoundingClientRect() : null,
+        var isHidden = false,
+            position = element.getBoundingClientRect ? element.getBoundingClientRect() : null,
             positionX = position ? position.x : null,
             positionY = position ? position.y : null;
 
@@ -305,8 +318,12 @@ var Pencils = {
             }
         }
 
-        var isFixed = this.isPositionFixed(element),
+        var isFixed = this.isPositionFixed(element);
+
+        //Check if position is visible
+        if ( isHidden ) {
             isHidden = (!positionY || !positionX || positionY == 0 || positionX === 0);
+        }
 
         pencil.style.position = isFixed ? 'fixed' : 'absolute';
         pencil.style.left = ((isFixed ? 0 : window.scrollX) + positionX)+'px';
