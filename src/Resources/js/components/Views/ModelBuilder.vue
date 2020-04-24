@@ -537,10 +537,10 @@
                 $('#'+this.getFilterId+' .js_chosen').chosen({disable_search_threshold: 5}).on('change', function(){
                     if ( dispached == false )
                     {
-                            dispached = true;
-                            this.dispatchEvent(js_date_event);
+                        dispached = true;
+                        this.dispatchEvent(js_date_event);
                     } else {
-                            dispached = false;
+                        dispached = false;
                     }
                 });
             },
@@ -581,10 +581,33 @@
             hasChilds(){
                 var length = 0;
 
-                for ( var key in this.model.childs )
+                for ( var key in this.model.childs ) {
                     length++;
+                }
 
                 return length;
+            },
+            hasModelsInGroups(childs){
+                for ( var i = 0 ; i < childs.length; i++ ) {
+                    //Check if group field is tab
+                    if ( typeof childs[i] != 'object' ) {
+                        continue;
+                    }
+
+                    //If model is in recursive tabs or group
+                    if ( childs[i].model ){
+                        return true;
+                    }
+
+                    //If tab has other childs, then check recursive
+                    if ( childs[i].fields.length > 0 ) {
+                        if ( this.hasModelsInGroups(childs[i].fields) ) {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
             },
             getStorage(){
                 return $.parseJSON(localStorage.sizes||'{}')||{};
@@ -614,8 +637,7 @@
                 }
 
                 //Select size from storage
-                if ( this.model.slug in data && data[this.model.slug + '_default'] == defaultValue )
-                {
+                if ( this.model.slug in data && data[this.model.slug + '_default'] == defaultValue ) {
                     for ( var key in this.sizes ) {
                         if ( this.sizes[key].size == data[ this.model.slug ] ) {
                             return this.sizes[key].active = true;
@@ -631,10 +653,14 @@
                 }
 
                 /*
-                 * When is localStorage value empty, then automatic chose the best grid value
+                 * When is localStorage value empty, then automatic chose the best grid value.
+                 * In this case we need check for all full screen options
                  */
-                //Full screen
-                if ( this.hasChilds() > 0 || columns.length > this.fullSizeByColumns() ) {
+                if (
+                    this.hasModelsInGroups(this.model.fields_groups)
+                    || this.hasChilds() > 0
+                    || columns.length > this.fullSizeByColumns()
+                ) {
                     return this.sizes[3].active = true;
                 }
 

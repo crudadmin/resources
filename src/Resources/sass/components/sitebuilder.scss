@@ -26,10 +26,11 @@
     }
 
     .sb_add_items {
+        margin: -10px 0;
         padding: 0 10px;
 
         .sb_add_items__col {
-            padding: 0 10px 0;
+            padding: 10px;
 
             .sb_add_item {
                 width: 100%;

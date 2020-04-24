@@ -176,6 +176,7 @@ select[multiple] {height: 34px;color: white;}
 .form-group .can-add-select { width: 100%; position: relative; display: flex; }
 .form-group .can-add-select > div.chosen-container { min-width: auto; max-width: auto; }
 .form-group .can-add-select > button { width: 35px; border: 0 }
+.form-group .can-add-select .search-field { min-width: auto !important }
 
 .form-group .modal > .modal-dialog > .modal-content > .modal-body > div > .box {box-shadow: none;border: 0;margin-bottom: 0}
 .form-group .modal > .modal-dialog > .modal-content > .modal-body > div > .box > .box-header {padding: 0;position: absolute;right: 45px;top: -59px;}

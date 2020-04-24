@@ -21,7 +21,7 @@
                             {{ trans('history.show') }}
                         </button>
 
-                        <div class="dropdown multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage">
+                        <div class="dropdown multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage && languages.length > 1">
                             <button class="btn btn-default dropdown-toggle btn-sm" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                 <i class="--icon-left fa fa-globe-americas"></i>
                                 <span class="text">{{ getLangName(selectedLanguage) }}</span>

@@ -13,7 +13,7 @@
 
         <li class="treeview treeview-list" v-if="isActive && isGroup && hasChilds" :data-slug="row.slug" >
           <a @click="toggleMenu">
-            <i class="fa icon" :class="faMigrator(row.icon||defaultIcon)||'fa-folder-open far'"></i>
+            <i class="fa icon" :class="faMigrator(row.icon||'fa-folder-open far')"></i>
             <span>{{ row.name }}</span>
             <i v-if="hasSubmenu" class="fa side-arrow" :class="{ 'fa-angle-down' : opened, 'fa-angle-left' : !opened }"></i>
           </a>

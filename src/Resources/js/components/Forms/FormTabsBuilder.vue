@@ -138,10 +138,10 @@ export default {
         },
         getTabs(){
             var model_fields = this.getModelFields,
-                    items = this.tabs||(this.group ? this.group.fields : model_fields),
-                    tabs = items.filter(function(group) {
-                        return this.isTab(group);
-                    }.bind(this));
+                items = this.tabs||(this.group ? this.group.fields : model_fields),
+                tabs = items.filter(function(group) {
+                    return this.isTab(group);
+                }.bind(this));
 
             if ( tabs.length == 0 || tabs.length > 0 && tabs.length != items.length ){
                 items = items.filter(function(group) {
