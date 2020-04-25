@@ -36,7 +36,7 @@ var Translatable = {
 
         //Element has been registered already
         if (
-            element.hasPointer
+            element.hasPointer && element.hasPointer.indexOf('translatable') > -1
             || element._isInEditorElement
             || (isTextFromEditor = this.isInEditorElement(element))
         ) {
@@ -145,7 +145,7 @@ var Translatable = {
      */
     isInEditorElement(element){
         if ( element ) {
-            if ( element.hasPointer ) {
+            if ( element.hasPointer && elements.hasPointer.indexOf('translatable') > -1 ) {
                 return true;
             }
 
@@ -173,7 +173,7 @@ var Translatable = {
             value = Helpers.htmlspecialcharsDecode(value);
         }
 
-        data.changes[e.getPointerSetting('originalTranslate')] = value;
+        data.changes[e.getPointerSetting('originalTranslate', 'translatable')] = value;
 
         //Clear previous key change
         if ( this._ajaxSend ) {
@@ -204,7 +204,7 @@ var Translatable = {
      */
     updateSameTranslationElements(element){
         for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
-            if ( CAEditor.matchedElements[i].getPointerSetting('originalTranslate') == element.getPointerSetting('originalTranslate') ) {
+            if ( CAEditor.matchedElements[i].getPointerSetting('originalTranslate', 'translatable') == element.getPointerSetting('originalTranslate', 'translatable') ) {
                 if ( CAEditor.matchedElements[i] != element ) {
                     CAEditor.matchedElements[i].innerHTML = element.innerHTML;
                 }
@@ -257,7 +257,7 @@ var Translatable = {
      */
     events : {
         onPointerCreate(pencil, element){
-            pencil.setAttribute('data-translate', element.getPointerSetting('originalTranslate'));
+            pencil.setAttribute('data-translate', element.getPointerSetting('originalTranslate', 'translatable'));
         },
         onPointerClick(element, pencil){
             var actualValue = this.nodeValue(element);
@@ -274,6 +274,9 @@ var Translatable = {
             } else {
                 Editor.makeEditableNode(element, actualValue);
             }
+
+            //When pointer is clicked, we want remove all additional pointers
+            Pencils.removeAdditionalPointers(element._CAPencil);
         },
         onPointerHide(element, pencil){
             //If element is beign edite state, we want open alert instead.

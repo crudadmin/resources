@@ -1,9 +1,12 @@
 import Observer from './Observer';
 import Helpers from './Helpers';
+import Navigation from './Navigation';
 
 var Pencils = {
     wrapperId : 'CAE_Pencils__wrapper',
+    wrapperTooltipNavbar : 'CAE_Pencils__tooltip_wrapper',
     className : 'CAE_Pencil',
+    classNameMultiple : 'CAE_Pencil--multiple',
     classNameSaved : 'CAE_Pencil--saved',
     classNameHidden : 'CAE_Pencil--hidden',
     classNameMoving : 'CAE_Pencil--moving',
@@ -11,7 +14,10 @@ var Pencils = {
     classNameError : 'CAE_Pencil--error',
     classNameActive : 'CAE_Pencil--active',
     classNameLoading : 'CAE_Pencil--loading',
+    classNameIcon : 'CAE_Pencil--icon',
     classNameImage : 'CAE_Pencil--image',
+    classNameLinkable : 'CAE_Pencil--linkable',
+    classNameSubmenu : 'CAE_Pencil--subpointers',
 
     //Wrapper element
     pointersWrapper : null,
@@ -223,39 +229,103 @@ var Pencils = {
     },
     onClick(pencil){
         var element = pencil._CAElement,
-            handler = element.getPointerSetting('onPointerClick');
+            helpers = Object.keys(element.getPointerSettings()),
+            handler = element.getPointerSetting('onPointerClick', pencil.pointerType||(helpers.length == 1 ? helpers[0] : null));
 
         //Reset error state on click
         Helpers.removeClass(pencil, Pencils.classNameError);
 
+        //If handler has been selected
         if ( handler ) {
             handler(element, pencil);
         }
+
+        //When pointer has multiple listeners
+        else if ( helpers.length > 1 ) {
+            //If pointer has been removed, we want only hide subpointers
+            if ( this.removeAdditionalPointers(pencil) ) {
+                return;
+            }
+
+            //Add pointer active class
+            Helpers.addClass(pencil, Pencils.classNameSubmenu);
+
+            var offsetMargin = 10,
+                offsetLeft = parseInt(pencil.offsetWidth / 2) + offsetMargin;
+
+            //We want add additional pointers with offsets
+            for ( var i = 0; i < helpers.length; i++ ) {
+                let clonedPointer = this.createPencil(element, null, helpers[i]);
+
+                pencil.additionalPointers.push(clonedPointer);
+
+                //This is offset of given pointer
+                clonedPointer.leftOffset = (clonedPointer.offsetWidth / 2) + offsetLeft;
+
+                //We want animation
+                clonedPointer.style.left = pencil.style.left;
+                clonedPointer.pointerType = helpers[i];
+
+                //We want set position for given pointer by element properties
+                this.bindPosition(element, clonedPointer);
+
+                //Set offset for next pointer
+                offsetLeft += clonedPointer.offsetWidth + offsetMargin;
+            }
+        }
+    },
+    removeAdditionalPointers(pointer){
+        var removed = false;
+
+        //Remove multipencils
+        if ( pointer.additionalPointers && pointer.additionalPointers.length > 0 ) {
+            for ( var i = 0; i < pointer.additionalPointers.length; i++ ){
+                pointer.additionalPointers[i].style.left = pointer.style.left;
+
+                setTimeout(function(){
+                    this.remove();
+                }.bind(pointer.additionalPointers[i]), 200);
+
+                removed = true;
+            }
+        }
+
+        pointer.additionalPointers = [];
+
+        Helpers.removeClass(pointer, Pencils.classNameSubmenu);
+
+        return removed;
     },
     repaintPencils(){
         for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
             Pencils.bindPosition(CAEditor.matchedElements[i]);
         }
     },
-    createPencil(element, key){
+    createPencil(element, key, type){
+        var helpers = Object.keys(element.getPointerSettings());
+
         var e = document.createElement('div');
             e.setAttribute('data-key', key);
-            e.className = Pencils.className;
+            e.className = Pencils.className + (helpers.length > 1 && !type ? (' '+Pencils.classNameMultiple) : '');
             e._CAElement = element;
 
         //Fire onCreate event
-        var onCreate = element.getPointerSetting('onPointerCreate');
-        if ( onCreate ) {
-            onCreate(e, element, key);
-        }
+        var handlers = element.getAllPointerSetting('onPointerCreate', type);
+
+        handlers.forEach((callback) => {
+            if ( callback ) {
+                callback(e, element);
+            }
+        })
 
         this.pointersWrapper.appendChild(e);
 
         return e;
     },
-    bindPosition(element){
-        var pencil = element._CAPencil,
-            pencilHeight = 20,
+    bindPosition(element, pencil){
+        pencil = pencil||element._CAPencil;
+
+        var pencilHeight = 20,
             pencilWidth = 20;
 
         //If element does not have pencil
@@ -333,17 +403,22 @@ var Pencils = {
             isHidden = hasNoPosition || this.isHiddenElement(element);
         }
 
+        //If pencil has set offset
+        if ( pencil.leftOffset ){
+            positionX += pencil.leftOffset;
+        }
+
         pencil.style.position = isFixed ? 'fixed' : 'absolute';
         pencil.style.left = ((isFixed ? 0 : window.scrollX) + positionX)+'px';
         pencil.style.top = ((isFixed ? 0 : window.scrollY) + positionY - pencilHeight)+'px';
 
         //If element is gonne be hidden and has been visible in previosu state
         if ( pencil.style.display && pencil.style.display != 'none' && isHidden && !hasNoPosition ) {
-            var handler = element.getPointerSetting('onPointerHide');
+            var handlers = element.getAllPointerSetting('onPointerHide');
 
-            if ( handler ){
-                handler(element, pencil);
-            }
+            handlers.forEach(callback => {
+                callback(element, pencil);
+            });
 
             //When dot has been visible, we want hide this dot after one second delay
             //Because element may dissapear, but we may edit content in alert.
@@ -368,6 +443,13 @@ var Pencils = {
 
         //Automatically set zIndex of point
         this.setPencilZindex(element, pencil);
+
+        //We want repaint all additional pointers
+        if ( pencil.additionalPointers && pencil.additionalPointers.length ) {
+            for ( var i = 0; i < pencil.additionalPointers.length; i++ ) {
+                this.bindPosition(element, pencil.additionalPointers[i]);
+            }
+        }
     },
     isPositionFixed(element, pencil){
         var fixed = false;

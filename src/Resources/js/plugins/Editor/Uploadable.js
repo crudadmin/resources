@@ -89,7 +89,7 @@ var Uploadable = {
 
     buildRequest(e){
         var data = new FormData(),
-            imageUrl = Uploadable.imageElement.getPointerSetting('defaultUrl'),
+            imageUrl = Uploadable.imageElement.getPointerSetting('defaultUrl', 'uploadable'),
             sizes = this.getQueryPart(imageUrl, 'sizes');
 
         data.append('table', this.getQueryPart(imageUrl, this.queryKey));
@@ -175,7 +175,7 @@ var Uploadable = {
     //Update all images with same source image
     updateImagesWithSameSrc(response, image){
         CAEditor.allMatchedElements('uploadable').forEach(item => {
-            if ( item.getPointerSetting('defaultUrl') == image.getPointerSetting('defaultUrl') ) {
+            if ( item.getPointerSetting('defaultUrl', 'uploadable') == image.getPointerSetting('defaultUrl', 'uploadable') ) {
                 if ( item.nodeName == 'IMG' ) {
                     item.src = response.responseJSON.url;
 
@@ -187,13 +187,16 @@ var Uploadable = {
                     item.style.backgroundImage = 'url("'+response.responseJSON.url+'")';
                 }
 
+                //Hide subpointers if are available
+                Pencils.removeAdditionalPointers(item._CAPencil);
             }
-        })
+        });
     },
 
     events : {
         onPointerCreate(pointer, element){
-            Helpers.addClass(pointer, Pencils.classNameImage)
+            Helpers.addClass(pointer, Pencils.classNameIcon);
+            Helpers.addClass(pointer, Pencils.classNameImage);
         },
         onPointerClick(element, pointer){
             var e = document.createEvent('MouseEvents');

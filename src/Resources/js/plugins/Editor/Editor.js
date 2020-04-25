@@ -6,7 +6,7 @@ var Editor = {
     inlineClass : 'CAE__InlineWrapper',
 
     hasAllowedFormation(element){
-        return CAEditor.translatable.rawTranslates.indexOf(element.getPointerSetting('originalTranslate')) > -1;
+        return CAEditor.translatable.rawTranslates.indexOf(element.getPointerSetting('originalTranslate', 'translatable')) > -1;
     },
 
     isDisabledFormationActionEvent(e, element){
@@ -95,7 +95,7 @@ var Editor = {
     },
     makeEditableNode(element, actualValue){
         //If given element is textNode, we need wrap it into inline div
-        if ( element.nodeName == '#text' && element.getPointerSetting('originalTranslate') ) {
+        if ( element.nodeName == '#text' && element.getPointerSetting('originalTranslate', 'translatable') ) {
             var wrapper = document.createElement('div');
                 wrapper.className = this.inlineClass;
 

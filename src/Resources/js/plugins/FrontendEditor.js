@@ -5,6 +5,7 @@ import Ajax from './Editor/Ajax';
 import Navigation from './Editor/Navigation';
 import Translatable from './Editor/Translatable';
 import Uploadable from './Editor/Uploadable';
+import Linkable from './Editor/Linkable';
 
 /*
  * CrudAdmin auto translatable
@@ -22,6 +23,9 @@ import Uploadable from './Editor/Uploadable';
 
         //Uploadable class
         uploadable : Uploadable,
+
+        //Linkable class
+        linkable : Linkable,
 
         //All elementws with assigned pencil
         matchedElements : [],
@@ -48,6 +52,9 @@ import Uploadable from './Editor/Uploadable';
 
             //Boot uploadable
             Uploadable.boot();
+
+            //Boot linkable
+            Linkable.boot();
 
             //Boot pencils
             this.pencils.init();
@@ -100,50 +107,96 @@ import Uploadable from './Editor/Uploadable';
             Translatable.getTranslatableElements();
             this.pencils.refresh();
         },
-        pushPointerElement(element, type, settings){
-            //Element has pointer already
-            if ( element.hasPointer ) {
-                return;
+        registerPointerProperties(element, type){
+            if ( !element.hasPointer ) {
+                element.hasPointer = [];
             }
 
-            //Register that this element has pointer already
-            element.hasPointer = true;
-
-            //Bind pointer settings
-            element._pointerSettings = {
-                type,
-            };
+            if ( !element._pointerSettings ) {
+                element._pointerSettings = {};
+            }
 
             //Get pointer settings
-            element.getPointerSetting = function(key){
-                return this._pointerSettings[key];
+            if ( !element.getPointerSetting ) {
+                element.getPointerSetting = function(key, type){
+                    if ( !this._pointerSettings || !this._pointerSettings[type] ){
+                        return;
+                    }
+
+                    return this._pointerSettings[type][key];
+                }
+            }
+
+            //Get pointer settings
+            if ( !element.getAllPointerSetting ) {
+                element.getAllPointerSetting = function(key, type){
+                    var items = [];
+
+                    for ( var k in this._pointerSettings ) {
+                        if ( key in this._pointerSettings[k] ) {
+                            if ( !type || type == k ) {
+                                items.push(this._pointerSettings[k][key]);
+                            }
+                        }
+                    }
+
+                    return items;
+                }
+            }
+
+            //Get pointer settings
+            if ( !element.getPointerSettings ) {
+                element.getPointerSettings = function(){
+                    return this._pointerSettings;
+                }
             }
 
             //set pointer settings
-            element.setPointerSetting = function(key, value){
-                this._pointerSettings[key] = value;
+            if ( !element.setPointerSetting ) {
+                element.setPointerSetting = function(key, value, type){
+                    this._pointerSettings[type][key] = value;
+                }
+            }
+
+            //Register that this element has given pointer type
+            element.hasPointer.push(type);
+
+            //Bind pointer settings
+            element._pointerSettings[type] = {};
+        },
+        pushPointerElement(element, type, settings){
+            //Element has pointer already
+            if ( element.hasPointer && element.hasPointer.indexOf(type) > -1 ) {
+                return;
+            }
+
+            //Register missing pointer properties
+            else {
+                this.registerPointerProperties(element, type);
             }
 
             //Bind additional pointer settings
             for ( var key in settings ){
-                element.setPointerSetting(key, settings[key]);
+                element.setPointerSetting(key, settings[key], type);
             }
 
             //Register pointer element
-            this.matchedElements.push(element);
+            if ( this.matchedElements.indexOf(element) === -1 ) {
+                this.matchedElements.push(element);
+            }
         },
         ajax : Ajax,
 
         //Returns matched elements by given type
-        allMatchedElements(type){
-            if ( ! type ){
+        allMatchedElements(searchByType){
+            if ( ! searchByType ){
                 return this.matchedElements;
             }
 
             var elements = [];
 
             for ( var i = 0; i < this.matchedElements.length; i++ ) {
-                if ( this.matchedElements[i].getPointerSetting('type') == type ){
+                if ( searchByType in this.matchedElements[i].getPointerSettings() ){
                     elements.push(this.matchedElements[i]);
                 }
             }
