@@ -11,10 +11,7 @@ var Linkable = {
             return;
         }
 
-        console.log('booting linkable');
-
         this.registerAllLinks();
-        // this.bindEvents();
     },
 
     isLinkableUrl(href){

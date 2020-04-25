@@ -190,9 +190,14 @@ var Pencils = {
                     Pencils.onClick(list[i]);
 
                     e.preventDefault();
-                    break;
+
+                    this.removeAdditionalPointers(null, e.originalPointer||list[i]);
+                    return;
                 }
             }
+
+            //Remove all additional pointers on missclick
+            this.removeAdditionalPointers();
 
             return false;
         });
@@ -260,6 +265,7 @@ var Pencils = {
                 pencil.additionalPointers.push(clonedPointer);
 
                 //This is offset of given pointer
+                clonedPointer.originalPointer = pencil;
                 clonedPointer.leftOffset = (clonedPointer.offsetWidth / 2) + offsetLeft;
 
                 //We want animation
@@ -274,8 +280,24 @@ var Pencils = {
             }
         }
     },
-    removeAdditionalPointers(pointer){
+    removeAdditionalPointers(pointer, excepPointer){
         var removed = false;
+
+        //Find active pointer with additional pointers
+        if ( !pointer ){
+            for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+                let additional = CAEditor.matchedElements[i]._CAPencil.additionalPointers;
+
+                if ( additional && additional.length > 0 ) {
+                    pointer = CAEditor.matchedElements[i]._CAPencil;
+                    break;
+                }
+            }
+        }
+
+        if ( !pointer || pointer === excepPointer ){
+            return;
+        }
 
         //Remove multipencils
         if ( pointer.additionalPointers && pointer.additionalPointers.length > 0 ) {
