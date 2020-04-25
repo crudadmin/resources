@@ -17,7 +17,7 @@ return [
     'languages-add-new' => _('Pridať nový jazyk'),
     'languages-update' => _('Upravujete jazyk :name'),
     'languages-name' => _('Názov jazyka'),
-    'languages-title' => _('Zadajte názov jazyka'),
+    'languages-title' => _('Upravte texty na web stránke pre vybranú jazykovú verziu.'),
     'languages-prefix' => _('Skratka jazyka'),
     'languages-prefix-title' => _('Zadajte skratku jazyka (en, sk, de, cz)...'),
     'languages-po-name' => _('Preklad .po súboru'),

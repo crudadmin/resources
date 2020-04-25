@@ -23,6 +23,11 @@
                     font-weight: 600;
                     @include fontSize(14px);
                 }
+
+                .breadcrumb__title {
+                    display: block;
+                    color: $darkText;
+                }
             }
         }
 

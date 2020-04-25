@@ -6,6 +6,7 @@
                 <li v-if="getGroup">{{ getGroup.name }}</li>
                 <li class="active">
                     <a class="active">{{ model.name }}</a>
+                    <span class="breadcrumb__title">{{ model.title }}</span>
                 </li>
             </ol>
         </section>
