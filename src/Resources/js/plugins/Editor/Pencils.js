@@ -283,38 +283,46 @@ var Pencils = {
     removeAdditionalPointers(pointer, excepPointer){
         var removed = false;
 
+        var pointers = [];
+
         //Find active pointer with additional pointers
         if ( !pointer ){
             for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
                 let additional = CAEditor.matchedElements[i]._CAPencil.additionalPointers;
 
-                if ( additional && additional.length > 0 ) {
-                    pointer = CAEditor.matchedElements[i]._CAPencil;
+                if (
+                    additional && additional.length > 0
+                    && CAEditor.matchedElements[i]._CAPencil !== excepPointer
+                ) {
+                    pointers.push(CAEditor.matchedElements[i]._CAPencil);
                     break;
                 }
             }
+        } else {
+            pointers.push(pointer);
         }
 
-        if ( !pointer || pointer === excepPointer ){
-            return;
-        }
+        //Turn off all active pointers
+        for ( var a = 0; a < pointers.length; a++ ) {
+            let pointer = pointers[a];
 
-        //Remove multipencils
-        if ( pointer.additionalPointers && pointer.additionalPointers.length > 0 ) {
-            for ( var i = 0; i < pointer.additionalPointers.length; i++ ){
-                pointer.additionalPointers[i].style.left = pointer.style.left;
+            //Remove multipencils
+            if ( pointer.additionalPointers && pointer.additionalPointers.length > 0 ) {
+                for ( var i = 0; i < pointer.additionalPointers.length; i++ ){
+                    pointer.additionalPointers[i].style.left = pointer.style.left;
 
-                setTimeout(function(){
-                    this.remove();
-                }.bind(pointer.additionalPointers[i]), 200);
+                    setTimeout(function(){
+                        this.remove();
+                    }.bind(pointer.additionalPointers[i]), 200);
 
-                removed = true;
+                    removed = true;
+                }
             }
+
+            pointer.additionalPointers = [];
+
+            Helpers.removeClass(pointer, Pencils.classNameSubmenu);
         }
-
-        pointer.additionalPointers = [];
-
-        Helpers.removeClass(pointer, Pencils.classNameSubmenu);
 
         return removed;
     },
