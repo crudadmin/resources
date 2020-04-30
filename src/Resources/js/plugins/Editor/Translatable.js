@@ -145,7 +145,7 @@ var Translatable = {
      */
     isInEditorElement(element){
         if ( element ) {
-            if ( element.hasPointer && elements.hasPointer.indexOf('translatable') > -1 ) {
+            if ( element.hasPointer && element.hasPointer.indexOf('translatable') > -1 ) {
                 return true;
             }
 
