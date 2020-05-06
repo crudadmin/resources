@@ -400,7 +400,7 @@
                 //Get parent model builder
                 var modelBuilder = this.getModelBuilder();
 
-                parent = modelBuilder.getParentTableName(this.model.withoutParent == true);
+                parent = modelBuilder.getParentTableName(this.model.without_parent == true);
 
                 return 'id-' + this.model.slug + this.field_key + '-' + this.depth_level + '-' + parent + '-' + this.index + '-' + this.langslug;
             },

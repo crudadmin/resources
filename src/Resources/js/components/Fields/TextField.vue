@@ -44,6 +44,7 @@
                     return;
 
                 var editor = CKEDITOR.instances[this.id];
+
                 if ( ! editor )
                     return;
 
