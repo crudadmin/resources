@@ -91,6 +91,11 @@ class CKFinderController extends Controller
 
     public function downloader()
     {
+        //If is newest ckfinder version installed
+        if ( CKFinderDownloadCommand::ckfinderExists() === true ) {
+            return;
+        }
+
         Artisan::call('ckfinder:download');
     }
 }
