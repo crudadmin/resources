@@ -3,6 +3,7 @@
 namespace Admin\Resources\Controllers;
 
 use Admin\Resources\Commands\CKFinderDownloadCommand;
+use Artisan;
 use CKSource\CKFinder\CKFinder;
 use Illuminate\Http\Request;
 use Psr\Container\ContainerInterface;
@@ -10,7 +11,6 @@ use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use \Illuminate\Routing\Controller;
-use Artisan;
 
 /**
  * Controller for handling requests to CKFinder connector.
@@ -41,7 +41,7 @@ class CKFinderController extends Controller
     private function setupForV4Kernel($ckfinder)
     {
         $ckfinder['resolver'] = function () use ($ckfinder) {
-            $commandResolver = new \Admin\Resources\Plugins\CKFinder\Polyfill\CommandResolver($ckfinder);
+            $commandResolver = new \Admin\Resources\Helpers\CommandResolver($ckfinder);
             $commandResolver->setCommandsNamespace(\CKSource\CKFinder\CKFinder::COMMANDS_NAMESPACE);
             $commandResolver->setPluginsNamespace(\CKSource\CKFinder\CKFinder::PLUGINS_NAMESPACE);
 

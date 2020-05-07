@@ -34,11 +34,18 @@ class CKFinderDownloadCommand extends Command
         return realpath(__DIR__.'/../../ckfinder/'.$path);
     }
 
+    public static function getVersionPath()
+    {
+        $targetPublicPath = self::getCKFinderPath('/public/');
+
+        return $targetPublicPath.'/.kernel_version';
+    }
+
     public static function ckfinderExists()
     {
         $targetPublicPath = self::getCKFinderPath('/public/');
 
-        return file_exists($targetPublicPath.'/ckfinder/ckfinder.js');
+        return file_exists($targetPublicPath.'/ckfinder/ckfinder.js') && @file_get_contents(self::getVersionPath()) == Kernel::MAJOR_VERSION;
     }
 
     /**
@@ -136,7 +143,7 @@ class CKFinderDownloadCommand extends Command
 
         $this->line('Moving the CKFinder connector to the ' . $targetConnectorPath . ' directory.');
         $fs->moveDirectory(
-            $targetPublicPath . '/ckfinder/core/connector/php/vendor/cksource/ckfinder/src/CKSource/CKFinder',
+            $targetPublicPath.'/ckfinder/core/connector/php/vendor/cksource/ckfinder/src/CKSource/CKFinder',
             $targetConnectorPath,
             true
         );
@@ -146,6 +153,11 @@ class CKFinderDownloadCommand extends Command
          * Because we want _connector directory in git
          */
         @file_put_contents($targetConnectorPath.'/.gitkeep', '');
+
+        /*
+         * We want add installed kernel version
+         */
+        @file_put_contents($this->getVersionPath(), Kernel::MAJOR_VERSION);
 
         $this->line('Cleaning up.');
 
