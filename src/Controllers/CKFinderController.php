@@ -2,13 +2,15 @@
 
 namespace Admin\Resources\Controllers;
 
+use Admin\Resources\Commands\CKFinderDownloadCommand;
 use CKSource\CKFinder\CKFinder;
-use \Illuminate\Routing\Controller;
-use Psr\Container\ContainerInterface;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use \Illuminate\Routing\Controller;
+use Artisan;
 
 /**
  * Controller for handling requests to CKFinder connector.
@@ -21,10 +23,10 @@ class CKFinderController extends Controller
     public function __construct()
     {
         app()->bind('ckfinder.connector', function () {
-            $ckfinder = new \CKSource\CKFinder\CKFinder(require __DIR__.'/../Plugins/CKFinder/config.php');
+            $ckfinder = new \CKSource\CKFinder\CKFinder(require __DIR__.'/../../ckfinder/config.php');
 
-            if (Kernel::MAJOR_VERSION >= 4) {
-                $this->setupForV4PlusKernel($ckfinder);
+            if (Kernel::MAJOR_VERSION === 4) {
+                $this->setupForV4Kernel($ckfinder);
             }
 
             return $ckfinder;
@@ -36,7 +38,7 @@ class CKFinderController extends Controller
      *
      * @param \CKSource\CKFinder\CKFinder $ckfinder
      */
-    private function setupForV4PlusKernel($ckfinder)
+    private function setupForV4Kernel($ckfinder)
     {
         $ckfinder['resolver'] = function () use ($ckfinder) {
             $commandResolver = new \Admin\Resources\Plugins\CKFinder\Polyfill\CommandResolver($ckfinder);
@@ -79,6 +81,16 @@ class CKFinderController extends Controller
      */
     public function browserAction(ContainerInterface $container, Request $request)
     {
+        //We need download ckfinder
+        if ( CKFinderDownloadCommand::ckfinderExists() === false ) {
+            return view('admin::partials.ckfinder_download');
+        }
+
         return view('admin::partials.ckfinder_browser');
+    }
+
+    public function downloader()
+    {
+        Artisan::call('ckfinder:download');
     }
 }

@@ -3,6 +3,7 @@
 namespace Admin\Resources\Providers;
 
 use Admin\Resources\Commands\AdminUpdateCommand;
+use Admin\Resources\Commands\CKFinderDownloadCommand;
 use Illuminate\Support\ServiceProvider;
 
 class CommandsServiceProvider extends ServiceProvider
@@ -20,10 +21,9 @@ class CommandsServiceProvider extends ServiceProvider
 
     private function registerCommands()
     {
-        $this->app->bind('gogol::admin.update', AdminUpdateCommand::class);
-
         $this->commands([
-            'gogol::admin.update',
+            AdminUpdateCommand::class,
+            CKFinderDownloadCommand::class,
         ]);
     }
 }

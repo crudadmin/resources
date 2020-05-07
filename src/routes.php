@@ -31,5 +31,6 @@ Route::group(['middleware' => 'admin'], function () {
 
     //CKFinder
     Route::any('/admin/api/ckfinder/browser', 'CKFinderController@browserAction')->name('ckfinder_browser');
+    Route::any('/admin/api/ckfinder/download', 'CKFinderController@downloader')->name('ckfinder_downloader');
     Route::any('/admin/api/ckfinder/connector', 'CKFinderController@requestAction')->name('ckfinder_connector');
 });

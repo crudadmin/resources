@@ -22,7 +22,7 @@
     "autoload": {
         "psr-4": {
             "Admin\\Resources\\": "src",
-            "CKSource\\CKFinder\\": "src/Plugins/CKFinder/connector"
+            "CKSource\\CKFinder\\": "ckfinder/_connector"
         },
         "files": [
             "src/Helpers/helpers.php"
