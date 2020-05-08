@@ -102,6 +102,7 @@
                             :model.sync="model"
                             :rows.sync="rows"
                             :row.sync="row"
+                            :scopes="scopes"
                             :langid="selected_language_id ? selected_language_id : langid"
                             :progress.sync="progress"
                             :search="search"
@@ -155,7 +156,7 @@
     import ModelHelper from '../Helpers/ModelHelper.js';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel'],
+        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'scopes'],
 
         name : 'model-builder',
 

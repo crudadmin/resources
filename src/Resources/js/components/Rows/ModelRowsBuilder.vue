@@ -90,7 +90,7 @@ import Refreshing from '../Partials/Refreshing.vue';
 import TableRows from './TableRows.vue';
 
 export default {
-    props : ['model', 'row', 'rows', 'langid', 'progress', 'search', 'history', 'gettext_editor', 'iswithoutparent', 'activetab', 'depth_level'],
+    props : ['model', 'row', 'rows', 'langid', 'progress', 'search', 'history', 'gettext_editor', 'iswithoutparent', 'activetab', 'depth_level', 'scopes'],
 
     components : { Refreshing, TableRows },
 
@@ -459,7 +459,11 @@ export default {
                 this.$root.openAlert(this.trans('warning'), 'Nastala nečakana chyba, skúste neskôr prosím.<br><br>Príčinu zlyhania požiadavky môžete zistiť na tejto adrese:<br> <a target="_blank" href="'+url+'">'+url+'</a>', 'error');
             }
 
-            this.$http.get(this.$root.requests.get('rows', query), {
+            var url = this.$root.requests.get('rows', query);
+
+            this.addScopeParams(search_query);
+
+            this.$http.get(url, {
                 params : search_query,
             }).then(function(response){
                 //If has been component destroyed, and request is delivered... and some conditions
@@ -536,6 +540,19 @@ export default {
                     this.$root.errorResponseLayer(response, null);
                 }
             });
+        },
+        addScopeParams(data){
+            for ( var key in this.scopes ){
+                let params = this.scopes[key].join(';');
+
+                if ( !('scopes' in data) ){
+                    data['scopes'] = {};
+                }
+
+                data['scopes'][key] = params;
+            }
+
+            return data;
         },
         destroyTimeout(){
             if ( this.updateTimeout )
