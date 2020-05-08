@@ -240,8 +240,9 @@
                 }
 
                 //If is current date value in datepicker
-                if ( field.default && this.isDatepickerField(field) && field.default.toUpperCase() == 'CURRENT_TIMESTAMP' )
+                if ( field.default && this.isDatepickerField(field) && default_value.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
                     default_value = moment().format(this.$root.fromPHPFormatToMoment(field.date_format));
+                }
 
                 //Get value by other table
                 if ( field.default )
