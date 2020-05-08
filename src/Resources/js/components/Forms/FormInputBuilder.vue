@@ -268,7 +268,7 @@
                 }
 
                 //If is current date value in datepicker
-                if ( field.default && this.isDatepickerField(field) && field.default.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
+                if ( field.default && this.isDatepickerField(field) && defaultValue.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
                     defaultValue = moment().format(this.$root.fromPHPFormatToMoment(field.date_format));
                 }
 
