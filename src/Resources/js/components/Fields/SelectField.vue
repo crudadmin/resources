@@ -26,9 +26,11 @@
                     </div>
                     <div class="modal-body">
                         <model-builder
+                            :key="modelBuilderId"
                             :langid="langid"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"
+                            :scopes="canAddScopes"
                             :model_builder="getRelationModel">
                         </model-builder>
                     </div>
@@ -74,6 +76,13 @@
         },
 
         computed: {
+            modelBuilderId(){
+                if ( this.field.canAdd == 'parent' ){
+                    return this.id+this.row.id;
+                }
+
+                return 'key';
+            },
             getModalId(){
                 return 'form-relation-modal-'+this.id;
             },
@@ -114,7 +123,17 @@
              * and also when is filter activated, then show just when is filter also selected
              */
             canAddRow(){
-                return this.field.canAdd === true && this.$parent.hasparentmodel !== false && (!this.getFilterBy || this.filterBy);
+                return (this.field.canAdd === true || ['parent'].indexOf(this.field.canAdd) > -1)
+                       && this.$parent.hasparentmodel !== false && (!this.getFilterBy || this.filterBy);
+            },
+            canAddScopes(){
+                if ( ['parent'].indexOf(this.field.canAdd) == -1 ){
+                    return {};
+                }
+
+                return {
+                    'filterByParentField' : [this.model.table, this.field_key, this.row.id],
+                };
             },
             getFilterBy(){
                 if ( !('filterBy' in this.field) )
