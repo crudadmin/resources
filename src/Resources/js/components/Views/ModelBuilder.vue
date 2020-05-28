@@ -110,18 +110,18 @@
                     <div :class="['col-lg-'+(12 - activeGridSize)]" class="col col--form col-md-12 col-sm-12" v-show="canShowForm" v-if="activetab!==false">
                         <form-builder
                             :formID="formID"
-                            :progress.sync="progress"
-                            :rows.sync="rows"
+                            :progress="progress"
+                            :rows="rows"
                             :history="history"
                             :model="model"
                             :langid="selected_language_id ? selected_language_id : langid"
-                            :selectedlangid.sync="selected_language_id ? selected_language_id : langid"
+                            :selectedlangid="selected_language_id ? selected_language_id : langid"
                             :canaddrow="canAddRow"
                             :hasparentmodel="hasparentmodelMutated"
-                            :gettext_editor.sync="gettext_editor"
+                            :gettext_editor="gettext_editor"
                             :depth_level="depth_level"
                             :parentActiveGridSize="activeGridSize"
-                            :row.sync="row"
+                            :row="row"
                         ></form-builder>
                     </div>
                     <!--/.col (left) -->
@@ -129,15 +129,15 @@
                     <!-- right column -->
                     <div :class="['col-lg-'+(12-(12-activeGridSize))]" class="col col--rows col-md-12 col-sm-12" v-show="canShowRows">
                         <model-rows-builder
-                            :model.sync="model"
-                            :rows.sync="rows"
-                            :row.sync="row"
+                            :model="model"
+                            :rows="rows"
+                            :row="row"
                             :langid="selected_language_id ? selected_language_id : langid"
-                            :progress.sync="progress"
+                            :progress="progress"
                             :search="search"
                             :iswithoutparent="isWithoutParentRow"
                             :activetab="activetab"
-                            :gettext_editor.sync="gettext_editor"
+                            :gettext_editor="gettext_editor"
                             :depth_level="depth_level"
                             :history="history">
                         </model-rows-builder>
@@ -951,12 +951,14 @@
                 return true;
             },
             canShowForm(){
-                if ( !this.isOpenedRow && !this.canAddRow || this.isOpenedRow && this.model.editable == false)
+                if ( (!this.isOpenedRow && !this.canAddRow || this.isOpenedRow && this.model.editable == false) && !this.model.isInParent() ) {
                     return false;
+                }
 
                 //If user does not have write permissions
-                if ( !this.isOpenedRow && this.model.hasAccess('insert') == false )
+                if ( !this.isOpenedRow && this.model.hasAccess('insert') == false ) {
                     return false;
+                }
 
                 return true;
 

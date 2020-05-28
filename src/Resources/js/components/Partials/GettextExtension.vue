@@ -52,7 +52,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" @click="saveAndClose" class="btn btn-primary">{{ trans('gettext-save') }}</button>
+                        <button type="button" @click="saveAndClose" data-save-translations class="btn btn-primary">{{ trans('gettext-save') }}</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->

@@ -17,13 +17,15 @@
                 <option v-for="mvalue in missingValueInSelectOptions" :value="mvalue" :selected="hasValue(mvalue, value, isMultiple)">{{ mvalue }}</option>
                 <option v-for="data in fieldOptions" :selected="hasValue(data[0], value, isMultiple)" :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
             </select>
-            <button v-if="canAddRow" data-add-relation-row @click="allowRelation = true" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-success"><i class="fa fa-plus"></i></button>
+            <button v-if="canAddRow" data-add-relation-row @click="allowRelation = true" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-success">
+                <i class="fa fa-plus"></i>
+            </button>
         </div>
         <small>{{ field.title }}</small>
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+field_key" value="1">
 
         <!-- Modal for adding relation -->
-        <div class="modal fade" v-if="canAddRow && allowRelation" :id="getModalId" tabindex="-1" role="dialog">
+        <div class="modal fade" v-if="canAddRow" :id="getModalId" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -32,6 +34,7 @@
                     </div>
                     <div class="modal-body">
                         <model-builder
+                            v-if="allowRelation"
                             :langid="langid"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"

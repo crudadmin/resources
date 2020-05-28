@@ -6,18 +6,18 @@
             <span>{{ row.name }}</span>
             <i v-if="hasSubmenu" class="fa side-arrow" :class="{ 'fa-angle-down' : opened, 'fa-angle-left' : !opened }"></i>
           </a>
-          <ul v-if="hasSubmenu" v-show="opened" class="treeview-menu">
+          <ul v-if="hasSubmenu" class="treeview-menu">
             <sidebar-row v-for="(subrow, key) in row.submenu" :key="key" :row="subrow" :parent="levels"></sidebar-row>
           </ul>
         </router-link>
 
-        <li class="treeview treeview-list" v-if="isActive && isGroup && hasChilds" :data-slug="row.slug" >
+        <li class="treeview treeview-list" :class="{ active : opened }" v-if="isActive && isGroup && hasChilds" :data-slug="row.slug" >
           <a @click="toggleMenu">
             <i class="fa icon" :class="faMigrator(row.icon||'fa-folder-open far')"></i>
             <span>{{ row.name }}</span>
             <i v-if="hasSubmenu" class="fa side-arrow" :class="{ 'fa-angle-down' : opened, 'fa-angle-left' : !opened }"></i>
           </a>
-          <ul v-if="hasSubmenu" v-show="opened" class="treeview-menu">
+          <ul v-if="hasSubmenu" class="treeview-menu">
             <sidebar-row v-for="(subrow, key) in row.submenu" :key="key" :row="subrow" :parent="levels"></sidebar-row>
           </ul>
         </li>
@@ -55,6 +55,14 @@ export default {
 
     mounted(){
         this.openTree();
+
+        eventHub.$on('closeMenu', parent => {
+            if ( this.getParentLi() == parent || this == parent ){
+                return;
+            }
+
+            this.opened = false;
+        });
     },
 
     computed: {
@@ -71,17 +79,31 @@ export default {
             return false;
         },
         isActive(){
-            return this.row.active !== false && this.row.in_menu !== false;
+            return this.row.active !== false && this.row.in_menu !== false || this.opened == true;
         }
     },
 
     methods: {
+        getParentLi(){
+            var parent = this,
+                parents = [];
+
+            while(parent.$options.name == 'sidebar-row') {
+                parent = parent.$parent;
+
+                parents.push(parent);
+            }
+
+            return parents[parents.length - 2]||this;
+        },
         //Recursively open all menu items way up
         openTree(){
             //If is opened actual model
-            if ( this.row.table != this.$router.history.current.params.model )
+            if ( this.row.table != this.$router.history.current.params.model ) {
                 return;
+            }
 
+            //We need open all parent menus
             var parent = this;
             while(parent.$options.name == 'sidebar-row') {
                 parent.opened = true;
@@ -91,6 +113,9 @@ export default {
         },
         toggleMenu(){
             this.opened = !this.opened;
+
+            //Close all menus which does not have same parent li as selected one
+            eventHub.$emit('closeMenu', this.getParentLi());
         },
     }
 }

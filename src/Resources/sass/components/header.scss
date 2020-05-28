@@ -102,6 +102,7 @@ aside.main-sidebar {
 
                 .treeview-menu {
                     padding-left: 15px;
+                    display: none;
                 }
 
                 a {
@@ -147,6 +148,12 @@ aside.main-sidebar {
 
                     a {
                         color: #41464C;
+                    }
+                }
+
+                &.active {
+                    > .treeview-menu {
+                        display: block;
                     }
                 }
             }
