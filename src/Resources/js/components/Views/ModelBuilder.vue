@@ -309,7 +309,7 @@
             },
             parentrow(row, oldrow){
                 //When parent row has been changed, then load children rows
-                if ( ! _.isEqual(row, oldrow) && row.id != oldrow.id ){
+                if ( ! _.isEqual(row, oldrow) && (row.id != oldrow.id || this.model.isInParent()) ){
                     var children = null;
 
                     //Get rows builder child

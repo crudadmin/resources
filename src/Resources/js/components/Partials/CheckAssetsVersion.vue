@@ -17,7 +17,7 @@ export default {
 
     computed: {
         isDifferent(){
-            if ( this.version == 'dev-master' )
+            if ( this.version == 'dev-master' || this.version_assets == 'dev-master' )
                 return false;
 
             return this.version != this.version_assets;
