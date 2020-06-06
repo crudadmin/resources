@@ -2,7 +2,7 @@
     <div :class="{ 'nav-tabs-custom' : hasTabsAvailable }">
         <ul class="nav nav-tabs" v-if="hasTabsAvailable">
             <li class="nav-item" :class="{ 'model-tab' : isModel(tab), active : activetab == $index }" v-for="(tab, $index) in getTabs" v-if="isTab(tab) && !tab.model || isModel(tab)" v-show="isTabVisible(tab)" data-tabs :data-depth="depth_level" :default-tab="isModel(tab) && getModel(tab.model) ? false : ''" :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table" @click="activetab = $index">
-                <a data-toggle="tab" class="nav-link" aria-expanded="true">
+                <a data-toggle="tab" class="nav-link" :class="{ active : activetab == $index }" aria-expanded="true">
                     <i v-if="getTabIcon(tab)" class="fa nav-link--icon-left" :class="[faMigrator(getTabIcon(tab))]"></i>
                     {{ getTabName(tab)||trans('general-tab') }}
                 </a>
@@ -158,7 +158,7 @@ export default {
             }
 
             //Add models into tabs if neccesary
-            if ( this.childs == true )
+            if ( this.childs == true ) {
                 for ( var key in this.model.childs )
                 {
                     var child_model = typeof this.model.childs[key] === 'string' ? this.model : this.model.childs[key];
@@ -174,6 +174,7 @@ export default {
                             });
                     }
                 }
+            }
 
             return tabs;
         },
