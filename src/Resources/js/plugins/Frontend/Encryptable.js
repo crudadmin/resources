@@ -10,10 +10,11 @@
      */
     if ( ! window.decryptText ) {
         window.decryptText = function(text) {
-            if ( ! text )
+            if ( ! text ) {
                 return;
+            }
 
-            return atob(atob(text).slice(3));
+            return atob(atob(text+'==').slice(3));
         };
     }
 
