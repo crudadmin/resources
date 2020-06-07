@@ -14,7 +14,7 @@
                 return;
             }
 
-            return atob(atob(text+'==').slice(3));
+            return atob(atob(text).slice(3));
         };
     }
 
