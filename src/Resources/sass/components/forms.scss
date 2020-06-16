@@ -1,6 +1,6 @@
 .crudadmin-form {
     .nav-tabs-custom {
-        > .nav-tabs > li > a {cursor: pointer}
+        > .nav-tabs > li > a { cursor: pointer; color: inherit }
         > .nav-tabs > li[has-error] {border-top-color: #dd4939;}
         > .nav-tabs > li[has-error] i {margin-left: -1px;}
         > .nav-tabs > li[has-error] i.fa-exclamation-triangle ~ i {display: none}
@@ -285,6 +285,10 @@
 
         .chosen-drop {
             border-color: $inputBorderColor;
+
+            .chosen-results {
+                padding-top: 3px;
+            }
         }
 
         .search-choice {
