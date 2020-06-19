@@ -13,8 +13,11 @@
                             <i class="--icon-right fa fa-angle-down"></i>
                         </button>
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
-                            <li @click="$event.stopPropagation()" v-for="(column, key) in enabled_columns" v-if="canShowColumn(column, key)" :class="{ active : column.enabled }">
-                                <label><input type="checkbox" :data-column="key" v-model="column.enabled"> {{ columnName(key, column.name) }}</label>
+                            <li @click="$event.stopPropagation()" v-for="(column, key) in enabled_columns" v-if="canShowColumn(column, key)" :class="{ active : column.enabled }" class="--no-item-padding">
+                                <label class="--dropdown-item-padding --dropdown-item-vertical">
+                                    <input type="checkbox" :data-column="key" v-model="column.enabled">
+                                    {{ columnName(key, column.name) }}
+                                </label>
                             </li>
                             <li class="default-reset"><a href="#" @click.prevent="resetColumnsList">{{ trans('default') }}</a></li>
                         </ul>

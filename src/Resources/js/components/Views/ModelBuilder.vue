@@ -703,17 +703,20 @@
                 this.$root.languages_active = languages_active ? true : false;
             },
             getSearchingColumnName(column){
-                if ( column == 'id' )
+                if ( column == 'id' ) {
                     return this.trans('number');
+                }
 
-                if ( column == 'created_at' )
+                if ( column == 'created_at' ) {
                     return this.trans('created-at');
+                }
 
-                if ( ! column || !(column in this.model.fields) )
-                    return this.trans('search-all');
+                if ( ! column || !(column in this.model.fields) ) {
+                    return this.model.getSettings('columns.'+column+'.name', this.trans('search-all'));
+                }
 
                 var field = this.model.fields[column],
-                        name = field.name && field.name.length > 20 ? field.name.substr(0, 20) + '...' : field.name;
+                    name = field.name && field.name.length > 20 ? field.name.substr(0, 20) + '...' : field.name;
 
                 return name;
             },
@@ -988,16 +991,16 @@
                 var keys = [];
 
                 //Get searchable fields
-                for ( var key in this.model.fields )
-                {
+                for ( var key in this.model.fields ) {
                     var field = this.model.fields[key];
 
                     if ( 'belongToMany' in field
                             || 'multiple' in field
                             || ( 'removeFromForm' in field && 'hidden' in field )
                             || field.type == 'password'
-                    )
+                    ) {
                         continue;
+                    }
 
                     keys.push(key);
                 }

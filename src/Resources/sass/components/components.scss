@@ -48,10 +48,17 @@
 
         li, .dropdown-item {
             @include fontSize(14px);
-            padding: 0 11px;
             color: $darkText;
-            line-height: 40px;
             cursor: pointer;
+
+            &:not(.--no-item-padding), .--dropdown-item-padding {
+                padding: 10px 12px;
+            }
+
+            .--dropdown-item-vertical {
+                display: flex;
+                align-items: center;
+            }
 
             i {
                 &.--icon-left { margin-right: 3px; }
