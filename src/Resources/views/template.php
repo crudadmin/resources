@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
 <html lang="<?php echo substr(Gettext::getLocale(app()->getLocale()) ?: '', 0, 2) ?>">
 <head>
   <meta charset="utf-8">
@@ -10,10 +6,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta name="csrf-token" content="<?php echo csrf_token() ?>">
   <meta name="root" content="<?php echo asset('admin') ?>">
   <title><?php echo config('admin.name') ?> - <?php echo trans('admin::admin.admin') ?></title>
-  <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-  <!-- Theme style -->
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/lightbox/lightbox.min.css') ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datatables/dataTables.bootstrap.css') ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/chosen/chosen.css?v=').Admin::getAssetsVersion() ?>">

@@ -18,7 +18,7 @@
                         </button>
                         <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
                             <i class="fa fa-history"></i>
-                            {{ trans('history.show') }}
+                            {{ model.getSettings('buttons.show-history', trans('history.show')) }}
                         </button>
 
                         <div class="dropdown multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage && languages.length > 1">
