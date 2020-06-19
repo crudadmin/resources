@@ -33,6 +33,13 @@
                 }
             }
 
+            /* Last inline group */
+            &:last-child {
+                .fields-group__wrapper > div > .row > .fields-group__item .field-wrapper .form-group {
+                    margin-bottom: 0;
+                }
+            }
+
             &[data-fields="2"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 2); }
             &[data-fields="3"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 3); }
             &[data-fields="4"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 4); }
@@ -44,11 +51,17 @@
         &:not(.fields-group--inline) > .fields-group__wrapper {
             margin-bottom: $form-group-margin-bottom;
 
+            /* last field in group */
             > div > .row {
                 > .fields-group__item:last-child > .field-wrapper > .form-group:last-child {
                     margin-bottom: 0;
                 }
             }
+        }
+
+        /* last Group in group */
+        > .fields-group__wrapper > .card-body > .row > .fields-group.fields-group__item:last-child .fields-group__wrapper {
+            margin-bottom: 0;
         }
     }
 }
@@ -137,6 +150,8 @@
      * Checkboxes
      */
     label.checkbox {
+        margin-bottom: 0;
+
         span {
             color: #555;
             font-weight: normal;
