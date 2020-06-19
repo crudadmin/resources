@@ -28,11 +28,11 @@
                     <fragment :key="index" v-for="(item, index) in group.fields">
                         <div
                             v-if="isField(item) && canRenderField(model.fields[item])"
-                            v-for="langslug in getFieldLangs(model.fields[item])"
-                            v-show="canShowField(model.fields[item]) && canShowLanguageField(model.fields[item], langslug, inputlang)"
                             class="fields-group__item col-12">
                             <form-input-builder
-                                :key="item"
+                                v-for="langslug in getFieldLangs(model.fields[item])"
+                                v-show="canShowField(model.fields[item]) && canShowLanguageField(model.fields[item], langslug, inputlang)"
+                                :key="item+'-'+langslug"
                                 :history="history"
                                 :model="model"
                                 :langid="langid"

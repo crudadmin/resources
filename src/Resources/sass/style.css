@@ -17,12 +17,6 @@
 .content .box-header { min-height: 51px }
 .content .box-header > *:not(div):not(button) { position: relative; top: 6px; }
 .content .box-header .form-group.pull-right { margin: 0 }
-.content .box-header .multi-languages .dropdown-toggle { padding: 4px 10px }
-.content .box-header .multi-languages .dropdown-toggle.has-error { border: 1px solid #dd4b39; color: #dd4b39; }
-.content .box-header .multi-languages .dropdown-menu li .fa { display: none; }
-.content .box-header .multi-languages .dropdown-menu li.has-error a { color: #dd4b39; }
-.content .box-header .multi-languages .dropdown-menu li.has-error .fa { display: inline-block }
-.content .box-header .multi-languages span.text { margin: 0 5px }
 .content .box-limit { padding-bottom: 0 }
 
 @media screen and (max-width: 768px) {

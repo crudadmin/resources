@@ -196,3 +196,24 @@
     &.--active { background: #32AB45; }
     &.--inactive { background: #E7492E; }
 }
+
+.box-header__actions {
+    .multi-languages {
+        .dropdown-toggle {
+            padding: 4px 10px;
+
+            &.has-error {
+                border: 1px solid $validationErrorcolor;
+                color: $validationErrorcolor;
+            }
+        }
+
+        .dropdown-menu li {
+            text-align: right;
+
+            .fa { display: none; }
+            &.has-error a { color: $validationErrorcolor; }
+            &.has-error .fa { display: inline-block }
+        }
+    }
+}
