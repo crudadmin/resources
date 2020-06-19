@@ -59,8 +59,18 @@
             }
         }
 
+        /* Last field in tabs */
+        > .fields-tabs__wrapper > div > .row > .fields-group__item:last-child > .field-wrapper > .form-group  {
+            margin-bottom: 0;
+        }
+
         /* last Group in group */
         > .fields-group__wrapper > .card-body > .row > .fields-group.fields-group__item:last-child .fields-group__wrapper {
+            margin-bottom: 0;
+        }
+
+        /* last Tab in Group */
+        .fields-tabs__wrapper > div > .row > .tab--parent:last-child > .nav-tabs-custom > .tab-content--form {
             margin-bottom: 0;
         }
     }
