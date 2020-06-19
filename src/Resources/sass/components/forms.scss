@@ -23,11 +23,13 @@
 
     .fields-group {
         &.fields-group--inline {
-            > .fields-group__wrapper > div > .row {
-                flex-direction: row;
+            > .fields-group__wrapper {
+                > div > .row {
+                    flex-direction: row;
 
-                > .fields-group__item {
-                    flex: inherit;
+                    > .fields-group__item {
+                        flex: inherit;
+                    }
                 }
             }
 
@@ -39,7 +41,7 @@
             &[data-fields="7"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 7); }
         }
 
-        > .fields-group__wrapper {
+        &:not(.fields-group--inline) > .fields-group__wrapper {
             margin-bottom: $form-group-margin-bottom;
 
             > div > .row {
