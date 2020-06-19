@@ -309,7 +309,7 @@ const BaseComponent = (router) => {
                             }
 
                             //Support for inArray values for belongsToMany
-                            if ( typeof filter[k] == 'object' ) {
+                            if ( filter[k] && typeof filter[k] == 'object' ) {
                                 if ( filter[k].indexOf(array[key][1][k]) == -1 ) {
                                     continue loop1;
                                 }
