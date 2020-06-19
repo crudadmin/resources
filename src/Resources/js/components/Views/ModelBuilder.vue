@@ -994,7 +994,9 @@
                 for ( var key in this.model.fields ) {
                     var field = this.model.fields[key];
 
-                    if ( 'belongToMany' in field
+                    if (
+                            ! field.name
+                            || 'belongToMany' in field
                             || 'multiple' in field
                             || ( 'removeFromForm' in field && 'hidden' in field )
                             || field.type == 'password'
