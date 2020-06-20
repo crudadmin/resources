@@ -10,7 +10,7 @@
         </div>
 
         <!-- Table value -->
-        <span :data-toggle="fieldValue.length > settings.string_limit ? 'tooltip' : ''" :data-original-title="onlyEncodedTitle" v-html="fieldValueLimitedAndEncoded"></span>
+        <span v-else :data-toggle="fieldValue.length > settings.string_limit ? 'tooltip' : ''" :data-original-title="onlyEncodedTitle" v-html="fieldValueLimitedAndEncoded"></span>
     </div>
 </template>
 
