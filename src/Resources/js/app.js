@@ -6,6 +6,9 @@ window.eventHub = new Vue();
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource'
 import Fragment from 'vue-fragment'
+import globalVueMixins from './mixins/globalVueMixins';
+
+Vue.mixin(globalVueMixins);
 
 //Uses
 Vue.use(VueResource);
