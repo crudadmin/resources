@@ -608,7 +608,7 @@ export default {
             this.destroyTimeout();
 
             //Disable autorefreshing when is one row
-            if ( this.isEnabledAutoSync === false ){
+            if ( this.isEnabledAutoSync === false && force !== true ){
                 return;
             }
 
