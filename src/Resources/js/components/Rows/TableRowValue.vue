@@ -1,8 +1,8 @@
 <template>
-    <div v-if="fieldValue != null">
+    <div v-if="hasFieldValue">
 
         <!-- File -->
-        <div v-if="isFile(field)" class="filesList">
+        <div v-if="isFile()" class="filesList">
             <div v-for="(file, index) in getFiles">
                 <file :file="file" :field="field" :model="model" :image="image"></file>
                 <span v-if="index != getFiles.length - 1">, </span>
@@ -10,7 +10,7 @@
         </div>
 
         <!-- Table value -->
-        <span v-else :data-toggle="fieldValue.length > getStringLimit ? 'tooltip' : ''" :data-original-title="onlyEncodedTitle" v-html="fieldValueLimitedAndEncoded"></span>
+        <span :data-toggle="fieldValue.length > settings.string_limit ? 'tooltip' : ''" :data-original-title="onlyEncodedTitle" v-html="fieldValueLimitedAndEncoded"></span>
     </div>
 </template>
 
@@ -18,31 +18,41 @@
 import File from '../Partials/File.vue';
 
 export default {
-    props : ['model', 'item', 'field', 'name', 'image'],
+    props : ['model', 'item', 'field', 'name', 'image', 'columns', 'settings'],
 
     components : { File },
 
+    /*
+     * Performance tests
+     */
+    // created(){
+    //     this.$a = window.startTest();
+    // },
+
+    // mounted(){
+    //     window.endTest(this.$a);
+    // },
+
     computed: {
         getFiles(){
-            var value = this.fieldValue;
+            var value = this.fieldValue||[];
 
-            if ( ! value )
-                return [];
-
-            if ( $.isArray(value) )
+            if ( $.isArray(value) ) {
                 return value;
+            }
 
             return [ value ];
         },
-        fieldValue()
-        {
-            var field = this.field in this.model.fields ? this.model.fields[this.field] : null,
+        hasFieldValue(){
+            return _.isNil(this.fieldValue) === false;
+        },
+        fieldValue() {
+            var field = this.settings.field,
                 row = this.item,
                 rowValue = this.field in row ? this.getMutatedValue(row[this.field], field) : '';
 
             //Get select original value
-            if ( field )
-            {
+            if ( field ) {
                 var isRadio = field.type == 'radio';
 
                 if ( field.type == 'select' || isRadio ) {
@@ -97,27 +107,26 @@ export default {
                 return this.returnDateFormat([rowValue]);
             }
 
-            var add_before = this.model.getModelProperty('settings.columns.'+this.field+'.add_before'),
-                add_after = this.model.getModelProperty('settings.columns.'+this.field+'.add_after');
+            var add_before = this.settings.add_before,
+                add_after = this.settings.add_after;
 
             //If is object
-            if ( typeof rowValue == 'object' )
+            if ( typeof rowValue == 'object' ) {
                 return rowValue;
+            }
 
             return (rowValue || rowValue == 0) ? ((add_before||'') + rowValue + (add_after||'')) : null;
         },
         onlyEncodedTitle(){
             //If is not encoded column, then return empty value
-            if ( this.model.getModelProperty('settings.columns.'+this.field+'.encode', true) === false )
+            if ( this.settings.encode === false ) {
                 return '';
+            }
 
             return this.fieldValue;
         },
         fieldValueLimitedAndEncoded(){
             return this.encodeValue(this.stringLimit(this.fieldValue));
-        },
-        getStringLimit(){
-            return this.getFieldLimit(Object.keys(this.$parent.$parent.columns).length < 5 ? 40 : 20)
         },
     },
 
@@ -130,28 +139,31 @@ export default {
             }).join(', ');
         },
         stringLimit(string){
-            var limit = this.getStringLimit;
+            var limit = this.settings.string_limit;
 
-            if ( limit != 0 && string.length > limit && this.model.getModelProperty('settings.columns.'+this.field+'.encode', true) !== false )
+            if ( limit != 0 && string.length > limit && this.settings.encode !== false ) {
                 return string.substr(0, limit) + '...';
+            }
 
             return string;
         },
         encodeValue(string){
-            var isReal = this.isRealField(this.field);
+            var field = this.settings.field;
 
-            //Check if column can be encoded
-            if ( isReal && this.model.getModelProperty('settings.columns.'+this.field+'.encode', true) == true ) {
-                string = $(document.createElement('div')).text(string).html();
-            }
+            if ( this.settings.isRealField ) {
+                //Check if column can be encoded
+                if ( this.settings.encode == true ) {
+                    string = $(document.createElement('div')).text(string).html();
+                }
 
-            if ( this.isRealField(this.field) && this.model.fields[this.field].type == 'text' && parseInt(this.model.fields[this.field].limit) === 0) {
-                return string.replace(/\n/g, '<br>');
-            }
+                if ( field.type == 'text' && parseInt(field.limit) === 0) {
+                    return string.replace(/\n/g, '<br>');
+                }
 
-            //Is phone number
-            if ( this.isRealField(this.field) && this.model.fields[this.field].type == 'string' && ('phone' in this.model.fields[this.field] || 'phone_link' in this.model.fields[this.field]) ) {
-                return '<a href="tel:'+string+'">'+string+'</a>';
+                //Is phone number
+                if ( field.type == 'string' && ('phone' in field || 'phone_link' in field) ) {
+                    return '<a href="tel:'+string+'">'+string+'</a>';
+                }
             }
 
             return string;
@@ -166,13 +178,11 @@ export default {
             return table.split(',')[0];
         },
         getMutatedValue(value, field){
-            if ( field && 'locale' in field )
-            {
+            if ( field && 'locale' in field ) {
                 //Get default language
-                var dslug = this.$root.languages[0].slug;
+                var dslug = this.settings.default_slug;
 
-                if ( value && typeof value === 'object' )
-                {
+                if ( value && typeof value === 'object' ) {
                     //Get default language value
                     if ( dslug in value && (value[dslug] || value[dslug] == 0) ){
                         value = value[dslug];
@@ -180,23 +190,24 @@ export default {
 
                     //Get other available language
                     else for ( var key in value ) {
-                        if ( value[key] || value[key] === 0 )
-                        {
+                        if ( value[key] || value[key] === 0 ) {
                             value = value[key]
                             break;
                         }
                     }
 
-                    if ( typeof value == 'object' )
+                    if ( typeof value == 'object' ) {
                         value = '';
+                    }
                 }
             }
 
             //Return correct zero value
-            if ( value === 0 )
+            if ( value === 0 ) {
                 return 0;
+            }
 
-            return value||'';
+            return value;
         },
         getLanguageSelectOptions(array, model){
             model = this.$root.models[model];
@@ -205,48 +216,19 @@ export default {
                 language_id : this.$root.language_id,
             } : {};
 
-            return this.$root.languageOptions(array, this.model.fields[this.field], filter, false);
+            return this.$root.languageOptions(array, this.settings.field, filter, false);
         },
-        isFile(field){
-
-            if ( !(field in this.model.fields) )
-                return false;
-
-            if ( this.model.fields[field].type == 'file' && this.isEncodedValue(field) )
+        isFile(){
+            if (
+                this.settings.isRealField
+                && this.settings.field.type == 'file'
+                && this.settings.encode
+            ) {
                 return true;
+            }
 
             return false;
-
         },
-        isRealField(key){
-            return key in this.model.fields;
-        },
-        getFieldLimit(defaultLimit){
-            if ( this.isEncodedValue(this.field) === false )
-                return 0;
-
-            if ( this.isRealField(this.field) )
-            {
-                var field = this.model.fields[this.field],
-                        limit;
-
-                if ( 'limit' in field ) {
-                    limit = field.limit;
-                }
-
-                else {
-                    limit = this.model.getModelProperty('settings.columns.'+this.field+'.limit', defaultLimit);
-                }
-
-                return limit || limit === 0 ? limit : defaultLimit;
-            } else {
-                return this.model.getModelProperty('settings.columns.'+this.field+'.limit', defaultLimit);
-            }
-        },
-        isEncodedValue(key)
-        {
-            return this.model.getModelProperty('settings.columns.'+key+'.encode', true);
-        }
     }
 }
 </script>

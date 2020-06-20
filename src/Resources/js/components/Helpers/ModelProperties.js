@@ -27,12 +27,32 @@ var ModelProperties = (Model) => {
         var path = key.split('.'),
             obj = this;
 
-        for ( var i = 0; i < path.length; i++ ) {
-            if ( ! ( path[i] in obj ) ) {
-                return !_.isNil(value) ? value : null;
-            }
+        if ( !this._settings ) {
+            this._settings = {};
+        }
 
-            obj = obj[path[i]];
+        //Return from cache
+        if ( key in this._settings ) {
+            obj = this._settings[key];
+        }
+
+        //Find data in object
+        else {
+            for ( var i = 0; i < path.length; i++ ) {
+                if ( ! ( path[i] in obj ) ) {
+                    obj = undefined;
+                    break;
+                }
+
+                obj = obj[path[i]];
+            }
+        }
+
+        //Save into cache
+        this._settings[key] = obj;
+
+        if ( obj === undefined ) {
+            return !_.isNil(value) ? value : null
         }
 
         return obj;

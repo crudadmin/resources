@@ -3,6 +3,14 @@
         .box {
             position: relative;
 
+            .box-header {
+                .box-header__actions--synchronize {
+                    color: red;
+                    cursor: pointer;
+                    @include fontSize(12px);
+                }
+            }
+
             .box-body {
                 &.box-body--table {
                     padding: 0;
@@ -15,6 +23,11 @@
                     border: 0;
                     @include fontSize(14px);
                     color: $darkText;
+
+                    &.table-sm {
+                        td:first-child, th:first-child { padding-left: 0.75rem; padding-right: 0.3rem; }
+                        td:last-child, th:last-child { padding-right: 0.75rem; }
+                    }
 
                     th, td {
                         border-color: $inputBorderColor;
@@ -30,6 +43,7 @@
                             color: $blackText;
                             border-bottom: 0;
                             border-top: 0;
+                            vertical-align: middle;
 
                             i {
                                 display: inline-block;
@@ -51,6 +65,12 @@
                             &.td-id {
                                 text-align: center;
                                 width: 55px;
+                            }
+                        }
+
+                        tr {
+                           &.--active td {
+                                background: rgba(222, 227, 233, 0.2);
                             }
                         }
 

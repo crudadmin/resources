@@ -82,6 +82,7 @@
     <?php echo $__env->make('admin::partials.crudadmin-props', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
     <script src="<?php echo Gettext::getJSPlugin(AdminLocalization::class) ?>"></script>
+    <script src="<?php echo admin_asset('/js/Gettextable.js') ?>"></script>
     <!-- <link rel="stylesheet" type="text/css" href="<?php echo admin_asset('css/frontend.css') ?>"> -->
 
     <!-- jQuery 2.1.4 -->

@@ -3,7 +3,10 @@
         <div class="box-header">
             <div class="box-header__actions">
                 <div class="box-header__left">
-                    <h3 class="box-header__title">{{ title }} <small>({{ rows.count }})</small></h3>
+                    <div>
+                        <h3 class="box-header__title">{{ title }} <small>({{ rows.count }})</small></h3>
+                        <a data-toggle="tooltip" :title="_('Automatická synchronizácia záznamov v tabuľke je vypnutá')" class="box-header__actions--synchronize" @click="loadRows(true)" v-if="isEnabledAutoSync == false"><i class="fa fa-sync-alt"></i> {{ _('Synchronizácia vypnutá') }}</a>
+                    </div>
                 </div>
 
                 <div class="box-header__right">
@@ -57,6 +60,7 @@
         <div class="box-body box-body--table">
             <table-rows
                 :model="model"
+                :pagination="pagination"
                 :row.sync="row"
                 :buttons="rows.buttons"
                 :count="rows.count"
@@ -295,6 +299,15 @@ export default {
     },
 
     computed: {
+        isEnabledAutoSync(){
+            var limit = this.isPaginationEnabled ? this.pagination.limit : 0,
+                refreshingRowsLimit = 100;
+
+            return !(
+                this.rows.count > 0 && this.model.maximum === 1 ||
+                this.rows.count > refreshingRowsLimit && parseInt(limit) > refreshingRowsLimit
+            );
+        },
         hasAnyActions(){
             return this.hasButtons
                    || this.model.publishable && this.model.hasAccess('publishable')
@@ -594,11 +607,10 @@ export default {
         initTimeout(indicator, force){
             this.destroyTimeout();
 
-            var limit = this.isPaginationEnabled ? this.pagination.limit : 0;
-
             //Disable autorefreshing when is one row
-            if ( (this.rows.count > 0 && this.model.maximum === 1 || this.rows.count > 50 && parseInt(limit) > 50) && force !== true )
+            if ( this.isEnabledAutoSync === false ){
                 return;
+            }
 
             this.updateTimeout = setTimeout(function(){
                 this.loadRows(indicator);
@@ -718,6 +730,7 @@ export default {
         },
         getRefreshInterval(){
             var interval = this.$root.getModelProperty(this.model, 'settings.refresh_interval', 10000);
+
             //Infinity interval
             if ( interval == false ) {
                 interval = 3600 * 1000;

@@ -1,5 +1,5 @@
 <template>
-    <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="depth_level" :class="['table', { 'sortable' : model.sortable && orderby[0] == '_order' }]">
+    <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="depth_level" class="table" :class="{ 'sortable' : model.sortable && orderby[0] == '_order', 'table-sm' : isSmallTable }">
         <thead data-table-head>
             <tr>
                 <th class="select-row-checkbox" @click="toggleAllCheckboxes">
@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <draggable tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
-            <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id">
+            <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : checked.indexOf(item.id) > -1 }">
                 <td class="select-row-checkbox">
                     <div class="checkbox-box" @click="checkRow(item.id)">
                         <input type="checkbox" :checked="checked.indexOf(item.id) > -1">
@@ -25,8 +25,16 @@
                     </div>
                 </td>
 
-                <td v-for="(name, field) in columns" @click="checkRow(item.id, field)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
-                    <table-row-value :field="field" :name="name" :item="item" :model="model" :image="isImageField(field)"></table-row-value>
+                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="checkRow(item.id, field)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
+                    <table-row-value
+                        :settings="getCachableColumnsSettings(field)"
+                        :columns="columns"
+                        :field="field"
+                        :name="name"
+                        :item="item"
+                        :model="model"
+                        :image="isImageField(field)">
+                    </table-row-value>
                 </td>
 
                 <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
@@ -52,7 +60,7 @@ import TableRowValue from './TableRowValue.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['row', 'rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'checked', 'button_loading', 'depth_level'],
+    props : ['row', 'rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'checked', 'button_loading', 'pagination', 'depth_level'],
 
     components: { TableRowValue, draggable },
 
@@ -91,6 +99,12 @@ export default {
     },
 
     computed: {
+        isSmallTable(){
+            var limit = 100,
+                columnsCount = Object.keys(this.columns).length;
+
+            return this.pagination.limit >= limit && this.rows.count >= limit || columnsCount > 10;
+        },
         multipleCheckbox(){
             return this.checked.length > 0;
         },
@@ -226,6 +240,57 @@ export default {
     },
 
     methods: {
+        /*
+         * We need cache all settings for columns, for better performance
+         */
+        getCachableColumnsSettings(field){
+            if ( ! this._cacheColumnSettings ) {
+                this._cacheColumnSettings = {};
+            }
+
+            if ( field in this._cacheColumnSettings ){
+                return this._cacheColumnSettings[field];
+            }
+
+            var settings = {
+                isRealField: field in this.model.fields,
+                field : this.model.fields[field],
+                string_limit : this.getFieldLimit(field),
+                default_slug : this.$root.languages[0].slug,
+                field : field in this.model.fields ? this.model.fields[field] : null,
+                add_before : this.model.getSettings('columns.'+field+'.add_before'),
+                add_after : this.model.getSettings('columns.'+field+'.add_after'),
+                encode : this.model.getSettings('columns.'+field+'.encode', true),
+                limit : this.model.getSettings('columns.'+field+'.limit'),
+            };
+
+            return this._cacheColumnSettings[field] = settings;
+        },
+        getFieldLimit(fieldKey){
+            let defaultLimit = Object.keys(this.columns).length < 5 ? 40 : 20,
+                settingsLimit = this.model.getSettings('columns.'+fieldKey+'.limit');
+
+            if ( this.model.getSettings('columns.'+fieldKey+'.encode', true) === false ) {
+                return 0;
+            }
+
+            if ( fieldKey in this.model.fields ) {
+                let field = this.model.fields[fieldKey],
+                    limit;
+
+                if ( 'limit' in field ) {
+                    limit = field.limit;
+                }
+
+                else {
+                    limit = settingsLimit||defaultLimit;
+                }
+
+                return limit || limit === 0 ? limit : defaultLimit;
+            }
+
+            return settingsLimit||defaultLimit;
+        },
         addColumn(modifiedData, k, key, where, columns, except){
             if ( where in columns[k] && (columns[k][where] == key || columns[k][where] + '_id' == key) )
             {
