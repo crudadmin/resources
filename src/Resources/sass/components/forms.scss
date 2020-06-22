@@ -35,9 +35,19 @@
 
             /* Last inline group */
             &:last-child {
-                .fields-group__wrapper > div > .row > .fields-group__item .field-wrapper .form-group {
+                > .fields-group__wrapper & > div > .row > .fields-group__item .field-wrapper .form-group {
                     margin-bottom: 0;
                 }
+            }
+
+            /* every field in inline group */
+            & > .fields-group__wrapper > div > .row > .fields-group__item > .field-wrapper > .form-group:last-child {
+                margin-bottom: 0;
+            }
+
+            /* subinline group in inline group */
+            & > .fields-group__wrapper > div > .row > .fields-group__item.fields-group--inline > .fields-group__wrapper {
+                margin-bottom: 0;
             }
 
             &[data-fields="2"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 2); }
@@ -48,24 +58,26 @@
             &[data-fields="7"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 7); }
         }
 
-        &:not(.fields-group--inline) > .fields-group__wrapper {
+        .fields-group__wrapper {
             margin-bottom: $form-group-margin-bottom;
 
-            /* last field in group */
             > div > .row {
-                > .fields-group__item:last-child > .field-wrapper > .form-group:last-child {
-                    margin-bottom: 0;
+                > .fields-group__item:last-child > {
+                    /* last field in group */
+                    & .field-wrapper > .form-group:last-child {
+                        margin-bottom: 0;
+                    }
                 }
+            }
+
+            /* last Group in group */
+            & > div > .row > .fields-group.fields-group__item:last-child .fields-group__wrapper {
+                margin-bottom: 0;
             }
         }
 
         /* Last field in tabs */
         > .fields-tabs__wrapper > div > .row > .fields-group__item:last-child > .field-wrapper > .form-group  {
-            margin-bottom: 0;
-        }
-
-        /* last Group in group */
-        > .fields-group__wrapper > .card-body > .row > .fields-group.fields-group__item:last-child .fields-group__wrapper {
             margin-bottom: 0;
         }
 

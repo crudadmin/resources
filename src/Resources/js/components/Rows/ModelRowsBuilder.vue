@@ -39,8 +39,9 @@
                         </ul>
                     </div>
 
-                    <div class="pagination-limit" v-if="isPaginationEnabled" :title="trans('rows-count')">
+                    <div class="pagination-limit" :class="{ '--hidden-limit' : isHiddenMode }" v-if="isPaginationEnabled" :title="trans('rows-count')">
                         <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
+                            <option value="hide">{{ _('Skryť') }}</option>
                             <option v-for="count in pagination.limits">{{ count }}</option>
                         </select>
                     </div>
@@ -57,7 +58,7 @@
             </component>
         </div>
 
-        <div class="box-body box-body--table">
+        <div class="box-body box-body--table" v-show="!isHiddenMode">
             <table-rows
                 :model="model"
                 :pagination="pagination"
@@ -75,7 +76,7 @@
             </table-rows>
         </div>
 
-        <div class="box-footer">
+        <div class="box-footer" v-show="!isHiddenMode">
             <component
                 v-if="getComponents('table-footer').length > 0"
                 v-for="name in getComponents('table-footer')"
@@ -92,8 +93,9 @@
                     <pagination v-if="isPaginationEnabled" :rows="rows" :pagination="pagination" />
                 </div>
                 <div class="box-footer__right">
-                    <div class="pagination-limit" v-if="isPaginationEnabled" :title="trans('rows-count')">
+                    <div class="pagination-limit" :class="{ '--hidden-limit' : isHiddenMode }" v-if="isPaginationEnabled" :title="trans('rows-count')">
                         <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
+                            <option value="hide">{{ _('Skryť') }}</option>
                             <option v-for="count in pagination.limits">{{ count }}</option>
                         </select>
                     </div>
@@ -117,17 +119,14 @@ export default {
     components : { Refreshing, TableRows, Pagination },
 
     data : function(){
-        //Load pagination limit from localStorage
-        var limit = this.iswithoutparent ? 500 : ('limit' in localStorage ? localStorage.limit : this.model.getSettings('pagination.limit', 10));
-
         return {
             table : null,
 
             //Sorting
             pagination: {
                 position: 1,
-                limit : parseInt(limit),
-                limits : [ 5, 10, 20, 30, 50, 100, 200, 500 ],
+                limit : this.getLimitFromStorage(),
+                limits : [ 5, 10, 20, 30, 50, 100, 200, 500, 1000 ],
                 refreshing : false,
                 maxpages : 10,
             },
@@ -299,6 +298,9 @@ export default {
     },
 
     computed: {
+        isHiddenMode(){
+            return this.pagination.limit == 'hide';
+        },
         isEnabledAutoSync(){
             var limit = this.isPaginationEnabled ? this.pagination.limit : 0,
                 refreshingRowsLimit = 100;
@@ -408,6 +410,12 @@ export default {
     },
 
     methods: {
+        getLimitFromStorage(){
+            //Load pagination limit from localStorage
+            var limit = this.iswithoutparent ? 500 : ('limit' in localStorage ? localStorage.limit : this.model.getSettings('pagination.limit', 10));
+
+            return $.isNumeric(limit) ? parseInt(limit) : limit;
+        },
         resetColumnsList(){
             for ( var key in this.$children )
             {
@@ -465,22 +473,24 @@ export default {
                 return false;
             }
 
-            if ( indicator !== false )
+            if ( indicator !== false ) {
                 this.pagination.refreshing = true;
+            }
 
             // Remove last auto timeout
             this.destroyTimeout();
 
-            var search_query = {};
-            var query = {
-                model : this.model.slug,
-                parent : this.$parent.getParentTableName(this.model.without_parent),
-                subid : this.getParentRowId(),
-                langid : this.model.localization === true ? this.langid : 0,
-                limit : this.isPaginationEnabled ? this.pagination.limit : 0,
-                page : this.pagination.position,
-                count : this.refresh.count,
-            };
+            var search_query = {},
+                rowsLimit = this.isPaginationEnabled ? (this.isHiddenMode ? 1 : this.pagination.limit) : 0,
+                query = {
+                    model : this.model.slug,
+                    parent : this.$parent.getParentTableName(this.model.without_parent),
+                    subid : this.getParentRowId(),
+                    langid : this.model.localization === true ? this.langid : 0,
+                    limit : rowsLimit,
+                    page : this.pagination.position,
+                    count : this.refresh.count,
+                };
 
             //If is enabled searching
             if ( this.searching == true ){
@@ -719,7 +729,10 @@ export default {
         },
         setPosition(position, indicator){
             //We need allow reload position 1 also when max pages are 0 (when zero rows)
-            if ( position == 0 || (this.rows.count > 0 && position > Math.ceil(this.rows.count/this.pagination.limit)) ) {
+            if (
+                position == 0
+                || (this.rows.count > 0 && position > Math.ceil(this.rows.count/this.pagination.limit))
+            ) {
                 return;
             }
 

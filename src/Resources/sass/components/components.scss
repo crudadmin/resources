@@ -227,3 +227,10 @@
         }
     }
 }
+
+.pagination-limit {
+    &.--hidden-limit .form-control {
+        background: $primary;
+        color: white;
+    }
+}
