@@ -15,6 +15,7 @@
             :placeholder="field.placeholder || field_name"
             :disabled="disabled"
             :readonly="readonly"
+            @change="changeValue"
             @keyup="changeValue">
         <small>{{ field.title }}</small>
     </div>
