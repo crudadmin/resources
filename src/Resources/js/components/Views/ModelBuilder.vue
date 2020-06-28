@@ -132,6 +132,7 @@
                             :model="model"
                             :rows="rows"
                             :row="row"
+                            :scopes="scopes"
                             :langid="selected_language_id ? selected_language_id : langid"
                             :progress="progress"
                             :search="search"
@@ -189,7 +190,7 @@
     import ModelHelper from '../Helpers/ModelHelper.js';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize'],
+        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes'],
 
         name : 'model-builder',
 

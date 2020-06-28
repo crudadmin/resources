@@ -35,9 +35,11 @@
                     <div class="modal-body">
                         <model-builder
                             v-if="allowRelation"
+                            :key="modelBuilderId"
                             :langid="langid"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"
+                            :scopes="canAddScopes"
                             :model_builder="getRelationModel">
                         </model-builder>
                     </div>
@@ -96,6 +98,13 @@
         },
 
         computed: {
+            modelBuilderId(){
+                if ( this.field.canAdd == 'parent' ){
+                    return this.id+this.row.id;
+                }
+
+                return 'key';
+            },
             getModalId(){
                 return 'form-relation-modal-'+this.id;
             },
@@ -145,8 +154,18 @@
                 var relatedModel = this.$root.models[this.relationTable];
 
                 return (!relatedModel || relatedModel.hasAccess('insert'))
+                        && (this.field.canAdd === true || ['parent'].indexOf(this.field.canAdd) > -1)
                         && this.$parent.hasparentmodel !== false
                         && (!this.getFilterBy || this.filterBy);
+            },
+            canAddScopes(){
+                if ( ['parent'].indexOf(this.field.canAdd) == -1 ){
+                    return {};
+                }
+
+                return {
+                    'filterByParentField' : [this.model.table, this.field_key, this.row.id],
+                };
             },
             getFilterBy(){
                 if ( !('filterBy' in this.field) )
@@ -302,7 +321,7 @@
                 this.$watch('field.value', (value, oldvalue) => {
                     if (
                         is_change === true
-                        || ! value
+                        || _.isNil(value)
                         || (value === oldvalue || _.isEqual(value, oldvalue))
                     ){
                         is_change = false;
