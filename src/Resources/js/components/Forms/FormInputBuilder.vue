@@ -145,7 +145,21 @@
             :required="isRequired"
             :disabled="isDisabled"
             :readonly="isReadonly"
-            :is="componentName">
+            :is="componentName('component')">
+        </component>
+
+        <component
+            v-if="hasSubComponent"
+            :model="model"
+            :field="field"
+            :history_changed="isChangedFromHistory"
+            :row="row"
+            :field_key="getFieldName"
+            :field_key_original="field_key"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :is="componentName('sub_component')">
         </component>
     </div>
 </template>
@@ -167,7 +181,8 @@
         components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, FileField, SelectField, RadioField },
 
         created(){
-            this.registerComponents();
+            this.registerComponents('component');
+            this.registerComponents('sub_component');
         },
 
         mounted()
@@ -215,12 +230,12 @@
                     this.row[this.field_key] = this.resetEmptyValue(value);
                 });
             },
-            registerComponents(){
-                if ( !('component' in this.field) ) {
+            registerComponents(attribute){
+                if ( !(attribute in this.field) ) {
                     return;
                 }
 
-                var components = this.field.component.split(','),
+                var components = this.field[attribute].split(','),
                     component = null;
 
                 for ( var i = 0; i < components.length; i++ )
@@ -248,7 +263,7 @@
                 }
 
                 if ( component ) {
-                    Vue.component(this.componentName, component);
+                    Vue.component(this.componentName(attribute), component);
                 }
             },
             isEmptyValue(value){
@@ -389,6 +404,15 @@
 
                 return value;
             },
+            componentName(attribute){
+                var parts = (this.field[attribute]||'').split(',').filter(item => item);
+
+                if ( parts.length == 0 ){
+                    return;
+                }
+
+                return parts[0].toLowerCase();
+            },
         },
 
         computed : {
@@ -488,30 +512,24 @@
                 return this.isMultipleField(this.field);
             },
             hasComponent(){
-                return 'component' in this.field && this.field.component && !this.hasEmptyComponent;
+                return 'component' in this.field && this.field.component && this.hasEmptyComponent == false;
+            },
+            hasSubComponent(){
+                return 'sub_component' in this.field && this.field.sub_component;
             },
             hasEmptyComponent(){
-                if ( !this.componentName ){
+                if ( !this.componentName('component') ){
                     return false;
                 }
 
                 try {
-                    var data = this.model.components[this.componentName],
+                    var data = this.model.components[this.componentName('component')],
                         obj = (new Function('return '+data))();
                 } catch(e){
                     return false;
                 }
 
                 return obj.template == '';
-            },
-            componentName(){
-                var parts = (this.field.component||'').split(',').filter(item => item);
-
-                if ( parts.length == 0 ){
-                    return;
-                }
-
-                return parts[0].toLowerCase();
             },
             getValueOrDefault()
             {
