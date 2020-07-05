@@ -10,7 +10,7 @@
             class="form-control"
             :name="field_key"
             :value="value"
-            :step="isDecimal ? '0.01' : ''"
+            :step="isDecimal ? getDecimalStep : ''"
             :placeholder="field.placeholder || field_name"
             :disabled="disabled"
             :readonly="readonly"
@@ -26,6 +26,13 @@
         computed : {
             isDecimal(){
                 return this.field.type == 'decimal';
+            },
+            getDecimalStep(){
+                var length = '',
+                    decimalLength = ((this.field.decimal_length||'').replace(':', ',')||'8,2').split(','),
+                    step = '0.'+_.repeat(0, decimalLength[1] - 1)+'1';
+
+                return step;
             },
         },
 
