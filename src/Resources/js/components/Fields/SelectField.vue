@@ -25,11 +25,11 @@
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+field_key" value="1">
 
         <!-- Modal for adding relation -->
-        <div class="modal fade" v-if="canAddRow" :id="getModalId" tabindex="-1" role="dialog">
+        <div class="modal fade" :class="{ '--inModal' : isModalInModal }" v-if="canAddRow" :id="getModalId" data-keyboard="false" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="close" @click="closeOpenedCanAddModal"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">&nbsp;</h4>
                     </div>
                     <div class="modal-body">
@@ -155,8 +155,13 @@
 
                 return (!relatedModel || relatedModel.hasAccess('insert'))
                         && (this.field.canAdd === true || ['parent'].indexOf(this.field.canAdd) > -1)
-                        && this.$parent.hasparentmodel !== false
                         && (!this.getFilterBy || this.filterBy);
+
+                        //if we would like to disable canAdd option in already opened form throught canAdd button
+                        // && this.isModalInModal == false
+            },
+            isModalInModal(){
+                return this.$parent.hasparentmodel === false
             },
             canAddScopes(){
                 if ( ['parent'].indexOf(this.field.canAdd) == -1 ){
@@ -263,6 +268,18 @@
         },
 
         methods : {
+            /*
+             * Close only this modal, not all opened. Because canAdd can be opened multiple times inside another modal
+             */
+            closeOpenedCanAddModal(){
+                $('#'+this.getModalId).modal('hide').on('hidden.bs.modal', () => {
+                    //If multiple modals are opened all the time, also after modal close. We want add
+                    //model-open class into body, for support of scrolling modal.
+                    if ( $('.modal .modal-header:visible').length > 0 ) {
+                        $('body').addClass('modal-open');
+                    }
+                });
+            },
             /*
              * If field has filters, then check of other fields values for filtrating
              */

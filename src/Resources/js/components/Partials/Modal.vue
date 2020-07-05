@@ -75,7 +75,7 @@ export default {
                 if ( this.canShowAlert !== true ) {
                     //Close other alerts, which are not associated with this component
                     if ( e.keyCode == 27 ) {
-                        $('.modal .modal-header .close:visible').click();
+                        $('.modal .modal-header .close:visible').last().click();
                     }
 
                     return;
