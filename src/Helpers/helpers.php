@@ -6,7 +6,22 @@ if (! function_exists('admin_asset')) {
             return $path;
         }
 
-        return asset(($root == false ? Admin::getAdminAssetsPath() : '') . '/' . trim($path, '/'));
+        $version = (Admin::getVersion() == 'dev-master' ? 'dev-master' : Admin::getAssetsVersion());
+
+        $basepath = ($root == false ? Admin::getAdminAssetsPath() : '') . '/' . trim($path, '/');
+
+        $path = $basepath;
+
+        //If no query is available
+        if ( strpos($path, '?') === false ) {
+            $path .= '?v='.$version;
+
+            if ( file_exists($basepath = public_path($basepath)) ){
+                $path .= '&t='.filemtime($basepath);
+            }
+        }
+
+        return asset($path);
     }
 }
 

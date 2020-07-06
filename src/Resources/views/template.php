@@ -10,9 +10,9 @@
 
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/lightbox/lightbox.min.css') ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datatables/dataTables.bootstrap.css') ?>">
-  <link rel="stylesheet" href="<?php echo admin_asset('/plugins/chosen/chosen.css?v=').Admin::getAssetsVersion() ?>">
-  <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datetimepicker/jquery.datetimepicker.css?v=').Admin::getAssetsVersion() ?>">
-  <link rel="stylesheet" href="<?php echo admin_asset('/css/app.css?v=').Admin::getAssetsVersion() ?>">
+  <link rel="stylesheet" href="<?php echo admin_asset('/plugins/chosen/chosen.css') ?>">
+  <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datetimepicker/jquery.datetimepicker.css')?>">
+  <link rel="stylesheet" href="<?php echo admin_asset('/css/app.css') ?>">
 
   <?php foreach (array_merge((array)config('admin.styles', []), ((($customCssPath = public_path('/assets/admin/css/custom.css')) && file_exists($customCssPath)) ? [ asset('/assets/admin/css/custom.css') ] : [])) as $css) { ?>
   <link rel="stylesheet" type="text/css" href="<?php echo admin_asset($css, true) ?>">
@@ -91,7 +91,7 @@
     <script src="<?php echo admin_asset('/plugins/ckeditor/ckeditor.js') ?>"></script>
 
     <!-- APP JS -->
-    <script src="<?php echo admin_asset('/js/app.js?v=' . (Admin::getVersion() == 'dev-master' ? rand(00000, 99999) : Admin::getAssetsVersion())) ?>"></script>
+    <script src="<?php echo admin_asset('/js/app.js') ?>"></script>
 
     <?php foreach ((array)config('admin.scripts', []) as $script) { ?>
     <script type="text/javascript" src="<?php echo admin_asset($script) ?>"></script>

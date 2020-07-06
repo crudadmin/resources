@@ -38,7 +38,9 @@
                 </td>
 
                 <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
-                    <div class="buttons-options__item" v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') ? trans('edit') : trans('show')"><i class="far fa-edit"></i></button></div>
+                    <div class="buttons-options__item" v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') ? trans('edit') : trans('show')">
+                        <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == item.id, 'far fa-edit' : loadingRow != item.id }"></i></button>
+                    </div>
                     <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowInfo" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
@@ -69,6 +71,7 @@ export default {
             enabled_columns : {},
             hidden: ['language_id', '_order', 'slug', 'published_at', 'updated_at', 'created_at'],
             autoSize : false,
+            loadingRow : null,
         };
     },
 
@@ -589,16 +592,25 @@ export default {
 
                 //Fix for single model with history support
                 if ( model_row ){
-                    for ( var key in model_row )
-                    {
+                    for ( var key in model_row ) {
                         this.$set(model_row, key, row[key]);
                     }
                 }
 
                 this.$parent.$parent.closeHistory(history_id ? true : false);
 
-                this.scrollToForm();
+                //When form will be fully loaded, we want turn off loader and scroll into this form.
+                //This is better for heavy and big forms, which may be laggy in scrolling... So first we need wait
+                //and then scroll. Much more smoother animation...
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        this.loadingRow = false;
+                        this.scrollToForm();
+                    }, 100);
+                });
             };
+
+            this.loadingRow = row.id;
 
             if ( data ) {
                 render(data);
@@ -644,8 +656,12 @@ export default {
                 return;
 
             setTimeout(() => {
-                $('html, body').animate({
-                        scrollTop: $('#' + this.formID).offset().top - 10
+                var form = $('#' + this.formID),
+                    modalWrapper = form.parents('.modal[role="dialog"]:visible');
+
+                //If form is in canAdd feature, in modal.. then we want scroll modal and not whole window
+                (modalWrapper.length ? modalWrapper : $('html, body')).animate({
+                    scrollTop: form.offset().top - 10
                 }, this.$root.isTest ? 0 : 500);
             }, 25);
         }
