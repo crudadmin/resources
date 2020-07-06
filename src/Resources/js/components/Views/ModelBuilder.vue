@@ -140,6 +140,7 @@
                             :activetab="activetab"
                             :gettext_editor="gettext_editor"
                             :depth_level="depth_level"
+                            :allow_refreshing="allow_refreshing"
                             :history="history">
                         </model-rows-builder>
                     </div>
@@ -190,7 +191,7 @@
     import ModelHelper from '../Helpers/ModelHelper.js';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes'],
+        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes', 'allow_refreshing'],
 
         name : 'model-builder',
 

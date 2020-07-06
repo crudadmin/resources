@@ -39,6 +39,7 @@
                             :langid="langid"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"
+                            :allow_refreshing="isCanAddInParentMode ? false : true"
                             :scopes="canAddScopes"
                             :model_builder="getRelationModel">
                         </model-builder>
@@ -98,8 +99,11 @@
         },
 
         computed: {
+            isCanAddInParentMode(){
+                return ['parent'].indexOf(this.field.canAdd) > -1;
+            },
             modelBuilderId(){
-                if ( this.field.canAdd == 'parent' ){
+                if ( this.isCanAddInParentMode ){
                     return this.id+this.row.id;
                 }
 
@@ -154,7 +158,7 @@
                 var relatedModel = this.$root.models[this.relationTable];
 
                 return (!relatedModel || relatedModel.hasAccess('insert'))
-                        && (this.field.canAdd === true || ['parent'].indexOf(this.field.canAdd) > -1)
+                        && (this.field.canAdd === true || this.isCanAddInParentMode)
                         && (!this.getFilterBy || this.filterBy);
 
                         //if we would like to disable canAdd option in already opened form throught canAdd button
@@ -164,7 +168,7 @@
                 return this.$parent.hasparentmodel === false
             },
             canAddScopes(){
-                if ( ['parent'].indexOf(this.field.canAdd) == -1 ){
+                if ( this.isCanAddInParentMode == false ){
                     return {};
                 }
 

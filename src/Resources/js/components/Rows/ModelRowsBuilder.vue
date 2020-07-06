@@ -114,7 +114,7 @@ import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
 
 export default {
-    props : ['model', 'row', 'rows', 'langid', 'progress', 'search', 'history', 'gettext_editor', 'iswithoutparent', 'activetab', 'depth_level', 'scopes'],
+    props : ['model', 'row', 'rows', 'langid', 'progress', 'search', 'history', 'gettext_editor', 'iswithoutparent', 'activetab', 'depth_level', 'scopes', 'allow_refreshing'],
 
     components : { Refreshing, TableRows, Pagination },
 
@@ -468,6 +468,13 @@ export default {
             return row.id;
         },
         loadRows(indicator){
+            //If auto reloading is disabled from model.
+            //This is used for canAdd rows, which are filtrated by parent row.
+            //(If parent row is not saved yet, this rows may dissapear, so we need disable autoreloading)
+            if ( this.allow_refreshing === false && indicator == false ){
+                return;
+            }
+
             //On first time allow reload rows without parent, for field options...
             if ( (this.$parent.isWithoutParentRow || this.activetab === false) && indicator == false ){
                 return false;
