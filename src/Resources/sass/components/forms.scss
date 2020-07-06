@@ -308,6 +308,25 @@
     /*
      * Selects
      */
+    .form-group__chosen-container {
+        width: 100%;
+        position: relative;
+        display: flex;
+
+        > div.chosen-container {
+            min-width: auto;
+            max-width: auto;
+
+            .search-field {
+                min-width: auto !important
+            }
+        }
+
+        &.can-add-select {
+            > button { width: 35px; border: 0 }
+        }
+    }
+
     .chosen-container {
         .chosen-single {
             border-color: $inputBorderColor;

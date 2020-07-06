@@ -5,7 +5,7 @@
             {{ field.name }}
             <span v-if="required || isRequiredIfHasValues" class="required">*</span>
         </label>
-        <div :class="{ 'can-add-select' : canAddRow }">
+        <div class="form-group__chosen-container" :class="{ 'can-add-select' : canAddRow }">
             <select v-if="readonly" :name="!isMultiple ? field_key : ''" class="d-none">
                 <option v-if="!isMultiple" value=""></option>
                 <option v-for="mvalue in missingValueInSelectOptions" :value="mvalue" :selected="hasValue(mvalue, value, isMultiple)"></option>
