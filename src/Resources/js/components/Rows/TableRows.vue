@@ -101,6 +101,12 @@ export default {
         eventHub.$off('selectHistoryRow', this.selectHistoryRowEvent);
     },
 
+    watch: {
+        columns(){
+            this._cacheColumnSettings = {};
+        },
+    },
+
     computed: {
         isSmallTable(){
             var limit = 100,

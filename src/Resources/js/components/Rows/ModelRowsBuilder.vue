@@ -224,7 +224,7 @@ export default {
             this.$parent.closeHistory();
 
             //Reload rows on row update event
-            if ( this.$root.getModelProperty(this.model, 'settings.reloadOnUpdate') == true ) {
+            if ( this.model.getSettings('reloadOnUpdate') == true ) {
                 this.loadRows();
             }
         });
@@ -331,7 +331,7 @@ export default {
         title(){
             var title;
 
-            if ( title = this.$root.getModelProperty(this.model, 'settings.title.rows') )
+            if ( title = this.model.getSettings('title.rows') )
             {
                 return title;
             }
@@ -339,13 +339,13 @@ export default {
             return this.trans('rows');
         },
         isPaginationEnabled(){
-            return this.$root.getModelProperty(this.model, 'settings.pagination.enabled') !== false && !this.iswithoutparent;
+            return this.model.getSettings('pagination.enabled') !== false && !this.iswithoutparent;
         },
         rowsData(){
             var field = this.orderBy[0],
                 is_numeric = this.isNumericValue( field ),
                 is_date = this.isDateValue( field ),
-                is_decoded = this.$root.getModelProperty(this.model, 'settings.columns.'+field+'.encode', true) !== true;
+                is_decoded = this.model.getSettings('columns.'+field+'.encode', true) !== true;
 
             //If is date field, then receive correct date format of this field
             if ( this.isDateValue( field ) && field in this.model.fields )
@@ -701,7 +701,7 @@ export default {
             if ( key in this.model.fields && ['integer', 'decimal', 'checkbox'].indexOf( this.model.fields[key].type ) > -1 )
                 return true;
 
-            if ( this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.type') == 'integer' )
+            if ( this.model.getSettings('columns.'+key+'.type') == 'integer' )
                 return true;
 
             return false;
@@ -722,7 +722,7 @@ export default {
             //Set order by settings parameter
             if ( this.orderBy == null)
             {
-                var orderBy = this.$root.getModelProperty(this.model, 'settings.orderBy');
+                var orderBy = this.model.getSettings('orderBy');
 
                 if ( orderBy )
                 {
@@ -765,7 +765,7 @@ export default {
             this.loadRows(indicator);
         },
         getRefreshInterval(){
-            var interval = this.$root.getModelProperty(this.model, 'settings.refresh_interval', 10000);
+            var interval = this.model.getSettings('refresh_interval', 10000);
 
             //Infinity interval
             if ( interval == false ) {
