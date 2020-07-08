@@ -44,7 +44,7 @@
 
   <script src="<?php echo admin_asset('/js/manifest.js') ?>"></script>
   <script src="<?php echo admin_asset('/js/vendor.js') ?>"></script>
-  <script src="<?php echo admin_asset('/js/app.js?v=' . Admin::getAssetsVersion()) ?>"></script>
+  <script src="<?php echo admin_asset('/js/app.js') ?>"></script>
   <script src="{{ admin_asset('plugins/iCheck/icheck.min.js') }}"></script>
   <script>
     $(function () {
