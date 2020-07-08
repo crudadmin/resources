@@ -9,7 +9,7 @@ var Editable = {
     },
 
     isEditableElement(element){
-        return element.getAttribute('data-crudadmin-editor') == '';
+        return element.getAttribute('data-crudadmin-editor') == '' && parseInt(element.getAttribute('data-id')) > 0;
     },
 
     registerAllEditors(){
@@ -30,14 +30,16 @@ var Editable = {
     },
 
     updateContent(element, data){
-        CAEditor.ajax.post(CAEditor.config.requests.updateContent, {
+        var obj = {
             language : CAEditor.config.language,
             model : element.getAttribute('data-model'),
             key : element.getAttribute('data-key'),
             id : element.getAttribute('data-id'),
             hash : element.getAttribute('data-hash'),
             content : data
-        }, {
+        };
+
+        CAEditor.ajax.post(CAEditor.config.requests.updateContent, obj, {
             success(response){
                 Helpers.addClass(element._CAPencil, Pencils.classNameSaved);
 
