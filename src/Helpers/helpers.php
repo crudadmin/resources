@@ -1,4 +1,12 @@
 <?php
+function hashAdminVersionName($version)
+{
+    //We want hash version name
+    return \Cache::rememberForever('admin_version_'.$version, function() use ($version) {
+        return md5(sha1($version.env('APP_ENV')));
+    });
+}
+
 if (! function_exists('admin_asset')) {
     function admin_asset($path, $root = false)
     {
@@ -6,7 +14,7 @@ if (! function_exists('admin_asset')) {
             return $path;
         }
 
-        $version = (Admin::getVersion() == 'dev-master' ? 'dev-master' : Admin::getAssetsVersion());
+        $version = hashAdminVersionName((Admin::getVersion() == 'dev-master' ? 'dev-master' : Admin::getAssetsVersion()));
 
         $basepath = ($root == false ? Admin::getAdminAssetsPath() : '') . '/' . trim($path, '/');
 
