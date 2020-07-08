@@ -324,3 +324,20 @@ $textColor: #8292A5;
 .cke > .cke_inner {
     max-width: 550px;
 }
+
+[contenteditable="true"].cke_focus {
+    position: relative;
+
+    &:after {
+        content : '';
+        width: calc(100% + 30px);
+        height: calc(100% + 30px);
+        position: absolute;
+        left: -15px;
+        top: -15px;
+        right: -15px;
+        bottom: -15px;
+        outline: 2px solid rgba(74, 84, 226, 0.2);
+        pointer-events: none;
+    }
+}
