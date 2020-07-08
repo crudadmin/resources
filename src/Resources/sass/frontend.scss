@@ -327,6 +327,7 @@ $textColor: #8292A5;
 
 [contenteditable="true"].cke_focus {
     position: relative;
+    outline: none;
 
     &:after {
         content : '';
