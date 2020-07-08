@@ -5,6 +5,9 @@ import Translatable from './Translatable';
 var Editor = {
     inlineClass : 'CAE__InlineWrapper',
 
+    //Is ckeditor booted?
+    ckEditorBooted : false,
+
     hasAllowedFormation(element){
         return CAEditor.translatable.rawTranslates.indexOf(element.getPointerSetting('originalTranslate', 'translatable')) > -1;
     },
@@ -152,6 +155,54 @@ var Editor = {
 
             Helpers.removeClass(element._CAPencil, Pencils.classNameActive);
         }
+    },
+
+    bootCkEditor(callback){
+        if ( this.ckEditorBooted === true ){
+            return callback();
+        }
+
+        var script = document.createElement('script');
+        script.src = CAEditorConfig.ckeditor_path;
+        script.type = 'text/javascript';
+
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+        script.onload = () => {
+            this.ckEditorBooted = true;
+
+            callback();
+        };
+    },
+
+    makeInlineCKEditor(element, onChange){
+        this.bootCkEditor(() => {
+            //If editor is already booted, we only want trigger focus event and allow editing
+            if ( element.hasBootedCKEditor == true ){
+                element.contentEditable = true;
+                element.focus();
+                return;
+            }
+
+            element.contentEditable = true;
+
+            let editor = CKEDITOR.inline(element, {
+                startupFocus: true,
+
+                on : {
+                    change(editor){
+                        Pencils.refresh();
+
+                        onChange(editor);
+                    },
+                }
+            });
+
+            element.hasBootedCKEditor = true;
+
+            //Add active class
+            Helpers.addClass(element._CAPencil, Pencils.classNameActive);
+        });
     }
 }
 

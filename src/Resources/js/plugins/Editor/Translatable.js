@@ -68,16 +68,22 @@ var Translatable = {
 
         //Build translates tree
         for ( var key in this.allTranslates ) {
-            var translate = this.allTranslates[key][0]||key;
+            var translate = this.domPreparer.prepareTranslateHTML(this.allTranslates[key][0]||key);
+
+            /*
+             * DEBUG only given texts
+             */
+            if ( debugText.length > 0 && translate.indexOf(debugText) === -1 ) {
+                continue;
+            }
+
+            if ( translate && translate.indexOf('je fiktívny text') > -1 ){
+                console.log(translate)
+            }
 
             //We need save duplicate translates
             if ( translate in this.translatedTree ) {
                 this.duplicates.push(translate);
-            }
-
-            //Debug only given texts
-            if ( debugText.length > 0 && debugText.indexOf(translate) === -1 ) {
-                continue;
             }
 
             this.translatedTree[translate] = key;
@@ -86,6 +92,89 @@ var Translatable = {
                 this.maxTranslateLength = translate.length;
             }
         }
+    },
+    /*
+     * Change translates and HTML dom into same format
+     * ig. we need sort all attributes by name order, because VueJS sorts attributes... then translates are not same with innerHTML
+     */
+    domPreparer: {
+        prepared : {},
+
+        prepareTranslateHTML(html, e){
+            //We need cache prepared texts, because othervise it may have heavy performance impact on browser
+            if ( html in this.prepared ){
+                return this.prepared[html];
+            }
+
+            var vn = document.createElement('div');
+                vn.innerHTML = html;
+
+            this.modifyElements(vn);
+
+            return this.prepared[html] = vn.innerHTML;
+        },
+        modifyElements(parentNode){
+            //Element has no childnodes
+            if ( !parentNode.childNodes ){
+                return;
+            }
+
+            for ( var k = 0; k < parentNode.childNodes.length; k++ ) {
+                let e = parentNode.childNodes[k];
+
+                this.sortAttributes(e);
+
+                //If childnode has another childs...
+                if ( e.childNodes && e.childNodes.length > 0 ){
+                    this.modifyElements(e)
+                }
+            }
+        },
+        sortAttributes(e){
+            let defaultAttributes = [];
+
+            //If childnode has attributes, we need sort them
+            if ( e.attributes && e.attributes.length > 0 ){
+                //Build attributes tree
+                for ( let i = 0; i < e.attributes.length; i++ ){
+                    defaultAttributes.push({
+                        name : e.attributes[i].nodeName,
+                        value : e.attributes[i].nodeValue
+                    });
+                }
+
+                //Sort element attribues by tag name
+                defaultAttributes = defaultAttributes.sort((a, b) => {
+                    return a.name > b.name ? 1 : -1;
+                });
+
+                //Remove all attributes
+                defaultAttributes.forEach(item => {
+                    e.removeAttribute(item.name);
+                });
+
+                //Add attributes aggain in correct order
+                defaultAttributes.forEach(item => {
+                    item = this.updateAttribute(item);
+
+                    e.setAttribute(item.name, item.value);
+                });
+            }
+        },
+        updateAttribute(item){
+            //We want update style to format same as from vuejs render
+            if ( item.name == 'style' ){
+                let newValue = item.value.replace(/\:/g, ': ').replace(/\s\s/g, ' ');
+
+                if ( newValue && newValue.substr(-1) != ';' ){
+                    newValue += ';';
+                }
+
+                item.value = newValue;
+            }
+
+            return item;
+        },
     },
     getTranslatableElements(){
         var elements = document.querySelectorAll('*');
@@ -103,7 +192,10 @@ var Translatable = {
             //Add element into array if has not been added already and has translation
             if ( this.translatedTree[html] !== undefined ) {
                 this.registerTranslatableElement(elements[i], html);
-            } else {
+            }
+
+            //Look for text childs
+            else {
                 for ( var n = 0; n < elements[i].childNodes.length; n++ ){
                     var node = elements[i].childNodes[n];
                     if ( node.nodeName !== '#text' ) {
@@ -134,11 +226,7 @@ var Translatable = {
         var value = e.nodeName == '#text' ? e.data : e.innerHTML,
             value = value||'';
 
-        //We need replace &nbsp; for empty spaces. Because if we push empty chart
-        //it will change to this encoded value.
-        value = value.replace(new RegExp('&nbsp;', 'g'), ' ');
-
-        return value.trim();
+        return this.domPreparer.prepareTranslateHTML(value, e).trim();
     },
     /*
      * Check if given translation is in text block from editor field (type:editor)
@@ -167,6 +255,13 @@ var Translatable = {
         var data = { changes : {} },
             value = this.nodeValue(e);
 
+        //We need replace &nbsp; for empty spaces. Because if we push empty char it will change to this encoded value.
+        //We need place empty char, when user will delete whole translation. This situation is buggy in some browsers..
+        //So we need remove here this empty char at the end.
+        if ( value.substr(-6) == '&nbsp;' ) {
+            value = value.substr(0, -6);
+        }
+
         //If is not raw text, we can save unencoded value
         //Because double encodion would be applied from laravel side
         if ( Editor.hasAllowedFormation(e) === false ) {
@@ -183,6 +278,8 @@ var Translatable = {
         //Remove error class before sending ajax
         Helpers.removeClass(e._CAPencil, Pencils.classNameError);
 
+        //We need send ajax minimally once per second,
+        //because gettext is cached on file timestamp. which in in seconds...
         this._ajaxSend = setTimeout(() => {
             var url = CAEditor.config.requests.updateText;
 
@@ -197,7 +294,7 @@ var Translatable = {
             });
 
             this.updateSameTranslationElements(e);
-        }, 500);
+        }, 1000);
     },
     /*
      * Update all translates with same translation
@@ -252,11 +349,20 @@ var Translatable = {
         this.updateTranslation(element);
     },
 
+    isStaticEditor(element){
+        return element.nodeName != '#text' && element.getAttribute('data-crudadmin-static-editor') === '';
+    },
+
     /*
      * Pencil events
      */
     events : {
         onPointerCreate(pencil, element){
+            if ( this.isStaticEditor(element) ){
+                Helpers.addClass(pencil, Pencils.classNameIcon);
+                Helpers.addClass(pencil, Pencils.classNameEditor);
+            }
+
             pencil.setAttribute('data-translate', element.getPointerSetting('originalTranslate', 'translatable'));
         },
         onPointerClick(element, pencil){
@@ -271,6 +377,10 @@ var Translatable = {
             //Invisible element cannot be edited in editor style
             if ( this.isInvisibleElement(element) ) {
                 this.openAlertModal(element, actualValue);
+            } else if ( this.isStaticEditor(element) ) {
+                Editor.makeInlineCKEditor(element, () => {
+                    Translatable.updateTranslation(element);
+                });
             } else {
                 Editor.makeEditableNode(element, actualValue);
             }

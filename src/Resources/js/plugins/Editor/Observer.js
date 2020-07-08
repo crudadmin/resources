@@ -38,7 +38,9 @@ var Observer = {
 
     observeNewElements(){
         this.observeDOM(document.body, (e) => {
-            CAEditor.refresh();
+            var hasChangedDomList = e.filter(item => ['childList'].indexOf(item.type) > -1).length > 0;
+
+            CAEditor.refresh(hasChangedDomList);
 
             //If removed element had pencil. We need remove pencil.
             for ( var i = 0; i < e.length; i++ ) {

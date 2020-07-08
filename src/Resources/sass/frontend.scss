@@ -245,6 +245,8 @@ $textColor: #8292A5;
 
         &:after {
             content: '';
+            background-repeat: no-repeat !important;
+            background-position: center center !important;
             width: 17px;
             height: 18px;
             display: block;
@@ -263,6 +265,12 @@ $textColor: #8292A5;
     &.CAE_Pencil--linkable {
         &:after {
             background: url('../images/caeditor/link-solid.svg');
+        }
+    }
+
+    &.CAE_Pencil--editor {
+        &:after {
+            background: url('../images/caeditor/italic-solid.svg');
         }
     }
 
@@ -311,4 +319,8 @@ $textColor: #8292A5;
 
 .CAE_Uploadable_wrapper {
     display: none
+}
+
+.cke > .cke_inner {
+    max-width: 550px;
 }

@@ -23,7 +23,6 @@ CKEDITOR.editorConfig = function( config ) {
     config.filebrowserWindowWidth = '50%';
     config.filebrowserWindowHeight = '50%';
 
-
     config.toolbar = [
         { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Save', '-', 'Source', '-', 'Undo', 'Redo' ] },
         { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord' ] },

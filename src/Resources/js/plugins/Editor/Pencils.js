@@ -17,6 +17,7 @@ var Pencils = {
     classNameIcon : 'CAE_Pencil--icon',
     classNameImage : 'CAE_Pencil--image',
     classNameLinkable : 'CAE_Pencil--linkable',
+    classNameEditor : 'CAE_Pencil--editor',
     classNameSubmenu : 'CAE_Pencil--subpointers',
 
     //Wrapper element

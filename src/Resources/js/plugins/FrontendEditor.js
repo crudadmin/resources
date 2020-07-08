@@ -6,6 +6,7 @@ import Navigation from './Editor/Navigation';
 import Translatable from './Editor/Translatable';
 import Uploadable from './Editor/Uploadable';
 import Linkable from './Editor/Linkable';
+import Editable from './Editor/Editable';
 
 /*
  * CrudAdmin auto translatable
@@ -26,6 +27,9 @@ import Linkable from './Editor/Linkable';
 
         //Linkable class
         linkable : Linkable,
+
+        //Editable class
+        editable : Editable,
 
         //All elementws with assigned pencil
         matchedElements : [],
@@ -55,6 +59,9 @@ import Linkable from './Editor/Linkable';
 
             //Boot linkable
             Linkable.boot();
+
+            //Editable content
+            Editable.boot();
 
             //Boot pencils
             this.pencils.init();
@@ -103,9 +110,26 @@ import Linkable from './Editor/Linkable';
                 state : false,
             });
         },
-        refresh(){
-            Translatable.getTranslatableElements();
-            this.pencils.refresh();
+        refresh(refreshDOM){
+            if ( refreshDOM === true ){
+                this.isRefreshedDom = true;
+            }
+
+            //We can refresh editor only one per second
+            if ( this.refreshingState ){
+                clearTimeout(this.refreshingState);
+            }
+
+            this.refreshingState = setTimeout(() => {
+                //If dom has been changed, we want reload all existing translates.
+                if ( this.isRefreshedDom === true ) {
+                    Translatable.getTranslatableElements();
+
+                    this.isRefreshedDom = false;
+                }
+
+                this.pencils.refresh();
+            }, 1000);
         },
         registerPointerProperties(element, type){
             if ( !element.hasPointer ) {

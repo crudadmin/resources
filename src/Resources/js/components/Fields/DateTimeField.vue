@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled, 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :class="{ disabled : disabled || readonly, 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
             {{ field_name }} <span v-if="required" class="required">*</span>
@@ -10,6 +10,7 @@
             type="text"
             class="form-control"
             :disabled="disabled"
+            :readonly="readonly"
             :name="isMultipleDatepicker ? '' : field_key"
             :value="value"
             :placeholder="field.placeholder || field_name"
@@ -23,7 +24,7 @@
 
 <script>
     export default {
-        props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'depth_level'],
+        props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
 
         mounted(){
             this.bindDatepickers();
@@ -62,6 +63,10 @@
                 return $(this.$refs.input);
             },
             bindDatepickers(){
+                if ( this.readonly === true ){
+                    return;
+                }
+
                 var _this = this;
 
                 this.getInput().datetimepicker({
