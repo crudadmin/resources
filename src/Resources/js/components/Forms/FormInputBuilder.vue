@@ -501,11 +501,11 @@
                     return true;
                 }
 
-                return this.model.tryAttribute(this.field, 'disabled');
+                return this.model.tryAttribute(this.field, 'disabled', this.row);
             },
             isReadonly()
             {
-                return this.model.tryAttribute(this.field, 'readonly');
+                return this.model.tryAttribute(this.field, 'readonly', this.row);
             },
             isMultiple()
             {

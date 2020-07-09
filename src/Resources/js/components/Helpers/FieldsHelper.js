@@ -40,11 +40,13 @@ var Fields = (Model) => {
     /*
      * Try atribute values with all combinations (attr as tru, attrIf, attrIfNot...)
      */
-    Model.prototype.isMatchedAttributesValues = function(params, isIn){
+    Model.prototype.isMatchedAttributesValues = function(params, isIn, row){
         var items = (params||'').split(','),
             fieldOperator = items[0].split('.'),
             relatedField = this.fields[fieldOperator[0]]||this.fields[fieldOperator[0]+'_id'],
-            value = relatedField.value;
+
+            //If static field does not exists, and we want do actions by non existing columns, then look for value in row data.
+            value = relatedField ? relatedField.value : row[fieldOperator[0]];
 
         //Cast values
         items = items.map(item => {
@@ -57,7 +59,7 @@ var Fields = (Model) => {
         });
 
         //If is key in item from options fields
-        if ( fieldOperator.length > 1 ) {
+        if ( relatedField && fieldOperator.length > 1 ) {
             var options = relatedField.options,
                 option = _.find(options, item => ( item[0] == value ));
 
@@ -86,27 +88,32 @@ var Fields = (Model) => {
     /*
      * Try atribute values with all combinations (attr as tru, attrIf, attrIfNot...)
      */
-    Model.prototype.tryAttribute = function(field, type){
+    Model.prototype.tryAttribute = function(field, type, row){
         let param;
 
-        if ( (param = field[type]) && param === true ){
-            return true;
+        //If is static value, non dynamical...
+        if ( param = field[type] ) {
+            if ( param === true ){
+                return true;
+            } else if ( param === false ){
+                return false;
+            }
         }
 
         if ( param = field[type+'If'] ) {
-            return this.isMatchedAttributesValues(param);
+            return this.isMatchedAttributesValues(param, false, row);
         }
 
         if ( param = field[type+'IfIn'] ) {
-            return this.isMatchedAttributesValues(param, true);
+            return this.isMatchedAttributesValues(param, true, row);
         }
 
         if ( param = field[type+'IfNot'] ) {
-            return !this.isMatchedAttributesValues(param);
+            return !this.isMatchedAttributesValues(param, false, row);
         }
 
         if ( param = field[type+'IfNotIn'] ) {
-            return !this.isMatchedAttributesValues(param, true);
+            return !this.isMatchedAttributesValues(param, true, row);
         }
 
         return false;

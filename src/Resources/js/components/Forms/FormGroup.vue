@@ -118,12 +118,12 @@ export default {
             });
         },
         canRemoveAttribute(field){
-            return this.model.tryAttribute(field, 'removeField')
-                   || this.model.tryAttribute(field, 'removeFromForm');
+            return this.model.tryAttribute(field, 'removeField', this.row)
+                   || this.model.tryAttribute(field, 'removeFromForm', this.row);
         },
         canHideAttribute(field){
-            return this.model.tryAttribute(field, 'hideField')
-                   || this.model.tryAttribute(field, 'hideFromForm');
+            return this.model.tryAttribute(field, 'hideField', this.row)
+                   || this.model.tryAttribute(field, 'hideFromForm', this.row);
         },
         canRenderField(field){
             return !('invisible' in field && field.invisible == true)
