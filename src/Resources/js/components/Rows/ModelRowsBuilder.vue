@@ -822,8 +822,7 @@ export default {
                 .then(response => {
                     var data = response.data;
 
-                    if ( data && 'type' in data && data.type == 'error' )
-                    {
+                    if ( data && 'type' in data && data.type == 'error' ) {
                         return this.$root.openAlert(data.title, data.message, 'danger');
                     }
 

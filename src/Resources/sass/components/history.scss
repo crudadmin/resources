@@ -13,7 +13,16 @@
             }
 
             .modal-body {
-                max-height: 380px; overflow-y: auto;
+                max-height: 380px;
+                overflow-y: auto;
+            }
+
+            .history-actions {
+                display: flex;
+
+                button:not(:last-child) {
+                    margin-right: 3px;
+                }
             }
         }
     }

@@ -22,7 +22,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(item, $index) in sortedHistory" :data-history-id="item.id">
+                                <tr v-for="(item, $index) in sortedHistory" :key="item.id" :data-history-id="item.id">
                                     <td class="td-id">{{ history.rows.length - $index }}</td>
                                     <td>{{ item.user ? item.user.username : trans('history.system') }}</td>
                                     <td data-changes-length>
@@ -30,7 +30,15 @@
                                     </td>
                                     <td>{{ date(item.created_at) }}</td>
                                     <td>
-                                        <div><button type="button" v-on:click="applyChanges(item)" class="btn btn-sm btn-success" v-bind:class="{ 'enabled-history' : history.history_id == item.id }" data-toggle="tooltip" :title="trans('history.show')" :data-original-title="trans('history.show-changes')"><i class="fa fa-eye"></i></button></div>
+                                        <div class="history-actions">
+                                            <button type="button" @click="applyChanges(item)" class="btn btn-sm btn-success" :class="{ 'enabled-history' : history.history_id == item.id }" data-toggle="tooltip" :title="trans('history.show')">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+
+                                            <button type="button" v-if="canDeleteHistoryItem(item, $index)" @click="deleteHistoryRow(item)" class="btn btn-sm btn-danger" data-toggle="tooltip" :title="_('Zmazať zmenu z histórie')">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -50,7 +58,7 @@
 
 <script>
 export default {
-    props : ['history'],
+    props : ['history', 'model'],
 
     computed: {
         sortedHistory(){
@@ -59,6 +67,15 @@ export default {
     },
 
     methods: {
+        canDeleteHistoryItem(item, index){
+            //We cannot delete last item
+            if ( index + 1 == this.history.rows.length ) {
+                return false;
+            }
+
+            //We need has delete permissions
+            return this.$root.models.models_histories.hasAccess('delete');
+        },
         applyChanges(item){
             this.$parent.history.fields = item.changed_fields;
             this.$parent.history.history_id = item.id;
@@ -69,6 +86,24 @@ export default {
                 history_id : item.id,
                 row : this.$parent.row,
             });
+        },
+        deleteHistoryRow(row){
+            this.$root.openAlert(this.trans('warning'), this.trans('delete-warning'), 'warning', () => {
+
+                this.$http.post(this.$root.requests.removeFromHistory, {
+                    model : this.model.table,
+                    id : row.id,
+                })
+                    .then(response => {
+                        var data = response.data;
+
+                        this.$parent.history.rows = data;
+                    })
+
+                    .catch(response => {
+                        this.$root.errorResponseLayer(response);
+                    });
+            }, true);
         },
         date(date){
             return moment(date).format('D.M.Y H:mm');

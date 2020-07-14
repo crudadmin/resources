@@ -173,7 +173,11 @@
             :is="name">
         </component>
 
-        <history v-if="history.id" :history="history"></history>
+        <history
+            v-if="history.id"
+            :model="model"
+            :history="history">
+        </history>
         <gettext-extension
             v-if="gettext_editor"
             :gettext_editor="gettext_editor"
@@ -432,7 +436,6 @@
                     id : row.id,
                 }))
                 .then(function(response){
-
                     var data = response.data;
 
                     if ( data.length <= 1 )

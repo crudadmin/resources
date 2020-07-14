@@ -212,7 +212,8 @@ export default {
             return this.model.editable || this.$parent.$parent.hasChilds() > 0;
         },
         isEnabledHistory(){
-            return this.model.history == true;
+            //Check if history is enabled, and user has acces to read data from history
+            return this.model.history == true && this.$root.models.models_histories.hasAccess('read');
         },
         canShowGettext(){
             if (
