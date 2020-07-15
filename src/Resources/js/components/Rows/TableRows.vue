@@ -266,7 +266,7 @@ export default {
                 isRealField: field in this.model.fields,
                 field : this.model.fields[field],
                 string_limit : this.getFieldLimit(field),
-                default_slug : this.$root.languages[0].slug,
+                default_slug : this.$root.languages.length ? this.$root.languages[0].slug : null,
                 field : field in this.model.fields ? this.model.fields[field] : null,
                 add_before : this.model.getSettings('columns.'+field+'.add_before'),
                 add_after : this.model.getSettings('columns.'+field+'.add_after'),
