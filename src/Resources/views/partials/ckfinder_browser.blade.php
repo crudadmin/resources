@@ -5,16 +5,14 @@
     <title>File Browser</title>
 </head>
 <body>
-
 <script src="<?php echo admin_asset('/plugins/ckeditor/plugins/ckfinder/ckfinder.js') ?>"></script>
 <script>
     CKFinder.config( {
-        connectorPath: {!! json_encode(route('ckfinder_connector')) !!},
+        connectorPath: '{!! route('ckfinder_connector') !!}',
         pass : '_token',
         _token : '{!! csrf_token() !!}'
     } );
     CKFinder.start();
 </script>
-
 </body>
 </html>

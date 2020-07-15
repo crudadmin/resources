@@ -20,6 +20,15 @@
 /*============================ General Settings =======================================*/
 // http://docs.cksource.com/ckfinder3-php/configuration.html
 
+/*
+ * We can overide config properties via this method
+ */
+if ( !function_exists('ckfinder_config_mutator') ){
+    function ckfinder_config_mutator($config = []){
+        return $config;
+    }
+}
+
 $config = array();
 
 $config['authentication'] = function () {
@@ -188,4 +197,4 @@ $config['csrfProtection'] = false;
 /*
  * Config must be returned - do not change it.
  */
-return $config;
+return ckfinder_config_mutator($config);

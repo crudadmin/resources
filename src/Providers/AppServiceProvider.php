@@ -3,8 +3,9 @@
 namespace Admin\Resources\Providers;
 
 use Admin\Resources\Facades;
-use Admin\Resources\Helpers;
 use Admin\Resources\Fields;
+use Admin\Resources\Helpers;
+use Admin\Resources\Middleware\CKFinderMiddleware;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,6 +14,10 @@ class AppServiceProvider extends ServiceProvider
         CommandsServiceProvider::class,
         PublishServiceProvider::class,
         RouteServiceProvider::class,
+    ];
+
+    protected $routeMiddleware = [
+        'ckfinder' => CKFinderMiddleware::class,
     ];
 
     /**
@@ -41,6 +46,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerProviders();
+
+        $this->bootRouteMiddleware();
     }
 
     /*
@@ -50,6 +57,23 @@ class AppServiceProvider extends ServiceProvider
     {
         foreach ($providers ?: $this->providers as $provider) {
             app()->register($provider);
+        }
+    }
+
+    public function bootRouteMiddleware()
+    {
+        foreach ($this->routeMiddleware as $name => $middleware) {
+            $router = $this->app['router'];
+
+            /*
+             * Support for laravel 5.3
+             * does not know aliasMiddleware method
+             */
+            if (method_exists($router, 'aliasMiddleware')) {
+                $router->aliasMiddleware($name, $middleware);
+            } else {
+                $router->middleware($name, $middleware);
+            }
         }
     }
 }

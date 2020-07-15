@@ -28,7 +28,9 @@ Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset');
 Route::group(['middleware' => 'admin'], function () {
     // Dashboard
     Route::get('/admin', 'DashboardController@index');
+});
 
+Route::group(['middleware' => 'ckfinder'], function () {
     //CKFinder
     Route::any('/admin/api/ckfinder/browser', 'CKFinderController@browserAction')->name('ckfinder_browser');
     Route::any('/admin/api/ckfinder/download', 'CKFinderController@downloader')->name('ckfinder_downloader');
