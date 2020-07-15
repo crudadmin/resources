@@ -2,6 +2,7 @@
 
 namespace Admin\Resources\Middleware;
 
+use Admin\Resources\Helpers\CKFinderHelper;
 use Closure;
 
 class CKFinderMiddleware
@@ -16,7 +17,7 @@ class CKFinderMiddleware
      */
     public function handle($request, Closure $next, $guard = null, $errors = [])
     {
-        $authenticated = app('ckfinder.connector')['config']->get('authentication')();
+        $authenticated = CKFinderHelper::getConfigData()['authentication']();
 
         //Check if ckeditor is authenticated
         if ( $authenticated === false ){

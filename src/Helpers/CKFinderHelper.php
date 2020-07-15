@@ -9,6 +9,20 @@ class CKFinderHelper
 {
     public static $booted = false;
 
+    public static $configData = null;
+
+    public static function getConfigData()
+    {
+        //Return loaded config data
+        if ( self::$configData ){
+            return self::$configData;
+        }
+
+        $data = require __DIR__.'/../../ckfinder/config.php';
+
+        return self::$configData = $data;
+    }
+
     public static function bootConnector()
     {
         if ( self::$booted === true ) {
@@ -16,7 +30,7 @@ class CKFinderHelper
         }
 
         app()->bind('ckfinder.connector', function () {
-            $ckfinder = new \CKSource\CKFinder\CKFinder(require __DIR__.'/../../ckfinder/config.php');
+            $ckfinder = new \CKSource\CKFinder\CKFinder(self::getConfigData());
 
             if (Kernel::MAJOR_VERSION === 4) {
                 self::setupForV4Kernel($ckfinder);
