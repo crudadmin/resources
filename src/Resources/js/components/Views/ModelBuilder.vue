@@ -241,6 +241,7 @@
                  */
                 history : {
                     history_id : null,
+                    data : {},
                     id : null,
                     rows : [],
                     fields : [],

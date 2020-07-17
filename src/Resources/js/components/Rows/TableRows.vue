@@ -622,9 +622,21 @@ export default {
             if ( data ) {
                 render(data);
             } else {
-                this.$http.get(this.$root.requests.get('show', { model : this.model.slug, id : row.id, subid : history_id }))
+                this.$http.get(this.$root.requests.get('show', {
+                    model : this.model.slug,
+                    id : row.id,
+                    subid : history_id
+                }))
                 .then(function(response){
-                    render(response.data);
+                    var data = response.data;
+
+                    if ( history_id ){
+                        this.$parent.$parent.history.data = response.data;
+
+                        data = data.row;
+                    }
+
+                    render(data);
                 })
                 .catch(function(response){
                     this.$root.errorResponseLayer(response);

@@ -294,6 +294,11 @@ export default {
             return this.languages[0];
         },
         canUpdateForm(){
+            //We cant save form in history row is opened
+            if ( this.history.history_id ){
+                return false;
+            }
+
             if ( this.isOpenedRow && this.$root.getModelProperty(this.model, 'settings.editable') == false ) {
                 return false;
             }

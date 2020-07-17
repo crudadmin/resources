@@ -5,7 +5,7 @@
         :data-lang="langslug"
         :data-history-changed="isChangedFromHistory"
         class="field-wrapper"
-        :class="{ 'is-changed-from-history' : isChangedFromHistory }">
+        :class="{ 'is-changed-from-history' : isChangedFromHistory && !hasComponent }">
 
         <string-field
             v-if="!hasComponent && (isString || isPassword)"
@@ -139,6 +139,7 @@
             :model="model"
             :field="field"
             :history_changed="isChangedFromHistory"
+            :history="history"
             :row="row"
             :field_key="getFieldName"
             :field_key_original="field_key"
@@ -153,6 +154,7 @@
             :model="model"
             :field="field"
             :history_changed="isChangedFromHistory"
+            :history="history"
             :row="row"
             :field_key="getFieldName"
             :field_key_original="field_key"
