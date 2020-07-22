@@ -19,7 +19,7 @@
                             <li @click="$event.stopPropagation()" v-for="(column, key) in enabled_columns" v-if="canShowColumn(column, key)" :class="{ active : column.enabled }" class="--no-item-padding">
                                 <label class="--dropdown-item-padding --dropdown-item-vertical">
                                     <input type="checkbox" :data-column="key" v-model="column.enabled">
-                                    {{ columnName(key, column.name) }}
+                                    {{ model.fieldName(key) }}
                                 </label>
                             </li>
                             <li class="default-reset"><a href="#" @click.prevent="resetColumnsList">{{ trans('default') }}</a></li>
@@ -270,7 +270,21 @@ export default {
                 var query = search.query||search.query_to,
                         was_searching = this.searching;
 
-                this.searching = (query && (query.length >= 3 || (search.column && ((search.column in this.model.fields && ['select', 'option'].indexOf(this.model.fields[search.column].type) > -1) || $.isNumeric(query))))) ? true : false;
+                this.searching = (
+                    query && (
+                        query.length >= 3
+                        || (
+                            search.column
+                            && (
+                                (
+                                    search.column in this.model.fields
+                                    && ['select', 'option'].indexOf(this.model.fields[search.column].type) > -1
+                                )
+                                || $.isNumeric(query)
+                            )
+                        )
+                    )
+                ) ? true : false;
 
                 this.search.used = true;
 
@@ -430,9 +444,6 @@ export default {
         },
         getEncodedValue(value, is_decoded){
             return (is_decoded ? $('<div>'+value+'</div>').text() : value) + '';
-        },
-        columnName(key, name){
-            return this.$parent.getSearchingColumnName(key);
         },
         canShowColumn(column, key){
             if ( ! column.name )

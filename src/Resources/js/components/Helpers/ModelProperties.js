@@ -62,6 +62,30 @@ var ModelProperties = (Model) => {
         return this.getModelProperty('settings.'+key, value);
     }
 
+    Model.prototype.fieldName = function(key){
+        if ( key in this.fields ) {
+            return (
+                this.fields[key].column_name
+                || this.getSettings('settings.columns.'+key+'.name')
+                || this.fields[key].name
+            );
+        } else {
+            switch( key ) {
+                case 'id':
+                    return trans('number');
+                    break;
+                case 'created_at':
+                    return trans('created');
+                    break;
+                case 'updated_at':
+                    return trans('updated');
+                    break;
+                default:
+                    return key;
+                    break;
+            }
+        }
+    }
 };
 
 export default ModelProperties;

@@ -10,10 +10,18 @@ const CrudAdmin = {
         }
     },
 
+    created(){
+        //Boot global trans method
+        if ( !window.trans ) {
+            window.trans = this.trans;
+        }
+    },
+
     methods: {
         trans(key){
-            if ( key in this.$root.localization )
+            if ( key in this.$root.localization ) {
                 return this.$root.localization[key];
+            }
 
             return key;
         },

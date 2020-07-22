@@ -453,25 +453,7 @@ export default {
             this.$parent.orderBy = [key, order];
         },
         fieldName(key){
-            if ( key in this.model.fields )
-                return this.model.fields[key].column_name||this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.name')||this.model.fields[key].name;
-            else {
-                switch( key )
-                {
-                    case 'id':
-                        return this.trans('number');
-                        break;
-                    case 'created_at':
-                        return this.trans('created');
-                        break;
-                    case 'updated_at':
-                        return this.trans('updated');
-                        break;
-                    default:
-                        return key;
-                        break;
-                }
-            }
+            return this.model.fieldName(key);
         },
         isActiveRow(row){
             if ( !this.row )
