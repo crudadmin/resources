@@ -1,4 +1,5 @@
 <?php
+
 function hashAdminVersionName($version)
 {
     //We want hash version name
