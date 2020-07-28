@@ -94,7 +94,7 @@
     <script src="<?php echo admin_asset('/js/app.js') ?>"></script>
 
     <?php foreach ((array)config('admin.scripts', []) as $script) { ?>
-    <script type="text/javascript" src="<?php echo admin_asset($script) ?>"></script>
+    <script type="text/javascript" src="<?php echo admin_asset($script, true) ?>"></script>
     <?php } ?>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
