@@ -86,10 +86,9 @@ export default {
         this.$options.components['model-builder'] = Vue.extend(ModelBuilder);
 
         //Reset tabs on change id
-        this.$watch('row.id', function(){
-            var autoreset = this.$root.getModelProperty(this.model, 'settings.autoreset');
-
-            if ( autoreset !== false ) {
+        this.$watch('row.id', function(id, oldid){
+            //If is created new row, or id does exists. We does not want reset active tab, because for will not be reseted
+            if ( this.model.getSettings('autoreset') !== false || !id ) {
                 this.activetab = 0;
             }
 
