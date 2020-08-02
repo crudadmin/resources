@@ -79,7 +79,9 @@
     </div>
 
     <!-- Admin variables -->
+    <script type="text/javascript">
     <?php echo $__env->make('admin::partials.crudadmin-props', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    </script>
 
     <script src="<?php echo Gettext::getJSPlugin(AdminLocalization::class) ?>"></script>
     <script src="<?php echo admin_asset('/js/Gettextable.js') ?>"></script>
