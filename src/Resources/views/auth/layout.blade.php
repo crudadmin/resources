@@ -40,7 +40,9 @@
   </div>
   <!-- /.login-box -->
 
-  @include('admin::partials.crudadmin-props')
+  <script type="text/javascript">
+    @include('admin::partials.crudadmin-props')
+  </script>
 
   <script src="<?php echo admin_asset('/js/manifest.js') ?>"></script>
   <script src="<?php echo admin_asset('/js/vendor.js') ?>"></script>
