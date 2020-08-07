@@ -15,7 +15,15 @@ header.main-header {
             color: #4A5056;
             font-weight: 600;
             text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: center;
             @include fontSize(30px);
+
+            img {
+                max-width: 100%;
+                max-height: 60px;
+            }
         }
     }
 

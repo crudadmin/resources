@@ -25,7 +25,7 @@
           <nav class="navbar-left">
             <!-- Logo -->
             <a href="#/dashboard" class="logo">
-              <span><?php echo config('admin.name') ?></span>
+              <?php echo getAdminLogo() ?>
             </a>
           </nav>
 

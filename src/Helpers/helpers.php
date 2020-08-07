@@ -52,3 +52,16 @@ function crudadmin_resources_path($path = null)
 {
     return __DIR__.'/../Resources/'.$path;
 }
+
+function getAdminLogo()
+{
+    $name = config('admin.name');
+
+    if ( starts_with($name, public_path()) ) {
+        $path = str_replace_first(public_path(), '', $name);
+
+        return '<img src="'.asset($path).'">';
+    }
+
+    return $name;
+}

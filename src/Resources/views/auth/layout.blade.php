@@ -32,7 +32,7 @@
 <body class="hold-transition login-page">
   <div class="login-box" id="app">
     <div class="login-logo">
-      <a href=""><b><?php echo config('admin.name') ?></b></a>
+      <a href=""><b><?php echo getAdminLogo() ?></b></a>
     </div>
     <!-- /.login-logo -->
     @yield('content')

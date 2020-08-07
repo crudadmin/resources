@@ -122,12 +122,11 @@ export default {
                 key;
 
             //Get columns from row
-            for ( var i = 0; i < this.model.columns.length; i++ )
-            {
+            for ( var i = 0; i < this.model.columns.length; i++ ) {
                 key = this.model.columns[i];
 
                 //If is column hidden
-                if (this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.hidden')) {
+                if (this.model.getSettings('columns.'+key+'.hidden')) {
                     continue;
                 }
 
@@ -146,7 +145,7 @@ export default {
                 }
             }
 
-            var columns = this.$root.getModelProperty(this.model, 'settings.columns');
+            var columns = this.model.getSettings('columns');
 
             /*
              * Check if can be added column after other column
@@ -154,32 +153,35 @@ export default {
             var except = [];
 
             //Add before and after column values
-            if ( columns )
-            {
-                for ( var i in columns )
-                {
+            if ( columns ) {
+                for ( var i in columns ) {
+                    console.log(i, this.model.getSettings('columns.'+i+'.hidden'));
+                    //Skip hidden column, also if is imaginary
+                    if ( this.model.getSettings('columns.'+i+'.hidden') == true ){
+                        continue;
+                    }
+
                     var modifiedData = {};
 
-                    for ( var key in data )
-                    {
+                    for ( var key in data ) {
                         //Add custom column before actual column
-                        for ( var k in columns )
+                        for ( var k in columns ) {
                             modifiedData = this.addColumn(modifiedData, k, key, 'before', columns, except);
+                        }
 
                         modifiedData[key] = data[key];
 
                         //Add custom column after actual column
-                        for ( var k in columns )
+                        for ( var k in columns ) {
                             modifiedData = this.addColumn(modifiedData, k, key, 'after', columns, except);
+                        }
                     }
 
                     data = modifiedData;
                 }
 
-                for ( var key in columns )
-                {
-                    if ( !(key in data) && (columns[key].hidden != true && columns[key].invisible != true) )
-                    {
+                for ( var key in columns ) {
+                    if ( !(key in data) && (columns[key].hidden != true && columns[key].invisible != true) ) {
                         var field_key = this.getColumnRightKey(key);
 
                         data[key] = columns[key].name||columns[key].title||this.model.fields[field_key].column_name||this.model.fields[field_key].name;
