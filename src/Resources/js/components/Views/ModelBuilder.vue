@@ -360,8 +360,9 @@
 
                 eventHub.$on('sendParentRow', this.sendParentRowEvent = (data) => {
                     //Skip child components
-                    if ( !data || !(this.depth_level < data.depth_level) )
+                    if ( !data || this.depth_level > data.depth_level ) {
                         return;
+                    }
 
                     this.emitRowData('getParentRow', data);
                 });

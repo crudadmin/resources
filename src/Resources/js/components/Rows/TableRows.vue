@@ -155,7 +155,6 @@ export default {
             //Add before and after column values
             if ( columns ) {
                 for ( var i in columns ) {
-                    console.log(i, this.model.getSettings('columns.'+i+'.hidden'));
                     //Skip hidden column, also if is imaginary
                     if ( this.model.getSettings('columns.'+i+'.hidden') == true ){
                         continue;

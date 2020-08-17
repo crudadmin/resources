@@ -14,8 +14,16 @@
 
             <select ref="select" :disabled="disabled || readonly" :name="!isMultiple ? field_key : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
                 <option v-if="!isMultiple" value="">{{ trans('select-option') }}</option>
-                <option v-for="mvalue in missingValueInSelectOptions" :value="mvalue" :selected="hasValue(mvalue, value, isMultiple)">{{ mvalue }}</option>
-                <option v-for="data in fieldOptions" :selected="hasValue(data[0], value, isMultiple)" :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
+                <option
+                    v-for="mvalue in missingValueInSelectOptions"
+                    :key="mvalue"
+                    :value="mvalue"
+                    :selected="hasValue(mvalue, value, isMultiple)">{{ mvalue }}</option>
+                <option
+                    v-for="data in fieldOptions"
+                    :key="data[0]"
+                    :selected="hasValue(data[0], value, isMultiple) ? 'selected' : ''"
+                    :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
             </select>
             <button v-if="canAddRow" data-add-relation-row @click="allowRelation = true" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-success">
                 <i class="fa fa-plus"></i>
@@ -355,10 +363,10 @@
             },
             hasValue(key, value, multiple)
             {
-                if ( multiple == true && $.isArray(value) )
-                {
-                    if ( value.indexOf( $.isNumeric(key) ? parseInt(key) : key ) > -1 )
+                if ( multiple == true && $.isArray(value) ) {
+                    if ( value.indexOf( $.isNumeric(key) ? parseInt(key) : key ) > -1 ) {
                         return true;
+                    }
                 } else if ((key || key == 0) && (value || value == 0) && key == value) {
                     return true;
                 }
