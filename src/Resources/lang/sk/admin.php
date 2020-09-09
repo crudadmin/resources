@@ -30,7 +30,7 @@ return [
     'super-admin' => _('Plný prístup'),
     'admin-group' => _('Administrátorská skupina'),
     'user-groups' => _('Používateľské skupiny'),
-    'user-groups-title' => _('Upravte používateľské skupiny a ich obmedzenie, do ktorých budú následne priradený useristrátori'),
+    'user-groups-title' => _('Upravte používateľské skupiny a ich obmedzenie, do ktorých budú následne priradený administrátori'),
     'user-groups-name' => _('Názov skupiny'),
     'user-groups-placeholder' => _('Zadajte názov skupiny'),
     'user-groups-modules' => _('Povolené moduly'),
