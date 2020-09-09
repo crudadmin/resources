@@ -55,9 +55,13 @@ function crudadmin_resources_path($path = null)
 
 function getAdminLogo()
 {
-    $name = config('admin.name');
+    $name = config('admin.logo') ?: config('admin.name');
 
-    if ( starts_with($name, public_path()) ) {
+    if (
+        starts_with($name, public_path())
+        || substr($name, 0, 5) == 'http:'
+        || substr($name, 0, 6) == 'https:'
+    ) {
         $path = str_replace_first(public_path(), '', $name);
 
         return '<img src="'.asset($path).'">';
