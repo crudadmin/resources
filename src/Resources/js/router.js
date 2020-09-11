@@ -5,7 +5,7 @@ import VueRouter from 'vue-router';
 import DashboardView from './components/Views/DashBoardView.vue';
 import BasePageView from './components/Views/BasePageView.vue';
 
-var Router = new VueRouter({
+var router = new VueRouter({
     routes : [
         {
             path : '*',
@@ -20,4 +20,8 @@ var Router = new VueRouter({
     ]
 });
 
-export default Router;
+router.afterEach((to, from) => {
+    store.commit('header/setMobileMenuActive', false);
+})
+
+export default router;

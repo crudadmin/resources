@@ -6,12 +6,16 @@ import Sidebar from './Sidebar/Sidebar.vue';
 import Modal from './Partials/Modal.vue';
 import ModelHelper from './Helpers/ModelHelper.js';
 
-const BaseComponent = (router) => {
+import { mapState, mapMutations } from 'vuex';
+
+const BaseComponent = (router, store) => {
     return {
         el: '#app',
         router,
+        store,
         data : function(){
             return {
+                mobile_menu : false,
                 csrf_token: null,
                 version : null,
                 version_resources : null,
@@ -63,12 +67,18 @@ const BaseComponent = (router) => {
         },
 
         computed : {
+            ...mapState('header', [
+                'isActiveMobileMenu',
+            ]),
             isTest(){
                 return this.version.indexOf('test') > -1;
             },
         },
 
         methods : {
+            ...mapMutations('header', [
+                'toggleMobileMenu',
+            ]),
             setDefaultRoute(){
                 if ( router.currentRoute.name == 'dashboard' ) {
                     for ( var key in this.models ) {

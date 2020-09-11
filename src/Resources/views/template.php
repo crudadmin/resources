@@ -19,26 +19,31 @@
   <?php } ?>
 </head>
 <body>
-    <div id="app">
+    <div id="app" :class="{ '--menuOpened' : isActiveMobileMenu }">
         <!-- Main Header -->
         <header class="main-header">
-          <nav class="navbar-left">
-            <!-- Logo -->
-            <a href="#/dashboard" class="logo">
-              <?php echo getAdminLogo() ?>
-            </a>
-          </nav>
+          <div class="main-header__wrapper">
+            <nav class="navbar-left">
+              <div class="mobile-menu" @click="toggleMobileMenu">
+                <i class="fa fa-bars" :class="{ 'fa-bars' : !isActiveMobileMenu, 'fa-times' : isActiveMobileMenu }"></i>
+              </div>
+              <!-- Logo -->
+              <a href="#/dashboard" class="logo">
+                <?php echo getAdminLogo() ?>
+              </a>
+            </nav>
 
-          <!-- Header Navbar -->
-          <nav class="navbar-right">
-            <right-navbar
-              :user="user" />
-          </nav>
+            <!-- Header Navbar -->
+            <nav class="navbar-right">
+              <right-navbar
+                :user="user" />
+            </nav>
+          </div>
         </header>
 
         <div class="wrapper">
           <!-- Left side column. contains the logo and sidebar -->
-          <aside class="main-sidebar">
+          <aside class="main-sidebar" :class="{ active : isActiveMobileMenu }">
             <sidebar
               :author="<?php echo config('admin.author', true) ? 'true' : 'false' ?>"
               :rows="tree"

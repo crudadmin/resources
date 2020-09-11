@@ -1,37 +1,35 @@
 <template>
 <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-            <!-- User Account Menu -->
-            <li class="user user-menu">
-                <!-- Menu Toggle Button -->
-                <a href="#" class="user-toggle" data-toggle="dropdown">
-                    <img v-bind:src="getAvatar" class="user-image" alt="User Image">
+    <ul class="nav navbar-nav">
+        <!-- User Account Menu -->
+        <li class="user user-menu">
+            <!-- Menu Toggle Button -->
+            <a href="#" class="user-toggle" data-toggle="dropdown">
+                <img v-bind:src="getAvatar" class="user-image" alt="User Image">
 
-                    <span v-if="user">{{ user.username }}</span>
-                    <i class="fa fa-angle-down"></i>
-                </a>
-                <ul class="dropdown-menu">
-                    <!-- The user image in the menu -->
-                    <li class="user-header">
-                        <img v-bind:src="getAvatar" class="img-circle" alt="User Image">
+                <span v-if="user">{{ user.username }}</span>
+                <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- The user image in the menu -->
+                <li class="user-header">
+                    <img v-bind:src="getAvatar" class="img-circle" alt="User Image">
 
-                        <p v-if="user">
-                            {{ user.username }} - {{ getPermissions }}
-                        </p>
-                    </li>
-                    <!-- Menu Body -->
-                    <li class="user-body">
+                    <p v-if="user">
+                        {{ user.username }} - {{ getPermissions }}
+                    </p>
+                </li>
+                <!-- Menu Body -->
+                <li class="user-body">
 
-                    </li>
-                    <!-- Menu Footer-->
-                    <li class="user-footer">
-                        <div class="pull-right">
-                            <a :href="logout" class="btn btn-primary">{{ trans('logout') }}</a>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+                </li>
+                <!-- Menu Footer-->
+                <li class="user-footer">
+                    <a :href="logout" class="btn btn-primary">{{ trans('logout') }}</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </div>
 </template>
 

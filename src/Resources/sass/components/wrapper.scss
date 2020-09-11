@@ -6,6 +6,10 @@
         width: calc(100% - #{$navbarWidth});
         position: relative;
 
+        @include less-than(md) {
+            width: 100%;
+        }
+
         .content-header {
             position: absolute;
             left: 0;
@@ -13,11 +17,23 @@
             height: $navbarHeight;
             display: flex;
 
+            @include less-than(md) {
+                position: relative;
+                top: 0;
+                height: auto;
+                padding: $navbarPadding/2 0;
+                border-bottom: 1px solid $navbarBorderColor;
+            }
+
             .breadcrumb {
                 margin-bottom: 0;
                 align-items: center;
                 padding: 0 $navbarPadding;
                 background: none;
+
+                @include less-than(md) {
+                    padding: 0 $navbarPadding / 2;
+                }
 
                 a {
                     font-weight: 600;
@@ -34,6 +50,10 @@
         .crudadmin-wrapper {
             padding: $navbarPadding;
 
+            @include less-than(md) {
+                padding: $navbarPadding / 2;
+            }
+
             .box {
                 background: white;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.13);
@@ -43,9 +63,21 @@
                     padding: $navbarPadding;
                     border-bottom: 1px solid $navbarBorderColor;
 
+                    @include less-than(md) {
+                        padding: $navbarPadding / 2;
+                    }
+
                     &.box-header--actions, .box-header__actions {
                         display: flex;
                         justify-content: space-between;
+
+                        @include less-than(md) {
+                            flex-direction: column;
+
+                            .box-header__left {
+                                margin-bottom: $navbarPadding / 2;
+                            }
+                        }
 
                         .box-header__right, .box-header__left {
                             display: flex;
@@ -107,6 +139,18 @@
                     padding: $navbarPadding;
                     border-bottom: 1px solid $navbarBorderColor;
 
+                    @include less-than(md){
+                        padding: $navbarPadding / 2;
+
+                        &.box-body--table {
+                            .table {
+                                > thead th, > tbody td {
+                                    padding: 0.3rem;
+                                }
+                            }
+                        }
+                    }
+
                     &.box-body--form {
                         padding-bottom: $navbarPadding - $form-group-margin-bottom;
                     }
@@ -115,6 +159,10 @@
                 .box-footer {
                     background: white;
                     padding: $navbarPadding;
+
+                    @include less-than(md){
+                        padding: $navbarPadding / 2;
+                    }
 
                     &.box-footer--actions, .box-footer__actions {
                         display: flex;
@@ -139,7 +187,14 @@
                         }
 
                         .pagination {
+                            height: 37px;
                             margin-bottom: 0;
+
+                            li a {
+                                height: 100%;
+                                display: flex;
+                                align-items: center;
+                            }
                         }
                     }
 
@@ -153,13 +208,33 @@
                     justify-content: space-between;
                     margin-bottom: $navbarPadding;
 
+                    @include less-than(md) {
+                        flex-direction: column;
+                        margin-bottom: $navbarPadding / 2;
+                    }
+
                     .left, .right {
                         display: flex;
                         align-items: center;
 
-                        > *:not(:last-child) {
-                            margin-right: $navbarPadding / 2;
+                        @include less-than(md) {
+                            flex-direction: column;
+
+                            > * {
+                                width: 100%;
+                            }
                         }
+
+                        > *:not(:last-child) {
+                            @include more-than(md) {
+                                margin-right: $navbarPadding / 2;
+                            }
+
+                            @include less-than(md) {
+                                margin-bottom: $navbarPadding / 2;
+                            }
+                        }
+
                     }
 
                     .btn {
@@ -242,6 +317,7 @@
                         display: flex;
                         padding-left: 0;
                         margin-bottom: 0;
+                        height: 38px;
                         border: 1px solid $inputBorderColor;
                         border-radius: $inputRadius;
                         @include fontSize(14px);
@@ -251,12 +327,20 @@
                         margin-bottom: -1px;
                         overflow: hidden;
 
+                        @include less-than(md) {
+                            display: none;
+                        }
+
                         li {
                             list-style: none;
                             background: white;
                             display: flex;
                             align-items: center;
                             padding: 7px 15px;
+
+                            img {
+                                max-width: 30px;
+                            }
 
                             &:hover:not(.disabled):not(.active) {
                                 background: #FCFCFC;
@@ -268,11 +352,6 @@
                                 pointer-events: all !important;
                             }
 
-                            &.active {
-                                background: $primary;
-                                color: white;
-                            }
-
                             &:not(:last-child) {
                                 border-right: 1px solid $inputBorderColor;
                             }
@@ -281,13 +360,23 @@
                 }
 
                 .admin-model__body {
-                    .grid-fullsize {
-                        > .col.col--form {
+                    > .grid-table.grid-fullsize {
+                        > .col--form {
                             order: 2;
                         }
 
-                        > .col.col--rows {
+                        > .col--rows {
                             margin-bottom: $navbarPadding;
+                        }
+                    }
+
+                    @include less-than(lg) {
+                        > .grid-table > .col--form {
+                            order: 2;
+                        }
+
+                        > .grid-table > .col--rows {
+                            margin-bottom: $navbarPadding / 2;
                         }
                     }
                 }

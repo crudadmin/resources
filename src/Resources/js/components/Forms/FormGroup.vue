@@ -153,11 +153,11 @@ export default {
                 width[0] = 4;
 
             if ( width.length == 2 && width[1] == 'inline' ) {
-                return 'col-'+width[0]+' fields-group--inline';
+                return 'col-12 col-lg-'+width[0]+' fields-group--inline';
             }
 
             if ( $.isNumeric(width[0]) ) {
-                return 'col-' + width[0];
+                return 'col-12 col-lg-' + width[0];
             }
 
             return 'col-12';

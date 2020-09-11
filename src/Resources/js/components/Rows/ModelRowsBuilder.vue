@@ -93,7 +93,7 @@
                     <pagination v-if="isPaginationEnabled" :rows="rows" :pagination="pagination" />
                 </div>
                 <div class="box-footer__right">
-                    <div class="pagination-limit" :class="{ '--hidden-limit' : isHiddenMode }" v-if="isPaginationEnabled" :title="trans('rows-count')">
+                    <div class="pagination-limit d-none d-lg-block" :class="{ '--hidden-limit' : isHiddenMode }" v-if="isPaginationEnabled" :title="trans('rows-count')">
                         <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
                             <option value="hide">{{ _('Skryť') }}</option>
                             <option v-for="count in pagination.limits">{{ count }}</option>

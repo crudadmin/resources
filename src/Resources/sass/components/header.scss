@@ -1,89 +1,151 @@
+#app.--menuOpened {
+    height: 100vh;
+    overflow: hidden;
+}
+
 header.main-header {
     height: $navbarHeight;
     border-bottom: 1px solid $navbarBorderColor;
-    display: flex;
 
-    .navbar-left {
-        background: white;
-        border-right: 1px solid $navbarBorderColor;
-        width: $navbarWidth;
-        padding: 0 $navbarPadding;
+    .main-header__wrapper {
         display: flex;
-        align-items: center;
+        height: 100%;
 
-        .logo {
-            color: #4A5056;
-            font-weight: 600;
-            text-decoration: none;
-            display: block;
-            width: 100%;
-            text-align: center;
-            @include fontSize(30px);
+        .navbar-left {
+            background: white;
+            border-right: 1px solid $navbarBorderColor;
+            width: $navbarWidth;
+            padding: 0 $navbarPadding;
+            display: flex;
+            align-items: center;
 
-            img {
-                max-width: 100%;
-                max-height: 55px;
+            .logo {
+                color: #4A5056;
+                font-weight: 600;
+                text-decoration: none;
+                display: block;
+                width: 100%;
+                text-align: center;
+                @include fontSize(30px);
+
+                img {
+                    max-width: 100%;
+                    max-height: 55px;
+                }
+            }
+        }
+
+        .navbar-right {
+            width: calc(100% - #{$navbarWidth});
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 $navbarPadding;
+
+            .user-menu {
+                position: relative;
+
+                a.user-toggle {
+                    color: #98A7B7;
+                    @include fontSize(14px);
+                    font-weight: 400;
+                    text-decoration: none;
+                    display: flex;
+                    align-items: center;
+
+                    @include less-than(md) {
+                        span {
+                            display: none;
+                        }
+
+                        img {
+                            margin-right: 10px;
+                        }
+                    }
+
+                    img {
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 100%;
+                    }
+
+                    span {
+                        padding: 0 10px;
+                    }
+                }
+
+                .dropdown-menu {
+                    transform: none !important;
+                    left: auto !important;
+                    right: 0 !important;
+                    top: 47px !important;
+                    border-color: $navbarBorderColor;
+                    border-radius: 1px;
+                    min-width: 200px;
+                    padding: $navbarPadding;
+
+                    @include less-than(md) {
+                        min-width: auto;
+                        width: calc(100vw - #{$navbarPadding});
+                    }
+
+                    .user-header {
+                        text-align: center;
+                        min-width: 300px;
+
+                        img {
+                            border-radius: 100%;
+                        }
+
+                        p {
+                            margin-top: 30px;
+                        }
+                    }
+
+                    .user-footer {
+                        .btn {
+                            width: 100%;
+                        }
+                    }
+                }
             }
         }
     }
 
-    .navbar-right {
-        width: calc(100% - #{$navbarWidth});
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        padding: 0 $navbarPadding;
+    @include less-than(md) {
+        .main-header__wrapper {
+            justify-content: space-between;
+            background: white;
 
-        .user-menu {
-            position: relative;
+            .navbar-left {
+                border-right: 0;
+                padding: 0;
+                padding-left: 0;
+                justify-content: flex-start;
 
-            a.user-toggle {
-                color: #98A7B7;
-                @include fontSize(14px);
-                font-weight: 400;
-                text-decoration: none;
-                display: flex;
-                align-items: center;
-
-                img {
-                    width: 30px;
-                    height: 30px;
-                    border-radius: 100%;
+                .logo {
+                    text-align: left;
+                    margin-left: $navbarPadding / 2;
                 }
 
-                span {
-                    padding: 0 10px;
+                .mobile-menu {
+                    height: 100%;
+                    width: $navbarHeight;
+                    background: $primary;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    i {
+                        font-size: 22px;
+                        color: white;
+                    }
                 }
             }
 
-            .dropdown-menu {
-                transform: none !important;
-                left: auto !important;
-                right: 0 !important;
-                top: 47px !important;
-                border-color: $navbarBorderColor;
-                border-radius: 1px;
-                min-width: 200px;
-                padding: $navbarPadding;
-
-                .user-header {
-                    text-align: center;
-                    min-width: 300px;
-
-                    img {
-                        border-radius: 100%;
-                    }
-
-                    p {
-                        margin-top: 30px;
-                    }
-                }
-
-                .user-footer {
-                    .btn {
-                        width: 100%;
-                    }
-                }
+            .navbar-right {
+                padding: $navbarPadding / 2;
+                background: white;
             }
         }
     }
@@ -95,8 +157,31 @@ aside.main-sidebar {
     border-right: 1px solid $navbarBorderColor;
     position: relative;
 
+    @include less-than(md) {
+        width: 100%;
+        border-right: 0;
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+        z-index: 2;
+        height: calc(100vh - #{$navbarHeight});
+        overflow-y: auto;
+
+        &.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
     .sidebar {
         padding: $navbarPadding;
+
+        @include less-than(md) {
+            padding: $navbarPadding / 2;
+            padding-left: calc(#{$navbarPadding} / 2 + 7px);
+            padding-right: calc(#{$navbarPadding} / 2 + 7px);
+        }
 
         .sidebar-menu {
             margin-left: 0;

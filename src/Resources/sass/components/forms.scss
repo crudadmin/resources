@@ -6,7 +6,13 @@
         > .nav-tabs > li[has-error] i.fa-exclamation-triangle ~ i {display: none}
         > .nav-tabs > li[has-error] a {color: #dd4939}
 
-        .tab-pane > .row .model > .box { border-top: 0;     box-shadow: none; }
+        @include less-than(md) {
+           > .nav-tabs > .nav-item {
+                width: 100%;
+            }
+        }
+
+        .tab-pane > .row .model > .box { border-top: 0; box-shadow: none; }
         .tab-pane > .row .model > .box > .box-header h3 { display: none; }
         .tab-pane > .row .model > .box > .box-header,
         .tab-pane > .row .model > .box > .box-body { padding: 0; }
@@ -22,40 +28,42 @@
     }
 
     .fields-group {
-        &.fields-group--inline {
-            > .fields-group__wrapper {
-                > div > .row {
-                    flex-direction: row;
+        @include more-than(md) {
+            &.fields-group--inline {
+                > .fields-group__wrapper {
+                    > div > .row {
+                        flex-direction: row;
 
-                    > .fields-group__item {
-                        flex: inherit;
+                        > .fields-group__item {
+                            flex: inherit;
+                        }
                     }
                 }
-            }
 
-            /* Last inline group */
-            &:last-child {
-                > .fields-group__wrapper & > div > .row > .fields-group__item .field-wrapper .form-group {
+                /* Last inline group */
+                &:last-child {
+                    > .fields-group__wrapper & > div > .row > .fields-group__item .field-wrapper .form-group {
+                        margin-bottom: 0;
+                    }
+                }
+
+                /* every field in inline group */
+                & > .fields-group__wrapper > div > .row > .fields-group__item > .field-wrapper > .form-group:last-child {
                     margin-bottom: 0;
                 }
-            }
 
-            /* every field in inline group */
-            & > .fields-group__wrapper > div > .row > .fields-group__item > .field-wrapper > .form-group:last-child {
-                margin-bottom: 0;
-            }
+                /* subinline group in inline group */
+                & > .fields-group__wrapper > div > .row > .fields-group__item.fields-group--inline > .fields-group__wrapper {
+                    margin-bottom: 0;
+                }
 
-            /* subinline group in inline group */
-            & > .fields-group__wrapper > div > .row > .fields-group__item.fields-group--inline > .fields-group__wrapper {
-                margin-bottom: 0;
+                &[data-fields="2"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 2); }
+                &[data-fields="3"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 3); }
+                &[data-fields="4"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 4); }
+                &[data-fields="5"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 5); }
+                &[data-fields="6"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 6); }
+                &[data-fields="7"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 7); }
             }
-
-            &[data-fields="2"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 2); }
-            &[data-fields="3"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 3); }
-            &[data-fields="4"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 4); }
-            &[data-fields="5"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 5); }
-            &[data-fields="6"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 6); }
-            &[data-fields="7"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 7); }
         }
 
         .fields-group__wrapper {

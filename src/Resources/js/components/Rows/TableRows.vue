@@ -595,6 +595,7 @@ export default {
                 this.$nextTick(() => {
                     setTimeout(() => {
                         this.loadingRow = false;
+
                         this.scrollToForm();
                     }, 100);
                 });
@@ -654,8 +655,9 @@ export default {
         },
         scrollToForm(){
             //Allow scroll form only on full width table
-            if ( this.$parent.$parent.activeGridSize != 0 )
+            if ( this.$parent.$parent.activeGridSize != 0 && this.isMobileDevice() == false ){
                 return;
+            }
 
             setTimeout(() => {
                 var form = $('#' + this.formID),

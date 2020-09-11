@@ -37,8 +37,17 @@
                     ></search>
 
                     <!-- Grid size -->
-                    <ul class="change-grid-size" v-if="isEnabledGrid" data-toggle="tooltip" :data-original-title="trans('edit-size')">
-                        <li v-for="size in sizes" :data-size="size.key" v-if="!size.disabled" :class="{ 'active' : size.active, 'disabled' : size.disabled }" @click="changeSize(size)">{{ size.name }}</li>
+                    <ul class="change-grid-size d-none d-lg-flex" v-if="isEnabledGrid">
+                        <li
+                            v-for="size in sizes"
+                            :data-size="size.key"
+                            v-if="!size.disabled"
+                            :class="{ 'active' : size.active, 'disabled' : size.disabled }"
+                            data-toggle="tooltip"
+                            :data-original-title="size.name"
+                            @click="changeSize(size)">
+                            <img :src="asset('images/grid/grid-'+size.key+''+(size.active ? '-active' : '')+'.svg')">
+                        </li>
                     </ul>
 
                     <!-- Choose language -->
@@ -62,9 +71,9 @@
             </div>
 
             <div class="admin-model__body">
-                <div :class="{ 'row' : true, 'grid-fullsize' : activeGridSize == 0 }">
+                <div class="row grid-table" :class="{ 'grid-fullsize' : activeGridSize == 0 }">
                     <!-- left column -->
-                    <div :class="['col-lg-'+(12 - activeGridSize)]" class="col col--form col-md-12 col-sm-12" v-show="canShowForm" v-if="activetab!==false">
+                    <div :class="['col-lg-'+(12 - activeGridSize)]" class="col--form col-12" v-show="canShowForm" v-if="activetab!==false">
                         <form-builder
                             :formID="formID"
                             :progress="progress"
@@ -84,7 +93,7 @@
                     <!--/.col (left) -->
 
                     <!-- right column -->
-                    <div :class="['col-lg-'+(12-(12-activeGridSize))]" class="col col--rows col-md-12 col-sm-12" v-show="canShowRows">
+                    <div :class="['col-lg-'+(12-(12-activeGridSize))]" class="col--rows col-12" v-show="canShowRows">
                         <model-rows-builder
                             :model="model"
                             :rows="rows"
