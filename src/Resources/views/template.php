@@ -24,7 +24,7 @@
         <header class="main-header">
           <div class="main-header__wrapper">
             <nav class="navbar-left">
-              <div class="mobile-menu" @click="toggleMobileMenu">
+              <div class="mobile-menu d-flex d-md-none d-lg-none" @click="toggleMobileMenu">
                 <i class="fa fa-bars" :class="{ 'fa-bars' : !isActiveMobileMenu, 'fa-times' : isActiveMobileMenu }"></i>
               </div>
               <!-- Logo -->
