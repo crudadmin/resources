@@ -16,7 +16,7 @@
                 <th class="th-options-buttons"></th>
             </tr>
         </thead>
-        <draggable tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
+        <component :is="isMobileDevice() ? 'tbody' : 'draggable'" tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
             <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : checked.indexOf(item.id) > -1 }">
                 <td class="select-row-checkbox">
                     <div class="checkbox-box" @click="checkRow(item.id)">
@@ -53,7 +53,7 @@
                     </div>
                 </td>
             </tr>
-        </draggable>
+        </component>
     </table>
 </template>
 

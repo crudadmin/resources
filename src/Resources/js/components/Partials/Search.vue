@@ -17,9 +17,9 @@
         <!-- /btn-group -->
 
         <!-- Search columns -->
-        <input type="text" v-show="isSearch" data-search-text :placeholder="trans('search')+'...'" @input="updateSearchQuery('query', $event)" class="form-control">
+        <input type="text" v-show="isSearch" data-search-text :placeholder="trans('search')+'...'" :value="search.query" @input="updateSearchQuery('query', $event)" class="form-control">
 
-        <input type="text" v-show="isDate" data-search-date readonly class="form-control js_date">
+        <input type="text" v-show="isDate" :value="search.query" data-search-date readonly class="form-control js_date">
 
         <select type="text" v-show="isCheckbox" v-model="search.query" class="form-control">
             <option value="0">{{ trans('off') }}</option>
@@ -38,9 +38,9 @@
             <button class="btn" :class="{ 'btn-default' : !search.interval, 'btn-primary' : search.interval }" @click="search.interval = !search.interval"><i class="fa fa-arrows-alt-h"></i></button>
         </div>
 
-        <input type="text" data-inerval-input data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'"  @input="updateSearchQuery('query_to', $event)" class="form-control">
+        <input type="text" data-inerval-input data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'" :value="search.query_to" @input="updateSearchQuery('query_to', $event)" class="form-control">
 
-        <input type="text" data-inerval-input data-search-interval-date v-show="search.interval && isDate" readonly class="form-control js_date">
+        <input type="text" data-inerval-input data-search-interval-date v-show="search.interval && isDate" :value="search.query_to" readonly class="form-control js_date">
 
         <div class="interval" data-reset-interval v-if="canResetSearch" data-toggle="tooltip" :data-original-title="trans('reset')">
             <button class="btn btn-default" @click="resetIterval"><i class="fa fa-times"></i></button>
@@ -208,6 +208,7 @@ export default {
         resetIterval(){
             this.search.query = '';
             this.search.query_to = '';
+            this.search.interval = false;
         },
     }
 }
