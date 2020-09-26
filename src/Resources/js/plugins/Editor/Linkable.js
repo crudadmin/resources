@@ -47,6 +47,7 @@ var Linkable = {
     updateLink(element, newUrl){
         var data = {
             id : element.getPointerSetting('rowId', 'linkable'),
+            language : CAEditor.config.language,
             url : newUrl
         };
 
