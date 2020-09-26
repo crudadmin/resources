@@ -4,6 +4,8 @@ var Ajax = {
         request.open('POST', url, true);
         request.setRequestHeader('X-CSRF-TOKEN', CAEditor.config.token);
 
+        request.setRequestHeader('Accept', 'application/json');
+
         if ( data instanceof FormData ) {
             request.send(data);
         } else {

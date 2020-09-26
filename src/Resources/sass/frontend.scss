@@ -256,6 +256,12 @@ $textColor: #8292A5;
         }
     }
 
+    &.CAE_Pencil--file {
+        &:after {
+            background: url('../images/caeditor/file-upload-solid.svg');
+        }
+    }
+
     &.CAE_Pencil--image {
         &:after {
             background: url('../images/caeditor/image-regular.svg');

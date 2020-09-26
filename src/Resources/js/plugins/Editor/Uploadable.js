@@ -30,15 +30,17 @@ var Uploadable = {
     },
 
     registerAllImages(){
-        var images = document.getElementsByTagName('img'),
+        var images = [...document.getElementsByTagName('img'), ...document.getElementsByTagName('a')],
             allElements = document.getElementsByTagName('*');
 
         //Add support for img src="" images
         for ( var i = 0; i < images.length; i++ ){
-            var src = images[i].src;
+            if ( this.isUploadableImage(images[i].src) ) {
+                this.registerImageElement(images[i], images[i].src);
+            }
 
-            if ( this.isUploadableImage(src) ) {
-                this.registerImageElement(images[i], src);
+            if ( this.isUploadableImage(images[i].href) ) {
+                this.registerImageElement(images[i], images[i].href, true);
             }
         }
 
@@ -64,11 +66,12 @@ var Uploadable = {
         return parts.length > 1 ? decodeURIComponent(parts[1].split('&')[0]) : null;
     },
 
-    registerImageElement(element, url){
+    registerImageElement(element, url, isFileUpload){
         CAEditor.pushPointerElement(element, 'uploadable', {
             defaultUrl : url,
             onPointerCreate : this.events.onPointerCreate.bind(this),
             onPointerClick : this.events.onPointerClick.bind(this),
+            isFileUpload : isFileUpload ? true : false,
         });
     },
 
@@ -92,15 +95,16 @@ var Uploadable = {
             imageUrl = Uploadable.imageElement.getPointerSetting('defaultUrl', 'uploadable'),
             sizes = this.getQueryPart(imageUrl, 'sizes');
 
-        data.append('table', this.getQueryPart(imageUrl, this.queryKey));
-        data.append('key', this.getQueryPart(imageUrl, 'ca_field_name'));
-        data.append('id', this.getQueryPart(imageUrl, 'ca_row_id'));
+        data.append('_table', this.getQueryPart(imageUrl, this.queryKey));
+        data.append('_key', this.getQueryPart(imageUrl, 'ca_field_name'));
+        data.append('_id', this.getQueryPart(imageUrl, 'ca_row_id'));
+        data.append('_hash', this.getQueryPart(imageUrl, 'ca_hash'));
+        data.append('_is_image', Uploadable.imageElement.getPointerSetting('isFileUpload', 'uploadable') ? 0 : 1);
         data.append(this.getQueryPart(imageUrl, 'ca_field_name'), e.target.files[0]);
-        data.append('hash', this.getQueryPart(imageUrl, 'ca_hash'));
 
         //If resizing is avialable
         if ( sizes ){
-            data.append('sizes', sizes);
+            data.append('_sizes', sizes);
         }
 
         return data;
@@ -133,12 +137,25 @@ var Uploadable = {
             };
 
             var onError = (response) => {
+                var imageUrl = Uploadable.imageElement.getPointerSetting('defaultUrl', 'uploadable');
+
                 //Add red pointer color
                 Helpers.addClass(pointer, Pencils.classNameError);
 
                 //Reset loading and image
                 resetLoading(Uploadable.imageElement);
                 Uploadable.imageElement = null;
+
+                try {
+                    var data = JSON.parse(response.response),
+                        imageError = data.errors[this.getQueryPart(imageUrl, 'ca_field_name')];
+
+                    if ( imageError && imageError.length > 0 ){
+                        alert(imageError);
+                    }
+                } catch (e){
+                    console.error(e);
+                }
             };
 
             Ajax.post(CAEditor.config.requests.updateImage, data, {
@@ -176,6 +193,7 @@ var Uploadable = {
     updateImagesWithSameSrc(response, image){
         CAEditor.allMatchedElements('uploadable').forEach(item => {
             if ( item.getPointerSetting('defaultUrl', 'uploadable') == image.getPointerSetting('defaultUrl', 'uploadable') ) {
+                //Basic image
                 if ( item.nodeName == 'IMG' ) {
                     item.src = response.responseJSON.url;
 
@@ -183,8 +201,15 @@ var Uploadable = {
                     if ( item.srcset ) {
                         item.srcset = response.responseJSON.url+' 1x';
                     }
-                } else {
+                }
+
+                //Element with background style
+                else if ( item.style.backgroundImage ) {
                     item.style.backgroundImage = 'url("'+response.responseJSON.url+'")';
+                }
+
+                else if ( item.href ) {
+                    item.href = response.responseJSON.url;
                 }
 
                 //Hide subpointers if are available
@@ -195,8 +220,10 @@ var Uploadable = {
 
     events : {
         onPointerCreate(pointer, element){
+            let isFileUpload = element.getPointerSetting('isFileUpload', 'uploadable');
+
             Helpers.addClass(pointer, Pencils.classNameIcon);
-            Helpers.addClass(pointer, Pencils.classNameImage);
+            Helpers.addClass(pointer, isFileUpload ? Pencils.classNameFile : Pencils.classNameImage);
         },
         onPointerClick(element, pointer){
             var e = document.createEvent('MouseEvents');

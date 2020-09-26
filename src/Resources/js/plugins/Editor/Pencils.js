@@ -16,6 +16,7 @@ var Pencils = {
     classNameLoading : 'CAE_Pencil--loading',
     classNameIcon : 'CAE_Pencil--icon',
     classNameImage : 'CAE_Pencil--image',
+    classNameFile : 'CAE_Pencil--file',
     classNameLinkable : 'CAE_Pencil--linkable',
     classNameEditor : 'CAE_Pencil--editor',
     classNameSubmenu : 'CAE_Pencil--subpointers',
