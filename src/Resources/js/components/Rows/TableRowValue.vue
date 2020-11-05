@@ -1,8 +1,16 @@
 <template>
-    <div v-if="hasFieldValue">
+    <div v-if="hasFieldValue || hasComponent">
+        <component
+            v-if="hasComponent"
+            :mutatedValue="fieldValue"
+            :value="item[field]"
+            :field="fieldColumn"
+            :row="item"
+            :model="model"
+            :is="componentName(model, fieldColumn.column_component)" />
 
         <!-- File -->
-        <div v-if="isFile()" class="filesList">
+        <div v-else-if="isFile()" class="filesList">
             <div v-for="(file, index) in getFiles">
                 <file :file="file" :field="field" :model="model" :image="image"></file>
                 <span v-if="index != getFiles.length - 1">, </span>
@@ -22,12 +30,14 @@ export default {
 
     components : { File },
 
-    /*
-     * Performance tests
-     */
-    // created(){
-    //     this.$a = window.startTest();
-    // },
+    created(){
+        if ( this.fieldColumn ) {
+            this.registerFieldComponents(this.model, this.fieldColumn, 'column_component');
+        }
+
+        //Performance tests
+        //this.$a = window.startTest();
+    },
 
     // mounted(){
     //     window.endTest(this.$a);
@@ -127,6 +137,12 @@ export default {
         },
         fieldValueLimitedAndEncoded(){
             return this.encodeValue(this.stringLimit(this.fieldValue));
+        },
+        fieldColumn(){
+            return this.model.fields[this.field]
+        },
+        hasComponent(){
+            return this.fieldColumn && 'column_component' in this.fieldColumn && this.fieldColumn.column_component;
         },
     },
 

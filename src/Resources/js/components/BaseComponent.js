@@ -487,7 +487,7 @@ const BaseComponent = (router, store) => {
                     originalMounted = obj.mounted||(() => {}),
                     originalDestroyed = obj.destroyed||(() => {}),
                     proxyEventsResend = ['sendRow', 'sendParentRow', 'reloadRows'],
-                    proxyEventsReceive = ['getRow', 'getParentRow', 'onCreate', 'onUpdate', 'onSubmit', 'changeFormSaveState', 'selectHistoryRow'],
+                    proxyEventsReceive = ['getRow', 'getParentRow', 'onCreate', 'onUpdate', 'onSubmit', 'buttonAction', 'changeFormSaveState', 'selectHistoryRow'],
                     events = {};
 
                 //Extend created method

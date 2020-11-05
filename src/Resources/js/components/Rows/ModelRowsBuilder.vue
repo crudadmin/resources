@@ -908,6 +908,18 @@ export default {
         getButtonKey(id, key){
             return id + '-' + key;
         },
+        buildEventData(data, model, isChild){
+            var model = model||this.model;
+
+            return {
+                table : model.slug,
+                model : model,
+
+                //If is child inParent relation, then add depth level + 1 for correct communication
+                depth_level : this.depth_level + (isChild ? 1 : 0),
+                ...data
+            };
+        },
         buttonAction(key, button, row){
             var ids = row ? [ row.id ] : this.checked;
 
@@ -931,32 +943,41 @@ export default {
                     this.button_loading = false;
 
                     var data = response.data,
-                            hasData = 'data' in data,
-                            ask = hasData && data.data.ask == true,
-                            component = hasData && data.data.component ? data.data.component : null;
+                        hasData = 'data' in data,
+                        ask = hasData && data.data.ask == true,
+                        component = hasData && data.data.component ? data.data.component : null;
 
                     //Load rows into array
-                    if ( 'data' in data && ! ask )
-                    {
+                    if ( 'data' in data && ! ask ) {
+                        eventHub.$emit(
+                            'buttonAction',
+                            this.buildEventData({
+                                rows : data.data.rows.rows,
+                            }, this.model)
+                        );
+
                         //Update received rows by button action
-                        if ( 'rows' in data.data )
+                        if ( 'rows' in data.data ) {
                             this.updateParentData(key, button, row, data);
+                        }
 
                         //Redirect on page
-                        if ( ('redirect' in data.data) && data.data.redirect )
-                            if ( data.data.open == true )
+                        if ( ('redirect' in data.data) && data.data.redirect ) {
+                            if ( data.data.open == true ) {
                                 window.location.replace(data.data.redirect);
-                            else
+                            } else {
                                 window.open(data.data.redirect);
+                            }
+                        }
 
                         //Uncheck all rows
-                        if ( ! row )
+                        if ( ! row ) {
                             this.checked = [];
+                        }
                     }
 
                     //Alert message
-                    if ( data && 'type' in data )
-                    {
+                    if ( data && 'type' in data ) {
                         var component_data = component ? {
                             name : button.key,
                             component : component,
@@ -970,8 +991,9 @@ export default {
                         var success_callback = function(){
                             var data = {};
 
-                            if ( this.alert.component && this.alert.component.request )
+                            if ( this.alert.component && this.alert.component.request ) {
                                 data = _.clone(this.alert.component.request);
+                            }
 
                             makeAction(null, data);
                         }
@@ -997,9 +1019,7 @@ export default {
         updateParentData(key, button, row, data){
             //Reload just one row which owns button
             if ( button.reloadAll == false ){
-
-                for ( var k in data.data.rows.rows )
-                {
+                for ( var k in data.data.rows.rows ) {
                     var row = data.data.rows.rows[k];
 
                     if ( !(row.id in data.data.rows.buttons) ){
@@ -1009,14 +1029,10 @@ export default {
                     }
 
                     //Update just selected row
-                    for ( var i in this.rows.data )
-                    {
-                        if ( this.rows.data[i].id == row.id )
-                        {
-                            for ( var k in this.$parent.rows.data[i] )
-                            {
-                                if ( this.$parent.rows.data[i][k] != row[k] )
-                                {
+                    for ( var i in this.rows.data ) {
+                        if ( this.rows.data[i].id == row.id ) {
+                            for ( var k in this.$parent.rows.data[i] ) {
+                                if ( this.$parent.rows.data[i][k] != row[k] ) {
                                     this.$parent.rows.data[i][k] = row[k];
                                 }
                             }

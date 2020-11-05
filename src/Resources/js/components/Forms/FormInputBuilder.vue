@@ -146,7 +146,7 @@
             :required="isRequired"
             :disabled="isDisabled"
             :readonly="isReadonly"
-            :is="componentName('component')">
+            :is="componentName(model, field.component)">
         </component>
 
         <component
@@ -161,7 +161,7 @@
             :required="isRequired"
             :disabled="isDisabled"
             :readonly="isReadonly"
-            :is="componentName('sub_component')">
+            :is="componentName(model, field.sub_component)">
         </component>
     </div>
 </template>
@@ -183,8 +183,8 @@
         components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, FileField, SelectField, RadioField },
 
         created(){
-            this.registerComponents('component');
-            this.registerComponents('sub_component');
+            this.registerFieldComponents(this.model, this.field, 'component');
+            this.registerFieldComponents(this.model, this.field, 'sub_component');
         },
 
         mounted()
@@ -231,42 +231,6 @@
                 this.$watch('field.value', value => {
                     this.row[this.field_key] = this.resetEmptyValue(value);
                 });
-            },
-            registerComponents(attribute){
-                if ( !(attribute in this.field) ) {
-                    return;
-                }
-
-                var components = this.field[attribute].split(','),
-                    component = null;
-
-                for ( var i = 0; i < components.length; i++ )
-                {
-                    var name = components[i].toLowerCase(),
-                        data = this.model.components[name],
-                        obj;
-
-                    try {
-                        obj = this.$root.getComponentObject(data);
-                    } catch(error){
-                        console.error('Syntax error in component '+(components[i])+'.Vue' + "\n", error);
-                        continue;
-                    }
-
-                    if ( ! component )
-                        component = obj;
-                    else {
-                        if ( !('components' in component) ){
-                            component.components = {};
-                        }
-
-                        component.components[components[i]] = obj;
-                    }
-                }
-
-                if ( component ) {
-                    Vue.component(this.componentName(attribute), component);
-                }
             },
             isEmptyValue(value){
                 return _.isNil(value) || value === '';
@@ -406,15 +370,6 @@
 
                 return value;
             },
-            componentName(attribute){
-                var parts = (this.field[attribute]||'').split(',').filter(item => item);
-
-                if ( parts.length == 0 ){
-                    return;
-                }
-
-                return parts[0].toLowerCase();
-            },
         },
 
         computed : {
@@ -520,18 +475,21 @@
                 return 'sub_component' in this.field && this.field.sub_component;
             },
             hasEmptyComponent(){
-                if ( !this.componentName('component') ){
+                let componentName = this.componentName(this.model, this.field.component);
+
+                if ( !componentName || !this.model.components[componentName]){
                     return false;
                 }
 
                 try {
-                    var data = this.model.components[this.componentName('component')],
+                    var data = this.model.components[componentName],
                         obj = (new Function('return '+data))();
+
+                    return obj.template == '';
                 } catch(e){
-                    return false;
                 }
 
-                return obj.template == '';
+                return false
             },
             getValueOrDefault()
             {
@@ -573,8 +531,9 @@
                     var parts = this.field.required_if.split(','),
                         value = this.fixBoolValue(this.row[parts[0]]);
 
-                    if (value && parts.slice(1).indexOf(value) > -1)
+                    if (value && parts.slice(1).indexOf(value) > -1) {
                         return true;
+                    }
                 }
 
                 //Required unless attribute
