@@ -99,7 +99,7 @@ export default {
                 var obj;
 
                 try {
-                    obj = this.$root.getComponentObject(component.component);
+                    obj = this.getComponentObject(component.component);
                     obj.name = this.$root.getComponentName(component.name);
 
                     this.$options.components[obj.name] = obj;

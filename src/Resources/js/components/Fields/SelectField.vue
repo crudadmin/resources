@@ -273,7 +273,7 @@
             getStaticFilterBy()
             {
                 var column = this.getFilterBy[0].split('.'),
-                    model = column.length == 2 ? this.$parent.getModelBuilder(column[0]) : this;
+                    model = column.length == 2 ? this.getModelBuilder(column[0]) : this;
 
                 return model.row[column[column.length - 1]];
             },

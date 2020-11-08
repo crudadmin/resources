@@ -1,12 +1,13 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-window.eventHub = new Vue();
+window.eventHub = window.$bus = new Vue();
 window.store = require('./store/store').default;
 
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource'
 import Fragment from 'vue-fragment'
+
 import globalVueMixins from './mixins/globalVueMixins';
 import componentMixins from './mixins/componentMixins';
 
@@ -34,6 +35,6 @@ Vue.mixin(CrudAdmin);
 Vue.mixin(componentMixins);
 
 //Create base VueApp instance
-window.VueApp = new Vue(
+window.VueApp = window.$app = new Vue(
     BaseComponent(Router, store)
 );

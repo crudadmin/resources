@@ -194,7 +194,6 @@ const BaseComponent = (router, store) => {
                 return models;
             },
             openAlert(title, message, type, success, close, component){
-
                 if ( !type )
                     type = 'success';
 
@@ -415,8 +414,7 @@ const BaseComponent = (router, store) => {
                     return match;
                 });
             },
-            runInlineScripts(layout)
-            {
+            runInlineScripts(layout){
                 $('<div>'+layout+'</div>').find('script').each(function(){
                     //Run external js
                     if ( $(this).attr('src') ){
@@ -451,88 +449,6 @@ const BaseComponent = (router, store) => {
 
                 return lang.name;
             },
-            eventDataModifier(event, data, component){
-                if ( event == 'sendParentRow' ){
-                    data = { depth_level : component.$parent.depth_level };
-                }
-
-                return data;
-            },
-            canPassEventThrough(event, data, component){
-                if ( ['getParentRow'].indexOf(event) > -1 ) {
-                    var componentDepthLevel = component.$parent.depth_level||component.$parent.$parent.depth_level;
-
-                    //Does not receive events into component which are not from parent rows.
-                    if ( data.depth_level !== undefined && data.depth_level > componentDepthLevel ) {
-                        return false;
-                    }
-                }
-
-                return true;
-            },
-            getComponentObject(data){
-                var obj = (new Function('return '+data))(),
-                    _this = this;
-
-                //If template is missing, render empty div
-                if ( ! obj.template ) {
-                    obj.template = '<div></div>';
-                }
-
-                //Fixed backwards compacitibility for vuejs1 components
-                if ( obj.ready && !obj.mounted )
-                  obj.mounted = obj.ready;
-
-                var originalCreated = obj.created||(() => {}),
-                    originalMounted = obj.mounted||(() => {}),
-                    originalDestroyed = obj.destroyed||(() => {}),
-                    proxyEventsResend = ['sendRow', 'sendParentRow', 'reloadRows'],
-                    proxyEventsReceive = ['getRow', 'getParentRow', 'onCreate', 'onUpdate', 'onSubmit', 'buttonAction', 'changeFormSaveState', 'selectHistoryRow'],
-                    events = {};
-
-                //Extend created method
-                obj.created = function() {
-                    //This events should be resend from component to eventHub
-                    for ( var key in proxyEventsResend ) {
-                        ((event) => {
-                            this.$on(event, events[event] = (data) => {
-                                eventHub.$emit(event, _this.eventDataModifier(event, data, this));
-                            });
-                        })(proxyEventsResend[key]);
-                    }
-
-                    //This events should be received from evnentHub and send to component
-                    for ( var key in proxyEventsReceive ) {
-                        ((event) => {
-                            eventHub.$on(event, events[event] = (data) => {
-                                if ( _this.canPassEventThrough(event, data, this) ) {
-                                    this.$emit(event, data);
-                                }
-                            });
-                        })(proxyEventsReceive[key]);
-                    }
-
-                    originalCreated.call(this);
-                }
-
-                //Extend mounted method
-                obj.mounted = function() {
-                    originalMounted.call(this);
-                }
-
-                obj.destroyed = function(){
-                    //Unmount eventhub proxy
-                    for ( var key in proxyEventsReceive ) {
-                        ((event) => {
-                            eventHub.$off(event, events[event]);
-                        })(proxyEventsReceive[key]);
-                    }
-
-                    originalDestroyed.call(this);
-                }
-
-                return obj;
-            }
         }
     }
 };

@@ -331,27 +331,6 @@
 
                 this.$set(this.row, this.field_key, value);
             },
-            //Get parent model builder
-            getModelBuilder(slug, except){
-                var modelBuilder = this.$parent,
-                    except = slug === '$parent' ? this.model.slug : null,
-                    slug = slug === '$parent' ? null : slug;
-
-                while(modelBuilder && (
-                    modelBuilder.$options.name != 'model-builder'
-                    || (slug && modelBuilder.model.slug != slug)
-                    || (except && modelBuilder.model.slug === except)
-                ))
-                    modelBuilder = modelBuilder.$parent;
-
-                if ( slug && (!modelBuilder || modelBuilder.model.slug != slug) ){
-                    console.error('Model with table name "' + slug + '" does not exists in parents tree of models');
-
-                    return null;
-                }
-
-                return modelBuilder;
-            },
             isMultipleField(field){
                 return field.multiple && field.multiple === true || ('belongsToMany' in field);
             },
