@@ -273,8 +273,10 @@ export default {
                 this.initTimeout(false);
         },
         'model.scopes' : {
-            handler(a){
-                this.loadRows(true);
+            handler(a, b){
+                if ( _.isEqual(a, b) == false ) {
+                    this.loadRows(true);
+                }
             },
         },
         search : {
