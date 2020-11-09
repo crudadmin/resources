@@ -104,30 +104,45 @@ var componentMixins = {
                 component = parts[0];
             }
 
-            if ( component ) {
-                let globalComponent = Vue.options.components[component];
-
-                //If component does exists, we need rewrite this component with crudadmin helpers
-                if ( globalComponent && globalComponent.options){
-                    this.getComponentObject(globalComponent.options);
-                }
+            let globalComponent;
+            if ( component && (globalComponent = this.isGlobalComponent(component)) ) {
+                this.getComponentObject(globalComponent);
             }
 
             return component;
+        },
+        isGlobalComponent(name){
+            //Else try to find global vuejs component
+            let globalComponent = Vue.options.components[name];
+
+            if ( globalComponent && globalComponent.options ){
+                return globalComponent.options;
+            }
+
+            return false;
         },
         getComponentObject(data){
             var obj;
 
             //If string component has been given
             if ( typeof data == 'string' ) {
-                obj = (new Function('return '+data))();
-            } else {
+                //Try eval given object string
+                try {
+                    obj = (new Function('return '+data))();
+                } catch (e){
+                    //Try global component
+                    obj = this.isGlobalComponent(data);
+                }
+            }
+
+            //Or if object has been given
+            else if ( typeof data == 'object' ) {
                 obj = data;
             }
 
             //If object is already CA component
             if ( !obj || obj.$CA == true ){
-                return;
+                return obj||null;
             }
 
             //Identifiy component as crudadmin component
@@ -174,7 +189,7 @@ var componentMixins = {
                     }
                 },
                 ...obj.created,
-            ];
+            ].filter(f => f);
 
             obj.destroyed = [
                 function(){
@@ -186,7 +201,7 @@ var componentMixins = {
                     }
                 },
                 ...obj.destroyed,
-            ];
+            ].filter(f => f);
 
             return obj;
         }

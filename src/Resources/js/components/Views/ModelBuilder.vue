@@ -407,7 +407,7 @@
                     return item.position == type;
                 }).map(item => {
                     //We want register component from custom bundle. With all other events.
-                    if ( Vue.options.components[item.component_name] ){
+                    if ( this.isGlobalComponent(item.component_name) ){
                         return this.componentName(this.model, item.component_name);
                     }
 

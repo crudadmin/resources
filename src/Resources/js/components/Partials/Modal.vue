@@ -12,13 +12,13 @@
         <div class="modal-body">
           <p v-if="alert.message" v-html="alert.message"></p>
           <component
-            v-if="isRegistredComponent(alert.component)"
+            v-if="getRegistredComponent"
+            :is="getRegistredComponent"
             :model="alert.component.model"
             :rows="alert.component.rows"
             :row="alert.component.row"
             :request="alert.component.request"
-            :data="alert.component.data"
-            :is="getComponentName(alert.component.name)" />
+            :data="alert.component.data" />
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" v-on:click="closeAlert( alert.close )" v-if="alert.close || alert.type=='success' && !alert.close || !alert.close && !alert.success" v-bind:class="{ 'pull-left' : alert.success }" data-dismiss="modal">{{ trans('close') }}</button>
@@ -55,19 +55,24 @@ export default {
         canShowAlert(){
             return this.alert.title != null && this.alert.message != null || this.alert.component;
         },
-    },
+        getRegistredComponent(){
+            let component = this.alert.component;
 
-    methods: {
-        isRegistredComponent(component){
             if ( ! component || !component.name ){
                 return;
             }
 
-            return this.registredComponents.indexOf(this.$root.getComponentName(component.name)) > -1;
+            if ( this.isGlobalComponent(component.component) ){
+                return component.component;
+            }
+
+            if (this.registredComponents.indexOf(component.name) > -1){
+                return component.name;
+            }
         },
-        getComponentName(name){
-            return this.$root.getComponentName(name);
-        },
+    },
+
+    methods: {
         checkAlertEvents(){
             $(window).keyup(e => {
 
@@ -100,11 +105,15 @@ export default {
 
                 try {
                     obj = this.getComponentObject(component.component);
-                    obj.name = this.$root.getComponentName(component.name);
 
-                    this.$options.components[obj.name] = obj;
+                    if ( !this.isGlobalComponent(component.component) ) {
+                        obj.name = component.name;
 
-                    this.registredComponents.push(obj.name)
+                        this.$options.components[obj.name] = obj;
+
+                        this.registredComponents.push(obj.name);
+                    }
+
                 } catch(error){
                     console.error('Syntax error in component button component.' + "\n", error);
 

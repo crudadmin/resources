@@ -193,9 +193,6 @@ const BaseComponent = (router, store) => {
 
                 return models;
             },
-            getComponentName(name){
-                return name + 'Alert';
-            },
             bootLanguages(){
                 if ( this.languages.length == 0 )
                     return;
