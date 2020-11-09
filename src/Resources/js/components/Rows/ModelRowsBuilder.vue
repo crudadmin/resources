@@ -274,9 +274,7 @@ export default {
         },
         'model.scopes' : {
             handler(a, b){
-                if ( _.isEqual(a, b) == false ) {
-                    this.loadRows(true);
-                }
+                this.setPosition(1, true);
             },
         },
         search : {
@@ -659,8 +657,10 @@ export default {
             }
 
             //Added model scopes
-            for ( var key in this.model.scopes ){
-                data['scopes'][key] = this.model.scopes[key];
+            for ( var i = 0; i < this.model.scopes.length; i++ ){
+                let scope = this.model.scopes[i];
+
+                data['scopes'][scope.key] = scope.params;
             }
 
             return data;

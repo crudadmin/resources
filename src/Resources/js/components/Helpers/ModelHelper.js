@@ -16,6 +16,11 @@ var extensions = [
  * Bind given model properties
  */
 const ModelHelper = function(data){
+    //Bind scopes attribute
+    if ( data.scopes === undefined ) {
+        data.scopes = [];
+    }
+
     var core = new Model;
 
     //Copy all given model attributes

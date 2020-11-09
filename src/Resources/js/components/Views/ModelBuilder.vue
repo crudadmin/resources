@@ -257,7 +257,7 @@
                 deep : true,
                 handler(newObject, oldObject) {
                     for ( var key in newObject ) {
-                        if ( newObject[key] != oldObject[key] ) {
+                        if ( _.isEqual(newObject[key], oldObject[key]) === false ) {
                             this.$set(this.model, key, newObject[key]);
                         }
                     }
@@ -794,8 +794,14 @@
                 return true;
             },
             canShowRows(){
-                if ( ! this.hasRows )
+                //If scopes are available, we need show table also with zero rows
+                if ( this.model.scopes.length > 0 ){
+                    return true;
+                }
+
+                if ( ! this.hasRows ) {
                     return false;
+                }
 
                 if ( this.model.hasAccess('read') == false ) {
                     return false;
