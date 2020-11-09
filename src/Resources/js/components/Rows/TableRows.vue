@@ -362,6 +362,11 @@ export default {
                     continue;
                 }
 
+                //If fiels is inaccessible
+                if ( this.model.fields[key].inaccessible === true ){
+                    continue;
+                }
+
                 var add_index = null,
                     after = true,
                     before_columns = model_keys.slice(0, model_keys.indexOf(key)),
@@ -389,10 +394,11 @@ export default {
                     }
                 }
 
-                if ( add_index === null )
+                if ( add_index === null ) {
                     order.push(key);
-                else
+                } else {
                     order.splice(add_index + (after ? 1 : 0), 0, key);
+                }
 
                 enabled[key] = {
                     name : this.fieldName(key),

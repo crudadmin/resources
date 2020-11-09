@@ -1,4 +1,21 @@
 var ModelProperties = (Model) => {
+    Model.prototype.setScope = function(key, values){
+        let obj = {};
+            obj[key] = values;
+
+        this.scopes = { ...this.scopes, ...obj };
+    }
+
+    Model.prototype.removeScope = function(key, values){
+        let obj = this.scopes;
+
+        if ( key in obj ) {
+            delete obj[key];
+        }
+
+        this.scopes = { ...obj };
+    }
+
     Model.prototype.isInParent = function(){
         return this.inParent === true;
     }

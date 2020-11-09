@@ -10,6 +10,15 @@
                 </div>
 
                 <div class="box-header__right">
+                    <component
+                        v-for="name in getComponents('table-header-actions')"
+                        :key="name"
+                        :model="model"
+                        :row="row"
+                        :rows="rows.data"
+                        :is="name">
+                    </component>
+
                     <div class="dropdown fields-list" fields-list>
                         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" v-if="model.getSettings('table.switchcolumns', true) != false">
                             {{ trans('rows-list') }}
@@ -262,6 +271,11 @@ export default {
         activetab(value){
             if ( value == true )
                 this.initTimeout(false);
+        },
+        'model.scopes' : {
+            handler(a){
+                this.loadRows(true);
+            },
         },
         search : {
             deep : true,
@@ -632,14 +646,19 @@ export default {
             }
         },
         addScopeParams(data){
+            if ( !('scopes' in data) ){
+                data['scopes'] = {};
+            }
+
             for ( var key in this.scopes ){
                 let params = this.scopes[key].join(';');
 
-                if ( !('scopes' in data) ){
-                    data['scopes'] = {};
-                }
-
                 data['scopes'][key] = params;
+            }
+
+            //Added model scopes
+            for ( var key in this.model.scopes ){
+                data['scopes'][key] = this.model.scopes[key];
             }
 
             return data;

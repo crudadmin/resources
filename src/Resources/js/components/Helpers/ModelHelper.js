@@ -19,12 +19,14 @@ const ModelHelper = function(data){
     var core = new Model;
 
     //Copy all given model attributes
-    for ( var key in data )
+    for ( var key in data ) {
         core[key] = data[key];
+    }
 
     //Install all extensions
-    for ( var key in extensions )
+    for ( var key in extensions ) {
         extensions[key](Model);
+    }
 
     return core;
 }
