@@ -10,6 +10,7 @@ import Fragment from 'vue-fragment'
 
 import globalVueMixins from './mixins/globalVueMixins';
 import componentMixins from './mixins/componentMixins';
+import alertMixins from './mixins/alertMixins';
 
 Vue.mixin(globalVueMixins);
 
@@ -33,6 +34,7 @@ import Router from './router.js';
 //Global methods
 Vue.mixin(CrudAdmin);
 Vue.mixin(componentMixins);
+Vue.mixin(alertMixins);
 
 //Create base VueApp instance
 window.VueApp = window.$app = new Vue(

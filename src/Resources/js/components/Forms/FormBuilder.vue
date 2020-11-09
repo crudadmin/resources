@@ -529,7 +529,7 @@ export default {
             });
         },
         unknownAjaxErrorResponse(){
-            this.$root.arrorAlert(() => {
+            this.$root.errorAlert(() => {
 
                 this.$parent.progress = false;
 

@@ -400,17 +400,22 @@
             },
             getComponents(type){
                 return this.layouts.filter(item => {
-                    if ( this.registered_components.indexOf(item.name) === -1 )
+                    if ( this.registered_components.indexOf(item.name) === -1 && !Vue.options.components[item.component_name] ) {
                         return false;
+                    }
 
                     return item.position == type;
                 }).map(item => {
+                    //We want register component from custom bundle. With all other events.
+                    if ( Vue.options.components[item.component_name] ){
+                        return this.componentName(this.model, item.component_name);
+                    }
+
                     return this.getComponentName(item.name);
                 });
             },
             registerComponents(layouts){
-                for ( var i = 0; i < layouts.length; i++ )
-                {
+                for ( var i = 0; i < layouts.length; i++ ) {
                     var name = layouts[i].name,
                         data = layouts[i].view,
                         obj;
@@ -436,9 +441,11 @@
                         };
                     }
 
-                    this.registered_components.push(name);
+                    if ( obj ) {
+                        this.registered_components.push(name);
 
-                    Vue.component(this.getComponentName(name), obj);
+                        Vue.component(this.getComponentName(name), obj);
+                    }
                 }
             },
             getComponentName(name){

@@ -193,33 +193,8 @@ const BaseComponent = (router, store) => {
 
                 return models;
             },
-            openAlert(title, message, type, success, close, component){
-                if ( !type )
-                    type = 'success';
-
-                if ( type == 'error' )
-                    type = 'danger';
-
-                this.alert.type = type;
-                this.alert.title = title;
-                this.alert.message = message;
-                this.alert.success = success;
-                this.alert.close = close;
-                this.alert.opened = new Date().getTime();
-                this.alert.component = component;
-
-                //After opening alert unfocus focused input
-                //for prevent sending of new form ajax instance...
-                if ("activeElement" in document)
-                    document.activeElement.blur();
-
-                return this.alert;
-            },
             getComponentName(name){
                 return name + 'Alert';
-            },
-            arrorAlert(callback){
-                this.openAlert(this.trans('warning'), this.trans('unknown-error'), 'danger', null, callback ? callback : function(){});
             },
             bootLanguages(){
                 if ( this.languages.length == 0 )
@@ -231,8 +206,7 @@ const BaseComponent = (router, store) => {
                 this.language_id = localStorage.language_id;
             },
             //Check for all error response in all requests
-            errorResponseLayer(response, code, callback)
-            {
+            errorResponseLayer(response, code, callback){
                 //Fix for jquery response
                 if ( 'responseJSON' in response ) {
                     response.data = response.responseJSON;
@@ -274,7 +248,7 @@ const BaseComponent = (router, store) => {
                 }
 
                 //Unknown error
-                this.$root.arrorAlert();
+                this.$root.errorAlert();
             },
             //Check specifics property in model
             getModelProperty(model, key, value){

@@ -126,7 +126,7 @@ var componentMixins = {
             }
 
             //If object is already CA component
-            if ( obj.$CA == true ){
+            if ( !obj || obj.$CA == true ){
                 return;
             }
 
