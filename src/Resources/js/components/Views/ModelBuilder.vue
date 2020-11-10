@@ -51,7 +51,7 @@
                     </ul>
 
                     <!-- Choose language -->
-                    <div class="dropdown" v-if="hasLanguages && isActiveLanguageSwitch" data-global-language-switch>
+                    <div class="dropdown" v-if="hasLanguages && isActiveLanguageSwitch && !canShowForm" data-global-language-switch>
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                             <i class="--icon-left fa fa-globe-americas"></i>
                             {{ selectedRootLanguage ? getLangName(selectedRootLanguage) : trans('language-mutation') }}
@@ -63,7 +63,13 @@
                     </div>
 
                     <!-- Add new row -->
-                    <button v-if="canAddRow && !model.isSingle() && model.hasAccess('insert')" data-create-new-row @click.prevent="resetForm(true, true, true)" type="button" class="btn--icon btn btn-primary">
+                    <button
+                        v-if="canShowAddButton"
+                        data-create-new-row
+                        @click.prevent="addNewRow"
+                        type="button"
+                        class="btn--icon btn btn-primary"
+                    >
                         <i class="fa fa-plus"></i>
                         {{ newRowTitle() }}
                     </button>
@@ -87,13 +93,16 @@
                             :gettext_editor="gettext_editor"
                             :depth_level="depth_level"
                             :parentActiveGridSize="activeGridSize"
+                            :isOnlyFormOpened="isOnlyFormOpened"
+                            :isEnabledOnlyFormOrTableMode="isEnabledOnlyFormOrTableMode"
+                            :hasRows="hasRows"
                             :row="row"
                         ></form-builder>
                     </div>
                     <!--/.col (left) -->
 
                     <!-- right column -->
-                    <div :class="['col-lg-'+(12-(12-activeGridSize))]" class="col--rows col-12" v-show="canShowRows">
+                    <div class="col--rows col-12" :class="['col-lg-'+(12-(12-activeGridSize)), { '--noMargin' : !canShowForm }]" v-show="canShowRows">
                         <model-rows-builder
                             :model="model"
                             :rows="rows"
@@ -226,6 +235,8 @@
 
                 depth_level : 0,
                 gettext_editor: null,
+
+                formOpened : false,
             };
         },
 
@@ -309,8 +320,9 @@
 
         methods : {
             checkParentGridSize(parentSize){
-                if ( [null, undefined].indexOf(parentSize) > -1 )
+                if ( [null, undefined].indexOf(parentSize) > -1 ) {
                     return;
+                }
 
                 for ( var key in this.sizes ){
                     //If grid parent size is on full width, then enable all grid sizes in this model
@@ -632,6 +644,18 @@
             newRowTitle(){
                 return this.model.getSettings('buttons.create', this.trans('new-row'));
             },
+            addNewRow(){
+                if ( this.isEnabledOnlyFormOrTableMode == true ){
+                    this.formOpened = true;
+                }
+
+                this.$nextTick(() => {
+                    this.resetForm(true, true, true);
+                });
+            },
+            closeForm(){
+                this.formOpened = false;
+            },
             resetForm(scroll, dontResetIfNotOpened, resetActiveTab){
                 if ( ! dontResetIfNotOpened || this.isOpenedRow ) {
                     //We do not want reset object is is already empty instance
@@ -658,8 +682,14 @@
             },
             pulseForm(){
                 //If is not full grid, then animate form
-                if ( this.activeGridSize == 0 && this.canShowRows && this.depth_level == 0 )
+                if ( this.activeGridSize == 0 && this.canShowRows && this.depth_level == 0 ) {
                     return;
+                }
+
+                //Only table/form mode enabled
+                if ( this.isEnabledOnlyFormOrTableMode === true ){
+                    return false;
+                }
 
                 var form = $('#'+this.formID);
 
@@ -702,6 +732,12 @@
         },
 
         computed: {
+            isOnlyFormOpened(){
+                return this.formOpened == true && this.isEnabledOnlyFormOrTableMode === true;
+            },
+            isEnabledOnlyFormOrTableMode(){
+                return this.activeGridSize === 0;
+            },
             activeGridSize(){
                 var size = this.sizes.filter(row => {
                     if ( row.active == true ) {
@@ -718,23 +754,24 @@
                 return size[0] ? size[0].size : null;
             },
             canShowAdminHeader(){
-                if ( this.model.getSettings('grid.header', true) === false ){
-                    return false;
-                }
-
                 return (
+                    //If is child, we can display header only in this cases
                     this.ischild
                     && !this.model.isSingle()
                     && (
                         !this.model.in_tab
                         || this.isEnabledGrid
                         || this.canShowSearchBar
+                        || this.canShowAddButton
                     )
+
+                    //For parent models, we can display header only if
                     || (
                         !this.model.isSingle()
                         && (
                             this.isEnabledGrid
                             || this.canShowSearchBar
+                            || this.canShowAddButton
                         )
                     )
                 );
@@ -794,6 +831,10 @@
                 return true;
             },
             canShowRows(){
+                if ( this.isEnabledOnlyFormOrTableMode === true && (this.isOpenedRow || this.isOnlyFormOpened === true) ){
+                    return false;
+                }
+
                 //If scopes are available, we need show table also with zero rows
                 if ( this.model.scopes.length > 0 ){
                     return true;
@@ -832,8 +873,16 @@
 
                 return true;
             },
+            canShowAddButton(){
+                return this.canAddRow && !this.model.isSingle() && this.model.hasAccess('insert') && (!this.isOnlyFormOpened && this.hasRows);
+            },
             canShowForm(){
                 if ( (!this.isOpenedRow && !this.canAddRow || this.isOpenedRow && this.model.editable == false) && !this.model.isInParent() ) {
+                    return false;
+                }
+
+                //If row is not selected, and form is not opened. But in table needs exists rows
+                if ( this.isEnabledOnlyFormOrTableMode === true && !this.isOpenedRow && (this.isOnlyFormOpened === false && this.hasRows) ){
                     return false;
                 }
 
@@ -855,6 +904,10 @@
              * Show search if has been at least one time used, or if is not single row, or if is more then 10 rows
              */
             canShowSearchBar(){
+                if ( this.isEnabledOnlyFormOrTableMode === true && this.canShowForm === true ){
+                    return false;
+                }
+
                 var searching = this.model.getSettings('search.enabled', null),
                     minimum = 2;
 

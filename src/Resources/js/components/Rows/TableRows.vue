@@ -2,7 +2,7 @@
     <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="depth_level" class="table" :class="{ 'sortable' : model.sortable && orderby[0] == '_order', 'table-sm' : isSmallTable }">
         <thead data-table-head>
             <tr>
-                <th class="select-row-checkbox" @click="toggleAllCheckboxes">
+                <th class="select-row-checkbox" @click="toggleAllCheckboxes" v-if="hasCheckingEnabled">
                     <div class="checkbox-box" @click="checkRow(item.id)" data-toggle="tooltip" :title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')">
                         <input type="checkbox" :checked="isCheckedAll">
                         <span class="checkmark"></span>
@@ -18,7 +18,7 @@
         </thead>
         <component :is="isMobileDevice() || model.sortable == false ? 'tbody' : 'draggable'" tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
             <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : checked.indexOf(item.id) > -1 }">
-                <td class="select-row-checkbox">
+                <td class="select-row-checkbox" v-if="hasCheckingEnabled">
                     <div class="checkbox-box" @click="checkRow(item.id)">
                         <input type="checkbox" :checked="checked.indexOf(item.id) > -1">
                         <span class="checkmark"></span>
@@ -108,6 +108,13 @@ export default {
     },
 
     computed: {
+        hasCheckingEnabled(){
+            if ( this.model.getSettings('checking', true) === false ){
+                return false;
+            }
+
+            return true;
+        },
         isSmallTable(){
             var limit = 100,
                 columnsCount = Object.keys(this.columns).length;
@@ -330,6 +337,10 @@ export default {
             this.$parent.checked = this.isCheckedAll ? [] : ids;
         },
         checkRow(id, field){
+            if ( this.hasCheckingEnabled === false ){
+                return;
+            }
+
             var checked = this.$parent.checked.indexOf(id);
 
             //Disable checking on type of fields

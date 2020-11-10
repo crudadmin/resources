@@ -95,8 +95,9 @@ const BaseComponent = (router, store) => {
                 });
 
                 //Destroy tooltips on click
-                $('body').click(() => {
+                $('body').on('click', () => {
                     $('[data-toggle="tooltip"]').tooltip('dispose');
+                    $('.tooltip.show').remove();
                 });
             },
             reloadCSRFToken(token){

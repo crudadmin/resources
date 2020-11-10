@@ -63,6 +63,10 @@
                     padding: $navbarPadding;
                     border-bottom: 1px solid $navbarBorderColor;
 
+                    &.--opened {
+                        background: #f3f8ff;
+                    }
+
                     @include less-than(md) {
                         padding: $navbarPadding / 2;
                     }
@@ -86,6 +90,10 @@
                             > *:not(:last-child) {
                                 margin-right: $navbarPadding / 2;
                             }
+
+                            > .btn {
+                                min-height: 31px;
+                            }
                         }
                     }
 
@@ -96,6 +104,11 @@
 
                         .--icon-left { margin-right: 5px; }
                         .--icon-right { margin-left: 5px; }
+
+                        .goBackButton {
+                            margin-right: $form-group-margin-bottom;
+                            cursor: pointer;
+                        }
                     }
 
                     .box-header__description {
@@ -243,6 +256,7 @@
 
                     .admin-header__title {
                         @include fontSize(20px);
+                        line-height: 36px;
                         font-weight: 400;
                         margin-bottom: 0;
 
@@ -326,7 +340,6 @@
                         cursor: pointer;
                         margin-top: -1px;
                         margin-bottom: -1px;
-                        overflow: hidden;
 
                         @include less-than(md) {
                             display: none;
@@ -366,7 +379,7 @@
                             order: 2;
                         }
 
-                        > .col--rows {
+                        > .col--rows:not(.--noMargin) {
                             margin-bottom: $navbarPadding;
                         }
                     }

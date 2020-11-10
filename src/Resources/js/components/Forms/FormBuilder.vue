@@ -3,10 +3,18 @@
     <component :is="formType" method="post" action="" :id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form crudadmin-form">
         <div class="box" :class="{ 'box--active' : isActive }">
 
-            <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (isOpenedRow && model.history)) }">
+            <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (isOpenedRow && model.history)), '--opened' : isOpenedRow }">
                 <div class="box-header__actions">
                     <div class="box-header__left">
                         <h3 class="box-header__title">
+                            <i
+                                v-if="(isOpenedRow || isOnlyFormOpened) && isEnabledOnlyFormOrTableMode && hasRows"
+                                @click="closeForm"
+                                class="goBackButton fa fa-chevron-left"
+                                data-toggle="tooltip"
+                                :title="__('Vrátiť sa bez uloženia')"
+                                >
+                            </i>
                             <span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="--icon-left fa fa-globe-americas"></span>
                             {{ title }}
                         </h3>
@@ -36,9 +44,16 @@
                             </ul>
                         </div>
 
-                        <button v-if="isOpenedRow && canaddrow && !model.isSingle()" data-create-new-row @click.prevent="resetForm" type="button" class="btn--icon btn btn-default btn-sm">
-                            <i class="fa fa-plus"></i>
-                            {{ newRowTitle }}
+                        <button
+                            v-if="isOpenedRow || isOnlyFormOpened"
+                            data-toggle="tooltip"
+                            :title="__('Zavrieť bez uloženia')"
+                            @click="closeForm"
+                            type="button"
+                            class="btn--icon btn btn-default btn-sm"
+                        >
+                            <i class="fa fa-times-circle"></i>
+                            {{ __('Zavrieť') }}
                         </button>
                     </div>
                 </div>
@@ -115,7 +130,7 @@ import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
 export default {
     name : 'form-builder',
 
-    props : ['formID', 'model', 'row', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level', 'parentActiveGridSize'],
+    props : ['formID', 'model', 'row', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level', 'parentActiveGridSize', 'isOnlyFormOpened', 'isEnabledOnlyFormOrTableMode', 'hasRows'],
 
     components: { FormTabsBuilder },
 
@@ -386,6 +401,16 @@ export default {
         },
         resetForm(){
             this.$parent.resetForm();
+        },
+        openNewForm(){
+            this.$parent.addNewRow();
+        },
+        closeForm(){
+            this.$parent.closeForm();
+
+            if ( this.isOpenedRow ){
+                this.resetForm();
+            }
         },
         //Resets form values and errors
         initForm(row, reset){
@@ -692,6 +717,9 @@ export default {
                             //Reseting form after new row
                             if ( !this.model.isSingle() && autoreset !== false) {
                                 this.initForm(this.$parent.emptyRowInstance());
+
+                                //After creation of new row, we want close adding
+                                this.closeForm();
                             }
 
                             //If is disabled autoreseting form, then select inserted row
