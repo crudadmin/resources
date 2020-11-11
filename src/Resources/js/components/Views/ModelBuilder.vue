@@ -758,12 +758,6 @@
                     //If is child, we can display header only in this cases
                     this.ischild
                     && !this.model.isSingle()
-                    && (
-                        !this.model.in_tab
-                        || this.isEnabledGrid
-                        || this.canShowSearchBar
-                        || this.canShowAddButton
-                    )
 
                     //For parent models, we can display header only if
                     || (
@@ -835,15 +829,6 @@
                     return false;
                 }
 
-                //If scopes are available, we need show table also with zero rows
-                if ( this.model.scopes.length > 0 ){
-                    return true;
-                }
-
-                if ( ! this.hasRows ) {
-                    return false;
-                }
-
                 if ( this.model.hasAccess('read') == false ) {
                     return false;
                 }
@@ -874,7 +859,7 @@
                 return true;
             },
             canShowAddButton(){
-                return this.canAddRow && !this.model.isSingle() && this.model.hasAccess('insert') && (!this.isOnlyFormOpened && this.hasRows);
+                return this.canAddRow && !this.model.isSingle() && this.model.hasAccess('insert') && !this.isOnlyFormOpened;
             },
             canShowForm(){
                 if ( (!this.isOpenedRow && !this.canAddRow || this.isOpenedRow && this.model.editable == false) && !this.model.isInParent() ) {
@@ -882,7 +867,7 @@
                 }
 
                 //If row is not selected, and form is not opened. But in table needs exists rows
-                if ( this.isEnabledOnlyFormOrTableMode === true && !this.isOpenedRow && (this.isOnlyFormOpened === false && this.hasRows) ){
+                if ( this.isEnabledOnlyFormOrTableMode === true && !this.isOpenedRow && this.isOnlyFormOpened === false ){
                     return false;
                 }
 
@@ -912,10 +897,13 @@
                     minimum = 2;
 
                 //If is forced showing searchbar
-                if ( searching === true )
+                if ( searching === true ) {
                     return true;
-                else if ( searching === false )
+                }
+
+                else if ( searching === false ) {
                     return false;
+                }
 
                 return this.search.used === true || (this.model.maximum==0 || this.model.maximum >= minimum) && this.rows.count >= minimum;
             },
