@@ -23,7 +23,7 @@ export default {
                 return false;
         },
         isImage(path){
-            return this.isExtension(path, ['jpg', 'jpeg', 'png', 'bmp', 'gif']);
+            return this.isExtension(path, ['jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg']);
         },
         isPdf(path){
             return this.isExtension(path, ['pdf']);
