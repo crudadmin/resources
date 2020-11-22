@@ -42,6 +42,19 @@ header.main-header {
             justify-content: flex-end;
             padding: 0 $navbarPadding;
 
+            .navbar-custom-menu {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .dropdown {
+                    button {
+                        border-color: transparent;
+                        background: transparent !important;
+                    }
+                }
+            }
+
             .user-menu {
                 position: relative;
 

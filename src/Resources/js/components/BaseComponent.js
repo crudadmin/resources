@@ -31,6 +31,7 @@ const BaseComponent = (router, store) => {
                 models: {},
                 localization: {},
                 languages: [],
+                admin_languages: [],
                 language_id : null,
                 languages_active : false,
                 alert: {
@@ -138,6 +139,8 @@ const BaseComponent = (router, store) => {
                     this.originalModels = this.flattenModelsWithChilds(layout.models);
                     this.localization = layout.localization||{};
                     this.languages = layout.languages||[];
+                    this.admin_language = layout.admin_language||{};
+                    this.admin_languages = layout.admin_languages||[];
 
                     this.bootLanguages();
                     this.setDefaultRoute();

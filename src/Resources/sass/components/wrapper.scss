@@ -289,6 +289,19 @@
                             border-bottom-right-radius: $inputRadius;
                         }
 
+                        .chosen-container {
+                            height: 100%;
+
+                            .chosen-single {
+                                border-radius: 0;
+                                height: 100%;
+
+                                > span {
+                                    color: $darkText;
+                                }
+                            }
+                        }
+
                         &.hasResetButton {
                             .form-control {
                                 border-radius: 0;
