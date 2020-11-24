@@ -30,11 +30,26 @@
                 </div>
 
                 <div class="right" v-if="!model.isSingle()">
-                    <search
-                        v-show="canShowSearchBar"
-                        :search="search"
-                        :model="model"
-                    ></search>
+                    <div class="searchbar__wrapper" :class="{ '--hasMoreButton' : search.used }">
+                        <div class="searchbar__wrapper__queries">
+                            <search
+                                v-for="(query, $index) in search.queries"
+                                :key="$index"
+                                v-show="canShowSearchBar"
+                                :search="query"
+                                :model="model"
+                            ></search>
+                        </div>
+                        <button
+                            data-toggle="tooltip"
+                            :data-original-title="_('Pridať ďalšie vyhľadávacie pravidlo')"
+                            v-if="search.used"
+                            type="button"
+                            class="btn btn-primary --addQuery"
+                            @click="addSearchQuery">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
 
                     <!-- Grid size -->
                     <ul class="change-grid-size d-none d-lg-flex" v-if="isEnabledGrid">
@@ -170,6 +185,13 @@
     import History from '../Partials/History.vue';
     import ModelHelper from '../Helpers/ModelHelper.js';
 
+    var defaultSearchQuery = {
+        column : null,
+        query : null,
+        query_to : null,
+        interval : false,
+    };
+
     export default {
         props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes', 'allow_refreshing'],
 
@@ -195,11 +217,13 @@
                  */
                 search : {
                     used : false,
-
-                    column : this.model_builder.getModelProperty('settings.search.column', null),
-                    query : null,
-                    query_to : null,
-                    interval : false,
+                    defaultQuery : defaultSearchQuery,
+                    queries : [
+                        {
+                            ..._.cloneDeep(defaultSearchQuery),
+                            column : this.model_builder.getModelProperty('settings.search.column', null),
+                        },
+                    ],
                 },
 
                 /*
@@ -319,6 +343,11 @@
         },
 
         methods : {
+            addSearchQuery(){
+                this.search.queries.push(
+                    _.cloneDeep(this.search.defaultQuery),
+                );
+            },
             checkParentGridSize(parentSize){
                 if ( [null, undefined].indexOf(parentSize) > -1 ) {
                     return;

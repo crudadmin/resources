@@ -277,28 +277,36 @@ export default {
                 this.setPosition(1, true);
             },
         },
-        search : {
+        'search.queries' : {
             deep : true,
-            handler : function(search){
+            handler(queries){
+                var was_searching = this.searching;
+                let searching = false;
 
-                var query = search.query||search.query_to,
-                        was_searching = this.searching;
+                for ( var i = 0; i < queries.length; i++ ) {
+                    let item = queries[i],
+                        query = item.query||item.query_to;
 
-                this.searching = (
-                    query && (
-                        query.length >= 3
-                        || (
-                            search.column
-                            && (
-                                (
-                                    search.column in this.model.fields
-                                    && ['select', 'option'].indexOf(this.model.fields[search.column].type) > -1
+                    if ( searching === false ){
+                        searching = (
+                            query && (
+                                query.length >= 3
+                                || (
+                                    item.column
+                                    && (
+                                        (
+                                            item.column in this.model.fields
+                                            && ['select', 'option'].indexOf(this.model.fields[item.column].type) > -1
+                                        )
+                                        || $.isNumeric(query)
+                                    )
                                 )
-                                || $.isNumeric(query)
                             )
-                        )
-                    )
-                ) ? true : false;
+                        ) ? true : false;
+                    }
+                }
+
+                this.searching = searching;
 
                 this.search.used = true;
 
@@ -526,17 +534,27 @@ export default {
 
             //If is enabled searching
             if ( this.searching == true ){
-                search_query.query = this.search.query;
+                search_query.search = [];
 
-                if ( this.search.interval === true )
-                    search_query.query_to = this.search.query_to;
+                for ( var i = 0; i < this.search.queries.length; i++ ){
+                    let item = this.search.queries[i],
+                        obj = {
+                            query : item.query,
+                            column : item.column,
+                        }
 
-                search_query.column = this.search.column;
+                    if ( item.interval === true ) {
+                        obj.query_to = item.query_to;
+                    }
+
+                    search_query.search.push(obj);
+                }
             }
 
             //Add additional columns which are not in default rows state
-            if ( this.enabledColumnsList.length > 0 )
+            if ( this.enabledColumnsList.length > 0 ) {
                 search_query.enabled_columns = this.enabledColumnsList.join(';');
+            }
 
             //My error
             function customErrorAlert(response){

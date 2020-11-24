@@ -271,72 +271,89 @@
                         font-weight: 400;
                     }
 
-                    .search-bar {
-                        margin-top: -1px;
-                        margin-bottom: -1px;
+                    .searchbar__wrapper {
+                        display: flex;
 
-                        .dropdown {
-                            button {
-                                height: 100%;
-                                border-radius: $inputRadius 0 0 $inputRadius;
-                                border-right: 0;
+                        &__queries {
+                            display: flex;
+                            flex-wrap: wrap;
+                            justify-content: flex-end;
+                        }
+
+                        &.--hasMoreButton {
+                            .searchbar__wrapper__queries {
+                                margin-right: $navbarPadding / 2;
                             }
                         }
 
-                        input.form-control {
-                            height: 38px;
-                            border-top-right-radius: $inputRadius;
-                            border-bottom-right-radius: $inputRadius;
+                        .--addQuery {
+                            border-radius: 0;
                         }
 
-                        .chosen-container {
-                            height: 100%;
+                        .search-bar {
+                            display: block;
+                            margin-left: $navbarPadding / 2;
 
-                            .chosen-single {
-                                border-radius: 0;
-                                height: 100%;
-
-                                > span {
-                                    color: $darkText;
+                            .dropdown {
+                                button {
+                                    height: 100%;
+                                    border-radius: $inputRadius 0 0 $inputRadius;
+                                    border-right: 0;
                                 }
                             }
-                        }
 
-                        &.hasResetButton {
-                            .form-control {
+                            input.form-control {
                                 border-radius: 0;
                             }
-                        }
 
-                        &.resetRightBorders {
-                            .form-control:not([data-inerval-input]) {
-                                border-radius: 0;
+                            .chosen-container {
+                                height: 100%;
+
+                                .chosen-single {
+                                    border-radius: 0;
+                                    height: 100%;
+
+                                    > span {
+                                        color: $darkText;
+                                    }
+                                }
                             }
-                        }
 
-                        .interval-btn {
-                            display: flex;
-                            width: 30px;
-                            @include fontSize(14px);
-                            max-width: 350px;
-
-                            button {
-                                padding: 4px;
-                                border-radius: 0;
-                                border-left: 0;
-                                width: 100%;
-                                box-shadow: none;
+                            &.hasResetButton {
+                                .form-control {
+                                    border-radius: 0;
+                                }
                             }
-                        }
 
-                        [data-reset-interval] button {
-                            border-top-left-radius: 0;
-                            border-bottom-left-radius: 0;
-                            height: 38px;
-                        }
+                            &.resetRightBorders {
+                                .form-control:not([data-inerval-input]) {
+                                    border-radius: 0;
+                                }
+                            }
 
-                        .btn i {
-                            @include fontSize(12px);
+                            .interval-btn {
+                                display: flex;
+                                width: 30px;
+                                @include fontSize(14px);
+                                max-width: 350px;
+
+                                button {
+                                    padding: 4px;
+                                    border-radius: 0;
+                                    border-left: 0;
+                                    width: 100%;
+                                    box-shadow: none;
+                                }
+                            }
+
+                            [data-reset-interval] button {
+                                border-radius: 0;
+                                height: 100%;
+                            }
+
+                            .btn i {
+                                @include fontSize(12px);
+                            }
                         }
                     }
 
