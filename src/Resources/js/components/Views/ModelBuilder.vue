@@ -83,8 +83,7 @@
                         data-create-new-row
                         @click.prevent="addNewRow"
                         type="button"
-                        class="btn--icon btn btn-primary"
-                    >
+                        class="btn--icon btn btn-primary">
                         <i class="fa fa-plus"></i>
                         {{ newRowTitle() }}
                     </button>

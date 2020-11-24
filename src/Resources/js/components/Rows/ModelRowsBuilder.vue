@@ -19,6 +19,17 @@
                         :is="name">
                     </component>
 
+                    <!-- Sheet download -->
+                    <button
+                        v-if="model.getSettings('xls') == true && rows.count > 0"
+                        data-export-xls
+                        @click.prevent="exportXlsTable"
+                        type="button"
+                        class="btn--icon btn btn-default">
+                        <i class="fa fa-file-excel"></i>
+                        {{ _('Stiahnuť excel') }}
+                    </button>
+
                     <div class="dropdown fields-list" fields-list>
                         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" v-if="model.getSettings('table.switchcolumns', true) != false">
                             {{ trans('rows-list') }}
@@ -446,6 +457,9 @@ export default {
     },
 
     methods: {
+        exportXlsTable(){
+            this.loadRows(true, true)
+        },
         getLimitFromStorage(){
             //Load pagination limit from localStorage
             var limit = this.iswithoutparent ? 500 : ('limit' in localStorage ? localStorage.limit : this.model.getSettings('pagination.limit', 10));
@@ -500,7 +514,7 @@ export default {
 
             return row.id;
         },
-        loadRows(indicator){
+        loadRows(indicator, download){
             //If auto reloading is disabled from model.
             //This is used for canAdd rows, which are filtrated by parent row.
             //(If parent row is not saved yet, this rows may dissapear, so we need disable autoreloading)
@@ -531,6 +545,10 @@ export default {
                     page : this.pagination.position,
                     count : this.refresh.count,
                 };
+
+            if ( download == true ){
+                search_query.download = 1;
+            }
 
             //If is enabled searching
             if ( this.searching == true ){
@@ -583,12 +601,16 @@ export default {
                     return;
                 }
 
+                //Disable loader
+                this.pagination.refreshing = false;
+
+                if ( response.data.download ){
+                    return window.location.href = response.data.download;
+                }
+
                 var requestModel = response.data.model;
 
                 this.updateModel(requestModel);
-
-                //Disable loader
-                this.pagination.refreshing = false;
 
                 //Load rows into array
                 this.updateRowsData(response.data.rows, this.enabledColumnsList.length == 0 ? null : 1);
@@ -634,15 +656,28 @@ export default {
             })
             .catch(function(response){
                 //If has been component destroyed, and request is delivered...
-                if ( !this.$root )
+                if ( !this.$root ) {
                     return;
+                }
 
                 //Add next timeout
                 this.initTimeout(false, true);
 
                 //On first error from response
-                if ( response.status == 500 && this.refresh.count == 0 && 'message' in response ){
-                    this.$root.errorResponseLayer(response, null);
+                if ( response.status == 500 ){
+                    let message;
+
+                    try {
+                        message = response.message;
+
+                        try {
+                            message = response.body.message
+                        } catch {};
+                    } catch {};
+
+                    if ( message ){
+                        this.$root.errorResponseLayer(response, message);
+                    }
                 }
 
                 //Show error alert at first request
