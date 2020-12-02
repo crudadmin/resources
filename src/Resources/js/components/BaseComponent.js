@@ -70,6 +70,7 @@ const BaseComponent = (router, store) => {
         computed : {
             ...mapState('header', [
                 'isActiveMobileMenu',
+                'sidebarMenuVisible',
             ]),
             isTest(){
                 return this.version.indexOf('test') > -1;

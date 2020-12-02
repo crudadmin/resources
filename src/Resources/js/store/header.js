@@ -3,6 +3,7 @@ const header = {
 
     state: {
         isActiveMobileMenu : false,
+        sidebarMenuVisible : true,
     },
 
     mutations: {
@@ -11,6 +12,9 @@ const header = {
         },
         toggleMobileMenu(state){
             state.isActiveMobileMenu = !state.isActiveMobileMenu;
+        },
+        toggleSidebarMenu(state){
+            state.sidebarMenuVisible = !state.sidebarMenuVisible;
         }
     },
 }

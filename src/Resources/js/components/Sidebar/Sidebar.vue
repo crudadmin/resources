@@ -7,17 +7,22 @@
         </section>
 
         <div class="footer-sidebar">
-            <p v-if="author !== false">Developed by <a href="https://www.marekgogol.sk" target="_blank">Marek Gogoľ</a></p>
-            <p>&copy; 2016 - {{ year }} <a href="https://www.crudadmin.com" target="_blank">CrudAdmin</a></p>
-            <br v-if="author !== false">
-            <p>Version <a target="_blank" :href="'https://packagist.org/packages/crudadmin/crudadmin#'+version">{{ version }}</a></p>
-          </strong>
+            <div class="footer-content">
+                <p v-if="author !== false">Developed by <a href="https://www.marekgogol.sk" target="_blank">Marek Gogoľ</a></p>
+                <p>&copy; 2016 - {{ year }} <a href="https://www.crudadmin.com" target="_blank">CrudAdmin</a></p>
+                <br v-if="author !== false">
+                <p>Version <a target="_blank" :href="'https://packagist.org/packages/crudadmin/crudadmin#'+version">{{ version }}</a></p>
+            </div>
+            <div class="toggle-menu-size" @click="toggleSidebarMenu">
+                <i class="fa" :class="{ 'fa-angle-left' : sidebarMenuVisible, 'fa-angle-right' : !sidebarMenuVisible }"></i>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 import SidebarRow from './SidebarRow.vue';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
     props: ['rows', 'languages', 'langid', 'user', 'version', 'author'],
@@ -33,6 +38,9 @@ export default {
     },
 
     computed : {
+        ...mapState('header', [
+            'sidebarMenuVisible'
+        ]),
         year(){
             return moment().format('Y');
         },
@@ -54,6 +62,9 @@ export default {
     },
 
     methods: {
+        ...mapMutations('header', [
+            'toggleSidebarMenu',
+        ]),
         addActiveTreeClasses(){
             var owner = $('.sidebar li[data-slug="'+this.$router.currentRoute.params.model+'"]');
 

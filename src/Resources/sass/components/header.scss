@@ -3,6 +3,116 @@
     overflow: hidden;
 }
 
+#app.--menuHidden {
+    header.main-header {
+        .main-header__wrapper {
+            .navbar-left {
+                padding: 10px;
+                width: $navbarWidthHidden;
+
+                .logo {
+                    @include fontSize(12px);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .navbar-right {
+                width: calc(100% - #{$navbarWidthHidden});
+            }
+        }
+    }
+
+    aside.main-sidebar {
+        width: $navbarWidthHidden;
+        z-index: 999;
+
+        .sidebar {
+            padding: 10px 0;
+
+            .sidebar-menu {
+                > li {
+                    border: 1px solid transparent;
+
+                    > a {
+                        text-decoration: none !important;
+
+                        > i.icon:first-child {
+                            width: calc(#{$navbarWidthHidden} - 2px);
+                            text-align: center;
+                        }
+
+                        > i.side-arrow {
+                            display: none;
+                        }
+                    }
+
+                    &:not(:hover) {
+                        &.active {
+                            > .treeview-menu {
+                                display: none;
+                            }
+                        }
+
+                        > a {
+                            i {
+                                margin-right: 0;
+                            }
+
+                            span, i.side-arrow {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    &:hover {
+                        width: calc(#{$navbarWidth} - #{$navbarPadding});
+                        background: white;
+                        border: 1px solid $navbarBorderColor;
+                        border-left: none;
+                        margin-left: $navbarWidthHidden;
+                        position: relative;
+
+                        > .treeview-menu {
+                            display: block;
+                            background: white;
+                            position: absolute;
+                            padding-right: 15px;
+                            border: 1px solid $navbarBorderColor;
+                            width: calc(100% + 2px);
+                            margin: -1px;
+                        }
+
+                        > a {
+                            margin-left: calc(-#{$navbarWidthHidden} + 1px);
+                            width: calc(100% + #{$navbarWidthHidden} - 1px)
+                        }
+                    }
+                }
+            }
+        }
+
+        .footer-sidebar {
+            padding-left: 0;
+            padding-right: 0;
+
+            .footer-content {
+                display: none;
+            }
+
+            .toggle-menu-size {
+                width: $navbarWidthHidden;
+            }
+        }
+    }
+
+    .wrapper {
+        .content-wrapper {
+            width: calc(100% - #{$navbarWidthHidden});
+        }
+    }
+}
+
 header.main-header {
     height: $navbarHeight;
     border-bottom: 1px solid $navbarBorderColor;
@@ -18,6 +128,7 @@ header.main-header {
             padding: 0 $navbarPadding;
             display: flex;
             align-items: center;
+            position: relative;
 
             .logo {
                 color: #4A5056;
@@ -237,7 +348,7 @@ aside.main-sidebar {
                     }
                 }
 
-                &.active:not(.treeview-list) {
+                &.active:not(.treeview-list), #app.--menuHidden &.active {
                     &:before {
                         content: '';
                         width: 2px;
@@ -248,12 +359,12 @@ aside.main-sidebar {
                         right: 0;
                     }
 
-                    i.icon {
-                        color: $primary;
-                    }
-
-                    a {
+                    > a {
                         color: #41464C;
+
+                        > i.icon {
+                            color: $primary;
+                        }
                     }
                 }
 
@@ -268,15 +379,44 @@ aside.main-sidebar {
 
     .footer-sidebar {
         border-top: 1px solid $navbarBorderColor;
+        border-bottom: 1px solid $navbarBorderColor;
         padding: $navbarPadding;
         @include fontSize(12px);
         color: $darkText;
+        position: relative;
 
         p {
             margin-bottom: 5px;
 
             a {
                 /*color: $darkText;*/
+            }
+        }
+
+        .toggle-menu-size {
+            top: 0;
+            position: absolute;
+            right: 0;
+            background: red;
+            height: 100%;
+            background: $navbarBorderColor;
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            @include less-than(md) {
+                display: none;
+            }
+
+            &:hover {
+                background: darken($navbarBorderColor, 10%);
+            }
+
+            i {
+                color: $blackText;
+                @include fontSize(12px);
             }
         }
     }

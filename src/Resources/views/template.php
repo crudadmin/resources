@@ -19,7 +19,7 @@
   <?php } ?>
 </head>
 <body>
-    <div id="app" :class="{ '--menuOpened' : isActiveMobileMenu }">
+    <div id="app" :class="{ '--menuOpened' : isActiveMobileMenu, '--menuHidden' : !sidebarMenuVisible }">
         <!-- Main Header -->
         <header class="main-header">
           <div class="main-header__wrapper">
