@@ -7,7 +7,7 @@ var config = {
     ],
 
     setMixConfig(mix){
-        mix.config.resourceRoot = '/vendor/crudadmin';
+        mix.config.resourceRoot = '../';
         mix.config.publicPath = 'src/Resources/admin';
         mix.config.fileLoaderDirs.fonts = 'fonts';
     }
