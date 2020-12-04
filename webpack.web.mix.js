@@ -1,4 +1,13 @@
-const mix = require('laravel-mix');
+const TargetsPlugin = require('targets-webpack-plugin'),
+      mix = require('laravel-mix');
+
+mix.webpackConfig({
+    plugins: [
+        new TargetsPlugin({
+            browsers: ['last 2 versions', 'chrome >= 41', 'IE 11'],
+        }),
+    ]
+});
 
 //Where sould be compiled assets
 var config = require('./config.js');

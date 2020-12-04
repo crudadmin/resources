@@ -14,7 +14,7 @@
 
     //global
     } else {
-        global.GettextTranslates = factory(global, window.Translator);
+        global.GettextTranslates = factory(global, require('gettext-translator').default);
     }
 }(typeof window !== 'undefined' ? window : this, function (window, Translator) {
     var a = new Translator(CATranslates.translates),
