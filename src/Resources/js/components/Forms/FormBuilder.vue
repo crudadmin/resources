@@ -45,7 +45,7 @@
                         </div>
 
                         <button
-                            v-if="isOpenedRow || isOnlyFormOpened"
+                            v-if="(isOpenedRow || isOnlyFormOpened) && !model.isInParent()"
                             data-toggle="tooltip"
                             :title="__('Zavrieť bez uloženia')"
                             @click="closeForm"
@@ -105,7 +105,7 @@
                 </component>
             </div>
 
-            <div :data-footer="model.table" class="box-footer" v-if="canUpdateForm">
+            <div :data-footer="model.table" class="box-footer" v-if="canShowFooter">
                 <component
                     v-for="name in getComponents('form-footer')"
                     :key="name"
@@ -114,7 +114,7 @@
                     :rows="rows.data"
                     :is="name">
                 </component>
-                <div class="box-footer__actions">
+                <div class="box-footer__actions" v-if="canUpdateForm">
                     <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( isOpenedRow ? 'success' : 'primary')]"><i class="fa updating fa-refresh"></i> {{ isOpenedRow ? trans('saving') : trans('sending') }}</button>
                     <button v-if="!progress" type="submit" :data-action-type="isOpenedRow ? 'update' : 'create'" name="submit" class="btn btn-primary">{{ isOpenedRow ? saveButton : sendButton }}</button>
                 </div>
@@ -307,6 +307,9 @@ export default {
                     return this.languages[key];
 
             return this.languages[0];
+        },
+        canShowFooter(){
+            return this.canUpdateForm || this.getComponents('form-footer').length > 0;
         },
         canUpdateForm(){
             //We cant save form in history row is opened

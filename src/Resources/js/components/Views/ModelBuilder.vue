@@ -764,7 +764,7 @@
                 return this.formOpened == true && this.isEnabledOnlyFormOrTableMode === true;
             },
             isEnabledOnlyFormOrTableMode(){
-                return this.activeGridSize === 0 && this.model.isInParent() !== true;
+                return this.activeGridSize === 0 && this.model.isInParent() !== true && this.model.getSettings('grid.splitmode') !== true;
             },
             activeGridSize(){
                 var size = this.sizes.filter(row => {

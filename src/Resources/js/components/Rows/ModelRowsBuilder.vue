@@ -884,8 +884,7 @@ export default {
                 }
             }
         },
-        removeRow(row)
-        {
+        removeRow(row){
             var ids = row ? [ row.id ] : this.checked;
 
             var success = function (){
@@ -938,8 +937,11 @@ export default {
                     }
 
                     //After remove reset checkbox
-                    if ( ! row )
+                    if ( ! row ) {
                         this.checked = [];
+                    }
+
+                    this.$parent.emitRowData('onDelete', ids);
                 })
                 .catch(response => {
                     this.$root.errorResponseLayer(response);
