@@ -345,8 +345,9 @@ export default {
         isLoadedModel(model, index){
             //Tab is active only when is selected, or when is inParentMode
             //because we need loaded fields also when tab is not opened. For proper validation errors.
-            if ( (index === this.activetab || model.isInParent()) && this.models_loaded.indexOf(model.slug) === -1 )
+            if ( (index === this.activetab || model.isInParent() || model.getSettings('tab_loaded')) && this.models_loaded.indexOf(model.slug) === -1 ) {
                 this.models_loaded.push(model.slug);
+            }
 
             return this.models_loaded.indexOf(model.slug) > -1;
         },
