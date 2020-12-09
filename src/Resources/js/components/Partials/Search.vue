@@ -71,6 +71,12 @@ export default {
         this.initSearchSelectboxes();
 
         this.resetSearchBar();
+
+        if ( this.isSelect ) {
+            this.$watch('model.fields.'+this.search.column+'.options', options => {
+                this.initSearchSelectboxes();
+            });
+        }
     },
 
     computed: {
@@ -160,19 +166,21 @@ export default {
             });
         },
         initSearchSelectboxes(){
-            window.js_date_event = document.createEvent('HTMLEvents');
+            this.$nextTick(() => {
+                window.js_date_event = document.createEvent('HTMLEvents');
 
-            var dispached = false;
+                var dispached = false;
 
-            js_date_event.initEvent('change', true, true);
+                js_date_event.initEvent('change', true, true);
 
-            $(this.$refs.chosenSelect).chosen({disable_search_threshold: 5}).on('change', function(){
-                if ( dispached == false ) {
-                    dispached = true;
-                    this.dispatchEvent(js_date_event);
-                } else {
-                    dispached = false;
-                }
+                $(this.$refs.chosenSelect).chosen({disable_search_threshold: 5}).on('change', function(){
+                    if ( dispached == false ) {
+                        dispached = true;
+                        this.dispatchEvent(js_date_event);
+                    } else {
+                        dispached = false;
+                    }
+                }).trigger('chosen:updated');
             });
         },
         resetSearchBar(){
