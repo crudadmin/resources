@@ -279,6 +279,8 @@
             this.setModelEvents();
 
             this.checkParentGridSize(this.parentActiveGridSize);
+
+            this.onModelUpdate();
         },
 
         destroyed(){
@@ -342,6 +344,15 @@
         },
 
         methods : {
+            onModelUpdate(){
+                this.$watch('model.single', (state, oldstate) => {
+                    if ( state === true && oldstate !== true ){
+                        this.row = this.rows.data[0]||this.emptyRowInstance();
+
+                        this.sendRowData();
+                    }
+                });
+            },
             addSearchQuery(){
                 this.search.queries.push(
                     _.cloneDeep(this.search.defaultQuery),
@@ -908,8 +919,9 @@
 
             },
             hasRows(){
-                if ( this.rows.loaded == false && this.model.maximum != 1 )
+                if ( this.rows.loaded == false && this.model.maximum != 1 ){
                     return true;
+                }
 
                 return this.rows.data.length > 0;
             },
