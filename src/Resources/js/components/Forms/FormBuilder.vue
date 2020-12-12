@@ -18,9 +18,27 @@
                             <span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="--icon-left fa fa-globe-americas"></span>
                             {{ title }}
                         </h3>
+
+                        <component
+                            v-for="name in getComponents('form-header-left')"
+                            :key="name"
+                            :model="model"
+                            :row="row"
+                            :rows="rows.data"
+                            :is="name">
+                        </component>
                     </div>
 
                     <div class="box-header__right">
+                        <component
+                            v-for="name in getComponents('form-header-right')"
+                            :key="name"
+                            :model="model"
+                            :row="row"
+                            :rows="rows.data"
+                            :is="name">
+                        </component>
+
                         <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
                             {{ trans('gettext-open') }}
                         </button>
@@ -226,8 +244,13 @@ export default {
             if ( this.isOpenedRow )
             {
                 //If update title has not been set
-                if ( !(title = this.$root.getModelProperty(this.model, 'settings.title.update')) )
-                    return this.trans('edit-row-n')+' ' + this.row.id;
+                if ( !(title = this.$root.getModelProperty(this.model, 'settings.title.update')) ) {
+                    if ( this.model.editable ) {
+                        return this.trans('edit-row-n')+' ' + this.row.id;
+                    } else {
+                        return this._('Zobrazujete záznam č.')+' '+this.row.id;
+                    }
+                }
 
                 //Bind value from row to title
                 for ( var key in this.row )
@@ -256,7 +279,7 @@ export default {
                         }
                     }
 
-                    title = title.replace(':'+key, value);
+                    title = title.replace(':'+key, value||'');
                 }
 
                 return title;
@@ -317,7 +340,12 @@ export default {
                 return false;
             }
 
-            if ( this.isOpenedRow && this.$root.getModelProperty(this.model, 'settings.editable') == false ) {
+            if (
+                this.isOpenedRow && (
+                    this.$root.getModelProperty(this.model, 'settings.editable') == false
+                    || this.model.editable == false
+                )
+            ) {
                 return false;
             }
 
@@ -436,8 +464,7 @@ export default {
             }
 
             //Checks if form can be editable
-            if ( is_row && this.canaddrow && this.model.editable == false && this.$parent.hasChilds() == 0 )
-            {
+            if ( is_row && this.canaddrow && (this.model.editable == false && this.model.displayable != true) && this.$parent.hasChilds() == 0 ) {
                 this.$parent.resetForm();
                 return;
             }

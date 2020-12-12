@@ -38,8 +38,10 @@
                 </td>
 
                 <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
-                    <div class="buttons-options__item" v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') ? trans('edit') : trans('show')">
-                        <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == item.id, 'far fa-edit' : loadingRow != item.id }"></i></button>
+                    <div class="buttons-options__item" v-if="isEditable || isDisplayable">
+                        <button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && isEditable ? trans('edit') : trans('show')">
+                            <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == item.id, 'far fa-edit' : loadingRow != item.id }"></i>
+                        </button>
                     </div>
                     <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
@@ -217,7 +219,10 @@ export default {
             return ['id'].concat( Object.keys( this.model.fields ) );
         },
         isEditable(){
-            return this.model.editable || this.$parent.$parent.hasChilds() > 0;
+            return this.model.editable == true || this.$parent.$parent.hasChilds() > 0;
+        },
+        isDisplayable(){
+            return this.model.displayable == true;
         },
         isEnabledHistory(){
             //Check if history is enabled, and user has acces to read data from history

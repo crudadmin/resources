@@ -890,7 +890,7 @@
                 return this.canAddRow && !this.model.isSingle() && this.model.hasAccess('insert') && !this.isOnlyFormOpened;
             },
             canShowForm(){
-                if ( (!this.isOpenedRow && !this.canAddRow || this.isOpenedRow && this.model.editable == false) && !this.model.isInParent() ) {
+                if ( (!this.isOpenedRow && !this.canAddRow || this.isOpenedRow && (this.model.editable == false && this.model.displayable !== true)) && !this.model.isInParent() ) {
                     return false;
                 }
 

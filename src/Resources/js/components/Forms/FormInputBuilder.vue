@@ -433,7 +433,7 @@
             },
             isDisabled()
             {
-                if ( this.model.hasAccess('update') == false ){
+                if ( this.model.hasAccess('update') == false || this.model.editable == false ){
                     return true;
                 }
 
