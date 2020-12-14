@@ -729,10 +729,13 @@ export default {
                             this.saveParentChilds(response.data[key].rows);
                         }
 
-                        var eventData = this.buildEventData({
-                            row : clonedRow,
-                            request : response.data[key]
-                        }, model, !isParentRow);
+                        var
+                            //We need push actual model, for access to field.options property
+                            eventModel = isParentRow ? this.model : model,
+                            eventData = this.buildEventData({
+                                row : clonedRow,
+                                request : response.data[key]
+                            }, eventModel, !isParentRow);
 
                         //Bind values for input builder
                         eventHub.$emit('onSubmit', eventData);
