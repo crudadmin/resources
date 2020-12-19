@@ -79,8 +79,9 @@ export default {
 
     created() {
         //If table has foreign column, will be hidden
-        if ( this.model.foreign_column != null )
+        if ( this.model.foreign_column != null ) {
             this.hidden.push( this.model.foreign_column );
+        }
 
         //Set allowed columns
         this.resetAllowedColumns();
@@ -148,6 +149,7 @@ export default {
                                 this.model.fields[key].hidden != true
                                 && this.model.fields[key].invisible != true
                             )
+                            || this.model.fields[key].column_visible == true
                     )
                 ) {
                     data[ this.model.columns[i] ] = this.fieldName( this.model.columns[i] );
@@ -189,7 +191,14 @@ export default {
                 }
 
                 for ( var key in columns ) {
-                    if ( !(key in data) && (columns[key].hidden != true && columns[key].invisible != true) ) {
+                    if ( !(key in data) && (
+                            (
+                                columns[key].hidden != true
+                                && columns[key].invisible != true
+                            )
+                            || columns[key].column_visible == true
+                        )
+                    ) {
                         var field_key = this.getColumnRightKey(key);
 
                         data[key] = columns[key].name||columns[key].title||this.model.fields[field_key].column_name||this.model.fields[field_key].name;
