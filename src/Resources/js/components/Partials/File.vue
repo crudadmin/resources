@@ -43,6 +43,11 @@ export default {
             return this.$root.requests.download + '?model=' + encodeURIComponent(this.model.slug) + '&field=' + encodeURIComponent(this.field) + '&file=' + encodeURIComponent(this.file);
         },
         imagePath(){
+            //Svg does not have thumbnails
+            if ( this.isExtension(this.file, ['svg']) ){
+                return this.path;
+            }
+
             return window.crudadmin.root + '/uploads/cache/' + this.model.slug + '/' + this.field + '/admin-thumbnails/' + this.file;
         },
         path(){
