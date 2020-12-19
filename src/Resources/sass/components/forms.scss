@@ -340,8 +340,15 @@
 .chosen-container {
     .chosen-single, .chosen-choices {
         border-color: $inputBorderColor;
-        height: $input-height;
         @include border-radius($input-border-radius, 0);
+
+        &.chosen-single {
+            height: $input-height;
+        }
+
+        &.chosen-choices {
+            min-height: $input-height;
+        }
     }
 
     .chosen-single > span {
