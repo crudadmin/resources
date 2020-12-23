@@ -1,6 +1,6 @@
 <template>
     <div v-show="isGroupVisible(group)" class="fields-group fields-group__item" :group-id="group.id" :class="getGroupClass(group)" :data-fields="visibleFields.length">
-        <div :class="{ card : canShowGroupName(group), 'fields-group__wrapper' : visibleFields.length > 0, 'fields-tabs__wrapper' : hasTabs(group.fields) }">
+        <div :class="{ card : canShowGroupName(group), 'fields-group__wrapper' : visibleFields.length > 0 || hasTabs(group.fields) === false, 'fields-tabs__wrapper' : hasTabs(group.fields) }">
             <h4 class="card-header" v-if="canShowGroupName(group)">
                 <i v-if="group.icon" class="card-header--icon-left" :class="['fa', faMigrator(group.icon)]"></i>
                 <span v-html="group.name"></span>
