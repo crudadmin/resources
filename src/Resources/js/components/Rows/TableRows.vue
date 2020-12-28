@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <component :is="isMobileDevice() || model.sortable == false ? 'tbody' : 'draggable'" tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
-            <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : checked.indexOf(item.id) > -1 }">
+            <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : checked.indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
                 <td class="select-row-checkbox" v-if="hasCheckingEnabled">
                     <div class="checkbox-box" @click="checkRow(item.id)">
                         <input type="checkbox" :checked="checked.indexOf(item.id) > -1">
@@ -25,7 +25,7 @@
                     </div>
                 </td>
 
-                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="checkRow(item.id, field)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
+                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="checkRow(item.id, field, item)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
                     <table-row-value
                         :settings="getCachableColumnsSettings(field)"
                         :columns="columns"
@@ -113,6 +113,10 @@ export default {
     computed: {
         hasCheckingEnabled(){
             if ( this.model.getSettings('checking', true) === false ){
+                return false;
+            }
+
+            if ( this.canOpenRowOnClick == true ){
                 return false;
             }
 
@@ -269,6 +273,9 @@ export default {
 
             return _.isEqual(ids, this.checked);
         },
+        canOpenRowOnClick(){
+            return this.model.getSettings('table.onclickopen', false) == true;
+        },
     },
 
     methods: {
@@ -350,7 +357,12 @@ export default {
 
             this.$parent.checked = this.isCheckedAll ? [] : ids;
         },
-        checkRow(id, field){
+        checkRow(id, field, row){
+            if ( row && this.canOpenRowOnClick && (this.isEditable || this.isDisplayable) ) {
+                this.selectRow(row);
+                return;
+            }
+
             if ( this.hasCheckingEnabled === false ){
                 return;
             }

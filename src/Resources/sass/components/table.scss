@@ -69,8 +69,33 @@
                         }
 
                         tr {
-                           &.--active td {
+                            &.--active td {
                                 background: rgba(222, 227, 233, 0.2);
+                            }
+
+                            @-webkit-keyframes blink {
+                                from { background: rgba(222, 227, 233, 0.5); }
+                                to { background: white; }
+                            }
+                            @-moz-keyframes blink {
+                                from { background: rgba(222, 227, 233, 0.5); }
+                                to { background: white; }
+                            }
+                            @-ms-keyframes blink {
+                                from { background: rgba(222, 227, 233, 0.5); }
+                                to { background: white; }
+                            }
+                            @-o-keyframes blink {
+                                from { background: rgba(222, 227, 233, 0.5); }
+                                to { background: white; }
+                            }
+                            @keyframes blink {
+                                from { background: rgba(222, 227, 233, 0.5); }
+                                to { background: white; }
+                            }
+
+                            &.--loading td {
+                                animation: blink 0.5s infinite alternate;
                             }
                         }
 
