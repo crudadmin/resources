@@ -433,7 +433,7 @@
             },
             isDisabled()
             {
-                if ( this.model.hasAccess('update') == false || this.model.editable == false ){
+                if ( this.isOpenedRow == true && (this.model.hasAccess('update') == false || this.model.editable == false) ){
                     return true;
                 }
 
