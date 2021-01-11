@@ -83,11 +83,28 @@ const BaseComponent = (router, store) => {
             ]),
             setDefaultRoute(){
                 if ( router.currentRoute.name == 'dashboard' ) {
+                    let defaultModel;
+
+                    let hasModelPermission = table => {
+                        return this.models[table].hasAccess('read');
+                    };
+
                     for ( var key in this.models ) {
-                        if ( this.models[key].hasAccess('read') && this.models[key].getSettings('default', false) === true ) {
-                            router.push({ name : 'admin-model', params : { model : this.models[key].table } });
-                            return;
+                        if ( hasModelPermission(key) && this.models[key].getSettings('default', false) === true ) {
+                            defaultModel = this.models[key].table;
+                            break;
                         }
+                    }
+
+                    //Run default permission model, or default model set in properties
+                    let defaultPermissionModel = this.user.roles.filter(role => {
+                        return role.default_model && hasModelPermission(role.default_model)
+                    }).map(role => role.default_model);
+
+                    if ( defaultPermissionModel.length > 0 || defaultModel ) {
+                        router.push({ name : 'admin-model', params : {
+                            model : defaultPermissionModel[0]||defaultModel
+                        } });
                     }
                 }
             },

@@ -288,8 +288,11 @@ export default {
         model(){
             this.updateModelOptions();
         },
-        modelOptions(){
-            this.updateModelOptions();
+        modelOptions: {
+            deep : true,
+            handler(){
+                this.updateModelOptions();
+            }
         },
         'model.scopes' : {
             handler(a, b){
@@ -465,6 +468,9 @@ export default {
     },
 
     methods: {
+        //We need update modelOptions all the time model or modelOptions has been changed
+        //because if model property in base $root models will change. options will dissapear.
+        //This is buggy behaviour when data are set in beforeInitialAdminRequest model property
         updateModelOptions(){
             for ( var key in this.modelOptions ){
                 if ( !_.isNil(this.model.fields[key].options) ) {
@@ -776,13 +782,19 @@ export default {
                         {
                             var from_key = fields[key].options.substr(2);
 
-                            this.modelOptions[key] = fields[from_key].options;
+                            let modelOptions = { ...this.modelOptions };
+                                modelOptions[key] = fields[from_key].options;
+
+                            this.modelOptions = modelOptions;
                         }
                     }
 
                     //Use own field options
                     else {
-                        this.modelOptions[key] = fields[key].options;
+                        let modelOptions = { ...this.modelOptions };
+                            modelOptions[key] = fields[key].options;
+
+                        this.modelOptions = modelOptions;
                     }
 
                 }
