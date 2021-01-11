@@ -166,6 +166,8 @@ export default {
             default_columns : [],
             enabled_columns : null,
             button_loading : false,
+
+            modelOptions : {},
         };
     },
 
@@ -282,6 +284,12 @@ export default {
         activetab(value){
             if ( value == true )
                 this.initTimeout(false);
+        },
+        model(){
+            this.updateModelOptions();
+        },
+        modelOptions(){
+            this.updateModelOptions();
         },
         'model.scopes' : {
             handler(a, b){
@@ -457,6 +465,13 @@ export default {
     },
 
     methods: {
+        updateModelOptions(){
+            for ( var key in this.modelOptions ){
+                if ( !_.isNil(this.model.fields[key].options) ) {
+                    this.model.fields[key].options = this.modelOptions[key];
+                }
+            }
+        },
         exportXlsTable(){
             this.loadRows(true, true)
         },
@@ -761,13 +776,13 @@ export default {
                         {
                             var from_key = fields[key].options.substr(2);
 
-                            this.model.fields[key].options = fields[from_key].options;
+                            this.modelOptions[key] = fields[from_key].options;
                         }
                     }
 
                     //Use own field options
                     else {
-                        this.model.fields[key].options = fields[key].options;
+                        this.modelOptions[key] = fields[key].options;
                     }
 
                 }
