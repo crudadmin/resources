@@ -906,7 +906,7 @@
                 }
 
                 //If row is not selected, and form is not opened. But in table needs exists rows
-                if ( this.isEnabledOnlyFormOrTableMode === true && !this.isOpenedRow && this.isOnlyFormOpened === false ){
+                if ( this.isEnabledOnlyFormOrTableMode === true && !this.isOpenedRow && this.isOnlyFormOpened === false && this.model.isSingle() == false ){
                     return false;
                 }
 
