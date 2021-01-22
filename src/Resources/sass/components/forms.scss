@@ -79,7 +79,7 @@
             }
 
             /* last Group in group */
-            & > div > .row > .fields-group.fields-group__item:last-child .fields-group__wrapper {
+            & > div > .row > .fields-group.fields-group__item:last-child > .fields-group__wrapper {
                 margin-bottom: 0;
             }
         }
