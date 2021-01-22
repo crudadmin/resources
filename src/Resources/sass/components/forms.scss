@@ -30,21 +30,19 @@
     .fields-group {
         @include more-than(md) {
             &.fields-group--inline {
-                > .fields-group__wrapper {
-                    > div > .row {
+                & > .fields-group__wrapper {
+                    & > div > .row {
                         flex-direction: row;
 
-                        > .fields-group__item {
+                        & > .fields-group__item {
                             flex: inherit;
                         }
                     }
                 }
 
                 /* Last inline group */
-                &:last-child {
-                    > .fields-group__wrapper & > div > .row > .fields-group__item .field-wrapper .form-group {
-                        margin-bottom: 0;
-                    }
+                &:last-child > .fields-group__wrapper & > div > .row > .fields-group__item .field-wrapper .form-group {
+                    margin-bottom: 0;
                 }
 
                 /* every field in inline group */
@@ -69,7 +67,7 @@
         .fields-group__wrapper {
             margin-bottom: $form-group-margin-bottom;
 
-            > div > .row {
+            & > div > .row {
                 > .fields-group__item:last-child > {
                     /* last field in group */
                     & .field-wrapper > .form-group:last-child {
@@ -85,7 +83,7 @@
         }
 
         /* Last field in tabs */
-        > .fields-tabs__wrapper > div > .row > .fields-group__item:last-child > .field-wrapper > .form-group  {
+        & > .fields-tabs__wrapper > div > .row > .fields-group__item:last-child > .field-wrapper > .form-group  {
             margin-bottom: 0;
         }
 
