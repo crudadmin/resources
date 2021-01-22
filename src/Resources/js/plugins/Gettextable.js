@@ -28,7 +28,17 @@
         },
         vuejsInstall = function (Vue, options) {
             for ( var i = 0; i < selectors.length; i++ ) {
-                Vue.prototype[selectors[i]] = getSelector(selectors[i]);
+                //Vuejs3
+                if ( Vue.config && Vue.config.globalProperties ) {
+                    if ( ['_'].indexOf(selectors[i]) == -1 ) {
+                        Vue.config.globalProperties[selectors[i]] = getSelector(selectors[i]);
+                    }
+                }
+
+                //Vuejs 2
+                else {
+                    Vue.prototype[selectors[i]] = getSelector(selectors[i]);
+                }
             }
         };
 

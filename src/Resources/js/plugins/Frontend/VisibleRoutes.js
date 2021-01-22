@@ -27,7 +27,15 @@
 
     //Vue.js installation
     action.install = (Vue, options) => {
-        Vue.prototype[selector] = action;
+        //Vuejs3
+        if ( Vue.config && Vue.config.globalProperties ) {
+            Vue.config.globalProperties[selector] = action;
+        }
+
+        //Vuejs 2
+        else {
+            Vue.prototype[selector] = action;
+        }
     };
 
     window[selector] = action;
