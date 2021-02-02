@@ -80,7 +80,7 @@ var ModelProperties = (Model) => {
         if ( key in this.fields ) {
             return (
                 this.fields[key].column_name
-                || this.getSettings('settings.columns.'+key+'.name')
+                || this.getSettings('columns.'+key+'.name')
                 || this.fields[key].name
             );
         } else {

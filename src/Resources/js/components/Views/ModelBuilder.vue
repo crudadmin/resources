@@ -66,7 +66,7 @@
                     </ul>
 
                     <!-- Choose language -->
-                    <div class="dropdown" v-if="hasLanguages && isActiveLanguageSwitch && !canShowForm" data-global-language-switch>
+                    <div class="dropdown" v-if="hasLanguages && isActiveLanguageSwitch && (!canShowForm || activeGridSize != 0)" data-global-language-switch>
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                             <i class="--icon-left fa fa-globe-americas"></i>
                             {{ selectedRootLanguage ? getLangName(selectedRootLanguage) : trans('language-mutation') }}
@@ -80,7 +80,7 @@
                     <!-- Add new row -->
                     <button
                         v-if="canShowAddButton"
-                        data-create-new-row
+                        :data-create-new-row="model.table"
                         @click.prevent="addNewRow"
                         type="button"
                         class="btn--icon btn btn-primary">
