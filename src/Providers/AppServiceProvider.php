@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
         CommandsServiceProvider::class,
         PublishServiceProvider::class,
         RouteServiceProvider::class,
+        FileManagerServiceProvider::class,
     ];
 
     protected $routeMiddleware = [

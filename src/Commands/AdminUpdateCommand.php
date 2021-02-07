@@ -97,6 +97,11 @@ class AdminUpdateCommand extends Command
     {
         Artisan::call('vendor:publish', [ '--tag' => 'admin.resources' ]);
 
+        //Publish filemanager vendor
+        if ( config('admin.filemanager', false) === true ) {
+            Artisan::call('vendor:publish', [ '--tag' => 'lfm_public' ]);
+        }
+
         $this->line('<comment>+ Vendor directories has been successfully published</comment>');
     }
 }

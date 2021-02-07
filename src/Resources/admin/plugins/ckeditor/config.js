@@ -9,17 +9,22 @@ CKEDITOR.editorConfig = function( config ) {
     config.language = lang;
     config.defaultLanguage = lang;
 
-    var basedir = window.crudadmin.baseURL + '/api/ckfinder/browser';
+    var fileManagerPath;
+    if ( window.crudadmin.ckfinder ) {
+        fileManagerPath = window.crudadmin.baseURL + '/api/ckfinder/browser';
+    } else {
+        fileManagerPath = window.crudadmin.baseURL + '/filemanager';
+    }
 
     config.skin = 'moono-lisa';
 
     //CKFinder
-    config.filebrowserBrowseUrl = basedir;
-    config.filebrowserImageBrowseUrl = basedir + '?type=Images';
-    config.filebrowserFlashBrowseUrl = basedir + '?type=Flash';
-    // config.filebrowserUploadUrl = basedir + '?command=QuickUpload&type=Files';
-    // config.filebrowserImageUploadUrl = basedir + '?command=QuickUpload&type=Images';
-    // config.filebrowserFlashUploadUrl = basedir + '?command=QuickUpload&type=Flash';
+    config.filebrowserBrowseUrl = fileManagerPath;
+    config.filebrowserImageBrowseUrl = fileManagerPath + '?type=Images';
+    config.filebrowserFlashBrowseUrl = fileManagerPath + '?type=Flash';
+    // config.filebrowserUploadUrl = fileManagerPath + '?command=QuickUpload&type=Files';
+    // config.filebrowserImageUploadUrl = fileManagerPath + '?command=QuickUpload&type=Images';
+    // config.filebrowserFlashUploadUrl = fileManagerPath + '?command=QuickUpload&type=Flash';
     config.filebrowserWindowWidth = '50%';
     config.filebrowserWindowHeight = '50%';
 
