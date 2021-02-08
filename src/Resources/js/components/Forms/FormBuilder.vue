@@ -63,7 +63,7 @@
                         </div>
 
                         <button
-                            v-if="(isOpenedRow || isOnlyFormOpened) && !model.isInParent()"
+                            v-if="(isOpenedRow || isOnlyFormOpened) && !model.isInParent() && !model.isSingle()"
                             data-toggle="tooltip"
                             :data-close-form="model.table"
                             :title="__('Zavrieť bez uloženia')"
