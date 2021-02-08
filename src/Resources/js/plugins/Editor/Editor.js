@@ -102,10 +102,17 @@ var Editor = {
             var wrapper = document.createElement('div');
                 wrapper.className = this.inlineClass;
 
+            let origElement = element;
+
             element.parentNode.insertBefore(wrapper, element);
             wrapper.appendChild(element);
 
             element = wrapper;
+
+            //We need reregister pencil to new element, and copy translatable properties
+            element._CAPencil = origElement._CAPencil;
+            element._CAPencil._CAElement = element;
+            CAEditor.registerPointerProperties(element, 'translatable', origElement.getPointerSettings().translatable);
         }
 
         element.innerHTML = actualValue;

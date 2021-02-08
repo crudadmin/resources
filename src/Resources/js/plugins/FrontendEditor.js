@@ -131,7 +131,7 @@ import Editable from './Editor/Editable';
                 this.pencils.refresh();
             }, 1000);
         },
-        registerPointerProperties(element, type){
+        registerPointerProperties(element, type, settings){
             if ( !element.hasPointer ) {
                 element.hasPointer = [];
             }
@@ -182,11 +182,25 @@ import Editable from './Editor/Editable';
                 }
             }
 
+            //set pointer settings
+            if ( !element.setPointerSettings ) {
+                element.setPointerSettings = function(type, settings){
+                    for ( var key in settings ){
+                        element.setPointerSetting(key, settings[key], type);
+                    }
+                }
+            }
+
             //Register that this element has given pointer type
             element.hasPointer.push(type);
 
             //Bind pointer settings
             element._pointerSettings[type] = {};
+
+            if ( settings ) {
+                //Bind additional pointer settings
+                element.setPointerSettings(type, settings);
+            }
         },
         pushPointerElement(element, type, settings){
             //Element has pointer already
@@ -196,12 +210,7 @@ import Editable from './Editor/Editable';
 
             //Register missing pointer properties
             else {
-                this.registerPointerProperties(element, type);
-            }
-
-            //Bind additional pointer settings
-            for ( var key in settings ){
-                element.setPointerSetting(key, settings[key], type);
+                this.registerPointerProperties(element, type, settings);
             }
 
             //Register pointer element
