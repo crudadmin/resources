@@ -99,6 +99,10 @@ class AdminUpdateCommand extends Command
 
         //Publish filemanager vendor
         if ( config('admin.filemanager', false) === true ) {
+            Admin::addGitignoreFiles([
+                public_path('vendor/laravel-filemanager')
+            ]);
+
             Artisan::call('vendor:publish', [ '--tag' => 'lfm_public' ]);
         }
 
