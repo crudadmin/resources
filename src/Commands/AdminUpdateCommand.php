@@ -106,6 +106,10 @@ class AdminUpdateCommand extends Command
             Artisan::call('vendor:publish', [ '--tag' => 'lfm_public' ]);
         }
 
+        if ( config('admin.gutenberg', false) === true ) {
+            Artisan::call('vendor:publish', [ '--provider' => \VanOns\Laraberg\LarabergServiceProvider::class ]);
+        }
+
         $this->line('<comment>+ Vendor directories has been successfully published</comment>');
     }
 }
