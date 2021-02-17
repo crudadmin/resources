@@ -15,9 +15,9 @@
             :maxlength="field.max"
             :placeholder="field.placeholder || field_name">
         </textarea>
-        <div v-if="initializing == false && initialized == false" class="alert alert-warning">
+        <div v-if="initialized == false" class="alert alert-warning" :class="{ '--loading' : initializing && !initialized }">
             <p>{{ _('Inštanciu editora je možné spustiť len raz. Pre prepnutie inštancie editora kliknite na nasledujúce tlačidlo.') }}</p>
-            <button type="button" @click="toggleEditorInstance" class="btn btn-warning mt-3">{{ _('Zapnuť editor') }}</button>
+            <button type="button" @click="toggleEditorInstance" class="btn btn-warning mt-3">{{ _('Zapnúť editor') }}</button>
         </div>
         <small>{{ field.title }}</small>
     </div>
@@ -80,12 +80,26 @@
 
         methods : {
             toggleEditorInstance(){
-                eventHub.$emit('disableGutenbergEditors', {
-                    id : this.id,
-                    callback : () => {
+                if ( this.initializing ) {
+                    return;
+                }
+
+                this.initializing = true;
+
+                //We need add timeout for correct button animation of "loading state"
+                setTimeout(() => {
+                    //If editor is enabled already
+                    if ( Gutenberg.editor ) {
+                        eventHub.$emit('disableGutenbergEditors', {
+                            id : this.id,
+                            callback : () => {
+                                this.tryInitializeEditor();
+                            }
+                        });
+                    } else {
                         this.tryInitializeEditor();
                     }
-                });
+                }, 100);
             },
             onEditorBoot(){
                 //Check if given field is under not intializing state
@@ -162,3 +176,9 @@
         },
     }
 </script>
+
+<style scoped>
+.--loading {
+    opacity: 0.5;
+}
+</style>
