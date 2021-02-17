@@ -97,14 +97,6 @@
     <script src="<?php echo admin_asset('/js/vendor.js') ?>"></script>
     <script src="<?php echo admin_asset('/plugins/ckeditor/ckeditor.js') ?>"></script>
 
-    <?php if ( config('admin.gutenberg') ) { ?>
-    <link rel="stylesheet" href="<?php echo asset('vendor/laraberg/css/laraberg.css') ?>">
-    <script src="https://unpkg.com/react@16.8.6/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js"></script>
-    <script src="<?php echo asset('vendor/laraberg/js/laraberg.js') ?>"></script>
-    <script src="<?php echo admin_asset('/js/gutenberg.js') ?>"></script>
-    <?php } ?>
-
     <!-- APP JS -->
     <script src="<?php echo admin_asset('/js/app.js') ?>"></script>
 

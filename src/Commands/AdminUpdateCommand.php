@@ -2,10 +2,11 @@
 
 namespace Admin\Resources\Commands;
 
-use Illuminate\Console\Command;
-use Artisan;
 use Admin;
+use Admin\Resources\Events\OnAdminUpdate;
+use Artisan;
 use File;
+use Illuminate\Console\Command;
 
 class AdminUpdateCommand extends Command
 {
@@ -97,6 +98,8 @@ class AdminUpdateCommand extends Command
     {
         Artisan::call('vendor:publish', [ '--tag' => 'admin.resources' ]);
 
+        event(new OnAdminUpdate($this));
+
         //Publish filemanager vendor
         if ( config('admin.filemanager', false) === true ) {
             Admin::addGitignoreFiles([
@@ -104,14 +107,6 @@ class AdminUpdateCommand extends Command
             ]);
 
             Artisan::call('vendor:publish', [ '--tag' => 'lfm_public' ]);
-        }
-
-        if ( config('admin.gutenberg', false) === true ) {
-            Artisan::call('vendor:publish', [ '--provider' => \VanOns\Laraberg\LarabergServiceProvider::class ]);
-
-            Admin::addGitignoreFiles([
-                public_path('vendor/laraberg')
-            ]);
         }
 
         $this->line('<comment>+ Vendor directories has been successfully published</comment>');

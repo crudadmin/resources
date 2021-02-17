@@ -6,7 +6,7 @@
         </label>
         <textarea
             rows="10"
-            class="form-control"
+            class="form-control d-none"
             :id="id"
             :disabled="disabled"
             :readonly="readonly"
@@ -15,6 +15,10 @@
             :maxlength="field.max"
             :placeholder="field.placeholder || field_name">
         </textarea>
+        <div v-if="initializing == false && initialized == false" class="alert alert-warning">
+            <p>{{ _('Inštanciu editora je možné spustiť len raz. Pre prepnutie inštancie editora kliknite na nasledujúce tlačidlo.') }}</p>
+            <button type="button" @click="toggleEditorInstance" class="btn btn-warning mt-3">{{ _('Zapnuť editor') }}</button>
+        </div>
         <small>{{ field.title }}</small>
     </div>
 </template>
@@ -25,14 +29,25 @@
 
         data(){
             return {
+                initializing : false,
+                initialized : false,
                 destroying : false,
-                editorLoaded : false,
             };
         },
         mounted(){
-            this.initializeEditor();
+            this.tryInitializeEditor();
 
-            eventHub.$on('updateField', this.onUpdateEvent = data => {
+            eventHub.$on('disableGutenbergEditors', this.$disableGutenbergEditors = data => {
+                //We can disable only if editor is loaded
+                //Also skip actual field
+                if ( !(this.initializing == true || this.initialized == true) || data.id == this.id ) {
+                    return;
+                }
+
+                this.removeEditor(data.callback);
+            });
+
+            eventHub.$on('updateField', this.$updateField = data => {
                 if ( this.destroying == true ){
                     return;
                 }
@@ -42,55 +57,73 @@
 
                 var value = this.$parent.getLocalizedValue(this.field.value) || '';
 
-                if ( this.editorLoaded == true ) {
-                    Laraberg.setContent(value);
+                if ( this.initialized == true ) {
+                    Gutenberg.setContent(value);
                 }
             });
 
             wp.data.subscribe(_.debounce(e => {
-                if ( this.destroying == true ){
+                //We can update this field, only if this field has been initialized
+                if ( this.destroying == true || this.initialized == false ){
                     return;
                 }
 
-                this.field.value = Laraberg.getContent();
+                this.field.value = Gutenberg.getContent();
             }, 500));
-
-            this.checkEditorBoot();
-            this.modifyGutenbergOnInitialize();
         },
         beforeDestroy() {
             this.removeEditor();
+
+            eventHub.$off('updateField', this.$updateField);
+            eventHub.$off('disableGutenbergEditors', this.$disableGutenbergEditors);
         },
 
         methods : {
-            checkEditorBoot(){
-                var { getPlugin, unregisterPlugin, registerPlugin } = wp.plugins;
-                var { useEffect } = wp.element;
-
-                const doSomething = () => {
-                    useEffect(() => {
-                        this.editorLoaded = true;
-                    }, []);
-                    return null
+            toggleEditorInstance(){
+                eventHub.$emit('disableGutenbergEditors', {
+                    id : this.id,
+                    callback : () => {
+                        this.tryInitializeEditor();
+                    }
+                });
+            },
+            onEditorBoot(){
+                //Check if given field is under not intializing state
+                if ( this.initializing === false ) {
+                    return;
                 }
 
-                //Reregister plugin
-                getPlugin('on-editor-boot') && unregisterPlugin('on-editor-boot');
-                registerPlugin('on-editor-boot', {
-                  render: doSomething,
-                });
+                this.initialized = true;
+
+                Gutenberg.setContent(this.field.value||'');
             },
             flushStorage(){
                 sessionStorage.removeItem("wp-autosave-block-editor-post-1");
             },
+            tryInitializeEditor(){
+                if ( Gutenberg.editor ){
+                    return;
+                }
+
+                this.initializeEditor();
+            },
             initializeEditor: function () {
+                this.initializing = true;
+
+                this.destroying = false;
+
                 this.flushStorage();
 
-                Laraberg.init(this.id, {
+                Gutenberg.init(this.id, {
                     laravelFilemanager: { prefix : '/admin/filemanager' },
+                    onBoot : () => {
+                        this.onEditorBoot();
+                    },
                 });
             },
-            removeEditor: function () {
+            removeEditor: function (callback) {
+                this.initializing = false;
+                this.initialized = false;
                 this.destroying = true;
 
                 try {
@@ -109,21 +142,23 @@
                     __experimentalTearDownEditor();
 
                     // Unmount component
-                    wp.element.unmountComponentAtNode(window.Laraberg.editor);
+                    wp.element.unmountComponentAtNode(window.Gutenberg.editor);
+
+                    //Remove editor wrapper
+                    $('#laraberg__editor').remove();
                 } catch (e) {
                     console.error(e);
                 }
 
-                window.Laraberg.editor = undefined;
+                window.Gutenberg.editor = undefined;
+
+                if ( typeof callback == 'function' ){
+                    callback();
+                }
             },
             changeValue(e){
                 this.$parent.changeValue(e);
             },
-            modifyGutenbergOnInitialize(){
-                window.Gutenberg.boot.forEach(callback => {
-                    callback();
-                });
-            }
         },
     }
 </script>
