@@ -56,7 +56,7 @@
             }, 500));
 
             this.checkEditorBoot();
-            this.registerBlocks();
+            this.modifyGutenbergOnInitialize();
         },
         beforeDestroy() {
             this.removeEditor();
@@ -89,13 +89,6 @@
                 Laraberg.init(this.id, {
                     laravelFilemanager: { prefix : '/admin/filemanager' },
                 });
-
-                const {toggleFeature} = wp.data.dispatch('core/edit-post');
-                const {isFeatureActive} = wp.data.select('core/edit-post');
-
-                isFeatureActive("welcomeGuide") && toggleFeature('welcomeGuide');
-                isFeatureActive("fullscreenMode") && toggleFeature('fullscreenMode');
-
             },
             removeEditor: function () {
                 this.destroying = true;
@@ -110,8 +103,6 @@
 
                     // Toggle these on again
                     const { toggleFeature } = wp.data.dispatch('core/edit-post')
-                    toggleFeature('welcomeGuide')
-                    toggleFeature('fullscreenMode')
 
                     // Start teardown
                     const {__experimentalTearDownEditor} = wp.data.dispatch('core/editor');
@@ -119,23 +110,19 @@
 
                     // Unmount component
                     wp.element.unmountComponentAtNode(window.Laraberg.editor);
-                } catch (e) {}
+                } catch (e) {
+                    console.error(e);
+                }
 
                 window.Laraberg.editor = undefined;
             },
             changeValue(e){
                 this.$parent.changeValue(e);
             },
-            registerBlocks(){
-                Laraberg.registerCategory('Admin blocks', 'crudadmin');
-
-                crudBerg.blocks.forEach(block => {
-                    block = block();
-
-                    Laraberg.registerBlock('crudadmin/'+block.key, block)
-
-                    console.log('Registered', block);
-                })
+            modifyGutenbergOnInitialize(){
+                window.Gutenberg.boot.forEach(callback => {
+                    callback();
+                });
             }
         },
     }

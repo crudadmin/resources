@@ -108,6 +108,10 @@ class AdminUpdateCommand extends Command
 
         if ( config('admin.gutenberg', false) === true ) {
             Artisan::call('vendor:publish', [ '--provider' => \VanOns\Laraberg\LarabergServiceProvider::class ]);
+
+            Admin::addGitignoreFiles([
+                public_path('vendor/laraberg')
+            ]);
         }
 
         $this->line('<comment>+ Vendor directories has been successfully published</comment>');

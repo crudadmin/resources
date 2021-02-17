@@ -83,6 +83,9 @@ const boot = () => {
         return renderSave(props)
     }
 
+    const MyIcon = () => (
+        <span class="fa fa-th-large"></span>
+    );
 
     return {
         key : 'test-block',
