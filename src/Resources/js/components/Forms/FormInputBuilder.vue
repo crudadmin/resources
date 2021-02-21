@@ -73,6 +73,20 @@
             :depth_level="depth_level">
         </text-field>
 
+        <gutenberg-field
+            v-if="!hasComponent && isGutenberg"
+            :id="getId"
+            :model="model"
+            :field_name="getName"
+            :field_key="getFieldName"
+            :field="field"
+            :value="getValueOrDefault"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :depth_level="depth_level">
+        </gutenberg-field>
+
         <file-field
             v-if="!hasComponent && isFile"
             :id="getId"
@@ -172,6 +186,7 @@
     import DateTimeField from '../Fields/DateTimeField';
     import CheckboxField from '../Fields/CheckboxField';
     import TextField from '../Fields/TextField';
+    import GutenbergField from '../Fields/GutenbergField';
     import FileField from '../Fields/FileField';
     import SelectField from '../Fields/SelectField';
     import RadioField from '../Fields/RadioField';
@@ -180,7 +195,7 @@
         name: 'form-input-builder',
         props: ['model', 'field', 'field_key', 'index', 'row', 'confirmation', 'history', 'langid', 'inputlang', 'hasparentmodel', 'langslug', 'depth_level'],
 
-        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, FileField, SelectField, RadioField },
+        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField },
 
         created(){
             this.registerFieldComponents(this.model, this.field, 'component');
@@ -398,6 +413,10 @@
             isText()
             {
                 return this.field.type == 'text' || this.field.type == 'longtext';
+            },
+            isGutenberg()
+            {
+                return this.field.type == 'gutenberg';
             },
             isEditor()
             {

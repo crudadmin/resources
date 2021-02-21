@@ -23,6 +23,7 @@
     "targets-webpack-plugin": "^3.0.0"
   },
   "dependencies": {
+    "@babel/preset-react": "^7.12.13",
     "bootstrap": "^4.0.0",
     "cross-env": "^5.2.1",
     "gettext-translator": "^3.0.1",

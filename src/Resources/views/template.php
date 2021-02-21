@@ -122,6 +122,5 @@
         include_once($path);
     }
     ?>
-
   </body>
 </html>

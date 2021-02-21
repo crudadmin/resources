@@ -2,10 +2,11 @@
 
 namespace Admin\Resources\Commands;
 
-use Illuminate\Console\Command;
-use Artisan;
 use Admin;
+use Admin\Resources\Events\OnAdminUpdate;
+use Artisan;
 use File;
+use Illuminate\Console\Command;
 
 class AdminUpdateCommand extends Command
 {
@@ -96,6 +97,8 @@ class AdminUpdateCommand extends Command
     public function publishVendor()
     {
         Artisan::call('vendor:publish', [ '--tag' => 'admin.resources' ]);
+
+        event(new OnAdminUpdate($this));
 
         //Publish filemanager vendor
         if ( config('admin.filemanager', false) === true ) {
