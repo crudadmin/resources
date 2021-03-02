@@ -196,26 +196,9 @@ export default {
         getMutatedValue(value, field){
             if ( field && 'locale' in field ) {
                 //Get default language
-                var dslug = this.settings.default_slug;
+                let dslug = this.settings.default_slug;
 
-                if ( value && typeof value === 'object' ) {
-                    //Get default language value
-                    if ( dslug in value && (value[dslug] || value[dslug] == 0) ){
-                        value = value[dslug];
-                    }
-
-                    //Get other available language
-                    else for ( var key in value ) {
-                        if ( value[key] || value[key] === 0 ) {
-                            value = value[key]
-                            break;
-                        }
-                    }
-
-                    if ( typeof value == 'object' ) {
-                        value = '';
-                    }
-                }
+                value = this.getLocaleFieldValue(value, dslug);
             }
 
             //Return correct zero value

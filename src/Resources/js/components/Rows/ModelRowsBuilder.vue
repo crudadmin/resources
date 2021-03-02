@@ -403,26 +403,38 @@ export default {
             var field = this.orderBy[0],
                 is_numeric = this.isNumericValue( field ),
                 is_date = this.isDateValue( field ),
-                is_decoded = this.model.getSettings('columns.'+field+'.encode', true) !== true;
+                is_locale = this.isLocaleValue( field ),
+                is_decoded = this.model.getSettings('columns.'+field+'.encode', true) !== true,
+                defaultSlug = this.$root.languages.length ? this.$root.languages[0].slug : null;
 
             //If is date field, then receive correct date format of this field
-            if ( this.isDateValue( field ) && field in this.model.fields )
+            if ( this.isDateValue( field ) && field in this.model.fields ){
                 var format = this.$root.fromPHPFormatToMoment(this.model.fields[field].date_format);
+            }
 
             return this.rows.data.slice(0).sort((a, b) => {
                 //If is null value
                 if ( ! a || ! b )
                     return false;
 
+                let aValue = a[ field ],
+                    bValue = b[ field ];
+
+                //Added support to sort localized values
+                if ( is_locale ) {
+                    aValue = this.getLocaleFieldValue(aValue, defaultSlug)
+                    bValue = this.getLocaleFieldValue(bValue, defaultSlug)
+                }
+
                 //Support for booleans
-                if ( a[ field ] === true || a[ field ] === false )
-                    a[ field ] = a[ field ] === true ? 1 : 0;
+                if ( aValue === true || aValue === false )
+                    aValue = aValue === true ? 1 : 0;
 
-                if ( b[ field ] === true || b[ field ] === false )
-                    b[ field ] = b[ field ] === true ? 1 : 0;
+                if ( bValue === true || bValue === false )
+                    bValue = bValue === true ? 1 : 0;
 
-                a = this.getEncodedValue(a[ field ], is_decoded),
-                b = this.getEncodedValue(b[ field ], is_decoded);
+                a = this.getEncodedValue(aValue, is_decoded),
+                b = this.getEncodedValue(bValue, is_decoded);
 
                 //Sorting numbers
                 if ( is_numeric )
@@ -824,6 +836,13 @@ export default {
 
             if ( key in this.model.fields && ['date', 'datetime'].indexOf( this.model.fields[key].type ) > -1 )
                 return true;
+
+            return false;
+        },
+        isLocaleValue(key){
+            if ( key in this.model.fields && this.model.fields[key].locale ){
+                return true;
+            }
 
             return false;
         },
