@@ -92,9 +92,6 @@ export default {
         visibleFields(){
             return this.getVisibleFields(this.group.fields);
         },
-        isOpenedRow(){
-            return this.row && 'id' in this.row;
-        },
     },
 
     methods: {
@@ -134,10 +131,10 @@ export default {
             if ( this.canHideAttribute(field) )
                 return false;
 
-            if ( (field.ifExists === true || field.hideOnCreate === true) && ! this.isOpenedRow )
+            if ( (field.ifExists === true || field.hideOnCreate === true) && ! this.model.isOpenedRow() )
                 return false;
 
-            if ( (field.ifDoesntExists === true || field.hideOnUpdate === true) && this.isOpenedRow )
+            if ( (field.ifDoesntExists === true || field.hideOnUpdate === true) && this.model.isOpenedRow() )
                 return false;
 
             return true;

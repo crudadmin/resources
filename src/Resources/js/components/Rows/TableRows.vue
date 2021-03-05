@@ -51,7 +51,7 @@
                     </div>
                     <div class="buttons-options__item" v-if="model.publishable && model.hasAccess('publishable')"><button data-button="publishable" type="button" v-on:click="togglePublishedAt(item)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
                     <div class="buttons-options__item" v-if="model.deletable && count > model.minimum && model.hasAccess('delete')">
-                        <button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button>
+                        <button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : model.isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button>
                     </div>
                 </td>
             </tr>
@@ -449,9 +449,6 @@ export default {
             }
 
             this.$parent.enabled_columns = this.enabled_columns = correctOrder;
-        },
-        isReservedRow(row){
-            return this.$parent.isReservedRow(row.id);
         },
         buttonsCount(item){
             var buttons = this.getButtonsForRow(item),

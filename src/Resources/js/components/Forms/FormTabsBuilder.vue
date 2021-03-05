@@ -173,15 +173,13 @@ export default {
                 {
                     var child_model = typeof this.model.childs[key] === 'string' ? this.model : this.model.childs[key];
 
-                    if ( child_model.in_tab == true )
-                    {
-                        //Check if model is not in fields group
-                        if ( ! this.isModelInFields(model_fields, this.model.childs[key].slug) )
-                            tabs.push({
-                                fields : [],
-                                type : 'tab',
-                                model : child_model.slug,
-                            });
+                    //Check if model is not in fields group
+                    if ( ! this.isModelInFields(model_fields, this.model.childs[key].slug) ) {
+                        tabs.push({
+                            fields : [],
+                            type : 'tab',
+                            model : child_model.slug,
+                        });
                     }
                 }
             }
@@ -198,9 +196,6 @@ export default {
 
                 return true;
             }.bind(this)).length == 1 && this.getTabs[0].default === true);
-        },
-        isOpenedRow(){
-            return this.row && 'id' in this.row;
         },
     },
 
@@ -225,10 +220,25 @@ export default {
          * Return model from childs by model table
          */
         getModel(model){
-            if ( typeof this.model.childs[model] == 'string' )
-                return _.cloneDeep(this.$root.models[this.model.slug]);
+            let cachedModel = () => {
+                if ( typeof this.model.childs[model] == 'string' ) {
+                    return _.cloneDeep(this.$root.models[this.model.slug]);
+                }
 
-            return ModelHelper(this.model.childs[model]||this.$root.models[model]);
+                return ModelHelper(this.model.childs[model]||this.$root.models[model]);
+            };
+
+            if ( !this.cachedModel ){
+                this.cachedModel = {};
+            }
+
+            if ( this.cachedModel[model] ){
+                return this.cachedModel[model];
+            }
+
+            //We need create cached version of given model. To share UUID accross all model session
+            //under this tab
+            return this.cachedModel[model] = cachedModel();
         },
         /*
          * Return tab name
@@ -289,7 +299,7 @@ export default {
             if ( !(tab.type == 'tab' && tab.model && this.getModel(tab.model).active == true) )
                 return false;
 
-            return this.isOpenedRow || this.getModel(tab.model).without_parent == true;
+            return this.model.isOpenedRow() || this.getModel(tab.model).without_parent == true;
         },
         isField(field){
             return typeof field == 'string' && field in this.model.fields;

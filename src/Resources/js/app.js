@@ -2,7 +2,7 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 window.eventHub = window.$bus = new Vue();
-window.store = require('./store/store').default;
+window.store = window.$store = require('./store/store').default;
 
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource'
@@ -27,9 +27,15 @@ if ( window.Gettext ) {
 // Components
 import BaseComponent from './components/BaseComponent.js';
 import CrudAdmin from './components/Helpers/CrudAdmin.js';
+import SiteTreeBuilder from './components/Extensions/SiteTreeBuilder/Builder.vue';
+import VueChosen from './components/Partials/VueChosen.vue';
 
 //Router
 import Router from './router.js';
+
+//Global components
+Vue.component('vue-chosen', VueChosen);
+Vue.component('SiteTreeBuilder', SiteTreeBuilder);
 
 //Global methods
 Vue.mixin(CrudAdmin);

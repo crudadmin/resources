@@ -99,9 +99,6 @@
                 return (this.value && !this.hasMultipleFilesValue && this.file_from_server && !this.isMultiple)
                     && this.model.getSettings('fields.'+this.field_key+'.canDownload', true);
             },
-            isOpenedRow(){
-                return this.row && 'id' in this.row;
-            },
             isMultiple(){
                 return this.field.multiple === true;
             },
@@ -109,7 +106,7 @@
                 return this.field.multirows && this.field.multirows === true;
             },
             isMultipleUpload(){
-                return (this.isMultirows && !this.isOpenedRow) || this.isMultiple;
+                return (this.isMultirows && !this.model.isOpenedRow()) || this.isMultiple;
             },
             hasMultipleFilesValue(){
                 return $.isArray(this.field.value);

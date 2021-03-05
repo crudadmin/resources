@@ -143,26 +143,26 @@ export default {
             table : null,
 
             //Sorting
-            pagination: {
+            pagination: this.model.setData('pagination', {
                 position: 1,
                 limit : this.getLimitFromStorage(),
                 limits : [ 5, 10, 20, 30, 50, 100, 200, 500, 1000 ],
                 refreshing : false,
                 maxpages : 10,
-            },
+            }).getData('pagination'),
 
             searching : false,
             dragging : false,
             orderBy : null,
 
-            refresh : {
+            refresh : this.model.setData('search', {
                 refreshing : true,
                 count : 0,
                 interval : this.getRefreshInterval(),
-            },
+            }).getData('search'),
 
             //Receive value from tablerows component
-            checked : [],
+            checked : this.model.setData('checked', []).getData('checked'),
             default_columns : [],
             enabled_columns : null,
             button_loading : false,
@@ -181,6 +181,9 @@ export default {
         //Refresh rows refreshInterval
         this.loadRows();
 
+        //We will map this model data values into this component
+        this.model.mapData(['checked'], this);
+
         /*
          * When row is added, then push it into table
          */
@@ -192,17 +195,17 @@ export default {
                 pages = Math.ceil(this.rows.count / this.pagination.limit);
 
             //If last page is full, and need to add new page
-            if ( this.isReversed(true) && this.rows.count > 0 && !this.$parent.isWithoutParentRow && pages == this.rows.count / this.pagination.limit ){
-                this.setPosition( pages + 1, this.$parent.isWithoutParentRow ? true : null );
+            if ( this.isReversed(true) && this.rows.count > 0 && !this.model.isWithoutParentRow() && pages == this.rows.count / this.pagination.limit ){
+                this.setPosition( pages + 1, this.model.isWithoutParentRow() ? true : null );
             }
 
             //If user is not on lage page, then change page into last, for see added rows
-            else if ( this.isReversed(true) && this.pagination.position < pages && !this.$parent.isWithoutParentRow ){
+            else if ( this.isReversed(true) && this.pagination.position < pages && !this.model.isWithoutParentRow() ){
                 this.setPosition( pages );
             }
 
             //If row can be pushed without reloading rows into first or last page
-            else if ( this.pagination.position == 1 || (this.isReversed(true) && this.pagination.position == pages || this.$parent.isWithoutParentRow) )
+            else if ( this.pagination.position == 1 || (this.isReversed(true) && this.pagination.position == pages || this.model.isWithoutParentRow()) )
             {
                 var rows = array.rows.concat( this.rows.data );
 
@@ -524,7 +527,7 @@ export default {
             return true;
         },
         reloadRows(){
-            this.$parent.row = this.$parent.emptyRowInstance();
+            this.$parent.row = this.model.emptyRowInstance();
             this.rows.data = [];
             this.rows.count = 0;
             this.rows.save_children = [];
@@ -539,14 +542,6 @@ export default {
             //Reset pagination to first page
             this.setPosition(1);
         },
-        getParentRowId(){
-            var row = this.$parent.parentrow;
-
-            if ( !row || !( 'id' in row ) )
-                return 0;
-
-            return row.id;
-        },
         loadRows(indicator, download){
             //If auto reloading is disabled from model.
             //This is used for canAdd rows, which are filtrated by parent row.
@@ -556,7 +551,7 @@ export default {
             }
 
             //On first time allow reload rows without parent, for field options...
-            if ( (this.$parent.isWithoutParentRow || this.activetab === false) && indicator == false ){
+            if ( (this.model.isWithoutParentRow() || this.activetab === false) && indicator == false ){
                 return false;
             }
 
@@ -571,8 +566,8 @@ export default {
                 rowsLimit = this.isPaginationEnabled ? (this.isHiddenMode ? 1 : this.pagination.limit) : 0,
                 query = {
                     model : this.model.slug,
-                    parent : this.$parent.getParentTableName(this.model.without_parent),
-                    subid : this.getParentRowId(),
+                    parent : this.model.getParentTableName(this.model.without_parent),
+                    subid : this.model.getParentRowId(),
                     langid : this.model.localization === true ? this.langid : 0,
                     limit : rowsLimit,
                     page : this.pagination.position,
@@ -646,7 +641,7 @@ export default {
                 this.updateModel(requestModel);
 
                 //Load rows into array
-                this.updateRowsData(response.data.rows, this.enabledColumnsList.length == 0 ? null : 1);
+                this.model.updateRowsData(response.data.rows, this.enabledColumnsList.length == 0 ? null : 1);
                 this.rows.count = response.data.count;
 
                 //Bind additional buttons for rows
@@ -670,7 +665,7 @@ export default {
 
                 //Set single model row
                 if ( this.model.isSingle() && response.data.rows.length > 0 ) {
-                    this.$parent.row = response.data.rows[0]||this.$parent.emptyRowInstance();
+                    this.$parent.row = response.data.rows[0]||this.model.emptyRowInstance();
                     this.$parent.sendRowData();
                 }
 
@@ -905,100 +900,21 @@ export default {
 
             return interval;
         },
-        /*
-         * Change updated rows in db
-         */
-        updateRowsData(data, update){
-            //This update rows just in table, not in forms
-            if ( update !== true && (this.rows.data.length != data.length || this.rows.data.length == 0 || this.rows.data[0].id != data[0].id || update === 1) ) {
-                this.rows.data = data;
-                return;
-            }
-
-            //Update changed data in vue object
-            for ( var i in this.rows.data )
-            {
-                for ( var k in data[i] )
-                {
-                    var isArray = $.isArray(data[i][k]);
-
-                    //Compare also arrays
-                    if ( isArray && !_.isEqual(this.rows.data[i][k], data[i][k]) || !isArray )
-                    {
-                        this.rows.data[i][k] = data[i][k];
-                    }
-                }
-            }
-        },
         removeRow(row){
             var ids = row ? [ row.id ] : this.checked;
 
-            var success = function (){
-                var requestData = {
-                    model : this.model.slug,
-                    parent : this.$parent.getParentTableName(this.model.without_parent),
-                    id : ids,
-                    subid : this.getParentRowId(),
-                    limit : this.pagination.limit,
-                    page : this.pagination.position,
-                    _method : 'delete',
-                };
+            this.model.removeRow(ids, (response, requestData) => {
+                //Remove row from options
+                if ( this.model.hasParentFormModel() !== true ){
+                    this.$parent.$parent.pushOption(requestData.id, 'delete');
+                }
 
-                //Check if is enabled language
-                if ( this.$root.language_id != null )
-                    requestData['language_id'] = parseInt(this.$root.language_id);
-
-                this.$http.post( this.$root.requests.delete, requestData)
-                .then(response => {
-                    var data = response.data;
-
-                    if ( data && 'type' in data && data.type == 'error' ) {
-                        return this.$root.openAlert(data.title, data.message, 'danger');
-                    }
-
-                    //Load rows into array
-                    if ( ! this.$parent.isWithoutParentRow ){
-                        this.updateRowsData(data.data.rows.rows);
-                        this.rows.count = data.data.rows.count;
-
-                        this.pagination.position = data.data.rows.page;
-                    } else {
-                        //Remove row
-                        var remove = [];
-                        for ( var key in this.rows.data )
-                            if ( ids.indexOf(this.rows.data[key].id) > -1 )
-                                remove.push(key);
-
-                        //Remove deleted keys from rows objects. For correct working we need remove items from end to start
-                        for ( var i = 0; i < remove.sort((a, b) =>  (b - a)).length; i++ )
-                            this.rows.data.splice(remove[i], 1);
-                    }
-
-                    if ( this.row && ids.indexOf(this.row.id) > -1 )
-                        this.$parent.row = this.$parent.emptyRowInstance();
-
-                    //Remove row from options
-                    if ( this.$parent.hasparentmodelMutated !== true ){
-                        this.$parent.$parent.pushOption(requestData.id, 'delete');
-                    }
-
-                    //After remove reset checkbox
-                    if ( ! row ) {
-                        this.checked = [];
-                    }
-
-                    this.$parent.emitRowData('onDelete', ids);
-                })
-                .catch(response => {
-                    this.$root.errorResponseLayer(response);
-                });
-            }.bind(this);
-
-            //Check if is row can be deleted
-            if ( this.isReservedRow(ids) )
-                return this.$root.openAlert(this.trans('warning'), this.trans(ids.length > 1 ? 'cannot-delete-multiple' : 'cannot-delete'), 'warning');
-
-            this.$root.openAlert(this.trans('warning'), this.trans('delete-warning'), 'warning', success, true);
+                //After remove reset checkbox
+                if ( ! row ) {
+                    //We need set length to zero, to keep array reference in admin model
+                    this.model.resetChecked();
+                }
+            });
         },
         togglePublishedAt(row)
         {
@@ -1024,8 +940,9 @@ export default {
             });
 
             //Reset checkboxes after published
-            if ( ! row )
-                this.checked = [];
+            if ( ! row ) {
+                this.model.resetChecked();
+            }
         },
         getButtonKey(id, key){
             return id + '-' + key;
@@ -1051,10 +968,10 @@ export default {
                 this.$http.post( this.$root.requests.buttonAction, _.merge(data||{}, {
                     _button : {
                         model : this.model.slug,
-                        parent : this.$parent.getParentTableName(),
+                        parent : this.model.getParentTableName(),
                         id : ids,
                         multiple : row ? false : true,
-                        subid : this.getParentRowId(),
+                        subid : this.model.getParentRowId(),
                         limit : this.pagination.limit,
                         page : this.pagination.position,
                         language_id : this.model.localization === true ? this.langid : 0,
@@ -1094,7 +1011,7 @@ export default {
 
                         //Uncheck all rows
                         if ( ! row ) {
-                            this.checked = [];
+                            this.model.resetChecked();
                         }
                     }
 
@@ -1165,30 +1082,11 @@ export default {
 
             //Reload all rows
             else {
-                this.updateRowsData(data.data.rows.rows, false);
+                this.model.updateRowsData(data.data.rows.rows, false);
 
                 this.rows.count = data.data.rows.count;
                 this.rows.buttons = data.data.rows.buttons;
             }
-        },
-        isReservedRow(id){
-            //check multiple input
-            if ( typeof id === 'object' && id.length && this.model.reserved )
-            {
-                for ( var i = 0; i < id.length; i++ )
-                {
-                    if ( this.model.reserved.indexOf(id[i]) > -1 )
-                        return true;
-                }
-
-                return false;
-            }
-
-            //check one row
-            if ( this.model.reserved && this.model.reserved.indexOf(id) > -1 )
-                return true;
-
-            return false;
         },
         /*
          * Return if model is in reversed mode

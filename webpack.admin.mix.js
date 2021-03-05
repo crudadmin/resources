@@ -13,7 +13,11 @@ mix.js('src/Resources/js/app.js', mix.config.publicPath+'/js')
    .extract([
         'vue', 'jquery', 'lodash', 'js-md5', 'moment', 'vue-router', 'vue-fragment',
         'vue-resource', 'vuedraggable', 'jquery-datetimepicker', 'bootstrap'
-    ]);
+    ])
+   .options({
+     extractVueStyles: true,
+     globalVueStyles: 'src/Resources/sass/_variables.scss',
+   })
 
 for ( key in config.paths )
 {

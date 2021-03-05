@@ -103,7 +103,7 @@
                             :langid="selected_language_id ? selected_language_id : langid"
                             :selectedlangid="selected_language_id ? selected_language_id : langid"
                             :canaddrow="canAddRow"
-                            :hasparentmodel="hasparentmodelMutated"
+                            :hasparentmodel="model.hasParentFormModel()"
                             :gettext_editor="gettext_editor"
                             :depth_level="depth_level"
                             :parentActiveGridSize="activeGridSize"
@@ -125,7 +125,7 @@
                             :langid="selected_language_id ? selected_language_id : langid"
                             :progress="progress"
                             :search="search"
-                            :iswithoutparent="isWithoutParentRow"
+                            :iswithoutparent="model.isWithoutParentRow()"
                             :activetab="activetab"
                             :gettext_editor="gettext_editor"
                             :depth_level="depth_level"
@@ -135,21 +135,6 @@
                     </div>
                     <!--/.col (right) -->
                 </div>
-
-                <model-builder
-                    dusk="model-builder"
-                    :data-model="getModel(child).table"
-                    v-if="(isOpenedRow || getModel(child).without_parent == true) && getModel(child).in_tab !== true"
-                    v-for="child in model.childs"
-                    :key="getModel(child).slug"
-                    :hasparentmodel="hasparentmodelMutated"
-                    :langid="langid"
-                    :ischild="true"
-                    :model="getModel(child)"
-                    :parentActiveGridSize="activeGridSize"
-                    :activetab="activetab"
-                    :parentrow="row">
-                </model-builder>
             </div>
         </div>
 
@@ -183,6 +168,7 @@
     import Search from '../Partials/Search.vue';
     import History from '../Partials/History.vue';
     import ModelHelper from '../Helpers/ModelHelper.js';
+    import { mapMutations } from 'vuex';
 
     var defaultSearchQuery = {
         column : null,
@@ -198,7 +184,7 @@
 
         components : { FormBuilder, ModelRowsBuilder, GettextExtension, Search, History },
 
-        data : function(){
+        data(){
             return {
                 model : this.model_builder,
 
@@ -209,7 +195,7 @@
                     { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : this.model_builder.getSettings('grid.full.disabled', false) },
                 ],
 
-                row : this.emptyRowInstance(this.model_builder),
+                row : this.model_builder.setData('row', this.model_builder.emptyRowInstance()),
 
                 /*
                  * Search engine
@@ -228,13 +214,13 @@
                 /*
                  * Loaded rows from db
                  */
-                rows : {
+                rows : this.model_builder.setData('rows', {
                     data : [],
                     buttons : {},
                     count : 0,
                     loaded : false,
                     save_children : [],
-                },
+                }).getData('rows'),
 
                 /*
                  * History for selected row
@@ -267,7 +253,17 @@
             //For file paths
             this.root = this.$root.$http.$options.root;
 
-            //Set deep level of models
+            //Store model and save his model-builder component
+            this.storeModel(this.model);
+
+            //Set model properties
+            this.model.setData('hasparentmodel', this.hasparentmodel);
+            this.model.setData('parentrow', this.parentrow);
+
+            //We will map this model data values into this component
+            this.model.mapData(['row'], this);
+
+            //Set deep level of given model
             this.setDeepLevel();
         },
 
@@ -344,10 +340,13 @@
         },
 
         methods : {
+            ...mapMutations('models', [
+                'storeModel',
+            ]),
             onModelUpdate(){
                 this.$watch('model.single', (state, oldstate) => {
                     if ( state === true && oldstate !== true ){
-                        this.row = this.rows.data[0]||this.emptyRowInstance();
+                        this.row = this.rows.data[0]||this.model.emptyRowInstance();
 
                         this.sendRowData();
                     }
@@ -395,27 +394,15 @@
              * Send all avaiable row events
              */
             sendRowData(){
-                this.emitRowData('getRow');
-                this.emitRowData('getParentRow');
-            },
-            emitRowData(type, data){
-                if ( data && data.table && data.table != this.model.table )
-                    return;
+                this.model.emitRowData('getRow');
+                this.model.emitRowData('getParentRow');
 
-                eventHub.$emit(type, {
-                    model : this.model,
-                    table : this.model.table,
-                    slug : this.model.table,
-                    row : this.row,
-                    rows : this.rows.data,
-                    count : this.rows.count,
-                    component : this,
-                    depth_level : this.depth_level,
-                });
+                //We want assign row into model
+                this.model.setData('row', this.row);
             },
             setModelEvents(){
                 eventHub.$on('sendRow', this.sendRowEvent = (data) => {
-                    this.emitRowData('getRow', data);
+                    this.model.emitRowData('getRow', data);
                 });
 
                 eventHub.$on('sendParentRow', this.sendParentRowEvent = (data) => {
@@ -424,7 +411,7 @@
                         return;
                     }
 
-                    this.emitRowData('getParentRow', data);
+                    this.model.emitRowData('getParentRow', data);
                 });
             },
             removeModelEvents(){
@@ -511,34 +498,27 @@
                 });
             },
             sendRowsData(){
-                this.emitRowData('rowsChanged');
+                this.model.emitRowData('rowsChanged');
             },
             setDeepLevel(){
                 var parent = this.$parent,
-                    depth = 0;
+                    depth = 0,
+                    treeUuids = [];
 
-                while(parent.$options.name != 'base-page-view')
-                {
-                    if ( parent.$options.name == 'model-builder' )
+                while(parent.$options.name != 'base-page-view') {
+                    if ( parent.$options.name == 'model-builder' ) {
+                        treeUuids.push(parent.model.getData('uuid'));
+
                         depth++;
+                    }
 
                     parent = parent.$parent;
                 }
 
                 this.depth_level = depth;
-            },
-            getParentTableName(force){
-                var row = this.$parent.row;
 
-                //if is model loaded in field, and has parent row, then load model of that parent
-                if ( this.hasparentmodelMutated && typeof this.hasparentmodelMutated == 'object' && 'slug' in this.hasparentmodelMutated )
-                    return this.hasparentmodelMutated.slug;
-
-                if ( force !== true && ((!row || !( 'id' in row )) || this.hasparentmodelMutated === false) ) {
-                    return 0;
-                }
-
-                return this.$parent.model.slug;
+                this.model.setData('depth_level', depth);
+                this.model.setData('tree', treeUuids);
             },
             /*
              * Returns if model has next childs
@@ -696,12 +676,12 @@
                 this.formOpened = false;
             },
             resetForm(scroll, dontResetIfNotOpened, resetActiveTab){
-                if ( ! dontResetIfNotOpened || this.isOpenedRow ) {
+                if ( ! dontResetIfNotOpened || this.model.isOpenedRow() ) {
                     //We do not want reset object is is already empty instance
                     //Because if component receives getParentRow, and then will be rewrited row observer
                     //Changes in this component wont be interactive
-                    if ( ! _.isEqual(this.row, this.emptyRowInstance()) ) {
-                        this.row = this.emptyRowInstance();
+                    if ( ! _.isEqual(this.row, this.model.emptyRowInstance()) ) {
+                        this.row = this.model.emptyRowInstance();
                     }
                 }
 
@@ -743,31 +723,6 @@
                     this.formPusling = null;
                 }, 1000);
             },
-            emptyRowInstance(model){
-                var row = {},
-                    model = model||this.model,
-                    table;
-
-                //Add foreign columns
-                if ( this.parentrow && model && model.foreign_column != null ) {
-                    if ( table = model.foreign_column[this.getParentTableName()] )
-                        row[table] = this.parentrow.id;
-                }
-
-                //Add default columns
-                for ( var key in model.fields )
-                    row[key] = null;
-
-                return row;
-            },
-            getModel(model){
-                //if is recursive model
-                if ( typeof model === 'string' ){
-                    return _.cloneDeep(this.$root.models[this.model.slug]);
-                }
-
-                return ModelHelper(model);
-            },
         },
 
         computed: {
@@ -793,6 +748,10 @@
                 return size[0] ? size[0].size : null;
             },
             canShowAdminHeader(){
+                if ( this.model.getSettings('header.enabled', true) === false ){
+                    return false;
+                }
+
                 return (
                     //If is child, we can display header only in this cases
                     this.ischild
@@ -821,24 +780,11 @@
             formID(){
                 return 'form-' + this.depth_level + '-' + this.model.slug;
             },
-            hasparentmodelMutated(){
-                //If parent model builder does not exists
-                if ( [null, undefined].indexOf(this.hasparentmodel) > -1 )
-                    return true;
-
-                return this.hasparentmodel;
-            },
-            isOpenedRow(){
-                return this.row && 'id' in this.row;
-            },
             /*
              * Return if acutal model can be added without parent row, and if parent row is not selected
              */
-            isWithoutParentRow(){
-                return this.model.without_parent == true && this.parentrow && this.$parent.isOpenedRow !== true && this.hasparentmodelMutated == true;
-            },
             getModelKey(){
-                return this.model.slug + '-' + this.getParentTableName();
+                return this.model.slug + '-' + this.model.getParentTableName();
             },
             //Checks if is enabled grid system
             isEnabledGrid(){
@@ -864,7 +810,11 @@
                 return true;
             },
             canShowRows(){
-                if ( this.isEnabledOnlyFormOrTableMode === true && (this.isOpenedRow || this.isOnlyFormOpened === true) ){
+                if ( this.model.getSettings('table.enabled', true) === false ){
+                    return false;
+                }
+
+                if ( this.isEnabledOnlyFormOrTableMode === true && (this.model.isOpenedRow() || this.isOnlyFormOpened === true) ){
                     return false;
                 }
 
@@ -901,17 +851,21 @@
                 return this.canAddRow && !this.model.isSingle() && this.model.hasAccess('insert') && !this.isOnlyFormOpened;
             },
             canShowForm(){
-                if ( (!this.isOpenedRow && !this.canAddRow || this.isOpenedRow && (this.model.editable == false && this.model.displayable !== true)) && !this.model.isInParent() ) {
+                if ( this.model.getSettings('form.enabled', true) === false ){
+                    return false;
+                }
+
+                if ( (!this.model.isOpenedRow() && !this.canAddRow || this.model.isOpenedRow() && (this.model.editable == false && this.model.displayable !== true)) && !this.model.isInParent() ) {
                     return false;
                 }
 
                 //If row is not selected, and form is not opened. But in table needs exists rows
-                if ( this.isEnabledOnlyFormOrTableMode === true && !this.isOpenedRow && this.isOnlyFormOpened === false && this.model.isSingle() == false ){
+                if ( this.isEnabledOnlyFormOrTableMode === true && !this.model.isOpenedRow() && this.isOnlyFormOpened === false && this.model.isSingle() == false ){
                     return false;
                 }
 
                 //If user does not have write permissions
-                if ( !this.isOpenedRow && this.model.hasAccess('insert') == false ) {
+                if ( !this.model.isOpenedRow() && this.model.hasAccess('insert') == false ) {
                     return false;
                 }
 

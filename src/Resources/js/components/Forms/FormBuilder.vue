@@ -3,12 +3,12 @@
     <component :is="formType" method="post" action="" :id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form crudadmin-form">
         <div class="box" :class="{ 'box--active' : isActive }">
 
-            <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (isOpenedRow && model.history)), '--opened' : isOpenedRow }">
+            <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (model.isOpenedRow() && model.history)), '--opened' : model.isOpenedRow() }">
                 <div class="box-header__actions">
                     <div class="box-header__left">
                         <h3 class="box-header__title">
                             <i
-                                v-if="(isOpenedRow || isOnlyFormOpened) && isEnabledOnlyFormOrTableMode && hasRows"
+                                v-if="(model.isOpenedRow() || isOnlyFormOpened) && isEnabledOnlyFormOrTableMode && hasRows"
                                 @click="closeForm"
                                 class="goBackButton fa fa-chevron-left"
                                 data-toggle="tooltip"
@@ -39,10 +39,10 @@
                             :is="name">
                         </component>
 
-                        <button v-if="isOpenedRow && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
+                        <button v-if="model.isOpenedRow() && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
                             {{ trans('gettext-open') }}
                         </button>
-                        <button v-if="isOpenedRow && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
+                        <button v-if="model.isOpenedRow() && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
                             <i class="fa fa-history"></i>
                             {{ model.getSettings('buttons.show-history', trans('history.show')) }}
                         </button>
@@ -63,7 +63,7 @@
                         </div>
 
                         <button
-                            v-if="(isOpenedRow || isOnlyFormOpened) && !model.isInParent() && !model.isSingle()"
+                            v-if="(model.isOpenedRow() || isOnlyFormOpened) && !model.isInParent() && !model.isSingle()"
                             data-toggle="tooltip"
                             :data-close-form="model.table"
                             :title="__('Zavrieť bez uloženia')"
@@ -134,8 +134,8 @@
                     :is="name">
                 </component>
                 <div class="box-footer__actions" v-if="canUpdateForm">
-                    <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( isOpenedRow ? 'success' : 'primary')]"><i class="fa updating fa-refresh"></i> {{ isOpenedRow ? trans('saving') : trans('sending') }}</button>
-                    <button v-if="!progress" type="submit" :data-action-type="isOpenedRow ? 'update' : 'create'" name="submit" class="btn btn-primary">{{ isOpenedRow ? saveButton : sendButton }}</button>
+                    <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]"><i class="fa updating fa-refresh"></i> {{ model.isOpenedRow() ? trans('saving') : trans('sending') }}</button>
+                    <button v-if="!progress" type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">{{ model.isOpenedRow() ? saveButton : sendButton }}</button>
                 </div>
             </div>
 
@@ -214,7 +214,7 @@ export default {
         row : {
             handler : function (row, oldRow) {
                 //Form cannot be resetted if data has been synced from db
-                var canResetForm = !this.isOpenedRow || ! oldRow || row.id != oldRow.id;
+                var canResetForm = !this.model.isOpenedRow() || ! oldRow || row.id != oldRow.id;
 
                 //Init new form after change row
                 if ( !row || !oldRow || row.id != oldRow.id || this.history.history_id )
@@ -236,13 +236,10 @@ export default {
         formType(){
             return this.model.isInParent() ? 'div' : 'form';
         },
-        isOpenedRow(){
-            return this.row && 'id' in this.row;
-        },
         title(){
             var title;
 
-            if ( this.isOpenedRow )
+            if ( this.model.isOpenedRow() )
             {
                 //If update title has not been set
                 if ( !(title = this.$root.getModelProperty(this.model, 'settings.title.update')) ) {
@@ -342,7 +339,7 @@ export default {
             }
 
             if (
-                this.isOpenedRow && (
+                this.model.isOpenedRow() && (
                     this.$root.getModelProperty(this.model, 'settings.editable') == false
                     || this.model.editable == false
                 )
@@ -380,11 +377,11 @@ export default {
 
             //Check if form belongs to other form
             if ( this.model.foreign_column != null && this.$parent.parentrow ) {
-                data[this.model.foreign_column[this.$parent.getParentTableName()]] = this.$parent.parentrow.id;
+                data[this.model.foreign_column[this.model.getParentTableName()]] = this.$parent.parentrow.id;
             }
 
-            if ( this.model.global_relation && this.$parent.parentrow && this.$parent.getParentTableName(true) ) {
-                data['_table'] = this.$parent.getParentTableName(true);
+            if ( this.model.global_relation && this.$parent.parentrow && this.model.getParentTableName(true) ) {
+                data['_table'] = this.model.getParentTableName(true);
                 data['_row_id'] = this.$parent.parentrow.id;
             }
 
@@ -414,7 +411,7 @@ export default {
             return mutatedData;
         },
         getFormAction(){
-            return ! this.isOpenedRow ? 'store' : 'update';
+            return ! this.model.isOpenedRow() ? 'store' : 'update';
         }
     },
 
@@ -440,7 +437,7 @@ export default {
         closeForm(){
             this.$parent.closeForm();
 
-            if ( this.isOpenedRow ){
+            if ( this.model.isOpenedRow() ){
                 this.resetForm();
             }
         },
@@ -750,7 +747,7 @@ export default {
 
                             //Reseting form after new row
                             if ( !this.model.isSingle() && autoreset !== false) {
-                                this.initForm(this.$parent.emptyRowInstance());
+                                this.initForm(this.model.emptyRowInstance());
 
                                 //After creation of new row, we want close adding
                                 this.closeForm();

@@ -15,7 +15,13 @@
         <section class="crudadmin-wrapper" v-if="model">
             <license></license>
             <check-assets-version v-if="version"></check-assets-version>
-            <model-builder :key="model.slug" :model_builder="model" :langid="langid" dusk="model-builder" :data-model="model.table"></model-builder>
+            <model-builder
+                :key="model.slug"
+                :model_builder="model"
+                :langid="langid"
+                dusk="model-builder"
+                :data-model="model.table">
+            </model-builder>
         </section>
         <!-- /.content -->
     </div>

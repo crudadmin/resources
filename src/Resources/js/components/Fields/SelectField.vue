@@ -146,8 +146,9 @@
             getRelationModelParent(){
                 var filterBy = this.getFilterBy;
 
-                if ( ! filterBy || ! this.row[filterBy[0]] )
+                if ( ! filterBy || ! this.row[filterBy[0]] ) {
                     return false;
+                }
 
                 var field = this.model.fields[filterBy[0]],
                     relationTable = (field.belongsTo||field.belongsToMany).split(',')[0];

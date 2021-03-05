@@ -367,15 +367,8 @@
         },
 
         computed : {
-            isOpenedRow(){
-                return this.row && 'id' in this.row;
-            },
-            getId()
-            {
-                //Get parent model builder
-                var modelBuilder = this.getModelBuilder();
-
-                parent = modelBuilder.getParentTableName(this.model.without_parent == true);
+            getId() {
+                parent = this.model.getParentTableName(this.model.without_parent == true);
 
                 return 'id-' + this.model.slug + this.field_key + '-' + this.depth_level + '-' + parent + '-' + this.index + '-' + this.langslug;
             },
@@ -452,7 +445,7 @@
             },
             isDisabled()
             {
-                if ( this.isOpenedRow == true && (this.model.hasAccess('update') == false || this.model.editable == false) ){
+                if ( this.model.isOpenedRow() == true && (this.model.hasAccess('update') == false || this.model.editable == false) ){
                     return true;
                 }
 
@@ -508,14 +501,14 @@
                 }
 
                 //If row is not opened, then return default field value
-                if ( ! this.isOpenedRow ){
+                if ( ! this.model.isOpenedRow() ){
                     return this.defaultFieldValue(this.field);
                 }
 
                 return value;
             },
             isRequired(){
-                if ( this.isOpenedRow && this.field.type == 'password' ) {
+                if ( this.model.isOpenedRow() && this.field.type == 'password' ) {
                     return false;
                 }
 
