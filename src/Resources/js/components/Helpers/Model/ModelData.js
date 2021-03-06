@@ -1,3 +1,10 @@
+export const defaultSearchQuery = {
+    column : null,
+    query : null,
+    query_to : null,
+    interval : false,
+};
+
 var ModelData = (Model, rawModel) => {
     if ( rawModel.data === undefined ) {
         rawModel.data = {
@@ -10,9 +17,17 @@ var ModelData = (Model, rawModel) => {
             //All uuids of parent models tree for given model
             tree : [],
 
+            //Actual database row for given model
             row : {},
 
-            rows : {},
+            //All available rows data fetched from database
+            rows : {
+                data : [],
+                buttons : {},
+                count : 0,
+                loaded : false,
+                save_children : [],
+            },
 
             //Check if model has parent row. For example when we are using filterBy in select
             //we need dynamically set parent of model builder
@@ -26,10 +41,26 @@ var ModelData = (Model, rawModel) => {
             pagination : {},
 
             //Search data
-            search : {},
+            search : {
+                used : false,
+                defaultQuery : defaultSearchQuery,
+                queries : [],
+            },
+
+            //History support
+            history : {
+                history_id : null,
+                data : {},
+                id : null,
+                rows : [],
+                fields : [],
+            },
 
             //Checked rows
             checked : [],
+
+            //Refresh table intervals
+            refresh : {},
 
             //Map events
             mapValues : [],
@@ -65,6 +96,7 @@ var ModelData = (Model, rawModel) => {
         return this.data[key];
     }
 
+
     Model.prototype.mapData = function(keys, callbackOrComponent){
         _.castArray(keys).forEach(key => {
             let callback = typeof callbackOrComponent == 'function' ? callbackOrComponent : (value) => {
@@ -79,6 +111,16 @@ var ModelData = (Model, rawModel) => {
 
     Model.prototype.getRow = function(key){
         return this.getData('row');
+    }
+
+    Model.prototype.setRow = function(row){
+        return this.setData('row', row);
+    }
+
+    Model.prototype.setValue = function(key, value){
+        this.data.row[key] = value;
+
+        return this;
     }
 
     Model.prototype.getParentModel = function(){

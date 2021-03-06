@@ -105,7 +105,6 @@
                         :childs="true"
                         :langid="langid"
                         :inputlang="selectedLanguage"
-                        :row="row"
                         :cansave="cansave"
                         :hasparentmodel="hasparentmodel"
                         :depth_level="depth_level"
@@ -149,7 +148,7 @@ import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
 export default {
     name : 'form-builder',
 
-    props : ['formID', 'model', 'row', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level', 'parentActiveGridSize', 'isOnlyFormOpened', 'isEnabledOnlyFormOrTableMode', 'hasRows'],
+    props : ['formID', 'model', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level', 'parentActiveGridSize', 'isOnlyFormOpened', 'isEnabledOnlyFormOrTableMode', 'hasRows'],
 
     components: { FormTabsBuilder },
 
@@ -185,7 +184,7 @@ export default {
 
             //Update model data of existing model on row update
             for ( var key in data.row ) {
-                this.row[key] = data.row[key];
+                this.model.setValue(key, data.row[key]);
 
                 //Update values in fields cause updating files in form
                 if ( key in this.model.fields ) {
@@ -221,18 +220,21 @@ export default {
                 {
                     this.initForm(row, canResetForm);
 
-                    this.$parent.sendRowData();
+                    this.model.sendRowData();
                 }
             },
             deep: true,
         },
         //On change language reset editing form
         // langid(langid){
-        //   this.$parent.resetForm();
+        //   this.model.resetForm();
         // },
     },
 
     computed: {
+        row(){
+            return this.model.getRow();
+        },
         formType(){
             return this.model.isInParent() ? 'div' : 'form';
         },
@@ -755,7 +757,7 @@ export default {
 
                             //If is disabled autoreseting form, then select inserted row
                             else {
-                                this.$parent.row = clonedRow;
+                                this.model.setRow(clonedRow);
 
                                 this.scrollToForm();
                             }

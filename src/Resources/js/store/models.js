@@ -9,6 +9,9 @@ const models = {
         storeModel(state, model){
             state.models.push(model);
         },
+        removeModel(state, model){
+            _.remove(state.models, { data : { uuid : model.getData('uuid') } });
+        },
     },
 
     getters: {

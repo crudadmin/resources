@@ -82,7 +82,6 @@
             <table-rows
                 :model="model"
                 :pagination="pagination"
-                :row.sync="row"
                 :buttons="rows.buttons"
                 :count="rows.count"
                 :history="history"
@@ -133,7 +132,7 @@ import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
 
 export default {
-    props : ['model', 'row', 'rows', 'langid', 'progress', 'search', 'history', 'gettext_editor', 'iswithoutparent', 'activetab', 'depth_level', 'scopes', 'allow_refreshing'],
+    props : ['model', 'rows', 'langid', 'progress', 'history', 'gettext_editor', 'iswithoutparent', 'activetab', 'depth_level', 'scopes', 'allow_refreshing'],
 
     components : { Refreshing, TableRows, Pagination },
 
@@ -154,11 +153,11 @@ export default {
             dragging : false,
             orderBy : null,
 
-            refresh : this.model.setData('search', {
+            refresh : this.model.setData('refresh', {
                 refreshing : true,
                 count : 0,
                 interval : this.getRefreshInterval(),
-            }).getData('search'),
+            }).getData('refresh'),
 
             default_columns : [],
             enabled_columns : null,
@@ -256,7 +255,7 @@ export default {
                 return;
 
             this.loadRows();
-        })
+        });
     },
 
     destroyed() {
@@ -353,6 +352,12 @@ export default {
     },
 
     computed: {
+        row(){
+            return this.model.getRow();
+        },
+        search(){
+            return this.model.getData('search');
+        },
         isHiddenMode(){
             return this.pagination.limit == 'hide';
         },
@@ -521,7 +526,8 @@ export default {
             return true;
         },
         reloadRows(){
-            this.$parent.row = this.model.emptyRowInstance();
+            this.model.resetForm();
+
             this.rows.data = [];
             this.rows.count = 0;
             this.rows.save_children = [];
@@ -659,8 +665,8 @@ export default {
 
                 //Set single model row
                 if ( this.model.isSingle() && response.data.rows.length > 0 ) {
-                    this.$parent.row = response.data.rows[0]||this.model.emptyRowInstance();
-                    this.$parent.sendRowData();
+                    this.model.setRow(response.data.rows[0]||this.model.emptyRowInstance());
+                    this.model.sendRowData();
                 }
 
                 //Update refresh informations

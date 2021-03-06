@@ -64,7 +64,7 @@ import TableRowValue from './TableRowValue.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['row', 'rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'button_loading', 'pagination', 'depth_level'],
+    props : ['rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'button_loading', 'pagination', 'depth_level'],
 
     components: { TableRowValue, draggable },
 
@@ -111,6 +111,9 @@ export default {
     },
 
     computed: {
+        row(){
+            return this.model.getRow();
+        },
         hasCheckingEnabled(){
             if ( this.model.getSettings('checking', true) === false ){
                 return false;
@@ -496,11 +499,13 @@ export default {
             return this.model.fieldName(key);
         },
         isActiveRow(row){
-            if ( !this.row )
+            if ( !this.model.isOpenedRow() ) {
                 return false;
+            }
 
-            if ( row.id == this.row.id )
+            if ( row.id == this.model.getRow().id ) {
                 return true;
+            }
 
             return false;
         },
@@ -600,24 +605,26 @@ export default {
         },
         selectRow(row, data, model, history_id, model_row){
             //If is selected same row
-            if ( this.row && this.row.id == row.id && !history_id )
+            if ( this.model.isOpenedRow() && this.model.getRow().id == row.id && !history_id ) {
                 return;
+            }
 
             //Recieve just messages between form and rows in one model component
-            if (model && this.model.slug != model)
+            if (model && this.model.slug != model) {
                 return;
+            }
 
             //Resets form
-            if ( row === true && data === null )
-                return this.$parent.row = null;
+            if ( row === true && data === null ) {
+                return this.model.setRow(null);
+            }
 
             var render = response => {
                 for ( var key in response ){
                     row[key] = response[key];
                 }
-
                 //Bind model data
-                this.$set(this.$parent.$parent, 'row', _.cloneDeep(row, true));
+                this.model.setRow(_.cloneDeep(row, true));
 
                 //Fix for single model with history support
                 if ( model_row ){

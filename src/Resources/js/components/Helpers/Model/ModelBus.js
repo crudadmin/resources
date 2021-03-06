@@ -14,6 +14,14 @@ var ModelBus = (Model) => {
             depth_level : this.data.depth_level,
         });
     };
+
+    /*
+     * Send all avaiable row events
+     */
+    Model.prototype.sendRowData = function(){
+        this.emitRowData('getRow');
+        this.emitRowData('getParentRow');
+    }
 };
 
 export default ModelBus;

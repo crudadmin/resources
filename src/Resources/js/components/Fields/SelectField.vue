@@ -62,7 +62,7 @@
     import ModelBuilder from '../Views/ModelBuilder.vue';
 
     export default {
-        props: ['id', 'row', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'inputlang', 'langid', 'depth_level'],
+        props: ['id', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'inputlang', 'langid', 'depth_level'],
 
         data(){
             return {
@@ -107,6 +107,9 @@
         },
 
         computed: {
+            row(){
+                return this.model.getRow();
+            },
             isCanAddInParentMode(){
                 return ['parent'].indexOf(this.field.canAdd) > -1;
             },

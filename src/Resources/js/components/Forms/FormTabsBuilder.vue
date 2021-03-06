@@ -27,7 +27,6 @@
                             v-if="hasTabs(tab.fields)"
                             :tabs="tabsFields(tab.fields)"
                             :model="model"
-                            :row="row"
                             :langid="langid"
                             :inputlang="inputlang"
                             :hasparentmodel="hasparentmodel"
@@ -57,7 +56,6 @@
                         :hasparentmodel="hasparentmodel"
                         :langid="langid"
                         :inputlang="inputlang"
-                        :row="row"
                         :history="history"
                         :depth_level="depth_level">
                     </form-group>
@@ -75,7 +73,7 @@ import ModelHelper from '../Helpers/ModelHelper.js';
 export default {
     name : 'form-tabs-builder',
 
-    props : ['model', 'row', 'history', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave', 'hasparentmodel', 'depth_level', 'parentActiveGridSize'],
+    props : ['model', 'history', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave', 'hasparentmodel', 'depth_level', 'parentActiveGridSize'],
 
     components : { FormGroup },
 
@@ -89,8 +87,7 @@ export default {
         };
     },
 
-    created()
-    {
+    created() {
         /*
          * Fir for double recursion in VueJS
          */
@@ -140,6 +137,9 @@ export default {
     },
 
     computed: {
+        row(){
+            return this.model.getRow();
+        },
         getModelFields(){
             if (this.model.fields_groups.length == 1 && this.model.fields_groups[0].type == 'default')
                 return this.model.fields_groups[0].fields;

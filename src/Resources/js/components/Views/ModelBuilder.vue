@@ -110,7 +110,6 @@
                             :isOnlyFormOpened="isOnlyFormOpened"
                             :isEnabledOnlyFormOrTableMode="isEnabledOnlyFormOrTableMode"
                             :hasRows="hasRows"
-                            :row="row"
                         ></form-builder>
                     </div>
                     <!--/.col (left) -->
@@ -120,11 +119,9 @@
                         <model-rows-builder
                             :model="model"
                             :rows="rows"
-                            :row="row"
                             :scopes="scopes"
                             :langid="selected_language_id ? selected_language_id : langid"
                             :progress="progress"
-                            :search="search"
                             :iswithoutparent="model.isWithoutParentRow()"
                             :activetab="activetab"
                             :gettext_editor="gettext_editor"
@@ -169,13 +166,7 @@
     import History from '../Partials/History.vue';
     import ModelHelper from '../Helpers/ModelHelper.js';
     import { mapMutations } from 'vuex';
-
-    var defaultSearchQuery = {
-        column : null,
-        query : null,
-        query_to : null,
-        interval : false,
-    };
+    import {defaultSearchQuery} from '../Helpers/Model/ModelData';
 
     export default {
         props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes', 'allow_refreshing'],
@@ -195,43 +186,15 @@
                     { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : this.model_builder.getSettings('grid.full.disabled', false) },
                 ],
 
-                row : this.model_builder.setData('row', this.model_builder.emptyRowInstance()).getData('row'),
-
-                /*
-                 * Search engine
-                 */
-                search : {
-                    used : false,
-                    defaultQuery : defaultSearchQuery,
-                    queries : [
-                        {
-                            ..._.cloneDeep(defaultSearchQuery),
-                            column : this.model_builder.getModelProperty('settings.search.column', null),
-                        },
-                    ],
-                },
-
                 /*
                  * Loaded rows from db
                  */
-                rows : this.model_builder.setData('rows', {
-                    data : [],
-                    buttons : {},
-                    count : 0,
-                    loaded : false,
-                    save_children : [],
-                }).getData('rows'),
+                rows : this.model_builder.getData('rows'),
 
                 /*
                  * History for selected row
                  */
-                history : {
-                    history_id : null,
-                    data : {},
-                    id : null,
-                    rows : [],
-                    fields : [],
-                },
+                history : this.model_builder.getData('history'),
 
                 //Additional layouts/components for model
                 layouts : [],
@@ -256,12 +219,20 @@
             //Store model and save his model-builder component
             this.storeModel(this.model);
 
+            //Set empty model instance
+            this.model.setRow(this.model, this.model.emptyRowInstance());
+
             //Set model properties
             this.model.setData('hasparentmodel', this.hasparentmodel);
             this.model.setData('parentrow', this.parentrow);
 
-            //We will map this model data values into this component
-            this.model.mapData(['row'], this);
+            //Set default search query
+            if ( this.model.getData('search').queries.length == 0 ) {
+                this.model.getData('search').queries.push({
+                    ..._.cloneDeep(defaultSearchQuery),
+                    column : this.model.getSettings('search.column', null),
+                });
+            }
 
             //Set deep level of given model
             this.setDeepLevel();
@@ -281,6 +252,8 @@
 
         destroyed(){
             this.removeModelEvents();
+
+            this.removeModel(this.model);
         },
 
         watch : {
@@ -323,8 +296,11 @@
                     }
 
                     if ( children ){
-                        children.reloadRows();
+                        //If parent form has been changed, we need reset actual form
                         children.model.resetForm();
+
+                        //We need reload all rows, because parent has been changed
+                        children.reloadRows();
                     }
                 }
             },
@@ -350,19 +326,19 @@
         methods : {
             ...mapMutations('models', [
                 'storeModel',
+                'removeModel',
             ]),
             onModelUpdate(){
                 this.$watch('model.single', (state, oldstate) => {
                     if ( state === true && oldstate !== true ){
-                        this.row = this.rows.data[0]||this.model.emptyRowInstance();
-
-                        this.sendRowData();
+                        this.model.setRow(this.rows.data[0]||this.model.emptyRowInstance());
+                        this.model.sendRowData();
                     }
                 });
             },
             addSearchQuery(){
-                this.search.queries.push(
-                    _.cloneDeep(this.search.defaultQuery),
+                this.model.getData('search').queries.push(
+                    _.cloneDeep(defaultSearchQuery),
                 );
             },
             checkParentGridSize(parentSize){
@@ -397,16 +373,6 @@
             },
             getLangName(lang){
                 return this.$root.getLangName(lang);
-            },
-            /*
-             * Send all avaiable row events
-             */
-            sendRowData(){
-                this.model.emitRowData('getRow');
-                this.model.emitRowData('getParentRow');
-
-                //We want assign row into model
-                this.model.setData('row', this.row);
             },
             setModelEvents(){
                 eventHub.$on('sendRow', this.sendRowEvent = (data) => {
@@ -688,7 +654,7 @@
                     //We do not want reset object is is already empty instance
                     //Because if component receives getParentRow, and then will be rewrited row observer
                     //Changes in this component wont be interactive
-                    if ( ! _.isEqual(this.row, this.model.emptyRowInstance()) ) {
+                    if ( ! _.isEqual(this.model.getRow(), this.model.emptyRowInstance()) ) {
                         this.model.resetForm();
                     }
                 }
@@ -734,6 +700,9 @@
         },
 
         computed: {
+            search(){
+                return this.model.getData('search');
+            },
             isOnlyFormOpened(){
                 return this.formOpened == true && this.isEnabledOnlyFormOrTableMode === true;
             },

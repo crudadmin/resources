@@ -43,7 +43,7 @@
     import File from '../Partials/File.vue';
 
     export default {
-        props: ['id', 'row', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level'],
+        props: ['id', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level'],
 
         components : { File },
 

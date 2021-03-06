@@ -80,8 +80,6 @@ var Fields = (Model) => {
                     callback(response, requestData);
                 }
             } catch (response){
-                console.error(response);
-
                 $app.errorResponseLayer(response);
 
                 throw response;
@@ -131,8 +129,6 @@ var Fields = (Model) => {
                 }
             }
         } catch (response){
-            console.error(response);
-
             $app.errorResponseLayer(response);
         }
     };

@@ -90,7 +90,6 @@
         <file-field
             v-if="!hasComponent && isFile"
             :id="getId"
-            :row="row"
             :model="model"
             :field_name="getName"
             :field_key="getFieldName"
@@ -106,7 +105,6 @@
         <select-field
             v-if="!hasComponent && isSelect"
             :id="getId"
-            :row="row"
             :model="model"
             :field_name="getName"
             :field_key="getFieldName"
@@ -144,7 +142,6 @@
             :field="field"
             :index="index"
             :field_key="field_key + '_confirmation'"
-            :row="row"
             :depth_level="depth_level"
             :confirmation="true"></form-input-builder>
 
@@ -193,7 +190,7 @@
 
     export default {
         name: 'form-input-builder',
-        props: ['model', 'field', 'field_key', 'index', 'row', 'confirmation', 'history', 'langid', 'inputlang', 'hasparentmodel', 'langslug', 'depth_level'],
+        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'history', 'langid', 'inputlang', 'hasparentmodel', 'langslug', 'depth_level'],
 
         components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField },
 
@@ -202,11 +199,11 @@
             this.registerFieldComponents(this.model, this.field, 'sub_component');
         },
 
-        mounted()
-        {
+        mounted(){
             //If this field has own component
             this.syncFieldsValueWithRow();
         },
+
         methods : {
             parseArrayValue(value){
                 if ( $.isArray(value) )
@@ -367,6 +364,9 @@
         },
 
         computed : {
+            row(){
+                return this.model.getRow();
+            },
             getId() {
                 parent = this.model.getParentTableName(this.model.without_parent == true);
 
