@@ -5,7 +5,7 @@
                 <div class="box-header__left">
                     <div>
                         <h3 class="box-header__title">{{ title }} <small>({{ rows.count }})</small></h3>
-                        <a data-toggle="tooltip" :title="_('Automatická synchronizácia záznamov v tabuľke je vypnutá')" class="box-header__actions--synchronize" @click="loadRows(true)" v-if="isEnabledAutoSync == false"><i class="fa fa-sync-alt"></i> {{ _('Synchronizácia vypnutá') }}</a>
+                        <a data-toggle="tooltip" :title="_('Automatická synchronizácia záznamov v tabuľke je vypnutá')" class="box-header__actions--synchronize" @click="model.loadRows(true)" v-if="model.isEnabledAutoSync() == false"><i class="fa fa-sync-alt"></i> {{ _('Synchronizácia vypnutá') }}</a>
                     </div>
                 </div>
 
@@ -59,7 +59,7 @@
                         </ul>
                     </div>
 
-                    <div class="pagination-limit" :class="{ '--hidden-limit' : isHiddenMode }" v-if="isPaginationEnabled" :title="trans('rows-count')">
+                    <div class="pagination-limit" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled()" :title="trans('rows-count')">
                         <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
                             <option value="hide">{{ _('Skryť') }}</option>
                             <option v-for="count in pagination.limits">{{ count }}</option>
@@ -78,7 +78,7 @@
             </component>
         </div>
 
-        <div class="box-body box-body--table" v-show="!isHiddenMode">
+        <div class="box-body box-body--table" v-show="!model.isHiddenMode()">
             <table-rows
                 :model="model"
                 :pagination="pagination"
@@ -88,13 +88,11 @@
                 :gettext_editor.sync="gettext_editor"
                 :rows="rows"
                 :rowsdata.sync="rowsData"
-                :button_loading="button_loading"
-                :orderby.sync="orderBy"
-                :depth_level="depth_level">
+                :button_loading="button_loading">
             </table-rows>
         </div>
 
-        <div class="box-footer" v-show="!isHiddenMode">
+        <div class="box-footer" v-show="!model.isHiddenMode()">
             <component
                 v-if="getComponents('table-footer').length > 0"
                 v-for="name in getComponents('table-footer')"
@@ -108,10 +106,10 @@
             <div class="box-footer__actions">
                 <div class="box-footer__left"></div>
                 <div class="box-footer__center">
-                    <pagination v-if="isPaginationEnabled" :rows="rows" :pagination="pagination" />
+                    <pagination v-if="model.isPaginationEnabled()" :rows="rows" :pagination="pagination" />
                 </div>
                 <div class="box-footer__right">
-                    <div class="pagination-limit d-none d-lg-block" :class="{ '--hidden-limit' : isHiddenMode }" v-if="isPaginationEnabled" :title="trans('rows-count')">
+                    <div class="pagination-limit d-none d-lg-block" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled()" :title="trans('rows-count')">
                         <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
                             <option value="hide">{{ _('Skryť') }}</option>
                             <option v-for="count in pagination.limits">{{ count }}</option>
@@ -132,7 +130,7 @@ import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
 
 export default {
-    props : ['model', 'rows', 'langid', 'progress', 'history', 'gettext_editor', 'iswithoutparent', 'activetab', 'depth_level', 'scopes', 'allow_refreshing'],
+    props : ['model', 'rows', 'history', 'gettext_editor', 'activetab'],
 
     components : { Refreshing, TableRows, Pagination },
 
@@ -149,21 +147,13 @@ export default {
                 maxpages : 10,
             }).getData('pagination'),
 
-            searching : false,
-            dragging : false,
-            orderBy : null,
-
             refresh : this.model.setData('refresh', {
                 refreshing : true,
                 count : 0,
                 interval : this.getRefreshInterval(),
             }).getData('refresh'),
 
-            default_columns : [],
-            enabled_columns : null,
             button_loading : false,
-
-            modelOptions : {},
         };
     },
 
@@ -175,31 +165,30 @@ export default {
         this.setOrder();
 
         //Refresh rows refreshInterval
-        this.loadRows();
+        this.model.loadRows();
 
         /*
          * When row is added, then push it into table
          */
         eventHub.$on('onCreate', this.onCreateEvent = data => {
-            if ( data.table != this.model.slug || data.depth_level != this.depth_level )
+            if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') )
                 return;
 
             var array = data.request,
                 pages = Math.ceil(this.rows.count / this.pagination.limit);
 
             //If last page is full, and need to add new page
-            if ( this.isReversed(true) && this.rows.count > 0 && !this.model.isWithoutParentRow() && pages == this.rows.count / this.pagination.limit ){
+            if ( this.model.isReversed(true) && this.rows.count > 0 && !this.model.isWithoutParentRow() && pages == this.rows.count / this.pagination.limit ){
                 this.setPosition( pages + 1, this.model.isWithoutParentRow() ? true : null );
             }
 
             //If user is not on lage page, then change page into last, for see added rows
-            else if ( this.isReversed(true) && this.pagination.position < pages && !this.model.isWithoutParentRow() ){
+            else if ( this.model.isReversed(true) && this.pagination.position < pages && !this.model.isWithoutParentRow() ){
                 this.setPosition( pages );
             }
 
             //If row can be pushed without reloading rows into first or last page
-            else if ( this.pagination.position == 1 || (this.isReversed(true) && this.pagination.position == pages || this.model.isWithoutParentRow()) )
-            {
+            else if ( this.pagination.position == 1 || (this.model.isReversed(true) && this.pagination.position == pages || this.model.isWithoutParentRow()) ) {
                 var rows = array.rows.concat( this.rows.data );
 
                 if ( rows.length > this.pagination.limit )
@@ -213,7 +202,7 @@ export default {
                 this.rows.data = rows;
                 this.rows.count += array.rows.length;
             } else {
-                this.loadRows();
+                this.model.loadRows();
             }
         });
 
@@ -221,7 +210,7 @@ export default {
          * When row is updated, then change data into table for changed rows
          */
         eventHub.$on('onUpdate', this.onUpdateEvent = data => {
-            if ( data.table != this.model.slug || data.depth_level != this.depth_level )
+            if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') )
                 return;
 
             //Update row in table rows
@@ -243,7 +232,7 @@ export default {
 
             //Reload rows on row update event
             if ( this.model.getSettings('reloadOnUpdate') == true ) {
-                this.loadRows();
+                this.model.loadRows();
             }
         });
 
@@ -254,12 +243,13 @@ export default {
             if ( this.model.slug != table )
                 return;
 
-            this.loadRows();
+            this.model.loadRows();
         });
     },
 
     destroyed() {
-        this.destroyTimeout();
+        this.model.disableRowsRefreshing();
+
         eventHub.$off('onCreate', this.onCreateEvent);
         eventHub.$off('onUpdate', this.onUpdateEvent);
         eventHub.$off('reloadRows', this.onReloadRows);
@@ -267,10 +257,11 @@ export default {
 
     watch: {
         progress(state){
-            if ( state == true )
-                this.destroyTimeout();
-            else
-                this.initTimeout(false);
+            if ( state == true ) {
+                this.model.disableRowsRefreshing();
+            } else {
+                this.model.enableRowsRefreshing(false);
+            }
         },
         langid(langid){
             if ( this.model.localization == true ) {
@@ -279,7 +270,7 @@ export default {
         },
         activetab(value){
             if ( value == true )
-                this.initTimeout(false);
+                this.model.enableRowsRefreshing(false);
         },
         model(){
             this.updateModelOptions();
@@ -298,7 +289,7 @@ export default {
         'search.queries' : {
             deep : true,
             handler(queries){
-                var was_searching = this.searching;
+                var was_searching = this.model.getData('searching');
                 let searching = false;
 
                 for ( var i = 0; i < queries.length; i++ ) {
@@ -324,18 +315,18 @@ export default {
                     }
                 }
 
-                this.searching = searching;
+                this.model.setData('searching', searching);
 
                 this.search.used = true;
 
                 //On first search query reset pagination
-                if ( this.searching == true && was_searching == false ){
+                if ( this.model.getData('searching') == true && was_searching == false ){
                     this.setPosition(1, true);
                 }
 
                 //If is normal searching, then search in every char, or if is turned searching from on to off state, then show normal rows
-                else if ( this.searching || ( this.searching == false && was_searching == true ) ) {
-                    this.loadRows(true);
+                else if ( this.model.getData('searching') || ( this.model.getData('searching') == false && was_searching == true ) ) {
+                    this.model.loadRows(true);
                 }
             },
         },
@@ -346,29 +337,29 @@ export default {
                 if ( ! old || ! columns )
                     return;
 
-                this.loadRows(true);
+                this.model.loadRows(true);
             },
         }
     },
 
     computed: {
+        progress(){
+            return this.model.getData('progress');
+        },
+        modelOptions(){
+            return this.model.getData('modelOptions');
+        },
+        enabled_columns(){
+            return this.model.getData('enabled_columns');
+        },
+        langid(){
+            return this.model.getData('langid');
+        },
         row(){
             return this.model.getRow();
         },
         search(){
             return this.model.getData('search');
-        },
-        isHiddenMode(){
-            return this.pagination.limit == 'hide';
-        },
-        isEnabledAutoSync(){
-            var limit = this.isPaginationEnabled ? this.pagination.limit : 0,
-                refreshingRowsLimit = 100;
-
-            return !(
-                this.rows.count > 0 && this.model.maximum === 1 ||
-                this.rows.count > refreshingRowsLimit && parseInt(limit) > refreshingRowsLimit
-            );
         },
         hasAnyActions(){
             return this.hasButtons
@@ -391,18 +382,15 @@ export default {
         title(){
             var title;
 
-            if ( title = this.model.getSettings('title.rows') )
-            {
+            if ( title = this.model.getSettings('title.rows') ) {
                 return title;
             }
 
             return this.trans('rows');
         },
-        isPaginationEnabled(){
-            return this.model.getSettings('pagination.enabled') !== false && !this.iswithoutparent;
-        },
         rowsData(){
-            var field = this.orderBy[0],
+            var orderBy = this.model.getData('orderBy'),
+                field = orderBy[0],
                 is_numeric = this.isNumericValue( field ),
                 is_date = this.isDateValue( field ),
                 is_locale = this.isLocaleValue( field ),
@@ -439,45 +427,35 @@ export default {
                 b = this.getEncodedValue(bValue, is_decoded);
 
                 //Sorting numbers
-                if ( is_numeric )
-                {
-                    if ( this.orderBy[1] == 1 )
+                if ( is_numeric ) {
+                    if ( orderBy[1] == 1 ) {
                         return b - a;
+                    }
 
                     return a - b;
                 }
 
-                else if ( is_date && format ){
+                else if ( is_date && format ) {
                     var c = moment(a, format),
                             d = moment(b, format);
 
                     if ( !c.isValid() || !d.isValid() )
                         return 0;
 
-                    if ( this.orderBy[1] == 1 )
+                    if ( orderBy[1] == 1 )
                         return d - c;
 
                     return c - d;
                 }
 
                 else {
-                    if ( this.orderBy[1] == 1 )
+                    if ( orderBy[1] == 1 ) {
                         return b.toLowerCase().localeCompare(a.toLowerCase(), 'sk');
+                    }
 
                     return a.toLowerCase().localeCompare(b.toLowerCase(), 'sk');
                 }
             });
-        },
-        enabledColumnsList(){
-            var allowed = [];
-
-            for ( var key in this.enabled_columns||{} ) {
-                if ( this.enabled_columns[key].enabled == true && this.default_columns.indexOf(key) == -1 ) {
-                    allowed.push(key);
-                }
-            }
-
-            return allowed;
         }
     },
 
@@ -493,11 +471,17 @@ export default {
             }
         },
         exportXlsTable(){
-            this.loadRows(true, true)
+            this.model.loadRows(true, true)
         },
         getLimitFromStorage(){
             //Load pagination limit from localStorage
-            var limit = this.iswithoutparent ? 500 : ('limit' in localStorage ? localStorage.limit : this.model.getSettings('pagination.limit', 10));
+            var limit = this.model.isWithoutParentRow() ?
+                            500
+                            : (
+                                'limit' in localStorage
+                                    ? localStorage.limit
+                                    : this.model.getSettings('pagination.limit', 10)
+                            );
 
             return $.isNumeric(limit) ? parseInt(limit) : limit;
         },
@@ -532,7 +516,7 @@ export default {
             this.rows.count = 0;
             this.rows.save_children = [];
 
-            this.loadRows();
+            this.model.loadRows();
 
             return true;
         },
@@ -541,277 +525,6 @@ export default {
 
             //Reset pagination to first page
             this.setPosition(1);
-        },
-        loadRows(indicator, download){
-            //If auto reloading is disabled from model.
-            //This is used for canAdd rows, which are filtrated by parent row.
-            //(If parent row is not saved yet, this rows may dissapear, so we need disable autoreloading)
-            if ( this.allow_refreshing === false && indicator == false ){
-                return;
-            }
-
-            //On first time allow reload rows without parent, for field options...
-            if ( (this.model.isWithoutParentRow() || this.activetab === false) && indicator == false ){
-                return false;
-            }
-
-            if ( indicator !== false ) {
-                this.pagination.refreshing = true;
-            }
-
-            // Remove last auto timeout
-            this.destroyTimeout();
-
-            var search_query = {},
-                rowsLimit = this.isPaginationEnabled ? (this.isHiddenMode ? 1 : this.pagination.limit) : 0,
-                query = {
-                    model : this.model.slug,
-                    parent : this.model.getParentTableName(this.model.without_parent),
-                    subid : this.model.getParentRowId(),
-                    langid : this.model.localization === true ? this.langid : 0,
-                    limit : rowsLimit,
-                    page : this.pagination.position,
-                    count : this.refresh.count,
-                };
-
-            if ( download == true ){
-                search_query.download = 1;
-            }
-
-            //If is enabled searching
-            if ( this.searching == true ){
-                search_query.search = [];
-
-                for ( var i = 0; i < this.search.queries.length; i++ ){
-                    let item = this.search.queries[i],
-                        obj = {
-                            query : item.query,
-                            column : item.column,
-                        }
-
-                    if ( item.interval === true ) {
-                        obj.query_to = item.query_to;
-                    }
-
-                    search_query.search.push(obj);
-                }
-            }
-
-            //Add additional columns which are not in default rows state
-            if ( this.enabledColumnsList.length > 0 ) {
-                search_query.enabled_columns = this.enabledColumnsList.join(';');
-            }
-
-            //My error
-            function customErrorAlert(response){
-                var url = response.request.url;
-
-                for ( var key in response.request.params )
-                    url = url.replace('{'+key+'}', response.request.params[key]);
-
-                this.$root.openAlert(this.trans('warning'), 'Nastala nečakana chyba, skúste neskôr prosím.<br><br>Príčinu zlyhania požiadavky môžete zistiť na tejto adrese:<br> <a target="_blank" href="'+url+'">'+url+'</a>', 'error');
-            }
-
-            var url = this.$root.requests.get('rows', query);
-
-            this.addScopeParams(search_query);
-
-            this.$http.get(url, {
-                params : search_query,
-            }).then(function(response){
-                //If has been component destroyed, and request is delivered... and some conditions
-                if ( this.dragging === true || this.progress === true || !this.$root ){
-                    return;
-                }
-
-                if ( typeof response.data == 'string' ){
-                    customErrorAlert.call(this, response);
-                    return;
-                }
-
-                //Disable loader
-                this.pagination.refreshing = false;
-
-                if ( response.data.download ){
-                    return window.location.href = response.data.download;
-                }
-
-                var requestModel = response.data.model;
-
-                this.updateModel(requestModel);
-
-                //Load rows into array
-                this.model.updateRowsData(response.data.rows, this.enabledColumnsList.length == 0 ? null : 1);
-                this.rows.count = response.data.count;
-
-                //Bind additional buttons for rows
-                this.rows.buttons = response.data.buttons;
-
-                //Rows are successfully loaded
-                this.$parent.rows.loaded = true;
-
-                //If is reversed sorting in model, then set pagination into last page after first displaying table
-                if ( this.isReversed() && this.refresh.count == 0 ) {
-                    this.pagination.position = Math.ceil(this.rows.count / this.pagination.limit);
-                }
-
-                if ( this.refresh.count == 0 ){
-                    //Update field options
-                    this.updateFieldOptions(requestModel.fields, requestModel);
-
-                    //Render additional layouts
-                    this.$parent.layouts = response.data.layouts;
-                }
-
-                //Set single model row
-                if ( this.model.isSingle() && response.data.rows.length > 0 ) {
-                    this.model.setRow(response.data.rows[0]||this.model.emptyRowInstance());
-                    this.model.sendRowData();
-                }
-
-                //Update refresh informations
-                this.refresh.count++;
-                this.refresh.refreshing = false;
-
-                //Get new csrf token
-                this.$root.reloadCSRFToken(response.data.token);
-
-                //Add next timeout, but we do not want sync filled single model
-                //If single model is empty, then keep syncing till row will be available
-                if ( ! this.model.isSingle() || response.data.rows.length == 0 ) {
-                    this.initTimeout(false);
-                }
-            })
-            .catch(function(response){
-                //If has been component destroyed, and request is delivered...
-                if ( !this.$root ) {
-                    return;
-                }
-
-                //Add next timeout
-                this.initTimeout(false, true);
-
-                //On first error from response
-                if ( response.status == 500 ){
-                    let message;
-
-                    try {
-                        message = response.message;
-
-                        try {
-                            message = response.body.message
-                        } catch {};
-                    } catch {};
-
-                    if ( message ){
-                        this.$root.errorResponseLayer(response, message);
-                    }
-                }
-
-                //Show error alert at first request
-                else if ( this.refresh.count == 0 && this.hasShowedError !== true || response.status == 401 ){
-                    this.hasShowedError = true;
-                    this.$root.errorResponseLayer(response, null);
-                }
-            });
-        },
-        updateModel(model){
-            for ( var key in model ) {
-                //If key is missing in admin model, add new data
-                if ( (key in this.$root.originalModels[this.model.table]) ) {
-                    continue
-                }
-
-                // Rewrite model
-                this.$set(this.$root.models[this.model.table], key, model[key]);
-            }
-        },
-        addScopeParams(data){
-            if ( !('scopes' in data) ){
-                data['scopes'] = {};
-            }
-
-            for ( var key in this.scopes ){
-                let params = this.scopes[key].join(';');
-
-                data['scopes'][key] = params;
-            }
-
-            //Added model scopes
-            for ( var i = 0; i < this.model.scopes.length; i++ ){
-                let scope = this.model.scopes[i];
-
-                data['scopes'][scope.key] = scope.params;
-            }
-
-            return data;
-        },
-        destroyTimeout(){
-            if ( this.updateTimeout )
-                clearTimeout(this.updateTimeout);
-        },
-        initTimeout(indicator, force){
-            this.destroyTimeout();
-
-            //Disable autorefreshing when is one row
-            if ( this.isEnabledAutoSync === false && force !== true ){
-                return;
-            }
-
-            this.updateTimeout = setTimeout(function(){
-                this.loadRows(indicator);
-            }.bind(this), this.refresh.interval);
-        },
-        updateFieldOptions(fields, model){
-            //Update fields from database, for dynamic selectbox values
-            for ( var key in fields )
-            {
-                //Update filterBy for each model
-                if ( 'filterBy' in (model.fields[key]||{}) && model.fields[key].filterBy ){
-                    this.$set(this.model, 'fields.'+key+'.filterBy', model.fields[key].filterBy);
-                } else if ( 'filterBy' in this.model.fields[key]||{} ){
-                    delete this.model.fields[key].filterBy;
-                }
-
-                //Update options
-                if (
-                    'options' in this.model.fields[key]
-                    && (
-                        typeof fields[key].options === 'string'
-                        || Object.keys(fields[key].options).length > 0
-                    )
-                )
-                {
-                    //Use options from different field
-                    if ( typeof fields[key].options === 'string' )
-                    {
-                        if ( fields[key].options.substr(0, 2) == '$.' )
-                        {
-                            var from_key = fields[key].options.substr(2);
-
-                            let modelOptions = { ...this.modelOptions };
-                                modelOptions[key] = fields[from_key].options;
-
-                            this.modelOptions = modelOptions;
-                        }
-                    }
-
-                    //Use own field options
-                    else {
-                        let modelOptions = { ...this.modelOptions };
-                            modelOptions[key] = fields[key].options;
-
-                        this.modelOptions = modelOptions;
-                    }
-
-                }
-            }
-
-            //Update fields options in selectbar for choosenjs
-            setTimeout(() => {
-                if ( this.$parent && this.$parent.reloadSearchBarSelect )
-                    this.$parent.reloadSearchBarSelect();
-            }, 100);
         },
         isNumericValue(key){
             if ( ['id', '_order'].indexOf( key ) > -1)
@@ -846,35 +559,44 @@ export default {
          */
         setOrder(){
             //Set order by settings parameter
-            if ( this.orderBy == null)
-            {
+            if ( this.model.getData('orderBy') == null) {
                 var orderBy = this.model.getSettings('orderBy');
 
-                if ( orderBy )
-                {
+                if ( orderBy ) {
                     var keys = Object.keys(orderBy);
 
-                    this.orderBy = [keys[0], parseFloat(orderBy[keys[0]].toLowerCase().replace('asc', 0).replace('desc', 1))];
+                    this.model.setData('orderBy', [
+                        keys[0],
+                        parseFloat(orderBy[keys[0]].toLowerCase().replace('asc', 0).replace('desc', 1))
+                    ]);
+
                     return;
                 }
             }
 
             //Set order by field parameter
-            for ( var key in this.model.fields )
-            {
+            for ( var key in this.model.fields ) {
                 var field = this.model.fields[key];
 
-                if ( 'orderBy' in field )
-                {
+                if ( 'orderBy' in field ) {
                     var order = 1;
 
-                    this.orderBy = [key, field['orderBy'].toLowerCase().replace('asc', 0).replace('desc', 1)];
+                    this.model.setData('orderBy', [
+                        key,
+                        field['orderBy'].toLowerCase().replace('asc', 0).replace('desc', 1)
+                    ]);
+
                     return;
                 }
             }
 
+            let defaultOrder = [
+                this.model.orderBy[0],
+                this.model.orderBy[1].toLowerCase().replace('asc', 0).replace('desc', 1)
+            ];
+
             //Add default order of rows
-            this.orderBy = [this.model.orderBy[0], this.model.orderBy[1].toLowerCase().replace('asc', 0).replace('desc', 1)];
+            this.model.setData('orderBy', defaultOrder);
         },
         setPosition(position, indicator){
             //We need allow reload position 1 also when max pages are 0 (when zero rows)
@@ -888,7 +610,7 @@ export default {
             this.pagination.position = position;
 
             //Load paginated rows...
-            this.loadRows(indicator);
+            this.model.loadRows(indicator);
         },
         getRefreshInterval(){
             var interval = this.model.getSettings('refresh_interval', 10000);
@@ -933,7 +655,7 @@ export default {
                 model : model,
 
                 //If is child inParent relation, then add depth level + 1 for correct communication
-                depth_level : this.depth_level + (isChild ? 1 : 0),
+                depth_level : this.model.getData('depth_level') + (isChild ? 1 : 0),
                 ...data
             };
         },
@@ -1066,17 +788,6 @@ export default {
                 this.rows.buttons = data.data.rows.buttons;
             }
         },
-        /*
-         * Return if model is in reversed mode
-         * new rows will be added on the end
-         */
-        isReversed(except)
-        {
-            if ( except != true && ( !(2 in this.model.orderBy) || this.model.orderBy[2] != true ) )
-                return false;
-
-            return ['id', '_order'].indexOf(this.model.orderBy[0]) > -1 && this.model.orderBy[1].toLowerCase() == 'asc';
-        }
     },
 }
 </script>

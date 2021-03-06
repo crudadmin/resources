@@ -1,5 +1,5 @@
 <template>
-    <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="depth_level" class="table" :class="{ 'sortable' : model.sortable && orderby[0] == '_order', 'table-sm' : isSmallTable }">
+    <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="model.getData('depth_level')" class="table" :class="{ 'sortable' : model.sortable && orderBy[0] == '_order', 'table-sm' : isSmallTable }">
         <thead data-table-head>
             <tr>
                 <th class="select-row-checkbox" @click="toggleAllCheckboxes" v-if="hasCheckingEnabled">
@@ -9,14 +9,14 @@
                     </div>
                 </th>
                 <th v-for="(name, field) in columns" :class="'th-'+field" @click="toggleSorting(field)">
-                    <i class="arrow-sorting fa fa-angle-up" v-if="orderby[0] == field && orderby[1] == 0"></i>
-                    <i class="arrow-sorting fa fa-angle-down" v-if="orderby[0] == field && orderby[1] == 1"></i>
+                    <i class="arrow-sorting fa fa-angle-up" v-if="orderBy[0] == field && orderBy[1] == 0"></i>
+                    <i class="arrow-sorting fa fa-angle-down" v-if="orderBy[0] == field && orderBy[1] == 1"></i>
                     {{ name }}
                 </th>
                 <th class="th-options-buttons"></th>
             </tr>
         </thead>
-        <component :is="isMobileDevice() || model.sortable == false ? 'tbody' : 'draggable'" tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
+        <component :is="isMobileDevice() || model.sortable == false ? 'tbody' : 'draggable'" tag="tbody" @start="model.onDragStart($event)" @end="model.onDragEnd($event, rowsdata)">
             <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : model.getChecked().indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
                 <td class="select-row-checkbox" v-if="hasCheckingEnabled">
                     <div class="checkbox-box" @click="checkRow(item.id)">
@@ -49,13 +49,13 @@
                     <div class="buttons-options__item" v-for="(button, button_key) in getButtonsForRow(item)">
                         <button type="button" :data-button="'action-'+button.key" v-on:click="buttonAction(button_key, button, item)" :class="['btn', 'btn-sm', button.class]" data-toggle="tooltip" title="" :data-original-title="button.name"><i :class="['fa', button_loading == getButtonKey(item.id, button_key) ? 'fa-sync-alt' : faMigrator(button.icon), { 'fa-spin' : button_loading == getButtonKey(item.id, button_key) }]"></i></button>
                     </div>
-                    <div class="buttons-options__item" v-if="model.canUnpublishRow(item)">
+                    <div class="buttons-options__item" v-if="model.canUnpublishRow(item.id)">
                         <publish-button
                             :model="model"
                             :row="item" />
                     </div>
                     <div class="buttons-options__item" v-if="model.deletable && count > model.minimum && model.hasAccess('delete')">
-                        <button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : model.isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button>
+                        <button data-button="delete" type="button" v-on:click="removeRow(item, key)" class="btn btn-danger btn-sm" :class="{ disabled : model.isReservedRow(item.id) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button>
                     </div>
                 </td>
             </tr>
@@ -69,7 +69,7 @@ import PublishButton from '../Partials/PublishButton.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'button_loading', 'pagination', 'depth_level'],
+    props : ['rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'history', 'button_loading', 'pagination'],
 
     components: { TableRowValue, PublishButton, draggable },
 
@@ -93,7 +93,7 @@ export default {
 
         //Automaticaly choose size of tables
         if ( this.autoSize == false ) {
-            this.$parent.$parent.checkActiveGridSize( this.columns );
+            this.model.checkActiveGridSize(this.columns);
         }
 
         //On history change
@@ -118,6 +118,9 @@ export default {
     computed: {
         row(){
             return this.model.getRow();
+        },
+        orderBy(){
+            return this.model.getData('orderBy');
         },
         hasCheckingEnabled(){
             if ( this.model.getSettings('checking', true) === false ){
@@ -222,7 +225,7 @@ export default {
             if ( this.$root.getModelProperty(this.model, 'settings.increments') === false && 'id' in data )
                 delete data['id'];
 
-            this.$parent.default_columns = Object.keys(data);
+            this.model.setData('default_columns', Object.keys(data));
 
             return data;
         },
@@ -240,7 +243,7 @@ export default {
             return ['id'].concat( Object.keys( this.model.fields ) );
         },
         isEditable(){
-            return this.model.editable == true || this.$parent.$parent.hasChilds() > 0;
+            return this.model.editable == true || this.model.hasChilds() > 0;
         },
         isDisplayable(){
             return this.model.displayable == true;
@@ -268,7 +271,7 @@ export default {
             return false;
         },
         formID(){
-            return 'form-' + this.depth_level + '-' + this.model.slug;
+            return 'form-' + this.model.getData('depth_level') + '-' + this.model.slug;
         },
         availableButtons(){
             return this.$parent.availableButtons;
@@ -455,7 +458,7 @@ export default {
                 correctOrder[order[i]] = enabled[order[i]];
             }
 
-            this.$parent.enabled_columns = this.enabled_columns = correctOrder;
+            this.model.setData('enabled_columns', this.enabled_columns = correctOrder);
         },
         buttonsCount(item){
             var buttons = this.getButtonsForRow(item),
@@ -493,12 +496,14 @@ export default {
             var sortable = this.$root.getModelProperty(this.model, 'settings.sortable');
 
             //Disable sorting by columns
-            if ( sortable === false )
+            if ( sortable === false ) {
                 return;
+            }
 
-            var order = this.orderby[0] == key ? (1 - this.orderby[1]) : 0;
+            var orderBy = this.model.getData('orderBy'),
+                order = orderBy[0] == key ? (1 - orderBy[1]) : 0;
 
-            this.$parent.orderBy = [key, order];
+            this.model.setData('orderBy', [key, order]);
         },
         fieldName(key){
             return this.model.fieldName(key);
@@ -513,74 +518,6 @@ export default {
             }
 
             return false;
-        },
-        enableDragging(){
-            this.$parent.initTimeout(false);
-            this.$parent.dragging = false;
-
-            //Enable all tooltips
-            $('[data-toggle="tooltip"]').tooltip('enable');
-        },
-        beforeUpdateOrder(dragged){
-            //Destroy table reload rows timeout
-            this.$parent.destroyTimeout();
-
-            //Set drag&drop state as true, because if we drag, we do not want reload rows
-            //from ajax request. We want stop syncing rows. Also ajax request which
-            //has been sent already.
-            this.$parent.dragging = true;
-
-            //Disable all tooltips
-            $('[data-toggle="tooltip"]').tooltip('disable');
-        },
-        updateOrder(dragged){
-            //Disable sorting when is used sorting columns
-            if ( this.orderby[0] != '_order' )
-            {
-                this.enableDragging();
-                return;
-            }
-
-            var dragged_row = this.rowsdata[dragged.oldIndex],
-                dropped_row = this.rowsdata[dragged.newIndex],
-                dragged_order = dragged_row._order,
-                dropped_order = dropped_row._order,
-                rows = {},
-                changed_ids = [];
-
-            //Sort all rows between sorted rows
-            for ( var i = this.$parent.$parent.rows.data.length - 1; i >= 0; i-- )
-            {
-                var row = this.$parent.$parent.rows.data[i];
-
-                //From top to bottom
-                if ( row.id == dragged_row.id ){
-                    row._order = dropped_order;
-                    rows[ row.id ] = row._order;
-                } else if ( dragged_order > dropped_order && row._order >= dropped_order && row._order <= dragged_order ){
-                    row._order += 1;
-                    rows[ row.id ] = row._order;
-                //From bottom to top
-                } else if ( dragged_order < dropped_order && row._order <= dropped_order && row._order > dragged_order) {
-                    row._order -= 1;
-                    rows[ row.id ] = row._order;
-                }
-            }
-
-            this.$http.post(this.$root.requests.updateOrder, { model : this.model.slug, rows : rows })
-            .then(response => {
-                var data = response.data;
-
-                if ( data && 'type' in data )
-                    return this.$root.openAlert(data.title, data.message, 'danger');
-
-                this.enableDragging();
-            })
-            .catch(function(response){
-                this.$root.errorResponseLayer(response);
-
-                this.enableDragging();
-            });
         },
         getDateByField(row, key){
             if ( key in this.model.fields )

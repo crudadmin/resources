@@ -8,7 +8,7 @@
                 v-if="isTab(tab) && !tab.model || isModel(tab)"
                 v-show="isTabVisible(tab)"
                 data-tabs
-                :data-depth="depth_level"
+                :data-depth="model.getData('depth_level')"
                 :default-tab="isModel(tab) && getModel(tab.model) ? false : ''"
                 :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table"
                 :data-tab-id="tab.id"
@@ -29,9 +29,7 @@
                             :model="model"
                             :langid="langid"
                             :inputlang="inputlang"
-                            :hasparentmodel="hasparentmodel"
-                            :history="history"
-                            :depth_level="depth_level">
+                            :history="history">
                         </form-tabs-builder>
 
                         <model-builder
@@ -42,7 +40,7 @@
                             :ischild="true"
                             :model_builder="getModel(tab.model)"
                             :activetab="isLoadedModel(getModel(tab.model), $index)"
-                            :parentActiveGridSize="parentActiveGridSize"
+                            :parentActiveGridSize="model.activeGridSize()"
                             :parentrow="row">
                         </model-builder>
                     </div>
@@ -53,11 +51,9 @@
                         v-if="isGroup(item) && !isTab(item)"
                         :group="item"
                         :model="model"
-                        :hasparentmodel="hasparentmodel"
                         :langid="langid"
                         :inputlang="inputlang"
-                        :history="history"
-                        :depth_level="depth_level">
+                        :history="history">
                     </form-group>
                 </div>
             </div>
@@ -73,7 +69,7 @@ import ModelHelper from '../Helpers/ModelHelper.js';
 export default {
     name : 'form-tabs-builder',
 
-    props : ['model', 'history', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave', 'hasparentmodel', 'depth_level', 'parentActiveGridSize'],
+    props : ['model', 'history', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave'],
 
     components : { FormGroup },
 
@@ -104,14 +100,14 @@ export default {
         });
 
         eventHub.$on('rowsChanged', this.rowsChangedEvent = item => {
-            if ( this.depth_level+1 != item.depth_level )
+            if ( this.model.getData('depth_level')+1 != item.depth_level )
                 return;
 
             this.$set(this.models_data, item.table, item);
         });
 
         eventHub.$on('changeActiveTab', this.changeActiveTab = item => {
-            if ( this.depth_level != item.depth_level )
+            if ( this.model.getData('depth_level') != item.depth_level )
                 return;
 
             this.activetab = item.activetab;

@@ -34,6 +34,8 @@ import Router from './router.js';
 
 //Global components
 Vue.component('vue-chosen', VueChosen);
+
+//Global model components
 Vue.component('SiteTreeBuilder', SiteTreeBuilder);
 
 //Global methods

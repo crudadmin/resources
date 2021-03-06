@@ -1,3 +1,12 @@
+const enableDragging = function(model){
+    model.enableRowsRefreshing(false);
+
+    model.setData('dragging', false);
+
+    //Enable all tooltips
+    $('[data-toggle="tooltip"]').tooltip('enable');
+};
+
 var Fields = (Model) => {
     Model.prototype.isReservedRow = function(id){
         //check multiple input
@@ -36,12 +45,12 @@ var Fields = (Model) => {
             };
 
             //Check if is enabled language
-            if ( $app.$root.language_id != null ) {
-                requestData['language_id'] = parseInt($app.$root.language_id);
+            if ( $app.language_id != null ) {
+                requestData['language_id'] = parseInt($app.language_id);
             }
 
             try {
-                var response = await $app.$http.post($app.$root.requests.delete, requestData),
+                var response = await $app.$http.post($app.requests.delete, requestData),
                     data = response.data;
 
                 if ( data && 'type' in data && data.type == 'error' ) {
@@ -105,7 +114,7 @@ var Fields = (Model) => {
         );
     }
 
-    Model.prototype.canUnpublishRow = function(row){
+    Model.prototype.canUnpublishRow = function(id){
         return this.publishable && this.hasAccess('publishable');
     }
 
@@ -136,6 +145,72 @@ var Fields = (Model) => {
             $app.errorResponseLayer(response);
         }
     };
+
+    Model.prototype.onDragStart = function(dragged){
+        //Destroy table reload rows timeout
+        this.disableRowsRefreshing();
+
+        //Set drag&drop state as true, because if we drag, we do not want reload rows
+        //from ajax request. We want stop syncing rows. Also ajax request which
+        //has been sent already.
+        this.setData('dragging', true);
+
+        //Disable all tooltips
+        $('[data-toggle="tooltip"]').tooltip('disable');
+    }
+
+    Model.prototype.onDragEnd = async function(dragged, list){
+        //Disable sorting when is used sorting columns
+        if ( this.getData('orderBy')[0] != '_order' ) {
+            enableDragging(this);
+
+            return;
+        }
+
+        var rowsData = list,
+            draggedRow = list[dragged.oldIndex],
+            droppedRow = list[dragged.newIndex],
+            draggedOrder = draggedRow._order,
+            droppedOrder = droppedRow._order,
+            rows = {},
+            changed_ids = [];
+
+        //Sort all rows between sorted rows
+        for ( var i = rowsData.length - 1; i >= 0; i-- ) {
+            var row = rowsData[i];
+
+            //From top to bottom
+            if ( row.id == draggedRow.id ){
+                row._order = droppedOrder;
+                rows[row.id] = row._order;
+            } else if ( draggedOrder > droppedOrder && row._order >= droppedOrder && row._order <= draggedOrder ){
+                row._order += 1;
+                rows[row.id] = row._order;
+            //From bottom to top
+            } else if ( draggedOrder < droppedOrder && row._order <= droppedOrder && row._order > draggedOrder) {
+                row._order -= 1;
+                rows[row.id] = row._order;
+            }
+        }
+
+        try {
+            let response = await $app.$http.post($app.requests.updateOrder, {
+                model : this.slug,
+                rows : rows
+            });
+
+            var data = response.data;
+            if ( data && 'type' in data ) {
+                return $app.openAlert(data.title, data.message, 'danger');
+            }
+
+            enableDragging(this);
+        } catch (response){
+            $app.errorResponseLayer(response);
+
+            enableDragging(this);
+        }
+    }
 };
 
 export default Fields;

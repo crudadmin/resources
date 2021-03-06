@@ -190,7 +190,7 @@
 
     export default {
         name: 'form-input-builder',
-        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'history', 'langid', 'inputlang', 'hasparentmodel', 'langslug', 'depth_level'],
+        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'history', 'langid', 'inputlang', 'langslug'],
 
         components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField },
 
@@ -364,6 +364,9 @@
         },
 
         computed : {
+            depth_level(){
+                return this.model.getData('depth_level');
+            },
             row(){
                 return this.model.getRow();
             },

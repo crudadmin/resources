@@ -47,9 +47,8 @@
                             :langid="langid"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"
-                            :allow_refreshing="isCanAddInParentMode ? false : true"
                             :scopes="canAddScopes"
-                            :model_builder="getRelationModel">
+                            :model_builder="getRelationModelMutated">
                         </model-builder>
                     </div>
                 </div><!-- /.modal-content -->
@@ -133,6 +132,16 @@
 
                 return _.cloneDeep(this.$root.models[this.relationTable]);
             },
+            getRelationModelMutated(){
+                let model = this.getRelationModel;
+
+                //We want disable refresh interval in model
+                if ( this.isCanAddInParentMode ) {
+                    model.settings.refresh_interval = false;
+                }
+
+                return model;
+            },
             getRelationRow(){
                 var filterBy = this.getFilterBy;
 
@@ -177,7 +186,7 @@
                         // && this.isModalInModal == false
             },
             isModalInModal(){
-                return this.$parent.hasparentmodel === false
+                return this.model.hasParentFormModel() === false
             },
             canAddScopes(){
                 if ( this.isCanAddInParentMode == false ){

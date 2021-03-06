@@ -20,7 +20,7 @@
             <p>{{ trans('no-permissions') }}</p>
         </div>
 
-        <div class="admin-model" :data-depth="depth_level" :class="{ 'admin-model--single-mode' : model.isSingle(), 'admin-model--in-parent' : model.isInParent() }" v-show="canShowForm || (canShowRows || isSearching)">
+        <div class="admin-model" :data-depth="model.getData('depth_level')" :class="{ 'admin-model--single-mode' : model.isSingle(), 'admin-model--in-parent' : model.isInParent() }" v-show="model.canShowForm() || (model.canShowRows() || isSearching)">
             <div class="admin-model__header" :class="{ 'with-border' : model.isSingle() }" v-show="canShowAdminHeader">
                 <div class="left">
                     <div>
@@ -66,7 +66,7 @@
                     </ul>
 
                     <!-- Choose language -->
-                    <div class="dropdown" v-if="hasLanguages && isActiveLanguageSwitch && (!canShowForm || activeGridSize != 0)" data-global-language-switch>
+                    <div class="dropdown" v-if="hasLanguages && isActiveLanguageSwitch && (!model.canShowForm() || model.activeGridSize() != 0)" data-global-language-switch>
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                             <i class="--icon-left fa fa-globe-americas"></i>
                             {{ selectedRootLanguage ? getLangName(selectedRootLanguage) : trans('language-mutation') }}
@@ -91,42 +91,28 @@
             </div>
 
             <div class="admin-model__body">
-                <div class="row grid-table" :class="{ 'grid-fullsize' : activeGridSize == 0 }">
+                <div class="row grid-table" :class="{ 'grid-fullsize' : model.activeGridSize() == 0 }">
                     <!-- left column -->
-                    <div :class="['col-lg-'+(12 - activeGridSize)]" class="col--form col-12" v-show="canShowForm" v-if="activetab!==false">
+                    <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()" v-if="activetab!==false">
                         <form-builder
                             :formID="formID"
-                            :progress="progress"
                             :rows="rows"
                             :history="history"
                             :model="model"
                             :langid="selected_language_id ? selected_language_id : langid"
                             :selectedlangid="selected_language_id ? selected_language_id : langid"
-                            :canaddrow="canAddRow"
-                            :hasparentmodel="model.hasParentFormModel()"
                             :gettext_editor="gettext_editor"
-                            :depth_level="depth_level"
-                            :parentActiveGridSize="activeGridSize"
-                            :isOnlyFormOpened="isOnlyFormOpened"
-                            :isEnabledOnlyFormOrTableMode="isEnabledOnlyFormOrTableMode"
-                            :hasRows="hasRows"
                         ></form-builder>
                     </div>
                     <!--/.col (left) -->
 
                     <!-- right column -->
-                    <div class="col--rows col-12" :class="['col-lg-'+(12-(12-activeGridSize)), { '--noMargin' : !canShowForm }]" v-show="canShowRows">
+                    <div class="col--rows col-12" :class="['col-lg-'+(12-(12-model.activeGridSize())), { '--noMargin' : !model.canShowForm() }]" v-show="model.canShowRows()">
                         <model-rows-builder
                             :model="model"
                             :rows="rows"
-                            :scopes="scopes"
                             :langid="selected_language_id ? selected_language_id : langid"
-                            :progress="progress"
-                            :iswithoutparent="model.isWithoutParentRow()"
-                            :activetab="activetab"
                             :gettext_editor="gettext_editor"
-                            :depth_level="depth_level"
-                            :allow_refreshing="allow_refreshing"
                             :history="history">
                         </model-rows-builder>
                     </div>
@@ -169,7 +155,7 @@
     import {defaultSearchQuery} from '../Helpers/Model/ModelData';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes', 'allow_refreshing'],
+        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes'],
 
         name : 'model-builder',
 
@@ -179,12 +165,12 @@
             return {
                 model : this.model_builder,
 
-                sizes : [
+                sizes : this.model_builder.setData('sizes', [
                     { size : 4, key : 'small', name : this.trans('grid-small'), active : false, disabled : this.model_builder.getSettings('grid.small.disabled', false) },
                     { size : 8, key : 'big', name : this.trans('grid-big'), active : false, disabled : this.model_builder.getSettings('grid.big.disabled', false) },
                     { size : 6, key : 'medium', name : this.trans('grid-medium'), active : false, disabled : this.model_builder.getSettings('grid.medium.disabled', false) },
                     { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : this.model_builder.getSettings('grid.full.disabled', false) },
-                ],
+                ]).getData('sizes'),
 
                 /*
                  * Loaded rows from db
@@ -196,19 +182,12 @@
                  */
                 history : this.model_builder.getData('history'),
 
-                //Additional layouts/components for model
-                layouts : [],
                 registered_components : [],
 
                 language_id : null,
                 selected_language_id : null,
 
-                progress : false,
-
-                depth_level : 0,
                 gettext_editor: null,
-
-                formOpened : false,
             };
         },
 
@@ -225,6 +204,12 @@
             //Set model properties
             this.model.setData('hasparentmodel', this.hasparentmodel);
             this.model.setData('parentrow', this.parentrow);
+
+            //Update parent model properties
+            this.model.setData('activetab', this.activetab);
+            this.model.setData('langid', this.langid);
+            this.model.setData('scopes', this.scopes);
+            this.model.setData('parentActiveGridSize', this.parentActiveGridSize);
 
             //Set default search query
             if ( this.model.getData('search').queries.length == 0 ) {
@@ -272,9 +257,20 @@
                 },
             },
             parentActiveGridSize(parentSize){
+                this.model.setData('parentActiveGridSize', value);
+
                 this.checkParentGridSize(parentSize);
             },
+            langid(value){
+                this.model.setData('langid', value);
+            },
+            scopes(value){
+                this.model.setData('scopes', value);
+            },
             activetab(value){
+                //Update parent model active tab
+                this.model.setData('activetab', value);
+
                 if ( value === true ) {
                     this.sendRowsData();
                 }
@@ -348,12 +344,12 @@
 
                 for ( var key in this.sizes ){
                     //If grid parent size is on full width, then enable all grid sizes in this model
-                    if ( parentSize == 0 && this.depth_level <= 1 ) {
+                    if ( parentSize == 0 && this.model.getData('depth_level') <= 1 ) {
                         this.sizes[key].disabled = false;
                     }
 
                     //If grid parent size has small form, or model is sub in third level, then disable all except full screen
-                    else if ( (parentSize == 8 || this.depth_level >= 2) && [0].indexOf(this.sizes[key].size) === -1 ) {
+                    else if ( (parentSize == 8 || this.model.getData('depth_level') >= 2) && [0].indexOf(this.sizes[key].size) === -1 ) {
                         this.sizes[key].disabled = true;
                     }
 
@@ -381,7 +377,7 @@
 
                 eventHub.$on('sendParentRow', this.sendParentRowEvent = (data) => {
                     //Skip child components
-                    if ( !data || this.depth_level > data.depth_level ) {
+                    if ( !data || this.model.getData('depth_level') > data.getData('depth_level') ) {
                         return;
                     }
 
@@ -489,109 +485,8 @@
                     parent = parent.$parent;
                 }
 
-                this.depth_level = depth;
-
                 this.model.setData('depth_level', depth);
                 this.model.setData('tree', treeUuids);
-            },
-            /*
-             * Returns if model has next childs
-             */
-            hasChilds(){
-                var length = 0;
-
-                for ( var key in this.model.childs ) {
-                    length++;
-                }
-
-                return length;
-            },
-            hasModelsInGroups(childs){
-                for ( var i = 0 ; i < childs.length; i++ ) {
-                    //Check if group field is tab
-                    if ( typeof childs[i] != 'object' ) {
-                        continue;
-                    }
-
-                    //If model is in recursive tabs or group
-                    if ( childs[i].model ){
-                        return true;
-                    }
-
-                    //If tab has other childs, then check recursive
-                    if ( childs[i].fields.length > 0 ) {
-                        if ( this.hasModelsInGroups(childs[i].fields) ) {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            },
-            getStorage(){
-                return $.parseJSON(localStorage.sizes||'{}')||{};
-            },
-            enableOnlyFullScreen(){
-                for ( var key in this.sizes ) {
-                    if ( key != 3 ) {
-                        this.sizes[key].disabled = true;
-                        this.sizes[key].active = false;
-                    }
-                }
-
-                return this.sizes[3].active = true;
-            },
-            checkActiveGridSize(columns){
-                var data = this.getStorage(),
-                    defaultValue = this.model.getSettings('grid.default'),
-                    columns = Object.keys(columns);
-
-                //Disable big table
-                if ( columns.length >= 5 )
-                    this.sizes[0].disabled = true;
-
-                //Full screen
-                if ( ! this.canShowForm || this.model.isSingle() ) {
-                    return this.enableOnlyFullScreen();
-                }
-
-                //Select size from storage
-                if ( this.model.slug in data && data[this.model.slug + '_default'] == defaultValue ) {
-                    for ( var key in this.sizes ) {
-                        if ( this.sizes[key].size == data[ this.model.slug ] ) {
-                            return this.sizes[key].active = true;
-                        }
-                    }
-                } else if ( defaultValue !== null ){
-                    // If model has default grid property
-                    for ( var key in this.sizes ) {
-                        if ( this.sizes[key].size == defaultValue || this.sizes[key].key == defaultValue ) {
-                            return this.sizes[key].active = true;
-                        }
-                    }
-                }
-
-                /*
-                 * When is localStorage value empty, then automatic chose the best grid value.
-                 * In this case we need check for all full screen options
-                 */
-                if (
-                    this.hasModelsInGroups(this.model.fields_groups)
-                    || this.hasChilds() > 0
-                    || columns.length > this.fullSizeByColumns()
-                ) {
-                    return this.sizes[3].active = true;
-                }
-
-                //50/50
-                this.sizes[2].active = true;
-            },
-            fullSizeByColumns(){
-                if ( window.innerWidth < 1500 ) {
-                    return 4;
-                }
-
-                return 5;
             },
             changeSize(row){
                 if ( row.disabled == true )
@@ -638,8 +533,8 @@
                 return this.model.getSettings('buttons.create', this.trans('new-row'));
             },
             addNewRow(){
-                if ( this.isEnabledOnlyFormOrTableMode == true ){
-                    this.formOpened = true;
+                if ( this.model.isEnabledOnlyFormOrTableMode() == true ){
+                    this.model.setData('formOpened', true);
                 }
 
                 this.$nextTick(() => {
@@ -647,7 +542,7 @@
                 });
             },
             closeForm(){
-                this.formOpened = false;
+                this.model.setData('formOpened', false);
             },
             resetForm(scroll, dontResetIfNotOpened, resetActiveTab){
                 if ( ! dontResetIfNotOpened || this.model.isOpenedRow() ) {
@@ -668,19 +563,19 @@
                 if ( resetActiveTab === true ) {
                     eventHub.$emit('changeActiveTab', {
                         table : this.model.table,
-                        depth_level : this.depth_level,
+                        depth_level : this.model.getData('depth_level'),
                         activetab : 0,
                     });
                 }
             },
             pulseForm(){
                 //If is not full grid, then animate form
-                if ( this.activeGridSize == 0 && this.canShowRows && this.depth_level == 0 ) {
+                if ( this.model.activeGridSize() == 0 && this.model.canShowRows() && this.model.getData('depth_level') == 0 ) {
                     return;
                 }
 
                 //Only table/form mode enabled
-                if ( this.isEnabledOnlyFormOrTableMode === true ){
+                if ( this.model.isEnabledOnlyFormOrTableMode() === true ){
                     return false;
                 }
 
@@ -704,29 +599,11 @@
             row(){
                 return this.model.getData('row');
             },
+            layouts(){
+                return this.model.getData('layouts');
+            },
             search(){
                 return this.model.getData('search');
-            },
-            isOnlyFormOpened(){
-                return this.formOpened == true && this.isEnabledOnlyFormOrTableMode === true;
-            },
-            isEnabledOnlyFormOrTableMode(){
-                return this.activeGridSize === 0 && this.model.isInParent() !== true && this.model.getSettings('grid.splitmode') !== true;
-            },
-            activeGridSize(){
-                var size = this.sizes.filter(row => {
-                    if ( row.active == true ) {
-                        var rows = this.getStorage();
-                            rows[ this.model.slug ] = row.size;
-                            rows[ this.model.slug + '_default' ] = this.model.getSettings('grid.default');
-
-                        localStorage.sizes = JSON.stringify( rows );
-                    }
-
-                    return row.active == true;
-                });
-
-                return size[0] ? size[0].size : null;
             },
             canShowAdminHeader(){
                 if ( this.model.getSettings('header.enabled', true) === false ){
@@ -759,7 +636,7 @@
                 return this.$root.languages_active == true ? 1 : 0;
             },
             formID(){
-                return 'form-' + this.depth_level + '-' + this.model.slug;
+                return 'form-' + this.model.getData('depth_level') + '-' + this.model.slug;
             },
             /*
              * Return if acutal model can be added without parent row, and if parent row is not selected
@@ -790,81 +667,14 @@
 
                 return true;
             },
-            canShowRows(){
-                if ( this.model.getSettings('table.enabled', true) === false ){
-                    return false;
-                }
-
-                if ( this.isEnabledOnlyFormOrTableMode === true && (this.model.isOpenedRow() || this.isOnlyFormOpened === true) ){
-                    return false;
-                }
-
-                if ( this.model.hasAccess('read') == false ) {
-                    return false;
-                }
-
-                if ( this.model.isSingle() ){
-                    this.enableOnlyFullScreen();
-
-                    return false;
-                }
-
-                return true;
-            },
-            canAddRow(){
-                //Disabled adding new rows
-                if ( this.model.insertable == false || !this.model.hasAccess('insert') ) {
-                    return false;
-                }
-
-                //Unlimited allowed rows
-                if ( this.model.maximum == 0 ) {
-                    return true;
-                }
-
-                if ( this.model.maximum <= this.rows.count ) {
-                    return false;
-                }
-
-                return true;
-            },
             canShowAddButton(){
-                return this.canAddRow && !this.model.isSingle() && this.model.hasAccess('insert') && !this.isOnlyFormOpened;
-            },
-            canShowForm(){
-                if ( this.model.getSettings('form.enabled', true) === false ){
-                    return false;
-                }
-
-                if ( (!this.model.isOpenedRow() && !this.canAddRow || this.model.isOpenedRow() && (this.model.editable == false && this.model.displayable !== true)) && !this.model.isInParent() ) {
-                    return false;
-                }
-
-                //If row is not selected, and form is not opened. But in table needs exists rows
-                if ( this.isEnabledOnlyFormOrTableMode === true && !this.model.isOpenedRow() && this.isOnlyFormOpened === false && this.model.isSingle() == false ){
-                    return false;
-                }
-
-                //If user does not have write permissions
-                if ( !this.model.isOpenedRow() && this.model.hasAccess('insert') == false ) {
-                    return false;
-                }
-
-                return true;
-
-            },
-            hasRows(){
-                if ( this.rows.loaded == false && this.model.maximum != 1 ){
-                    return true;
-                }
-
-                return this.rows.data.length > 0;
+                return this.model.canAddRow() && !this.model.isSingle() && this.model.hasAccess('insert') && !this.model.isOnlyFormOpened();
             },
             /*
              * Show search if has been at least one time used, or if is not single row, or if is more then 10 rows
              */
             canShowSearchBar(){
-                if ( this.isEnabledOnlyFormOrTableMode === true && this.canShowForm === true ){
+                if ( this.model.isEnabledOnlyFormOrTableMode() === true && this.model.canShowForm() === true ){
                     return false;
                 }
 

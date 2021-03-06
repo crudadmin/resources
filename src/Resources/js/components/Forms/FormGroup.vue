@@ -12,9 +12,7 @@
                         <form-tabs-builder
                             :tabs="tabsFields"
                             :model="model"
-                            :hasparentmodel="hasparentmodel"
-                            :history="history"
-                            :depth_level="depth_level">
+                            :history="history">
                         </form-tabs-builder>
                     </div>
 
@@ -39,10 +37,8 @@
                                 :inputlang="inputlang"
                                 :langslug="langslug"
                                 :index="index"
-                                :hasparentmodel="hasparentmodel"
                                 :field_key="item"
-                                :field="model.fields[item]"
-                                :depth_level="depth_level">
+                                :field="model.fields[item]">
                             </form-input-builder>
                         </div>
 
@@ -50,10 +46,8 @@
                             v-if="isGroup(item) && !isTab(item)"
                             :group="item"
                             :model="model"
-                            :hasparentmodel="hasparentmodel"
                             :inputlang="inputlang"
-                            :history="history"
-                            :depth_level="depth_level">
+                            :history="history">
                         </form-group>
                     </fragment>
                 </div>
@@ -69,7 +63,7 @@ import FormInputBuilder from './FormInputBuilder.vue';
 export default {
     name : 'form-group',
 
-    props : ['model', 'history', 'group', 'langid', 'inputlang', 'hasparentmodel', 'depth_level'],
+    props : ['model', 'history', 'group', 'langid', 'inputlang'],
 
     components : { FormInputBuilder, FormTabsBuilder },
 

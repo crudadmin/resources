@@ -6,6 +6,7 @@ import ModelData from './Model/ModelData';
 import ModelCoreHelpers from './Model/ModelCoreHelpers';
 import RowActions from './Model/RowActions';
 import ModelBus from './Model/ModelBus';
+import ModelTableRows from './Model/ModelTableRows';
 
 const Model = () => {};
 
@@ -16,6 +17,7 @@ var extensions = [
     ModelProperties,
     ModelData,
     ModelCoreHelpers,
+    ModelTableRows,
     RowActions,
     ModelBus,
 ];

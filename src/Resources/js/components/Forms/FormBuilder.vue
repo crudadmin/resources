@@ -8,7 +8,7 @@
                     <div class="box-header__left">
                         <h3 class="box-header__title">
                             <i
-                                v-if="(model.isOpenedRow() || isOnlyFormOpened) && isEnabledOnlyFormOrTableMode && hasRows"
+                                v-if="(model.isOpenedRow() || model.isOnlyFormOpened()) && model.isEnabledOnlyFormOrTableMode() && model.hasRows()"
                                 @click="closeForm"
                                 class="goBackButton fa fa-chevron-left"
                                 data-toggle="tooltip"
@@ -63,7 +63,7 @@
                         </div>
 
                         <button
-                            v-if="(model.isOpenedRow() || isOnlyFormOpened) && !model.isInParent() && !model.isSingle()"
+                            v-if="(model.isOpenedRow() || model.isOnlyFormOpened()) && !model.isInParent() && !model.isSingle()"
                             data-toggle="tooltip"
                             :data-close-form="model.table"
                             :title="__('Zavrieť bez uloženia')"
@@ -106,9 +106,6 @@
                         :langid="langid"
                         :inputlang="selectedLanguage"
                         :cansave="cansave"
-                        :hasparentmodel="hasparentmodel"
-                        :depth_level="depth_level"
-                        :parentActiveGridSize="parentActiveGridSize"
                         :history="history">
                     </form-tabs-builder>
                 </div>
@@ -148,7 +145,7 @@ import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
 export default {
     name : 'form-builder',
 
-    props : ['formID', 'model', 'rows', 'langid', 'canaddrow', 'progress', 'history', 'hasparentmodel', 'selectedlangid', 'gettext_editor', 'depth_level', 'parentActiveGridSize', 'isOnlyFormOpened', 'isEnabledOnlyFormOrTableMode', 'hasRows'],
+    props : ['formID', 'model', 'rows', 'langid', 'history', 'selectedlangid', 'gettext_editor'],
 
     components: { FormTabsBuilder },
 
@@ -179,7 +176,7 @@ export default {
          * When row is updated, then bind data from incoming request/database into model row and his values
          */
         eventHub.$on('onUpdate', this.onUpdateEvent = data => {
-            if ( data.table != this.model.slug || data.depth_level != this.depth_level )
+            if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') )
                 return;
 
             //Update model data of existing model on row update
@@ -232,6 +229,9 @@ export default {
     },
 
     computed: {
+        progress(){
+            return this.model.getData('progress');
+        },
         row(){
             return this.model.getRow();
         },
@@ -464,7 +464,7 @@ export default {
             }
 
             //Checks if form can be editable
-            if ( is_row && this.canaddrow && (this.model.editable == false && this.model.displayable != true) && this.$parent.hasChilds() == 0 ) {
+            if ( is_row && this.model.canAddRow() && (this.model.editable == false && this.model.displayable != true) && this.model.hasChilds() == 0 ) {
                 this.$parent.resetForm();
                 return;
             }
@@ -504,7 +504,7 @@ export default {
             this.form.find('.far.fa-times-circle').firstLevelForm(this.form[0]).remove();
             this.form.find('.multi-languages .has-error').firstLevelForm(this.form[0]).removeClass('has-error');
             this.removeActiveTab(this.form.find('.nav-tabs li[has-error]').firstLevelForm(this.form[0]));
-            this.$parent.progress = false;
+            this.model.setData('progress', false);
 
             if ( this.form._errorElements ){
                 for ( var i = 0; i < this.form._errorElements.length; i++ ){
@@ -529,7 +529,7 @@ export default {
 
             this.resetErrors();
 
-            this.$parent.progress = true;
+            this.model.setData('progress', true);
 
             $(e.target).ajaxSubmit({
 
@@ -538,7 +538,7 @@ export default {
                 success : data => {
 
                     this.submit = true;
-                    this.$parent.progress = false;
+                    this.model.setData('progress', false);
 
                     //Error occured
                     if ( $.type(data) != 'object' || ! ('type' in data) )
@@ -586,7 +586,7 @@ export default {
         unknownAjaxErrorResponse(){
             this.$root.errorAlert(() => {
 
-                this.$parent.progress = false;
+                this.model.setData('progress', false);
 
                 //Timeout for sending new request with enter
                 setTimeout(() => {
@@ -700,7 +700,7 @@ export default {
                 model : model,
 
                 //If is child inParent relation, then add depth level + 1 for correct communication
-                depth_level : this.depth_level + (isChild ? 1 : 0),
+                depth_level : this.model.getData('depth_level') + (isChild ? 1 : 0),
                 ...data
             };
         },
@@ -789,7 +789,7 @@ export default {
                 }
 
                 //Add or update select options
-                if ( this.hasparentmodel !== true ) {
+                if ( this.model.hasParentFormModel() !== true ) {
                     var incomingRow = action == 'store' ? response.data[0].rows[0] : response.data.rows[this.model.table];
 
                     this.$parent.$parent.pushOption(incomingRow, action);

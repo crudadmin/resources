@@ -29,6 +29,48 @@ var ModelData = (Model, rawModel) => {
                 save_children : [],
             },
 
+            //Grid model sizes
+            sizes : {},
+
+            //Is form opened?
+            formOpened: false,
+
+            //Order/sorting in table
+            orderBy : null,
+
+            //Is model dragged right now?
+            draggind : false,
+
+            //Active tab of parent model
+            activetab : null,
+
+            //Parent model language id
+            langid : null,
+
+            //Is searching?
+            searching : false,
+
+            //Parent active grid size
+            parentActiveGridSize : null,
+
+            //Default model columns
+            default_columns : [],
+
+            //Enabled columns
+            enabled_columns : null,
+
+            //Is model sending row?
+            progress : false,
+
+            //Loaded model options
+            modelOptions : {},
+
+            //Model scopes
+            scopes : [],
+
+            //Model layouts
+            layouts : [],
+
             //Check if model has parent row. For example when we are using filterBy in select
             //we need dynamically set parent of model builder
             hasparentmodel : null,

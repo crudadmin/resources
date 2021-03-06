@@ -73,8 +73,9 @@ export default {
             return this.row.slug.substr(0, config.groups_prefix.length) == config.groups_prefix;
         },
         hasChilds(){
-            for ( var key in this.row.submenu )
+            for ( var key in this.row.submenu ) {
                 return true;
+            }
 
             return false;
         },

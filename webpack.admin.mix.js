@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+const path = require('path');
 
 //Where sould be compiled assets
 var config = require('./config.js');
@@ -17,7 +18,15 @@ mix.js('src/Resources/js/app.js', mix.config.publicPath+'/js')
    .options({
      extractVueStyles: true,
      globalVueStyles: 'src/Resources/sass/_variables.scss',
-   })
+   });
+
+mix.webpackConfig({
+    resolve: {
+        alias: {
+            '@components': path.resolve(__dirname, 'src/Resources/js/components'),
+        }
+    }
+});
 
 for ( key in config.paths )
 {
