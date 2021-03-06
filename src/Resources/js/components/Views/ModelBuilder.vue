@@ -700,6 +700,10 @@
         },
 
         computed: {
+            //Row unit testing, to receive model row data
+            row(){
+                return this.model.getData('row');
+            },
             search(){
                 return this.model.getData('search');
             },

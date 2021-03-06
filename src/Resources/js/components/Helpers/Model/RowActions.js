@@ -105,6 +105,10 @@ var Fields = (Model) => {
         );
     }
 
+    Model.prototype.canUnpublishRow = function(row){
+        return this.publishable && this.hasAccess('publishable');
+    }
+
     Model.prototype.togglePublishedAt = async function(ids){
         ids = _.cloneDeep(_.castArray(ids));
 

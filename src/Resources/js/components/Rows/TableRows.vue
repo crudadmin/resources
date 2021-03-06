@@ -49,7 +49,11 @@
                     <div class="buttons-options__item" v-for="(button, button_key) in getButtonsForRow(item)">
                         <button type="button" :data-button="'action-'+button.key" v-on:click="buttonAction(button_key, button, item)" :class="['btn', 'btn-sm', button.class]" data-toggle="tooltip" title="" :data-original-title="button.name"><i :class="['fa', button_loading == getButtonKey(item.id, button_key) ? 'fa-sync-alt' : faMigrator(button.icon), { 'fa-spin' : button_loading == getButtonKey(item.id, button_key) }]"></i></button>
                     </div>
-                    <div class="buttons-options__item" v-if="model.publishable && model.hasAccess('publishable')"><button data-button="publishable" type="button" v-on:click="model.togglePublishedAt(item.id)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
+                    <div class="buttons-options__item" v-if="model.canUnpublishRow(item)">
+                        <publish-button
+                            :model="model"
+                            :row="item" />
+                    </div>
                     <div class="buttons-options__item" v-if="model.deletable && count > model.minimum && model.hasAccess('delete')">
                         <button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : model.isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button>
                     </div>
@@ -61,12 +65,13 @@
 
 <script>
 import TableRowValue from './TableRowValue.vue';
+import PublishButton from '../Partials/PublishButton.vue';
 import draggable from 'vuedraggable'
 
 export default {
     props : ['rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'button_loading', 'pagination', 'depth_level'],
 
-    components: { TableRowValue, draggable },
+    components: { TableRowValue, PublishButton, draggable },
 
     data(){
         return {
