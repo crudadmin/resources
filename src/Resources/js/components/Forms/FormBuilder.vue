@@ -883,8 +883,7 @@ export default {
             this.$parent.rows.save_children = [];
 
             //If actual row has no parent, and need to ba saved when parent will be saved
-            if ( this.$parent.isWithoutParentRow )
-            {
+            if ( this.model.isWithoutParentRow() ) {
                 var parent = this.$parent.$parent;
 
                 while(!('rows' in parent))

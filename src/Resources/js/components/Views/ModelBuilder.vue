@@ -195,7 +195,7 @@
                     { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : this.model_builder.getSettings('grid.full.disabled', false) },
                 ],
 
-                row : this.model_builder.setData('row', this.model_builder.emptyRowInstance()),
+                row : this.model_builder.setData('row', this.model_builder.emptyRowInstance()).getData('row'),
 
                 /*
                  * Search engine
@@ -306,17 +306,22 @@
             parentrow(row, oldrow){
                 //When parent row has been changed, then load children rows
                 if ( ! _.isEqual(row, oldrow) && (row.id != oldrow.id || this.model.isInParent()) ){
+                    //We need rewrite parent model if has been changed
+                    this.model.setData('parentrow', this.parentrow);
+
                     var children = null;
 
                     //Get rows builder child
-                    for ( var i = 0; i < this.$children.length; i++ )
+                    for ( var i = 0; i < this.$children.length; i++ ) {
                         if ( 'reloadRows' in this.$children[i] ){
                             children = this.$children[i];
                             break;
                         }
+                    }
 
                     if ( children ){
                         children.reloadRows();
+                        children.model.resetForm();
                     }
                 }
             },
@@ -681,7 +686,7 @@
                     //Because if component receives getParentRow, and then will be rewrited row observer
                     //Changes in this component wont be interactive
                     if ( ! _.isEqual(this.row, this.model.emptyRowInstance()) ) {
-                        this.row = this.model.emptyRowInstance();
+                        this.model.resetForm();
                     }
                 }
 

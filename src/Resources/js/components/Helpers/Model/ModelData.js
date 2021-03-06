@@ -52,8 +52,8 @@ var ModelData = (Model, rawModel) => {
         return this.data[key];
     }
 
-    Model.prototype.mapData = function(key, callbackOrComponent){
-        _.castArray(key).forEach(key => {
+    Model.prototype.mapData = function(keys, callbackOrComponent){
+        _.castArray(keys).forEach(key => {
             let callback = typeof callbackOrComponent == 'function' ? callbackOrComponent : (value) => {
                 callbackOrComponent[key] = value;
             };

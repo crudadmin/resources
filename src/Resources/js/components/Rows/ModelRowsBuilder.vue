@@ -918,7 +918,7 @@ export default {
         },
         togglePublishedAt(row)
         {
-            var ids = row ? [ row.id ] : this.checked;
+            var ids = _.cloneDeep(row ? [ row.id ] : this.checked);
 
             this.$http.post( this.$root.requests.togglePublishedAt, {
                 model : this.model.slug,
@@ -927,13 +927,18 @@ export default {
             .then(function(response){
                 var data = response.data;
 
-                if ( data && 'type' in data )
+                if ( data && 'type' in data ) {
                     return this.$root.openAlert(data.title, data.message, 'danger');
+                }
+
+                let rows = this.model.getData('rows');
 
                 //Update multiple published at
-                for ( var key in this.rows.data )
-                    if ( ids.indexOf(this.rows.data[key].id) > -1 )
-                        this.rows.data[key].published_at = data[this.rows.data[key].id];
+                for ( var key in rows.data ) {
+                    if ( ids.indexOf(rows.data[key].id) > -1 ) {
+                        rows.data[key].published_at = data[rows.data[key].id];
+                    }
+                }
             })
             .catch(function(response){
                 this.$root.errorResponseLayer(response);
