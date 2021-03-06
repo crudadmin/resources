@@ -12,6 +12,8 @@ var ModelData = (Model, rawModel) => {
 
             row : {},
 
+            rows : {},
+
             //Check if model has parent row. For example when we are using filterBy in select
             //we need dynamically set parent of model builder
             hasparentmodel : null,
@@ -34,6 +36,12 @@ var ModelData = (Model, rawModel) => {
         };
     }
 
+    /**
+     * Set model data
+     *
+     * @param  string  key
+     * @param  key  value
+     */
     Model.prototype.setData = function(key, value){
         this.data[key] = value;
 
@@ -48,6 +56,11 @@ var ModelData = (Model, rawModel) => {
         return this;
     }
 
+    /**
+     * Get model data
+     *
+     * @param  string  key
+     */
     Model.prototype.getData = function(key){
         return this.data[key];
     }
@@ -104,7 +117,34 @@ var ModelData = (Model, rawModel) => {
     }
 
     Model.prototype.resetChecked = function(){
-        return this.data.checked.length = 0;
+        this.setData('checked', []);
+    }
+
+    Model.prototype.getChecked = function(){
+        return this.getData('checked');
+    }
+
+    Model.prototype.setChecked = function(ids){
+        ids = _.castArray(ids);
+
+        if ( ids.length > 0 ){
+            let checked = _.uniq(this.data.checked.concat(ids));
+
+            this.setData('checked', checked);
+        } else {
+            this.resetChecked();
+        }
+    }
+
+    Model.prototype.toggleChecked = function(id){
+        var checked = this.getData('checked'),
+            index = checked.indexOf(id);
+
+        if ( index == -1 ) {
+            checked.push(id);
+        } else {
+            checked.splice(index, 1);
+        }
     }
 
     Model.prototype.resetForm = function(){

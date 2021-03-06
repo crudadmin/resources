@@ -11,8 +11,7 @@ import Fragment from 'vue-fragment'
 import globalVueMixins from './mixins/globalVueMixins';
 import componentMixins from './mixins/componentMixins';
 import alertMixins from './mixins/alertMixins';
-
-Vue.mixin(globalVueMixins);
+import modelMixins from './mixins/modelMixins';
 
 //Uses
 Vue.use(VueResource);
@@ -38,9 +37,11 @@ Vue.component('vue-chosen', VueChosen);
 Vue.component('SiteTreeBuilder', SiteTreeBuilder);
 
 //Global methods
+Vue.mixin(globalVueMixins);
 Vue.mixin(CrudAdmin);
 Vue.mixin(componentMixins);
 Vue.mixin(alertMixins);
+Vue.mixin(modelMixins);
 
 //Create base VueApp instance
 window.VueApp = window.$app = new Vue(

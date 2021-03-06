@@ -106,6 +106,36 @@ var Fields = (Model) => {
             true
         );
     }
+
+    Model.prototype.togglePublishedAt = async function(ids){
+        ids = _.cloneDeep(_.castArray(ids));
+
+        try {
+            let response = await $app.$http.post( $app.requests.togglePublishedAt, {
+                model : this.slug,
+                id : ids,
+            });
+
+            var data = response.data;
+
+            if ( data && 'type' in data ) {
+                return $app.openAlert(data.title, data.message, 'danger');
+            }
+
+            let rows = this.getData('rows');
+
+            //Update multiple published at
+            for ( var key in rows.data ) {
+                if ( ids.indexOf(rows.data[key].id) > -1 ) {
+                    rows.data[key].published_at = data[rows.data[key].id];
+                }
+            }
+        } catch (response){
+            console.error(response);
+
+            $app.errorResponseLayer(response);
+        }
+    };
 };
 
 export default Fields;

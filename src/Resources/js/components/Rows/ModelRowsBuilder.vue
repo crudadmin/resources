@@ -46,7 +46,7 @@
                         </ul>
                     </div>
 
-                    <div class="dropdown actions-list fields-list" v-if="checked.length > 0 && hasAnyActions" data-action-list>
+                    <div class="dropdown actions-list fields-list" v-if="model.getChecked().length > 0 && hasAnyActions" data-action-list>
                         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             {{ trans('action') }}
                             <i class="--icon-right fa fa-angle-down"></i>
@@ -90,7 +90,6 @@
                 :rows="rows"
                 :rowsdata.sync="rowsData"
                 :button_loading="button_loading"
-                :checked.sync="checked"
                 :orderby.sync="orderBy"
                 :depth_level="depth_level">
             </table-rows>
@@ -161,8 +160,6 @@ export default {
                 interval : this.getRefreshInterval(),
             }).getData('search'),
 
-            //Receive value from tablerows component
-            checked : this.model.setData('checked', []).getData('checked'),
             default_columns : [],
             enabled_columns : null,
             button_loading : false,
@@ -180,9 +177,6 @@ export default {
 
         //Refresh rows refreshInterval
         this.loadRows();
-
-        //We will map this model data values into this component
-        this.model.mapData(['checked'], this);
 
         /*
          * When row is added, then push it into table
@@ -901,7 +895,7 @@ export default {
             return interval;
         },
         removeRow(row){
-            var ids = row ? [ row.id ] : this.checked;
+            var ids = row ? [ row.id ] : this.model.getChecked();
 
             this.model.removeRow(ids, (response, requestData) => {
                 //Remove row from options
@@ -916,38 +910,11 @@ export default {
                 }
             });
         },
-        togglePublishedAt(row)
-        {
-            var ids = _.cloneDeep(row ? [ row.id ] : this.checked);
-
-            this.$http.post( this.$root.requests.togglePublishedAt, {
-                model : this.model.slug,
-                id : ids,
-            })
-            .then(function(response){
-                var data = response.data;
-
-                if ( data && 'type' in data ) {
-                    return this.$root.openAlert(data.title, data.message, 'danger');
-                }
-
-                let rows = this.model.getData('rows');
-
-                //Update multiple published at
-                for ( var key in rows.data ) {
-                    if ( ids.indexOf(rows.data[key].id) > -1 ) {
-                        rows.data[key].published_at = data[rows.data[key].id];
-                    }
-                }
-            })
-            .catch(function(response){
-                this.$root.errorResponseLayer(response);
-            });
+        togglePublishedAt(){
+            this.model.togglePublishedAt(this.model.getChecked());
 
             //Reset checkboxes after published
-            if ( ! row ) {
-                this.model.resetChecked();
-            }
+            this.model.resetChecked();
         },
         getButtonKey(id, key){
             return id + '-' + key;
@@ -965,7 +932,7 @@ export default {
             };
         },
         buttonAction(key, button, row){
-            var ids = row ? [ row.id ] : this.checked;
+            var ids = row ? [ row.id ] : this.model.getChecked();
 
             var makeAction = function(ask, data){
                 this.button_loading = row ? this.getButtonKey(row.id, key) : key;

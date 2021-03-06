@@ -3,7 +3,7 @@
         <thead data-table-head>
             <tr>
                 <th class="select-row-checkbox" @click="toggleAllCheckboxes" v-if="hasCheckingEnabled">
-                    <div class="checkbox-box" @click="checkRow(item.id)" data-toggle="tooltip" :title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')">
+                    <div class="checkbox-box" data-toggle="tooltip" :title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')">
                         <input type="checkbox" :checked="isCheckedAll">
                         <span class="checkmark"></span>
                     </div>
@@ -17,10 +17,10 @@
             </tr>
         </thead>
         <component :is="isMobileDevice() || model.sortable == false ? 'tbody' : 'draggable'" tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
-            <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : checked.indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
+            <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : model.getChecked().indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
                 <td class="select-row-checkbox" v-if="hasCheckingEnabled">
                     <div class="checkbox-box" @click="checkRow(item.id)">
-                        <input type="checkbox" :checked="checked.indexOf(item.id) > -1">
+                        <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
                         <span class="checkmark"></span>
                     </div>
                 </td>
@@ -49,7 +49,7 @@
                     <div class="buttons-options__item" v-for="(button, button_key) in getButtonsForRow(item)">
                         <button type="button" :data-button="'action-'+button.key" v-on:click="buttonAction(button_key, button, item)" :class="['btn', 'btn-sm', button.class]" data-toggle="tooltip" title="" :data-original-title="button.name"><i :class="['fa', button_loading == getButtonKey(item.id, button_key) ? 'fa-sync-alt' : faMigrator(button.icon), { 'fa-spin' : button_loading == getButtonKey(item.id, button_key) }]"></i></button>
                     </div>
-                    <div class="buttons-options__item" v-if="model.publishable && model.hasAccess('publishable')"><button data-button="publishable" type="button" v-on:click="togglePublishedAt(item)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
+                    <div class="buttons-options__item" v-if="model.publishable && model.hasAccess('publishable')"><button data-button="publishable" type="button" v-on:click="model.togglePublishedAt(item.id)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
                     <div class="buttons-options__item" v-if="model.deletable && count > model.minimum && model.hasAccess('delete')">
                         <button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : model.isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button>
                     </div>
@@ -64,7 +64,7 @@ import TableRowValue from './TableRowValue.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['row', 'rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'checked', 'button_loading', 'pagination', 'depth_level'],
+    props : ['row', 'rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'button_loading', 'pagination', 'depth_level'],
 
     components: { TableRowValue, draggable },
 
@@ -97,7 +97,7 @@ export default {
                 return;
 
             this.selectRow({ id : data.row_id }, null, null, data.history_id, data.row);
-        })
+        });
     },
 
     destroyed() {
@@ -129,7 +129,7 @@ export default {
             return this.pagination.limit >= limit && this.rows.count >= limit || columnsCount > 10;
         },
         multipleCheckbox(){
-            return this.checked.length > 0;
+            return this.model.getChecked().length > 0;
         },
         defaultColumns(){
             var data = {},
@@ -266,12 +266,14 @@ export default {
             return this.$parent.availableButtons;
         },
         isCheckedAll(){
-            var ids = this.rows.data.map(item => item.id);
+            var ids = this.rows.data.map(item => item.id),
+                checked = this.model.getChecked();
 
-            if ( this.checked.length == 0 )
+            if ( checked.length == 0 ) {
                 return false;
+            }
 
-            return _.isEqual(ids, this.checked);
+            return _.isEqual(ids, checked);
         },
         canOpenRowOnClick(){
             return this.model.getSettings('table.onclickopen', false) == true;
@@ -355,11 +357,12 @@ export default {
         toggleAllCheckboxes(){
             var ids = this.rows.data.map(item => item.id);
 
-            this.$parent.checked = this.isCheckedAll ? [] : ids;
+            this.model.setChecked(this.isCheckedAll ? [] : ids);
         },
         checkRow(id, field, row){
             if ( row && this.canOpenRowOnClick && (this.isEditable || this.isDisplayable) ) {
                 this.selectRow(row);
+
                 return;
             }
 
@@ -367,16 +370,12 @@ export default {
                 return;
             }
 
-            var checked = this.$parent.checked.indexOf(id);
-
             //Disable checking on type of fields
-            if ( field in this.model.fields && ['file'].indexOf(this.model.fields[field].type) > -1 )
+            if ( field in this.model.fields && ['file'].indexOf(this.model.fields[field].type) > -1 ) {
                 return;
+            }
 
-            if ( checked == -1 )
-                this.$parent.checked.push(id);
-            else
-                this.$parent.checked.splice(checked, 1);
+            this.model.toggleChecked(id);
         },
         resetAllowedColumns(){
             var columns = _.cloneDeep(this.defaultColumns),
@@ -669,9 +668,6 @@ export default {
         },
         removeRow(row){
             this.$parent.removeRow(row);
-        },
-        togglePublishedAt(row){
-            this.$parent.togglePublishedAt(row);
         },
         isImageField(field){
             if ( field in this.model.fields )

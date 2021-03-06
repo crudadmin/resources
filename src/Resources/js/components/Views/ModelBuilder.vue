@@ -288,8 +288,11 @@
             model_builder: {
                 deep : true,
                 handler(newObject, oldObject) {
+                    //We does not want to rewrite data in any case.
+                    let skipKeys = ['data'];
+
                     for ( var key in newObject ) {
-                        if ( _.isEqual(newObject[key], oldObject[key]) === false ) {
+                        if ( skipKeys.indexOf(key) === -1 && _.isEqual(newObject[key], oldObject[key]) === false ) {
                             this.$set(this.model, key, newObject[key]);
                         }
                     }
