@@ -226,6 +226,8 @@ const BaseComponent = (router, store) => {
             },
             //Check for all error response in all requests
             errorResponseLayer(response, code, callback){
+                console.error(response);
+
                 //Fix for jquery response
                 if ( 'responseJSON' in response ) {
                     response.data = response.responseJSON;

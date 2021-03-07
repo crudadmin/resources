@@ -430,6 +430,8 @@ var FormActions = (Model) => {
 
         if ( this.isOpenedRow() ){
             this.resetFormWithEvents();
+
+            this.closeHistory();
         }
     }
 

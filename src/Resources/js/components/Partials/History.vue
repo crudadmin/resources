@@ -62,7 +62,7 @@ export default {
 
     computed: {
         history(){
-            return this.getData('history');
+            return this.model.getData('history');
         },
         sortedHistory(){
             return _.orderBy(this.history.rows, 'id', 'desc');
@@ -80,32 +80,31 @@ export default {
             return this.$root.models.models_histories.hasAccess('delete');
         },
         applyChanges(item){
-            this.$parent.history.fields = item.changed_fields;
-            this.$parent.history.history_id = item.id;
+            this.history.fields = item.changed_fields;
+            this.history.history_id = item.id;
 
             eventHub.$emit('selectHistoryRow', {
-                table : this.$parent.model.slug,
-                row_id : this.$parent.history.id,
+                table : this.model.slug,
+                row_id : this.history.id,
                 history_id : item.id,
-                row : this.$parent.row,
+                row : this.model.getRow(),
             });
         },
         deleteHistoryRow(row){
             this.$root.openAlert(this.trans('warning'), this.trans('delete-warning'), 'warning', () => {
-
                 this.$http.post(this.$root.requests.removeFromHistory, {
                     model : this.model.table,
                     id : row.id,
                 })
-                    .then(response => {
-                        var data = response.data;
+                .then(response => {
+                    var data = response.data;
 
-                        this.$parent.history.rows = data;
-                    })
+                    this.history.rows = data;
+                })
 
-                    .catch(response => {
-                        this.$root.errorResponseLayer(response);
-                    });
+                .catch(response => {
+                    $app.errorResponseLayer(response);
+                });
             }, true);
         },
         date(date){
@@ -114,14 +113,14 @@ export default {
         changedFields(items){
             var changes = [];
 
-            for ( var k in items.changed_fields )
-            {
+            for ( var k in items.changed_fields ) {
                 var key = items.changed_fields[k];
 
-                if ( key in this.$parent.model.fields )
-                    changes.push(this.$parent.model.fields[key].name);
-                else
+                if ( key in this.$parent.model.fields ) {
+                    changes.push(this.model.fields[key].name);
+                } else {
                     changes.push(key);
+                }
             }
 
             return changes.join(', ');
