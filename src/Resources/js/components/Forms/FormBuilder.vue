@@ -2,7 +2,7 @@
     <!-- Horizontal Form -->
     <component ref="form" :is="formType" method="post" action="" :id="model.getFormId()" :data-form="model.slug" @submit.prevent="model.saveForm($event)" class="form crudadmin-form">
         <div class="box" :class="{ 'box--active' : isActive }">
-            <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (model.isOpenedRow() && model.history)), '--opened' : model.isOpenedRow() }">
+            <div data-header class="box-header" :class="{ visible : (model.hasLocaleFields() || canShowGettext || (model.isOpenedRow() && model.history)), '--opened' : model.isOpenedRow() }">
                 <div class="box-header__actions">
                     <div class="box-header__left">
                         <h3 class="box-header__title">
@@ -46,24 +46,7 @@
                             {{ model.getSettings('buttons.show-history', trans('history.show')) }}
                         </button>
 
-                        <div class="dropdown multi-languages" data-form-language-switch v-if="hasLocaleFields && model.selectedLanguage() && languages.length > 1">
-                            <button class="btn btn-default dropdown-toggle btn-sm" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <i class="--icon-left fa fa-globe-americas"></i>
-                                <span class="text">{{ getLangName(model.selectedLanguage()) }}</span>
-                                <i class="--icon-right fa fa-angle-down"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
-                                <li
-                                    v-for="lang in languages"
-                                    v-if="model.selectedLanguage().id != lang.id"
-                                    class="--no-item-padding"
-                                    :data-slug="lang.slug">
-                                    <a href="#" class="--dropdown-item-padding" @click.prevent="changeLanguage(lang.id)">
-                                        {{ getLangName(lang) }}
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        <model-language-switch :model="model" />
 
                         <button
                             v-if="(model.isOpenedRow() || model.isOnlyFormOpened()) && !model.isInParent() && !model.isSingle()"
@@ -146,13 +129,16 @@
 </template>
 <script>
 import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
+import ModelLanguageSwitch from '@components/Partials/ModelLanguageSwitch.vue';
 
 export default {
     name : 'form-builder',
 
     props : ['model', 'rows', 'gettext_editor'],
 
-    components: { FormTabsBuilder },
+    components: {
+        FormTabsBuilder, ModelLanguageSwitch
+    },
 
     data(){
         return {
@@ -304,23 +290,6 @@ export default {
         sendButton(){
             return this.$root.getModelProperty(this.model, 'settings.buttons.insert') || this.trans('send');
         },
-        hasLocaleFields(){
-            for ( var key in this.model.fields )
-            {
-                if ( this.model.fields[key].locale == true )
-                    return true;
-
-                //If some field has localized options rows
-                var options = this.model.fields[key].options;
-                if ( (options && options[0] && typeof options[0][1] == 'object' && options[0][1] !== null) && ('language_id' in options[0][1]) == true )
-                    return true;
-            }
-
-            return false;
-        },
-        languages(){
-            return this.$root.languages;
-        },
         canShowFooter(){
             return this.canUpdateForm || this.getComponents('form-footer').length > 0;
         },
@@ -364,12 +333,6 @@ export default {
     },
 
     methods: {
-        changeLanguage(id){
-            this.model.setData('selected_language_id', id);
-        },
-        getLangName(lang){
-            return this.$root.getLangName(lang);
-        },
         getComponents(type){
             return this.$parent.getComponents(type);
         },

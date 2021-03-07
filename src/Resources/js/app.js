@@ -26,7 +26,7 @@ if ( window.Gettext ) {
 // Components
 import BaseComponent from './components/BaseComponent.js';
 import CrudAdmin from './components/Helpers/CrudAdmin.js';
-import SiteTreeBuilder from './components/Extensions/SiteTreeBuilder/Builder.vue';
+import SiteTreeBuilder from './components/Extensions/SiteTreeBuilder/SiteTreeBuilder.vue';
 import VueChosen from './components/Partials/VueChosen.vue';
 
 //Router

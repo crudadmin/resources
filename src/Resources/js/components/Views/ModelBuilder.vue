@@ -355,9 +355,6 @@
             changeLanguage(id){
                 this.$root.language_id = id;
             },
-            getLangName(lang){
-                return this.$root.getLangName(lang);
-            },
             setModelEvents(){
                 eventHub.$on('sendRow', this.sendRowEvent = (data) => {
                     this.model.emitRowData('getRow', data);

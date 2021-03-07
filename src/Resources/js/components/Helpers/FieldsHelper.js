@@ -240,6 +240,23 @@ var Fields = (Model) => {
             }
         }
     }
+
+    Model.prototype.hasLocaleFields = function(){
+        for ( var key in this.fields ) {
+            if ( this.fields[key].locale == true ) {
+                return true;
+            }
+
+            //If some field has localized options rows
+            var options = this.fields[key].options;
+
+            if ( (options && options[0] && typeof options[0][1] == 'object' && options[0][1] !== null) && ('language_id' in options[0][1]) == true ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 };
 
 export default Fields;

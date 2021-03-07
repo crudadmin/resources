@@ -21,6 +21,14 @@ var eventDataModifier = (event, data, component) => {
 
 var componentMixins = {
     methods: {
+        getLangName(lang){
+            //If language table is also translatable
+            if ( typeof lang.name == 'object' ){
+                return lang.name[Object.keys(lang.name)[0]];
+            }
+
+            return lang.name;
+        },
         generateUuid(){
             return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
                 (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
