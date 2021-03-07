@@ -2,6 +2,7 @@
     <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="model.getData('depth_level')" class="table" :class="{ 'sortable' : model.sortable && orderBy[0] == '_order', 'table-sm' : isSmallTable }">
         <thead data-table-head>
             <tr>
+                <th class="row-draggable" v-if="model.isDragEnabled()"></th>
                 <th class="select-row-checkbox" @click="toggleAllCheckboxes" v-if="hasCheckingEnabled">
                     <div class="checkbox-box" data-toggle="tooltip" :title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')">
                         <input type="checkbox" :checked="isCheckedAll">
@@ -23,6 +24,9 @@
             @start="model.onDragStart($event)"
             @end="model.onDragEnd($event, sortedRows)">
             <tr v-for="(item, key) in sortedRows" :key="item.id" :data-id="item.id" :class="{ '--active' : model.getChecked().indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
+                <td class="row-draggable" v-if="model.isDragEnabled()" @click="checkRow(item.id)">
+                    <i class="fa fa-grip-vertical"></i>
+                </td>
                 <td class="select-row-checkbox" v-if="hasCheckingEnabled" @click="checkRow(item.id)">
                     <div class="checkbox-box">
                         <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
@@ -290,7 +294,7 @@ export default {
                 return false;
             }
 
-            return _.isEqual(ids, checked);
+            return _.isEqual(_.sortBy(ids), _.sortBy(checked));
         },
         canOpenRowOnClick(){
             return this.model.getSettings('table.onclickopen', false) == true;

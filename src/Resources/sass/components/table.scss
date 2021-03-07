@@ -120,6 +120,22 @@
                         }
                     }
 
+                    .row-draggable {
+                        width: 20px;
+                        padding-right: 0;
+                        transition: color 0.2s ease-in-out;
+
+                        i {
+                            color: $inputBorderColor;
+                        }
+                    }
+
+                    tr:hover, th:hover {
+                        .row-draggable i {
+                            color: $darkText;
+                        }
+                    }
+
                     .select-row-checkbox {
                         position: relative;
                         width: 25px;
