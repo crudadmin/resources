@@ -5,6 +5,7 @@ import ModelProperties from './ModelProperties';
 import ModelData from './Model/ModelData';
 import ModelCoreHelpers from './Model/ModelCoreHelpers';
 import RowActions from './Model/RowActions';
+import FormActions from './Model/FormActions';
 import ModelBus from './Model/ModelBus';
 import ModelTableRows from './Model/ModelTableRows';
 
@@ -19,6 +20,7 @@ var extensions = [
     ModelCoreHelpers,
     ModelTableRows,
     RowActions,
+    FormActions,
     ModelBus,
 ];
 

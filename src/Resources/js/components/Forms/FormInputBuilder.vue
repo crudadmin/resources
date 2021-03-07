@@ -189,7 +189,7 @@
 
     export default {
         name: 'form-input-builder',
-        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'langid', 'inputlang', 'langslug'],
+        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'inputlang', 'langslug'],
 
         components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField },
 
@@ -221,8 +221,9 @@
                     return value||null;
                 }
 
-                if ( value && this.langslug in value )
+                if ( value && this.langslug in value ) {
                     return value[this.langslug];
+                }
 
                 return defaultValue||null;
             },
@@ -315,32 +316,7 @@
              * Apply event on changed value
              */
             changeValue(e, value, no_field){
-                //Do not update value when confirmation field has been changed
-                if ( this.isConfirmation )
-                    return;
-
-                var value = e ? e.target.value : value;
-
-                if ( this.field.type == 'checkbox' )
-                    value = e ? e.target.checked : value;
-
-                //Update specific language field
-                if ( this.hasLocale ){
-                    var obj_value = typeof this.field.value === 'object' ? this.field.value||{} : {};
-                        obj_value[this.langslug] = value;
-
-                    value = obj_value;
-                }
-
-                //Update field values
-                if ( no_field != true ) {
-                    this.field.value = value;
-                }
-
-                var data = {};
-                    data[this.field_key] = value;
-
-                this.$set(this.row, this.field_key, value);
+                return this.model.changeValueFromInput(this.field_key, e, value, no_field, this.langslug);
             },
             isMultipleField(field){
                 return field.multiple && field.multiple === true || ('belongsToMany' in field);
@@ -363,6 +339,9 @@
         },
 
         computed : {
+            langid(){
+                return this.model.getSelectedLanguageId();
+            },
             depth_level(){
                 return this.model.getData('depth_level');
             },
@@ -487,8 +466,7 @@
 
                 return false
             },
-            getValueOrDefault()
-            {
+            getValueOrDefault() {
                 //If is confirmation, then return null value every time
                 if ( this.isConfirmation ){
                     return '';

@@ -1,15 +1,14 @@
 <template>
     <!-- Horizontal Form -->
-    <component :is="formType" method="post" action="" :id="model.getFormId()" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form crudadmin-form">
+    <component ref="form" :is="formType" method="post" action="" :id="model.getFormId()" :data-form="model.slug" @submit.prevent="model.saveForm($event)" class="form crudadmin-form">
         <div class="box" :class="{ 'box--active' : isActive }">
-
             <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (model.isOpenedRow() && model.history)), '--opened' : model.isOpenedRow() }">
                 <div class="box-header__actions">
                     <div class="box-header__left">
                         <h3 class="box-header__title">
                             <i
                                 v-if="(model.isOpenedRow() || model.isOnlyFormOpened()) && model.isEnabledOnlyFormOrTableMode() && model.hasRows()"
-                                @click="closeForm"
+                                @click="model.closeForm()"
                                 class="goBackButton fa fa-chevron-left"
                                 data-toggle="tooltip"
                                 :title="__('Vrátiť sa bez uloženia')"
@@ -47,15 +46,19 @@
                             {{ model.getSettings('buttons.show-history', trans('history.show')) }}
                         </button>
 
-                        <div class="dropdown multi-languages" data-form-language-switch v-if="hasLocaleFields && selectedLanguage && languages.length > 1">
+                        <div class="dropdown multi-languages" data-form-language-switch v-if="hasLocaleFields && model.selectedLanguage() && languages.length > 1">
                             <button class="btn btn-default dropdown-toggle btn-sm" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                 <i class="--icon-left fa fa-globe-americas"></i>
-                                <span class="text">{{ getLangName(selectedLanguage) }}</span>
+                                <span class="text">{{ getLangName(model.selectedLanguage()) }}</span>
                                 <i class="--icon-right fa fa-angle-down"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
-                                <li v-for="lang in languages" v-if="selectedLanguage.id != lang.id" :data-slug="lang.slug">
-                                    <a href="#" @click.prevent="changeLanguage(lang.id)">
+                                <li
+                                    v-for="lang in languages"
+                                    v-if="model.selectedLanguage().id != lang.id"
+                                    class="--no-item-padding"
+                                    :data-slug="lang.slug">
+                                    <a href="#" class="--dropdown-item-padding" @click.prevent="changeLanguage(lang.id)">
                                         {{ getLangName(lang) }}
                                     </a>
                                 </li>
@@ -67,7 +70,7 @@
                             data-toggle="tooltip"
                             :data-close-form="model.table"
                             :title="__('Zavrieť bez uloženia')"
-                            @click="closeForm"
+                            @click="model.closeForm()"
                             type="button"
                             class="btn--icon btn btn-default btn-sm"
                         >
@@ -98,13 +101,12 @@
                 </component>
 
                 <div class="box-body-wrapper">
-                    <input v-for="(value, key) in getAdditionalFormData" type="hidden" :name="key" :value="value">
+                    <input v-for="(value, key) in model.getAdditionalFormData()" type="hidden" :name="key" :value="value">
 
                     <form-tabs-builder
                         :model="model"
                         :childs="true"
-                        :langid="langid"
-                        :inputlang="selectedLanguage"
+                        :inputlang="model.selectedLanguage()"
                         :cansave="cansave">
                     </form-tabs-builder>
                 </div>
@@ -129,8 +131,12 @@
                     :is="name">
                 </component>
                 <div class="box-footer__actions" v-if="canUpdateForm">
-                    <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]"><i class="fa updating fa-refresh"></i> {{ model.isOpenedRow() ? trans('saving') : trans('sending') }}</button>
-                    <button v-if="!progress" type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">{{ model.isOpenedRow() ? saveButton : sendButton }}</button>
+                    <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]">
+                        <i class="fa updating fa-refresh"></i> {{ model.isOpenedRow() ? trans('saving') : trans('sending') }}
+                    </button>
+                    <button v-if="!progress" type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">
+                        {{ model.isOpenedRow() ? saveButton : sendButton }}
+                    </button>
                 </div>
             </div>
 
@@ -144,7 +150,7 @@ import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
 export default {
     name : 'form-builder',
 
-    props : ['model', 'rows', 'langid', 'selectedlangid', 'gettext_editor'],
+    props : ['model', 'rows', 'gettext_editor'],
 
     components: { FormTabsBuilder },
 
@@ -153,15 +159,10 @@ export default {
             submit : false,
             isActive : true,
             cansave : true,
-            form : null,
         };
     },
 
-    mounted()
-    {
-        //Initialize form
-        this.form = $('#'+this.model.getFormId());
-
+    mounted() {
         eventHub.$on('changeFormSaveState', this.changeFormSaveStateEvent = data => {
             if ( data.model != this.model.slug )
                 return;
@@ -195,7 +196,7 @@ export default {
         //We also does not want sent empty event for single model. Because CKEditor will be buggy with content. So this event
         //can be triggered only when model is not single, or has any data.
         // if ( ! this.model.isSingle() || this.row.id ){
-            this.initForm(this.row);
+            this.model.initForm(this.row);
         // }
     },
 
@@ -214,7 +215,7 @@ export default {
                 //Init new form after change row
                 if ( !row || !oldRow || row.id != oldRow.id || this.model.getData('history').history_id )
                 {
-                    this.initForm(row, canResetForm);
+                    this.model.initForm(row, canResetForm);
 
                     this.model.sendRowData();
                 }
@@ -223,7 +224,7 @@ export default {
         },
         //On change language reset editing form
         // langid(langid){
-        //   this.model.resetForm();
+        //   this.model.resetFormWithEvents();
         // },
     },
 
@@ -320,16 +321,6 @@ export default {
         languages(){
             return this.$root.languages;
         },
-        selectedLanguage(){
-            if ( ! this.selectedlangid )
-                return this.languages[0];
-
-            for ( var key in this.languages )
-                if ( this.languages[key].id == this.selectedlangid )
-                    return this.languages[key];
-
-            return this.languages[0];
-        },
         canShowFooter(){
             return this.canUpdateForm || this.getComponents('form-footer').length > 0;
         },
@@ -370,55 +361,11 @@ export default {
 
             return false;
         },
-        getAdditionalFormData(){
-            //Data for request
-            var data = {
-                _model : this.model.slug,
-            };
-
-            //Check if form belongs to other form
-            if ( this.model.foreign_column != null && this.$parent.parentrow ) {
-                data[this.model.foreign_column[this.model.getParentTableName()]] = this.$parent.parentrow.id;
-            }
-
-            if ( this.model.global_relation && this.$parent.parentrow && this.model.getParentTableName(true) ) {
-                data['_table'] = this.model.getParentTableName(true);
-                data['_row_id'] = this.$parent.parentrow.id;
-            }
-
-            //If is updating, then add row ID
-            if ( this.getFormAction == 'update' )
-            {
-                data['_id'] = this.row.id;
-                data['_method'] = 'put';
-            } else {
-                //Check if is enabled language
-                if ( this.langid ) {
-                    data['language_id'] = this.langid;
-                }
-
-                //Push saved childs without actual parent row
-                if ( this.hasParentModel() && this.$parent.rows.save_children.length > 0 ) {
-                    data['_save_children'] = JSON.stringify(this.$parent.rows.save_children);
-                }
-            }
-
-            //If we need mutate keys of additional form data
-            var mutatedData = {};
-            for ( var key in data ) {
-                mutatedData[this.model.formPrefix()+key] = data[key];
-            }
-
-            return mutatedData;
-        },
-        getFormAction(){
-            return ! this.model.isOpenedRow() ? 'store' : 'update';
-        }
     },
 
     methods: {
         changeLanguage(id){
-            this.$parent.selected_language_id = id;
+            this.model.setData('selected_language_id', id);
         },
         getLangName(lang){
             return this.$root.getLangName(lang);
@@ -426,469 +373,8 @@ export default {
         getComponents(type){
             return this.$parent.getComponents(type);
         },
-        resetForm(){
-            this.$parent.resetForm();
-        },
         openNewForm(){
             this.$parent.addNewRow();
-        },
-        closeForm(){
-            this.$parent.closeForm();
-
-            if ( this.model.isOpenedRow() ){
-                this.resetForm();
-            }
-        },
-        //Resets form values and errors
-        initForm(row, reset){
-            var is_row = row && 'id' in row;
-
-            //Resets document values of elements
-            //can be reseted just when is changed row for other, or inserting new row
-            if ( reset !== false )
-            {
-                for ( var key in this.model.fields )
-                {
-                    this.$set(this.model.fields[key], 'value', null);
-                }
-            }
-
-            this.resetErrors();
-
-            if ( ! is_row ) {
-                this.$parent.resetForm();
-            }
-
-            //Checks if form can be editable
-            if ( is_row && this.model.canAddRow() && (this.model.editable == false && this.model.displayable != true) && this.model.hasChilds() == 0 ) {
-                this.$parent.resetForm();
-                return;
-            }
-
-            for ( var key in this.model.fields )
-            {
-                if ( ! is_row || this.model.fields[key].value != row[key] || reset )
-                {
-                    //Value can not be undefined, because of model change events.
-                    //If value will be undefined, full rows table will be realoaded (bug)
-                    var value = is_row ? row[key] : null,
-                        value = value === undefined ? null : value;
-
-                    //Set value and default value of field from database
-                    this.model.fields[key].value = value;
-                    this.model.fields[key].$original_value = value;
-
-                    eventHub.$emit('updateField', this.buildEventData({
-                        key : key,
-                        field : this.model.fields[key]
-                    }));
-                }
-            }
-
-            //Set box color
-            if ( !is_row ) {
-                this.isActive = true;
-
-                if ( this.hasParentModel() )
-                    this.model.closeHistory();
-            } else {
-                this.isActive = row.published_at == null;
-            }
-        },
-        resetErrors(){
-            this.form.find('.form-group.has-error').firstLevelForm(this.form[0]).removeClass('has-error').find('.help-block').remove();
-            this.form.find('.far.fa-times-circle').firstLevelForm(this.form[0]).remove();
-            this.form.find('.multi-languages .has-error').firstLevelForm(this.form[0]).removeClass('has-error');
-            this.removeActiveTab(this.form.find('.nav-tabs li[has-error]').firstLevelForm(this.form[0]));
-            this.model.setData('progress', false);
-
-            if ( this.form._errorElements ){
-                for ( var i = 0; i < this.form._errorElements.length; i++ ){
-                    this.form._errorElements[i].remove();
-                }
-
-                this.form._errorElements = [];
-            }
-        },
-        sendForm(e, action, callback)
-        {
-            //Disable send already sent form
-            if ( this.submit == true )
-                return;
-
-            //Resets ckeditor values for correct value
-            if (typeof CKEDITOR!='undefined'){
-                for (var key in CKEDITOR.instances){
-                    CKEDITOR.instances[key].updateElement();
-                }
-            }
-
-            this.resetErrors();
-
-            this.model.setData('progress', true);
-
-            $(e.target).ajaxSubmit({
-
-                url : this.$root.requests[action],
-
-                success : data => {
-
-                    this.submit = true;
-                    this.model.setData('progress', false);
-
-                    //Error occured
-                    if ( $.type(data) != 'object' || ! ('type' in data) )
-                        return this.unknownAjaxErrorResponse();
-
-                    //Fix for resubmiting form after closing with enter
-                    setTimeout(() => {
-                        this.$root.openAlert(data.title, data.message, data.type, null, () => {
-
-                            //Timeout for sending new request with enter
-                            setTimeout(() => {
-                                this.submit = false;
-                            }, 500);
-
-                        });
-                    }, 100);
-
-                    callback( data );
-                },
-
-                error : response => {
-                    this.resetErrors();
-
-                    // Wrong validation
-                    this.$root.errorResponseLayer( response, 422, () => {
-                        var obj = response.responseJSON,
-                            errors = [];
-
-                        //Laravel 5.5+ provides validation errors in errors object.
-                        if ( 'errors' in obj && !('length' in obj.errors) )
-                            obj = obj.errors;
-
-                        for ( var key in obj )
-                        {
-                            //One or multiple errors
-                            errors = typeof obj[key] == 'string' ? [ obj[key] ] : obj[key];
-
-                            //Display errors
-                            this.bindErrorMessages(key, errors);
-                        }
-                    })
-                }
-            });
-        },
-        unknownAjaxErrorResponse(){
-            this.$root.errorAlert(() => {
-
-                this.model.setData('progress', false);
-
-                //Timeout for sending new request with enter
-                setTimeout(() => {
-                    this.submit = false;
-                }, 500);
-
-            });
-        },
-        bindErrorMessages(key, errors){
-            var keys = [],
-                parts = key.split('.');
-
-            if ( parts.length == 1 || parts.length == 2 && parts[1] == 0 ){
-                parts = [parts[0]];
-                key = parts[0];
-
-                keys.push(key);
-                parts.push(0);
-            }
-
-            parts = parts.map((item, i) => {
-                if ( i == 0 )
-                    return item;
-
-                return '['+item+']';
-            });
-
-            keys.push(parts.join(''));
-
-            //Add multiple field support to each key prefix
-            for ( var i = 0; i < keys.length; i++ ) {
-                if ( keys[i].substr(-2) != '[]' ) {
-                    keys.push(keys[i]+'[]');
-                }
-            }
-
-            for ( var i = 0; i < errors.length; i++ )
-            {
-                _.uniqBy(keys).map(key => {
-                    this.form.find('input[name="'+key+'"], select[name="'+key+'"], textarea[name="'+key+'"]')
-                             .firstLevelForm(this.form[0])
-                             .each(this.showErrorMessage(errors[i], i));
-                });
-            }
-        },
-        showErrorMessage(message, i){
-            var component = this;
-
-            return function(){
-                var where = $(this);
-
-                //Colorize tabs
-                component.colorizeTab($(this));
-
-                component.colorizeLangDropdown($(this));
-
-                if ( $(this).is('select') ){
-                    where = where.parent().parent().children().last().prev();
-                }
-
-                else if ( $(this).is('textarea') ){
-                    where = where.parent().children().last().prev();
-                }
-
-                else if ( $(this).is('input:checkbox') ){
-                    where = where.next();
-                }
-
-                else if ( $(this).is('input:radio') || $(this).parent().hasClass('label-wrapper') ){
-                    where = where.parent().parent().parent();
-
-                    if ( where.find('.help-block').length == 0 )
-                        where = where.children().last().prev();
-                    else
-                        where = null;
-                }
-
-                else if ( $(this).parent().hasClass('input-group') ) {
-                    where = $(this).parent();
-                }
-
-                //Where should be placed error messageblock
-                if ( where ) {
-                    where.after( '<span class="help-block">'+message+'</span>' );
-
-                    component.addErrorElement(where.next());
-                }
-
-                //On first error
-                if ( i == 0 ){
-                    var label = $(this).closest('div.form-group').addClass('has-error').find('> label');
-
-                    if ( label.find('.fa-times-circle').length == 0 ) {
-                        label.prepend('<i class="far fa-times-circle"></i> ');
-                    }
-                }
-            };
-        },
-        addErrorElement(element){
-            if ( !this.form._errorElements ){
-                this.form._errorElements = [];
-            }
-
-            this.form._errorElements.push(element);
-        },
-        buildEventData(data, model, isChild){
-            var model = model||this.model;
-
-            return {
-                table : model.slug,
-                model : model,
-
-                //If is child inParent relation, then add depth level + 1 for correct communication
-                depth_level : this.model.getData('depth_level') + (isChild ? 1 : 0),
-                ...data
-            };
-        },
-        saveForm(e) {
-            //We does not want to trigger inparent model
-            if ( this.model.isInParent() )
-                return;
-
-            //Devide if is updating or creating form
-            var action = this.getFormAction;
-
-            this.sendForm(e, action, response => {
-                if ( ! response.data )
-                    return false;
-
-                //Push new row
-                if ( action == 'store' ) {
-                    for ( var key in response.data ) {
-                        var clonedRow = _.cloneDeep(response.data[key].rows[0]),
-                            isParentRow = response.data[key].model == this.model.table,
-                            model = this.$root.models[response.data[key].model];
-
-                        //Reset actual items buffer
-                        if ( isParentRow && this.hasParentModel() ) {
-                            this.saveParentChilds(response.data[key].rows);
-                        }
-
-                        var
-                            //We need push actual model, for access to field.options property
-                            eventModel = isParentRow ? this.model : model,
-                            eventData = this.buildEventData({
-                                row : clonedRow,
-                                request : response.data[key]
-                            }, eventModel, !isParentRow);
-
-                        //Bind values for input builder
-                        eventHub.$emit('onSubmit', eventData);
-
-                        //Send notification about new row
-                        eventHub.$emit('onCreate', eventData);
-
-                        if ( isParentRow ) {
-                            //If form has disabled autoreseting
-                            var autoreset = this.$root.getModelProperty(this.model, 'settings.autoreset');
-
-                            //Reseting form after new row
-                            if ( !this.model.isSingle() && autoreset !== false) {
-                                this.initForm(this.model.emptyRowInstance());
-
-                                //After creation of new row, we want close adding
-                                this.closeForm();
-                            }
-
-                            //If is disabled autoreseting form, then select inserted row
-                            else {
-                                this.model.setRow(clonedRow);
-
-                                this.model.scrollToForm();
-                            }
-                        }
-                    }
-                }
-
-                //Update existing row
-                else if ( action == 'update' ) {
-                    var rows = response.data.rows;
-
-                    //Update all updated models. Parent and also child data...
-                    for ( var table in rows ) {
-                        var clonedRow = _.cloneDeep(rows[table]),
-                            isParentRow = table == this.model.table,
-                            model = this.$root.models[table];
-
-                        var eventData = this.buildEventData({
-                            row : clonedRow,
-                            request : rows[table]
-                        }, model, !isParentRow);
-
-                        //Bind values for input builder
-                        eventHub.$emit('onSubmit', eventData);
-
-                        //Send notification about updated row
-                        eventHub.$emit('onUpdate', eventData);
-                    }
-                }
-
-                //Add or update select options
-                if ( this.model.hasParentFormModel() !== true ) {
-                    var incomingRow = action == 'store' ? response.data[0].rows[0] : response.data.rows[this.model.table];
-
-                    this.$parent.$parent.pushOption(incomingRow, action);
-                }
-            });
-
-        },
-        removeActiveTab(tab, all){
-            var removeFrom = tab.filter(function(){
-                return all === true || ! $(this).hasClass('model-tab');
-            });
-
-            removeFrom.removeAttr('data-toggle')
-                      .removeAttr('data-original-title')
-                      .removeAttr('has-error')
-                      .tooltip("dispose")
-                      .find('a > .fa.fa-exclamation-triangle')
-                      .remove();
-        },
-        colorizeTab(input){
-            var _this = this;
-
-            input.parents('.tab-pane').each(function(){
-                var getActiveTab = (panel) => {
-                    var li = panel.parent().prev().find('li'),
-                        id = panel.attr('id')||panel.attr('data-tab-id'),
-                        tab;
-
-                    //This is support for custom tabs
-                    //If tab has gived ID, then find this tab in a element with same hashtag as tab id
-                    if ( id ) {
-                        tab = li.parent().add($('ul.nav.nav-tabs')).find('> li > a[href="#'+id+'"]');
-                    }
-
-                    //Return tab by id, if those tabs are custom
-                    if ( tab && tab.length > 0 )
-                        return tab.parent();
-
-                    return li.eq(panel.index());
-                };
-
-                //On button click, remove tabs alerts in actual tree, if tab has no more recursive errors
-                $(this).one('click', function(){
-                    if ( $(this).find('.nav-tabs-custom:not(.default) li[has-error]').length == 0 ) {
-                        _this.removeActiveTab(getActiveTab($(this)), true);
-                    }
-                });
-
-                getActiveTab($(this)).each(function(){
-                    if ( $(this).hasClass('has-error') )
-                        return;
-
-                    $(this).attr('data-toggle', 'tooltip').attr('data-original-title', _this.trans('tab-error')).attr('has-error', '').one('click', function(){
-                        var active = $(this).parents('.nav-tabs-custom').find('> .nav-tabs > li.active[has-error]').not($(this).parent().find('> li'));
-
-                        _this.removeActiveTab($([this].concat(active.toArray())), true);
-                    }).find('a').prepend('<i class="nav-link--icon-left fa fa-exclamation-triangle"></i>');
-                })
-            });
-        },
-        colorizeLangDropdown(input){
-            var field_wrapper = input.parents('.field-wrapper'),
-                field_key = field_wrapper.attr('data-field'),
-                field_lang = field_wrapper.attr('data-lang'),
-                field_model = field_wrapper.attr('data-model');
-
-            if ( ! field_key )
-                return;
-
-            var model = this.$root.models[field_model],
-                field = model.fields[field_key];
-
-            if ( field.locale != true || field_lang == this.selectedLanguage.slug )
-                return;
-
-            var dropdown = this.form.find('.multi-languages .dropdown-toggle');
-
-            dropdown.addClass('has-error');
-            dropdown.next().find('li[data-slug="'+field_lang+'"]').addClass('has-error');
-
-            if ( field_lang == this.languages[0].slug )
-                this.$root.openAlert(this.trans('warning'), this.trans('lang-error'), 'warning');
-        },
-        hasParentModel(){
-            return this.$parent.$options.name == 'model-builder';
-        },
-        saveParentChilds(rows){
-            this.$parent.rows.save_children = [];
-
-            //If actual row has no parent, and need to ba saved when parent will be saved
-            if ( this.model.isWithoutParentRow() ) {
-                var parent = this.$parent.$parent;
-
-                while(!('rows' in parent))
-                    parent = parent.$parent;
-
-                for ( var i = 0; i < rows.length; i++ )
-                {
-                    parent.rows.save_children.push({
-                        table : this.model.slug,
-                        id : rows[i].id,
-                    });
-                }
-            }
         },
         openGettextEditor(){
             this.$parent.gettext_editor = this.row;

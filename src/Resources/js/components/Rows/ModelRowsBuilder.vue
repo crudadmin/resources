@@ -169,8 +169,9 @@ export default {
          * When row is added, then push it into table
          */
         eventHub.$on('onCreate', this.onCreateEvent = data => {
-            if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') )
+            if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') ) {
                 return;
+            }
 
             var array = data.request,
                 pages = Math.ceil(this.rows.count / this.pagination.limit);
@@ -351,7 +352,7 @@ export default {
             return this.model.getData('enabled_columns');
         },
         langid(){
-            return this.model.getData('langid');
+            return this.model.getSelectedLanguageId();
         },
         row(){
             return this.model.getRow();
@@ -500,7 +501,7 @@ export default {
             //We need allow reload position 1 also when max pages are 0 (when zero rows)
             if (
                 position == 0
-                || (this.rows.count > 0 && position > Math.ceil(this.rows.count/this.pagination.limit))
+                || (this.rows.count > 0 && (position - 1) > Math.ceil(this.rows.count/this.pagination.limit))
             ) {
                 return;
             }
@@ -525,8 +526,12 @@ export default {
 
             this.model.removeRow(ids, (response, requestData) => {
                 //Remove row from options
-                if ( this.model.hasParentFormModel() !== true ){
-                    this.$parent.$parent.pushOption(requestData.id, 'delete');
+                if ( this.model.hasParentFormModel() !== true && this.model.getData('parentField') ){
+                    this.model.getParentModel().pushOption(
+                        this.model.getData('parentField'),
+                        requestData.id,
+                        'delete'
+                    );
                 }
 
                 //After remove reset checkbox

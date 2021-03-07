@@ -97,8 +97,6 @@
                         <form-builder
                             :rows="rows"
                             :model="model"
-                            :langid="selected_language_id ? selected_language_id : langid"
-                            :selectedlangid="selected_language_id ? selected_language_id : langid"
                             :gettext_editor="gettext_editor"
                         ></form-builder>
                     </div>
@@ -109,7 +107,6 @@
                         <model-rows-builder
                             :model="model"
                             :rows="rows"
-                            :langid="selected_language_id ? selected_language_id : langid"
                             :gettext_editor="gettext_editor">
                         </model-rows-builder>
                     </div>
@@ -151,7 +148,7 @@
     import {defaultSearchQuery} from '../Helpers/Model/ModelData';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes'],
+        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes', 'parentField'],
 
         name : 'model-builder',
 
@@ -176,7 +173,6 @@
                 registered_components : [],
 
                 language_id : null,
-                selected_language_id : null,
 
                 gettext_editor: null,
             };
@@ -197,6 +193,7 @@
             this.model.setData('parentrow', this.parentrow);
 
             //Update parent model properties
+            this.model.setData('parentField', this.parentField);
             this.model.setData('activetab', this.activetab);
             this.model.setData('langid', this.langid);
             this.model.setData('scopes', this.scopes);
@@ -248,7 +245,7 @@
                 },
             },
             parentActiveGridSize(parentSize){
-                this.model.setData('parentActiveGridSize', value);
+                this.model.setData('parentActiveGridSize', parentSize);
 
                 this.checkParentGridSize(parentSize);
             },
@@ -498,59 +495,8 @@
                 }
 
                 this.$nextTick(() => {
-                    this.resetForm(true, true, true);
+                    this.model.resetFormWithEvents(true, true, true);
                 });
-            },
-            closeForm(){
-                this.model.setData('formOpened', false);
-            },
-            resetForm(scroll, dontResetIfNotOpened, resetActiveTab){
-                if ( ! dontResetIfNotOpened || this.model.isOpenedRow() ) {
-                    //We do not want reset object is is already empty instance
-                    //Because if component receives getParentRow, and then will be rewrited row observer
-                    //Changes in this component wont be interactive
-                    if ( ! _.isEqual(this.model.getRow(), this.model.emptyRowInstance()) ) {
-                        this.model.resetForm();
-                    }
-                }
-
-                if ( scroll === true ) {
-                    this.scrollTo('#'+this.model.getFormId());
-
-                    this.pulseForm();
-                }
-
-                if ( resetActiveTab === true ) {
-                    eventHub.$emit('changeActiveTab', {
-                        table : this.model.table,
-                        depth_level : this.model.getData('depth_level'),
-                        activetab : 0,
-                    });
-                }
-            },
-            pulseForm(){
-                //If is not full grid, then animate form
-                if ( this.model.activeGridSize() == 0 && this.model.canShowRows() && this.model.getData('depth_level') == 0 ) {
-                    return;
-                }
-
-                //Only table/form mode enabled
-                if ( this.model.isEnabledOnlyFormOrTableMode() === true ){
-                    return false;
-                }
-
-                var form = $('#'+this.model.getFormId());
-
-                form.addClass('animated shake');
-
-                if ( this.formPusling )
-                    return;
-
-                this.formPusling = setTimeout(() => {
-                    form.removeClass('animated shake');
-
-                    this.formPusling = null;
-                }, 1000);
             },
         },
 

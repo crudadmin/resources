@@ -27,7 +27,6 @@
                             v-if="hasTabs(tab.fields)"
                             :tabs="tabsFields(tab.fields)"
                             :model="model"
-                            :langid="langid"
                             :inputlang="inputlang">
                         </form-tabs-builder>
 
@@ -35,7 +34,7 @@
                             dusk="model-builder"
                             :data-model="getModel(tab.model).table"
                             v-if="isModel(tab)"
-                            :langid="langid"
+                            :langid="model.getSelectedLanguageId()"
                             :ischild="true"
                             :model_builder="getModel(tab.model)"
                             :activetab="isLoadedModel(getModel(tab.model), $index)"
@@ -50,7 +49,6 @@
                         v-if="isGroup(item) && !isTab(item)"
                         :group="item"
                         :model="model"
-                        :langid="langid"
                         :inputlang="inputlang">
                     </form-group>
                 </div>
@@ -67,7 +65,7 @@ import ModelHelper from '../Helpers/ModelHelper.js';
 export default {
     name : 'form-tabs-builder',
 
-    props : ['model', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave'],
+    props : ['model', 'group', 'tabs', 'childs', 'inputlang', 'cansave'],
 
     components : { FormGroup },
 

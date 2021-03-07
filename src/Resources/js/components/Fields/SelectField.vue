@@ -45,6 +45,7 @@
                             v-if="allowRelation"
                             :key="modelBuilderId"
                             :langid="langid"
+                            :parentField="field_key"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"
                             :scopes="canAddScopes"
@@ -198,21 +199,10 @@
                 };
             },
             getFilterBy(){
-                if ( !('filterBy' in this.field) )
-                    return null;
-
-                var filterBy = this.field.filterBy.split(','),
-                    column;
-
-                //Get column of relation field
-                this.model.fields[column = filterBy[0]+'_id']||this.model.fields[column = filterBy[0]]
-
-                filterBy[0] = column;
-
-                return filterBy;
+                return this.model.getFilterBy(this.field_key);
             },
             isMultiple(){
-                return this.field.multiple && this.field.multiple === true || ('belongsToMany' in this.field);
+                return this.model.isFieldMultiple(this.field_key);
             },
             fieldOptions(){
                 if ( typeof this.field.options != 'object' )
@@ -436,58 +426,6 @@
                     filter[this.getFilterBy[1]] = this.isStaticFilterColumn ? this.getStaticFilterBy : this.filterBy;
 
                 return filter;
-            },
-            pushOption(row, action){
-                //Store or update option field
-                if ( action == 'store' )
-                {
-                    var filterBy = this.getFilterBy;
-
-                    //Add relation into added row
-                    if ( filterBy && this.row[filterBy[0]] )
-                        row[filterBy[1]] = this.row[filterBy[0]];
-
-                    //Push added option into array
-                    this.field.options.unshift([row.id, row]);
-
-                    //Set multiple values or one value
-                    if ( this.isMultiple ){
-                        if ( ! this.field.value )
-                            this.field.value = [row.id];
-                        else
-                            this.field.value.push(row.id);
-
-                        this.changeValue(null, this.field.value, false);
-                    } else {
-                        this.changeValue(null, row.id);
-                    }
-                } else if ( action == 'update' ) {
-                    for ( var i = 0; i < this.field.options.length; i++ )
-                        if ( this.field.options[i][0] == row.id ){
-                            for ( var key in row )
-                                this.field.options[i][1][key] = row[key];
-                        }
-                } else if ( action == 'delete' ) {
-                    //Remove value also from field values
-                    if ( this.isMultiple ){
-                        if ( $.isArray(this.field.value) ){
-                            this.field.value.splice(this.field.value.indexOf(row), 1);
-
-                            this.changeValue(null, this.field.value, false);
-                        }
-                    } else if ( this.field.value == row ) {
-                        this.changeValue(null, null);
-                    }
-
-                    //Remove deleted field from options
-                    for ( var key in this.field.options ){
-                        if ( this.field.options[key][0] == row ){
-                            this.field.options.splice(key, 1)
-
-                            break;
-                        }
-                    }
-                }
             },
             /*
              * If field has setters, then check for change of changer field

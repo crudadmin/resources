@@ -44,6 +44,12 @@ var ModelData = (Model, rawModel) => {
             //Is model dragged right now?
             draggind : false,
 
+            //Selected form language
+            selected_language_id : null,
+
+            //Assigned form into model
+            form : null,
+
             //Active tab of parent model
             activetab : null,
 
@@ -64,6 +70,9 @@ var ModelData = (Model, rawModel) => {
 
             //Is model sending row?
             progress : false,
+
+            //If model has been booted in field
+            parentField : null,
 
             //Loaded model options
             modelOptions : {},

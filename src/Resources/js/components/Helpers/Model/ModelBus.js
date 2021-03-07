@@ -15,6 +15,19 @@ var ModelBus = (Model) => {
         });
     };
 
+    Model.prototype.buildEventData = function(data, model, isChild){
+        var model = model||this;
+
+        return {
+            table : model.slug,
+            model : model,
+
+            //If is child inParent relation, then add depth level + 1 for correct communication
+            depth_level : this.getData('depth_level') + (isChild ? 1 : 0),
+            ...data
+        };
+    }
+
     /*
      * Send all avaiable row events
      */

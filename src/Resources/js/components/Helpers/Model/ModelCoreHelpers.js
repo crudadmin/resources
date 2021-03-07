@@ -1,8 +1,4 @@
 var ModelCoreHelpers = (Model) => {
-    Model.prototype.getFormId = function(){
-        return 'form-' + this.getData('depth_level') + '-' + this.slug;
-    }
-
     Model.prototype.hasParentFormModel = function(){
         let hasparentmodel = this.getData('hasparentmodel');
 

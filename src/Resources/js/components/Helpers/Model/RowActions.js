@@ -7,7 +7,7 @@ const enableDragging = function(model){
     $('[data-toggle="tooltip"]').tooltip('enable');
 };
 
-var Fields = (Model) => {
+var RowActions = (Model) => {
     Model.prototype.isReservedRow = function(id){
         //check multiple input
         if ( typeof id === 'object' && id.length && this.reserved ) {
@@ -53,30 +53,32 @@ var Fields = (Model) => {
                 var response = await $app.$http.post($app.requests.delete, requestData),
                     data = response.data;
 
+                let modelRows = this.data.rows;
+
                 if ( data && 'type' in data && data.type == 'error' ) {
                     return $app.openAlert(data.title, data.message, 'danger');
                 }
 
                 //Load rows into array
-                if ( ! this.isWithoutParentRow() ){
-                    this.updateRowsData(data.data.rows.rows);
-                    this.data.rows.count = data.data.rows.count;
-
-                    this.data.pagination.position = data.data.rows.page;
-                } else {
+                if ( this.isWithoutParentRow() ){
                     //Remove row
                     var remove = [];
 
-                    for ( var key in this.data.rows.data ) {
-                        if ( ids.indexOf(this.data.rows.data[key].id) > -1 ) {
+                    for ( var key in modelRows.data ) {
+                        if ( ids.indexOf(modelRows.data[key].id) > -1 ) {
                             remove.push(key);
                         }
                     }
 
                     //Remove deleted keys from rows objects. For correct working we need remove items from end to start
                     for ( var i = 0; i < remove.sort((a, b) =>  (b - a)).length; i++ ) {
-                        this.data.rows.data.splice(remove[i], 1);
+                        modelRows.data.splice(remove[i], 1);
                     }
+                } else {
+                    this.updateRowsData(data.data.rows.rows);
+                    modelRows.count = data.data.rows.count;
+
+                    this.data.pagination.position = data.data.rows.page;
                 }
 
                 if ( this.getRow() && ids.indexOf(this.getRow().id) > -1 ) {
@@ -356,4 +358,4 @@ var Fields = (Model) => {
     }
 };
 
-export default Fields;
+export default RowActions;

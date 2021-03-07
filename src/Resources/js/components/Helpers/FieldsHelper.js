@@ -118,6 +118,128 @@ var Fields = (Model) => {
 
         return false;
     }
+
+    Model.prototype.getFilterBy = function(key){
+        let field = this.fields[key];
+
+        if ( !field || !('filterBy' in field) ){
+            return null;
+        }
+
+        var filterBy = field.filterBy.split(','),
+            column;
+
+        //Get column of relation field
+        this.fields[column = filterBy[0]+'_id']||this.fields[column = filterBy[0]]
+
+        filterBy[0] = column;
+
+        return filterBy;
+    }
+
+    Model.prototype.isFieldMultiple = function(key){
+        let field = this.fields[key];
+
+        if ( field ){
+            return field.multiple && field.multiple === true || ('belongsToMany' in field);
+        }
+    }
+
+    Model.prototype.changeValueFromInput = function(field_key, e, value, no_field, langslug){
+        let field = this.fields[field_key];
+
+        //Do not update value when confirmation field has been changed
+        if ( field.confirmation ){
+            return;
+        }
+
+        var value = e ? e.target.value : value;
+
+        if ( field.type == 'checkbox' ) {
+            value = e ? e.target.checked : value;
+        }
+
+        //Update specific language field
+        if ( 'locale' in field ){
+            var obj_value = typeof field.value === 'object' ? field.value||{} : {};
+
+            $app.$set(obj_value, langslug, value);
+
+            value = obj_value;
+        }
+
+        //Update field values
+        if ( no_field != true ) {
+            field.value = value;
+        }
+
+        var data = {};
+            data[field_key] = value;
+
+        $app.$set(this.getRow(), field_key, value);
+    }
+
+    Model.prototype.pushOption = function(field_key, row, action){
+        let field = this.fields[field_key],
+            modelRow = this.getRow();
+
+        if ( !field || field.type !== 'select' ){
+            return;
+        }
+
+        //Store or update option field
+        if ( action == 'store' ) {
+            var filterBy = this.getFilterBy(field_key);
+
+            //Add relation into added row
+            if ( filterBy && modelRow[filterBy[0]] ) {
+                row[filterBy[1]] = modelRow[filterBy[0]];
+            }
+
+            //Push added option into array
+            field.options.unshift([row.id, row]);
+
+            //Set multiple values or one value
+            if ( this.isFieldMultiple(field_key) ){
+                if ( ! field.value ) {
+                    field.value = [row.id];
+                } else {
+                    field.value.push(row.id);
+                }
+
+                this.changeValueFromInput(field_key, null, field.value, false);
+            } else {
+                this.changeValueFromInput(field_key, null, row.id);
+            }
+        } else if ( action == 'update' ) {
+            for ( var i = 0; i < field.options.length; i++ )
+                if ( field.options[i][0] == row.id ){
+                    for ( var key in row ) {
+                        field.options[i][1][key] = row[key];
+                    }
+                }
+        } else if ( action == 'delete' ) {
+            //Remove value also from field values
+            if ( this.isFieldMultiple(field_key) ){
+                if ( $.isArray(field.value) ){
+                    field.value.splice(field.value.indexOf(row), 1);
+
+                    this.changeValueFromInput(field_key, null, field.value, false);
+                }
+            } else if ( field.value == row ) {
+                this.changeValueFromInput(field_key, null, null);
+            }
+
+            //Remove deleted field from options
+            for ( var key in field.options ){
+                if ( field.options[key][0] == row ){
+                    field.options.splice(key, 1)
+
+                    break;
+                }
+            }
+        }
+    }
 };
 
 export default Fields;

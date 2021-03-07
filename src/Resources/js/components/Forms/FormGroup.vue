@@ -31,7 +31,6 @@
                                 v-show="canShowLanguageField(model.fields[item], langslug, inputlang)"
                                 :key="item+'-'+langslug"
                                 :model="model"
-                                :langid="langid"
                                 :inputlang="inputlang"
                                 :langslug="langslug"
                                 :index="index"
@@ -60,7 +59,7 @@ import FormInputBuilder from './FormInputBuilder.vue';
 export default {
     name : 'form-group',
 
-    props : ['model', 'group', 'langid', 'inputlang'],
+    props : ['model', 'group', 'inputlang'],
 
     components : { FormInputBuilder, FormTabsBuilder },
 
