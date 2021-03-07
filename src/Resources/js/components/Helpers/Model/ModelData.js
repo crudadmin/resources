@@ -35,6 +35,9 @@ var ModelData = (Model, rawModel) => {
             //Is form opened?
             formOpened: false,
 
+            //Is row loading? Opening row state.
+            loadingRow: false,
+
             //Order/sorting in table
             orderBy : null,
 

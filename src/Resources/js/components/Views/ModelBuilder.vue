@@ -95,9 +95,7 @@
                     <!-- left column -->
                     <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()" v-if="activetab!==false">
                         <form-builder
-                            :formID="formID"
                             :rows="rows"
-                            :history="history"
                             :model="model"
                             :langid="selected_language_id ? selected_language_id : langid"
                             :selectedlangid="selected_language_id ? selected_language_id : langid"
@@ -112,8 +110,7 @@
                             :model="model"
                             :rows="rows"
                             :langid="selected_language_id ? selected_language_id : langid"
-                            :gettext_editor="gettext_editor"
-                            :history="history">
+                            :gettext_editor="gettext_editor">
                         </model-rows-builder>
                     </div>
                     <!--/.col (right) -->
@@ -131,9 +128,8 @@
         </component>
 
         <history
-            v-if="history.id"
-            :model="model"
-            :history="history">
+            v-if="model.getData('history').id"
+            :model="model">
         </history>
         <gettext-extension
             v-if="gettext_editor"
@@ -176,11 +172,6 @@
                  * Loaded rows from db
                  */
                 rows : this.model_builder.getData('rows'),
-
-                /*
-                 * History for selected row
-                 */
-                history : this.model_builder.getData('history'),
 
                 registered_components : [],
 
@@ -388,24 +379,6 @@
                 eventHub.$off('sendRowEvent', this.sendRowEvent);
                 eventHub.$off('sendParentRow', this.sendParentRowEvent);
             },
-            showHistory(row){
-                this.$http.get( this.$root.requests.get('getHistory', {
-                    model : this.model.slug,
-                    id : row.id,
-                }))
-                .then(function(response){
-                    var data = response.data;
-
-                    if ( data.length <= 1 )
-                        return this.$root.openAlert(this.trans('info'), this.trans('no-changes'), 'warning');
-
-                    this.history.id = row.id;
-                    this.history.rows = data;
-                })
-                .catch(function(response){
-                    this.$root.errorResponseLayer(response);
-                });
-            },
             getComponents(type){
                 return this.layouts.filter(item => {
                     if ( this.registered_components.indexOf(item.name) === -1 && !Vue.options.components[item.component_name] ) {
@@ -516,19 +489,6 @@
                 //Show or hide languages menu
                 this.$root.languages_active = languages_active ? true : false;
             },
-            /*
-             * Close history rows
-             */
-            closeHistory(with_fields){
-                this.history.id = null;
-                this.history.rows = [];
-
-                if ( ! with_fields )
-                {
-                    this.history.fields = [];
-                    this.history.history_id = null;
-                }
-            },
             newRowTitle(){
                 return this.model.getSettings('buttons.create', this.trans('new-row'));
             },
@@ -555,7 +515,7 @@
                 }
 
                 if ( scroll === true ) {
-                    this.scrollTo('#'+this.formID);
+                    this.scrollTo('#'+this.model.getFormId());
 
                     this.pulseForm();
                 }
@@ -579,7 +539,7 @@
                     return false;
                 }
 
-                var form = $('#'+this.formID);
+                var form = $('#'+this.model.getFormId());
 
                 form.addClass('animated shake');
 
@@ -634,9 +594,6 @@
             },
             isActiveLanguageSwitch(){
                 return this.$root.languages_active == true ? 1 : 0;
-            },
-            formID(){
-                return 'form-' + this.model.getData('depth_level') + '-' + this.model.slug;
             },
             /*
              * Return if acutal model can be added without parent row, and if parent row is not selected

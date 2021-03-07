@@ -6,7 +6,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">{{ trans('history.changes') }}</h4>
-                        <button type="button" class="close" @click="closeHistory" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" @click="model.closeHistory(true)" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
@@ -45,7 +45,7 @@
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" @click="closeHistory" class="btn btn-primary">{{ trans('close') }}</button>
+                        <button type="button" @click="model.closeHistory(true)" class="btn btn-primary">{{ trans('close') }}</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -58,9 +58,12 @@
 
 <script>
 export default {
-    props : ['history', 'model'],
+    props : ['model'],
 
     computed: {
+        history(){
+            return this.getData('history');
+        },
         sortedHistory(){
             return _.orderBy(this.history.rows, 'id', 'desc');
         }
@@ -107,9 +110,6 @@ export default {
         },
         date(date){
             return moment(date).format('D.M.Y H:mm');
-        },
-        closeHistory(){
-            this.$parent.closeHistory(true);
         },
         changedFields(items){
             var changes = [];

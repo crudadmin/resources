@@ -1,6 +1,6 @@
 <template>
     <!-- Horizontal Form -->
-    <component :is="formType" method="post" action="" :id="formID" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form crudadmin-form">
+    <component :is="formType" method="post" action="" :id="model.getFormId()" :data-form="model.slug" v-on:submit.prevent="saveForm" class="form crudadmin-form">
         <div class="box" :class="{ 'box--active' : isActive }">
 
             <div data-header class="box-header" :class="{ visible : (hasLocaleFields || canShowGettext || (model.isOpenedRow() && model.history)), '--opened' : model.isOpenedRow() }">
@@ -42,7 +42,7 @@
                         <button v-if="model.isOpenedRow() && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
                             {{ trans('gettext-open') }}
                         </button>
-                        <button v-if="model.isOpenedRow() && model.history && model.isSingle()" type="button" @click="showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
+                        <button v-if="model.isOpenedRow() && model.history && model.isSingle()" type="button" @click="model.showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
                             <i class="fa fa-history"></i>
                             {{ model.getSettings('buttons.show-history', trans('history.show')) }}
                         </button>
@@ -105,8 +105,7 @@
                         :childs="true"
                         :langid="langid"
                         :inputlang="selectedLanguage"
-                        :cansave="cansave"
-                        :history="history">
+                        :cansave="cansave">
                     </form-tabs-builder>
                 </div>
 
@@ -145,7 +144,7 @@ import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
 export default {
     name : 'form-builder',
 
-    props : ['formID', 'model', 'rows', 'langid', 'history', 'selectedlangid', 'gettext_editor'],
+    props : ['model', 'rows', 'langid', 'selectedlangid', 'gettext_editor'],
 
     components: { FormTabsBuilder },
 
@@ -161,7 +160,7 @@ export default {
     mounted()
     {
         //Initialize form
-        this.form = $('#'+this.formID);
+        this.form = $('#'+this.model.getFormId());
 
         eventHub.$on('changeFormSaveState', this.changeFormSaveStateEvent = data => {
             if ( data.model != this.model.slug )
@@ -213,7 +212,7 @@ export default {
                 var canResetForm = !this.model.isOpenedRow() || ! oldRow || row.id != oldRow.id;
 
                 //Init new form after change row
-                if ( !row || !oldRow || row.id != oldRow.id || this.history.history_id )
+                if ( !row || !oldRow || row.id != oldRow.id || this.model.getData('history').history_id )
                 {
                     this.initForm(row, canResetForm);
 
@@ -336,7 +335,7 @@ export default {
         },
         canUpdateForm(){
             //We cant save form in history row is opened
-            if ( this.history.history_id ){
+            if ( this.model.getData('history').history_id ){
                 return false;
             }
 
@@ -424,9 +423,6 @@ export default {
         getLangName(lang){
             return this.$root.getLangName(lang);
         },
-        showHistory(row){
-            this.$parent.showHistory(row);
-        },
         getComponents(type){
             return this.$parent.getComponents(type);
         },
@@ -494,7 +490,7 @@ export default {
                 this.isActive = true;
 
                 if ( this.hasParentModel() )
-                    this.$parent.closeHistory();
+                    this.model.closeHistory();
             } else {
                 this.isActive = row.published_at == null;
             }
@@ -704,8 +700,7 @@ export default {
                 ...data
             };
         },
-        saveForm(e)
-        {
+        saveForm(e) {
             //We does not want to trigger inparent model
             if ( this.model.isInParent() )
                 return;
@@ -759,7 +754,7 @@ export default {
                             else {
                                 this.model.setRow(clonedRow);
 
-                                this.scrollToForm();
+                                this.model.scrollToForm();
                             }
                         }
                     }
@@ -872,11 +867,6 @@ export default {
 
             if ( field_lang == this.languages[0].slug )
                 this.$root.openAlert(this.trans('warning'), this.trans('lang-error'), 'warning');
-        },
-        scrollToForm(){
-            setTimeout(() => {
-                this.scrollTo('#'+this.formID);
-            }, this.$root.isTest ? 0 : 500);
         },
         hasParentModel(){
             return this.$parent.$options.name == 'model-builder';

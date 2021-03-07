@@ -11,8 +11,7 @@
                     <div v-if="hasTabs(group.fields)" class="col-lg-12 tab--parent">
                         <form-tabs-builder
                             :tabs="tabsFields"
-                            :model="model"
-                            :history="history">
+                            :model="model">
                         </form-tabs-builder>
                     </div>
 
@@ -31,7 +30,6 @@
                                 v-for="langslug in getFieldLangs(model.fields[item])"
                                 v-show="canShowLanguageField(model.fields[item], langslug, inputlang)"
                                 :key="item+'-'+langslug"
-                                :history="history"
                                 :model="model"
                                 :langid="langid"
                                 :inputlang="inputlang"
@@ -46,8 +44,7 @@
                             v-if="isGroup(item) && !isTab(item)"
                             :group="item"
                             :model="model"
-                            :inputlang="inputlang"
-                            :history="history">
+                            :inputlang="inputlang">
                         </form-group>
                     </fragment>
                 </div>
@@ -63,7 +60,7 @@ import FormInputBuilder from './FormInputBuilder.vue';
 export default {
     name : 'form-group',
 
-    props : ['model', 'history', 'group', 'langid', 'inputlang'],
+    props : ['model', 'group', 'langid', 'inputlang'],
 
     components : { FormInputBuilder, FormTabsBuilder },
 

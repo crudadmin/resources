@@ -84,7 +84,6 @@
                 :pagination="pagination"
                 :buttons="rows.buttons"
                 :count="rows.count"
-                :history="history"
                 :gettext_editor.sync="gettext_editor"
                 :rows="rows"
                 :button_loading="button_loading">
@@ -129,7 +128,7 @@ import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
 
 export default {
-    props : ['model', 'rows', 'history', 'gettext_editor', 'activetab'],
+    props : ['model', 'rows', 'gettext_editor', 'activetab'],
 
     components : { Refreshing, TableRows, Pagination },
 
@@ -222,12 +221,12 @@ export default {
                 }
 
                 for ( var k in row ) {
-                    this.$parent.rows.data[key][k] = row[k];
+                    this.model.getData('rows').data[key][k] = row[k];
                 }
             }
 
             //Reset history on update row
-            this.$parent.closeHistory();
+            this.model.closeHistory();
 
             //Reload rows on row update event
             if ( this.model.getSettings('reloadOnUpdate') == true ) {

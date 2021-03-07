@@ -123,7 +123,10 @@
                     .select-row-checkbox {
                         position: relative;
                         width: 25px;
-                        padding-right: 0;
+
+                        & + th, & + td {
+                            padding-left: 0;
+                        }
 
                         .checkbox-box {
                             display: block;

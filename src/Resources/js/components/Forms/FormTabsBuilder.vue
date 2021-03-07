@@ -28,8 +28,7 @@
                             :tabs="tabsFields(tab.fields)"
                             :model="model"
                             :langid="langid"
-                            :inputlang="inputlang"
-                            :history="history">
+                            :inputlang="inputlang">
                         </form-tabs-builder>
 
                         <model-builder
@@ -52,8 +51,7 @@
                         :group="item"
                         :model="model"
                         :langid="langid"
-                        :inputlang="inputlang"
-                        :history="history">
+                        :inputlang="inputlang">
                     </form-group>
                 </div>
             </div>
@@ -69,7 +67,7 @@ import ModelHelper from '../Helpers/ModelHelper.js';
 export default {
     name : 'form-tabs-builder',
 
-    props : ['model', 'history', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave'],
+    props : ['model', 'group', 'tabs', 'childs', 'langid', 'inputlang', 'cansave'],
 
     components : { FormGroup },
 

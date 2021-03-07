@@ -138,7 +138,6 @@
         <form-input-builder
             v-if="field.confirmed == true && !isConfirmation"
             :model="model"
-            :history="history"
             :field="field"
             :index="index"
             :field_key="field_key + '_confirmation'"
@@ -190,7 +189,7 @@
 
     export default {
         name: 'form-input-builder',
-        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'history', 'langid', 'inputlang', 'langslug'],
+        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'langid', 'inputlang', 'langslug'],
 
         components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField },
 
@@ -366,6 +365,9 @@
         computed : {
             depth_level(){
                 return this.model.getData('depth_level');
+            },
+            history(){
+                return this.model.getData('history');
             },
             row(){
                 return this.model.getRow();

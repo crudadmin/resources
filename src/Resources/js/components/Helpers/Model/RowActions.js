@@ -114,6 +114,132 @@ var Fields = (Model) => {
         );
     }
 
+    Model.prototype.scrollToForm = function(){
+        //Allow scroll form only on full width table
+        if ( this.activeGridSize() != 0 && $app.isMobileDevice() == false ){
+            return;
+        }
+
+        setTimeout(() => {
+            var form = $('#'+this.getFormId()),
+                modalWrapper = form.parents('.modal[role="dialog"]:visible');
+
+            //If form is in canAdd feature, in modal.. then we want scroll modal and not whole window
+            (modalWrapper.length ? modalWrapper : $('html, body')).animate({
+                scrollTop: form.offset().top - 10
+            }, $app.isTest ? 0 : 500);
+        }, 25);
+    }
+
+    Model.prototype.showHistory = async function(row){
+        try {
+            let response = await $app.$http.get($app.requests.get('getHistory', {
+                model : this.slug,
+                id : row.id,
+            }))
+
+            var data = response.data;
+
+            if ( data.length <= 1 ) {
+                return $app.openAlert($app.trans('info'), $app.trans('no-changes'), 'warning');
+            }
+
+            this.getData('history').id = row.id;
+            this.getData('history').rows = data;
+        } catch (response){
+            $app.errorResponseLayer(response);
+        }
+    };
+
+    /*
+     * Close history rows
+     */
+    Model.prototype.closeHistory = function(with_fields){
+        let history = this.getData('history');
+
+        history.id = null;
+        history.rows = [];
+
+        if ( ! with_fields ) {
+            history.fields = [];
+            history.history_id = null;
+        }
+    };
+
+    Model.prototype.selectRow = async function(row, data, model, history_id, model_row){
+        //If is selected same row
+        if ( this.isOpenedRow() && this.getRow().id == row.id && !history_id ) {
+            return;
+        }
+
+        //Recieve just messages between form and rows in one model component
+        if (model && this.slug != model) {
+            return;
+        }
+
+        //Resets form
+        if ( row === true && data === null ) {
+            return this.setRow(null);
+        }
+
+        var render = response => {
+            for ( var key in response ){
+                row[key] = response[key];
+            }
+
+            //Bind model data
+            this.setRow(_.cloneDeep(row, true));
+
+            //Fix for single model with history support
+            if ( model_row ){
+                for ( var key in model_row ) {
+                    $app.$set(model_row, key, row[key]);
+                }
+            }
+
+            this.closeHistory(history_id ? true : false);
+
+            //When form will be fully loaded, we want turn off loader and scroll into this form.
+            //This is better for heavy and big forms, which may be laggy in scrolling... So first we need wait
+            //and then scroll. Much more smoother animation...
+            $app.$nextTick(() => {
+                setTimeout(() => {
+                    this.setData('loadingRow', false);
+
+                    this.scrollToForm();
+                }, 100);
+            });
+        };
+
+        this.setData('loadingRow', row.id);
+
+        if ( data ) {
+            render(data);
+        } else {
+            try {
+                let response = await $app.$http.get($app.requests.get('show', {
+                    model : this.slug,
+                    id : row.id,
+                    subid : history_id
+                }));
+
+                var data = response.data;
+
+
+                //Select history row
+                if ( history_id ){
+                    this.getData('history').data = response.data;
+
+                    data = data.row;
+                }
+
+                render(data);
+            } catch (response){
+                $app.errorResponseLayer(response);
+            }
+        }
+    }
+
     Model.prototype.canUnpublishRow = function(id){
         return this.publishable && this.hasAccess('publishable');
     }

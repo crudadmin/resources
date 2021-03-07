@@ -23,14 +23,14 @@
             @start="model.onDragStart($event)"
             @end="model.onDragEnd($event, sortedRows)">
             <tr v-for="(item, key) in sortedRows" :key="item.id" :data-id="item.id" :class="{ '--active' : model.getChecked().indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
-                <td class="select-row-checkbox" v-if="hasCheckingEnabled">
-                    <div class="checkbox-box" @click="checkRow(item.id)">
+                <td class="select-row-checkbox" v-if="hasCheckingEnabled" @click="checkRow(item.id)">
+                    <div class="checkbox-box">
                         <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
                         <span class="checkmark"></span>
                     </div>
                 </td>
 
-                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="checkRow(item.id, field, item)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
+                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
                     <table-row-value
                         :settings="getCachableColumnsSettings(field)"
                         :columns="columns"
@@ -44,11 +44,11 @@
 
                 <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
                     <div class="buttons-options__item" v-if="isEditable || isDisplayable">
-                        <button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && isEditable ? trans('edit') : trans('show')">
+                        <button data-button="edit" :data-id="item.id" type="button" @click="model.selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && isEditable ? trans('edit') : trans('show')">
                             <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == item.id, 'far fa-edit' : loadingRow != item.id }"></i>
                         </button>
                     </div>
-                    <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
+                    <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="model.showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowInfo" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
                     <div class="buttons-options__item" v-for="(button, button_key) in getButtonsForRow(item)">
@@ -74,7 +74,7 @@ import PublishButton from '../Partials/PublishButton.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'history', 'button_loading', 'pagination'],
+    props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'button_loading', 'pagination'],
 
     components: { TableRowValue, PublishButton, draggable },
 
@@ -83,7 +83,6 @@ export default {
             enabled_columns : {},
             hidden: ['language_id', '_order', 'slug', 'published_at', 'updated_at', 'created_at'],
             autoSize : false,
-            loadingRow : null,
         };
     },
 
@@ -106,7 +105,7 @@ export default {
             if ( this.model.slug != data.table )
                 return;
 
-            this.selectRow({ id : data.row_id }, null, null, data.history_id, data.row);
+            this.model.selectRow({ id : data.row_id }, null, null, data.history_id, data.row);
         });
     },
 
@@ -121,6 +120,12 @@ export default {
     },
 
     computed: {
+        loadingRow(){
+            return this.model.getData('loadingRow');
+        },
+        history(){
+            return this.model.getData('history');
+        },
         sortedRows(){
             return this.model.getRows();
         },
@@ -132,10 +137,6 @@ export default {
         },
         hasCheckingEnabled(){
             if ( this.model.getSettings('checking', true) === false ){
-                return false;
-            }
-
-            if ( this.canOpenRowOnClick == true ){
                 return false;
             }
 
@@ -278,9 +279,6 @@ export default {
 
             return false;
         },
-        formID(){
-            return 'form-' + this.model.getData('depth_level') + '-' + this.model.slug;
-        },
         availableButtons(){
             return this.$parent.availableButtons;
         },
@@ -380,7 +378,7 @@ export default {
         },
         checkRow(id, field, row){
             if ( row && this.canOpenRowOnClick && (this.isEditable || this.isDisplayable) ) {
-                this.selectRow(row);
+                this.model.selectRow(row);
 
                 return;
             }
@@ -550,78 +548,27 @@ export default {
         openGettextEditor(item){
             this.$parent.$parent.gettext_editor = item;
         },
-        showHistory(row){
-            this.$parent.$parent.showHistory(row);
-        },
-        selectRow(row, data, model, history_id, model_row){
-            //If is selected same row
-            if ( this.model.isOpenedRow() && this.model.getRow().id == row.id && !history_id ) {
+        selectRowFromTable(event, row, fieldKey){
+            let field = this.model.fields[fieldKey];
+
+            //If table has disabled clicks for opening rows
+            if ( this.model.getSettings('table.clickable', true) === false ){
                 return;
             }
 
-            //Recieve just messages between form and rows in one model component
-            if (model && this.model.slug != model) {
+            //If user click on link or button, we does not want to open row
+            for ( var i = 0; i < event.path.length; i++ ){
+                if ( ['A', 'BUTTON'].indexOf(event.path[i].tagName) > -1 ){
+                    return;
+                }
+            }
+
+            //If column has disabled opening row on click
+            if ( this.model.getSettings('columns.'+fieldKey+'.clickable', true) == false ){
                 return;
             }
 
-            //Resets form
-            if ( row === true && data === null ) {
-                return this.model.setRow(null);
-            }
-
-            var render = response => {
-                for ( var key in response ){
-                    row[key] = response[key];
-                }
-                //Bind model data
-                this.model.setRow(_.cloneDeep(row, true));
-
-                //Fix for single model with history support
-                if ( model_row ){
-                    for ( var key in model_row ) {
-                        this.$set(model_row, key, row[key]);
-                    }
-                }
-
-                this.$parent.$parent.closeHistory(history_id ? true : false);
-
-                //When form will be fully loaded, we want turn off loader and scroll into this form.
-                //This is better for heavy and big forms, which may be laggy in scrolling... So first we need wait
-                //and then scroll. Much more smoother animation...
-                this.$nextTick(() => {
-                    setTimeout(() => {
-                        this.loadingRow = false;
-
-                        this.scrollToForm();
-                    }, 100);
-                });
-            };
-
-            this.loadingRow = row.id;
-
-            if ( data ) {
-                render(data);
-            } else {
-                this.$http.get(this.$root.requests.get('show', {
-                    model : this.model.slug,
-                    id : row.id,
-                    subid : history_id
-                }))
-                .then(function(response){
-                    var data = response.data;
-
-                    if ( history_id ){
-                        this.$parent.$parent.history.data = response.data;
-
-                        data = data.row;
-                    }
-
-                    render(data);
-                })
-                .catch(function(response){
-                    this.$root.errorResponseLayer(response);
-                });
-            }
+            this.model.selectRow(row);
         },
         removeRow(row){
             this.$parent.removeRow(row);
@@ -646,22 +593,6 @@ export default {
 
             return k;
         },
-        scrollToForm(){
-            //Allow scroll form only on full width table
-            if ( this.model.activeGridSize() != 0 && this.isMobileDevice() == false ){
-                return;
-            }
-
-            setTimeout(() => {
-                var form = $('#' + this.formID),
-                    modalWrapper = form.parents('.modal[role="dialog"]:visible');
-
-                //If form is in canAdd feature, in modal.. then we want scroll modal and not whole window
-                (modalWrapper.length ? modalWrapper : $('html, body')).animate({
-                    scrollTop: form.offset().top - 10
-                }, this.$root.isTest ? 0 : 500);
-            }, 25);
-        }
     },
 }
 </script>
