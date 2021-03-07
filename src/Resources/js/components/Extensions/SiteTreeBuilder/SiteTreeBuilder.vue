@@ -4,8 +4,8 @@
         <div class="box-header box-header--actions">
             <div class="box-header__left">
                 <div>
-                    <h1 class="box-header__title">Header with actions</h1>
-                    <p class="box-header__description">This is header with icons on right side</p>
+                    <h1 class="box-header__title">{{ model.name }}</h1>
+                    <p class="box-header__description" v-if="model.title">{{ model.title }}</p>
                 </div>
             </div>
 

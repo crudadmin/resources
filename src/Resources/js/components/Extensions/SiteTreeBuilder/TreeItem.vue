@@ -40,6 +40,10 @@
             <button class="btn btn-primary" @click="saveItem" v-if="!row.id">{{ _('Pridať') }}</button>
         </div>
         <div class="sitetree__item__actions">
+            <a class="btn btn-sm" target="_blank" :href="selectedLink" v-if="selectedLink">
+                <i class="fa fa-link"></i>
+            </a>
+
             <button
                 class="btn btn-sm btn-primary"
                 @click="showSubTree = !showSubTree"
@@ -130,6 +134,19 @@ export default {
     },
 
     computed: {
+        selectedLink(){
+            if ( this.isGroup || !this.row.type || !this.row.row_id || !this.models[this.row.type] ){
+                return;
+            }
+
+            let row = _.find(this.models[this.row.type].rows, { id : this.row.row_id })
+
+            if ( !row ){
+                return;
+            }
+
+            return row._url;
+        },
         rowValues(){
             return [
                 JSON.stringify(this.row.name),
@@ -297,7 +314,7 @@ export default {
         &__actions {
             display: flex;
 
-            > button:not(:last-child) {
+            > .btn:not(:last-child) {
                 margin-right: 5px;
             }
         }
