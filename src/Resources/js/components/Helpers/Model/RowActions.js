@@ -146,6 +146,14 @@ var Fields = (Model) => {
         }
     };
 
+    Model.prototype.isDragEnabled = function(){
+        if ( $app.isMobileDevice() ){
+            return false;
+        }
+
+        return this.sortable == true;
+    }
+
     Model.prototype.onDragStart = function(dragged){
         //Destroy table reload rows timeout
         this.disableRowsRefreshing();
@@ -157,6 +165,15 @@ var Fields = (Model) => {
 
         //Disable all tooltips
         $('[data-toggle="tooltip"]').tooltip('disable');
+    }
+
+    Model.prototype.getDragOptions = function(){
+        return {
+            animation: 200,
+            group: this.table,
+            disabled: false,
+            ghostClass: 'ghost'
+        };
     }
 
     Model.prototype.onDragEnd = async function(dragged, list){

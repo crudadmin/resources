@@ -125,6 +125,45 @@ const fullSizeByColumns = () => {
     return 5;
 }
 
+const isNumericValue = (model, key) => {
+    if ( ['id', '_order'].indexOf( key ) > -1)
+        return true;
+
+    if ( key in model.fields && ['integer', 'decimal', 'checkbox'].indexOf(model.fields[key].type) > -1 ) {
+        return true;
+    }
+
+    if ( model.getSettings('columns.'+key+'.type') == 'integer' ) {
+        return true;
+    }
+
+    return false;
+}
+
+const isDateValue = (model, key) => {
+    if ( ['created_at', 'published_at', 'updated_at'].indexOf(key) > -1) {
+        return true;
+    }
+
+    if ( key in model.fields && ['date', 'datetime'].indexOf( model.fields[key].type ) > -1 ) {
+        return true;
+    }
+
+    return false;
+}
+
+const isLocaleValue = (model, key) => {
+    if ( key in model.fields && model.fields[key].locale ){
+        return true;
+    }
+
+    return false;
+}
+
+const getEncodedValue = (value, is_decoded) => {
+    return (is_decoded ? $('<div>'+value+'</div>').text() : value) + '';
+}
+
 var ModelTableRows = (Model) => {
     /*
      * Change updated rows in db
@@ -544,6 +583,81 @@ var ModelTableRows = (Model) => {
                 $app.errorResponseLayer(response, null);
             }
         };
+    }
+
+    Model.prototype.getRows = function(){
+        var orderBy = this.getData('orderBy'),
+            field = orderBy[0],
+            is_numeric = isNumericValue(this, field),
+            is_date = isDateValue(this, field),
+            is_locale = isLocaleValue(this, field),
+            is_decoded = this.getSettings('columns.'+field+'.encode', true) !== true,
+            defaultSlug = $app.languages.length ? $app.languages[0].slug : null;
+
+        //If is date field, then receive correct date format of this field
+        if ( isDateValue(this, field) && field in this.fields ){
+            var format = $app.fromPHPFormatToMoment(this.fields[field].date_format);
+        }
+
+        return this.getData('rows').data.slice(0).sort((a, b) => {
+            //If is null value
+            if ( ! a || ! b ) {
+                return false;
+            }
+
+            let aValue = a[field],
+                bValue = b[field];
+
+            //Added support to sort localized values
+            if ( is_locale ) {
+                aValue = $app.getLocaleFieldValue(aValue, defaultSlug);
+                bValue = $app.getLocaleFieldValue(bValue, defaultSlug);
+            }
+
+            //Support for booleans
+            if ( aValue === true || aValue === false ) {
+                aValue = aValue === true ? 1 : 0;
+            }
+
+            if ( bValue === true || bValue === false ) {
+                bValue = bValue === true ? 1 : 0;
+            }
+
+            a = getEncodedValue(aValue, is_decoded),
+            b = getEncodedValue(bValue, is_decoded);
+
+            //Sorting numbers
+            if ( is_numeric ) {
+                if ( orderBy[1] == 1 ) {
+                    return b - a;
+                }
+
+                return a - b;
+            }
+
+            else if ( is_date && format ) {
+                var c = moment(a, format),
+                        d = moment(b, format);
+
+                if ( !c.isValid() || !d.isValid() ) {
+                    return 0;
+                }
+
+                if ( orderBy[1] == 1 ) {
+                    return d - c;
+                }
+
+                return c - d;
+            }
+
+            else {
+                if ( orderBy[1] == 1 ) {
+                    return b.toLowerCase().localeCompare(a.toLowerCase(), 'sk');
+                }
+
+                return a.toLowerCase().localeCompare(b.toLowerCase(), 'sk');
+            }
+        });
     }
 };
 

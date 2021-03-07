@@ -16,8 +16,13 @@
                 <th class="th-options-buttons"></th>
             </tr>
         </thead>
-        <component :is="isMobileDevice() || model.sortable == false ? 'tbody' : 'draggable'" tag="tbody" @start="model.onDragStart($event)" @end="model.onDragEnd($event, rowsdata)">
-            <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id" :class="{ '--active' : model.getChecked().indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
+        <component
+            v-bind="model.isDragEnabled() ? model.getDragOptions() : {}"
+            :is="model.isDragEnabled() ? 'draggable' : 'tbody'"
+            tag="tbody"
+            @start="model.onDragStart($event)"
+            @end="model.onDragEnd($event, sortedRows)">
+            <tr v-for="(item, key) in sortedRows" :key="item.id" :data-id="item.id" :class="{ '--active' : model.getChecked().indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
                 <td class="select-row-checkbox" v-if="hasCheckingEnabled">
                     <div class="checkbox-box" @click="checkRow(item.id)">
                         <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
@@ -69,7 +74,7 @@ import PublishButton from '../Partials/PublishButton.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'history', 'button_loading', 'pagination'],
+    props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'history', 'button_loading', 'pagination'],
 
     components: { TableRowValue, PublishButton, draggable },
 
@@ -116,6 +121,9 @@ export default {
     },
 
     computed: {
+        sortedRows(){
+            return this.model.getRows();
+        },
         row(){
             return this.model.getRow();
         },
@@ -640,7 +648,7 @@ export default {
         },
         scrollToForm(){
             //Allow scroll form only on full width table
-            if ( this.$parent.$parent.activeGridSize != 0 && this.isMobileDevice() == false ){
+            if ( this.model.activeGridSize() != 0 && this.isMobileDevice() == false ){
                 return;
             }
 
