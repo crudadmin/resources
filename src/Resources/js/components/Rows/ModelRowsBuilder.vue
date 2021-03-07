@@ -404,6 +404,10 @@ export default {
             this.model.loadRows(true, true)
         },
         getLimitFromStorage(){
+            if ( !this.model.isPaginationEnabled() ){
+                return 0;
+            }
+
             //Load pagination limit from localStorage
             var limit = this.model.isWithoutParentRow() ?
                             500
