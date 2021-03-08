@@ -186,7 +186,7 @@
             this.storeModel(this.model);
 
             //Set empty model instance
-            this.model.setRow(this.model, this.model.emptyRowInstance());
+            this.model.setRow(this.model.emptyRowInstance());
 
             //Set model properties
             this.model.setData('hasparentmodel', this.hasparentmodel);

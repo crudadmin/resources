@@ -151,7 +151,7 @@ export default {
                 }.bind(this));
 
                 tabs = [{
-                    name : this.group ? this.group.name : this.$root.getModelProperty(this.model, 'settings.title.tab', this.trans('general-tab')),
+                    name : this.group ? this.group.name : this.model.getSettings('title.tab', this.trans('general-tab')),
                     icon : this.group ? this.group.icon : this.model.icon,
                     fields : items,
                     type : 'tab',

@@ -230,7 +230,7 @@ export default {
             if ( this.model.isOpenedRow() )
             {
                 //If update title has not been set
-                if ( !(title = this.$root.getModelProperty(this.model, 'settings.title.update')) ) {
+                if ( !(title = this.model.getSettings('title.update')) ) {
                     if ( this.model.editable ) {
                         return this.trans('edit-row-n')+' ' + this.row.id;
                     } else {
@@ -273,8 +273,8 @@ export default {
 
             //Insert title
             else if (
-                (title = this.$root.getModelProperty(this.model, 'settings.title.insert'))
-                || (title = this.$root.getModelProperty(this.model, 'settings.title.create'))
+                (title = this.model.getSettings('title.insert'))
+                || (title = this.model.getSettings('title.create'))
             ) {
                 return title;
             }
@@ -285,10 +285,10 @@ export default {
             return this.$parent.newRowTitle();
         },
         saveButton(){
-            return this.$root.getModelProperty(this.model, 'settings.buttons.update') || this.trans('save');
+            return this.model.getSettings('buttons.update') || this.trans('save');
         },
         sendButton(){
-            return this.$root.getModelProperty(this.model, 'settings.buttons.insert') || this.trans('send');
+            return this.model.getSettings('buttons.insert') || this.trans('send');
         },
         canShowFooter(){
             return this.canUpdateForm || this.getComponents('form-footer').length > 0;
@@ -301,7 +301,7 @@ export default {
 
             if (
                 this.model.isOpenedRow() && (
-                    this.$root.getModelProperty(this.model, 'settings.editable') == false
+                    this.model.getSettings('editable') == false
                     || this.model.editable == false
                 )
             ) {
