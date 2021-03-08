@@ -553,6 +553,11 @@ export default {
             this.$parent.$parent.gettext_editor = item;
         },
         selectRowFromTable(event, row, fieldKey){
+            //if table cannot be opened
+            if ( !(this.isEditable || this.isDisplayable) ){
+                return;
+            }
+
             let field = this.model.fields[fieldKey];
 
             //If table has disabled clicks for opening rows

@@ -362,7 +362,7 @@
 
                 eventHub.$on('sendParentRow', this.sendParentRowEvent = (data) => {
                     //Skip child components
-                    if ( !data || this.model.getData('depth_level') > data.getData('depth_level') ) {
+                    if ( !data || this.model.getData('depth_level') > data.depth_level ) {
                         return;
                     }
 
