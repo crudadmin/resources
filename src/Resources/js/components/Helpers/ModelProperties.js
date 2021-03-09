@@ -76,6 +76,36 @@ var ModelProperties = (Model) => {
         return this.getModelProperty('settings.'+key, value);
     }
 
+    Model.prototype.isSettingEnabled = function(key, defaultState){
+        let enabled = this.getSettings(key+'.enabled'),
+            disabled = this.getSettings(key+'.disabled');
+
+        if ( !_.isNil(enabled) ){
+            return enabled === true;
+        }
+
+        if ( !_.isNil(disabled) ){
+            return disabled === false;
+        }
+
+        return _.isNil(defaultState) ? true : defaultState;
+    }
+
+    Model.prototype.isSettingDisabled = function(key, defaultState){
+        let enabled = this.getSettings(key+'.enabled'),
+            disabled = this.getSettings(key+'.disabled');
+
+        if ( !_.isNil(enabled) ){
+            return enabled === false;
+        }
+
+        if ( !_.isNil(disabled) ){
+            return disabled === true;
+        }
+
+        return _.isNil(defaultState) ? false : defaultState;
+    }
+
     Model.prototype.fieldName = function(key){
         if ( key in this.fields ) {
             return (

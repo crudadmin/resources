@@ -18,25 +18,11 @@
                             {{ title }}
                         </h3>
 
-                        <component
-                            v-for="name in getComponents('form-header-left')"
-                            :key="name"
-                            :model="model"
-                            :row="row"
-                            :rows="rows.data"
-                            :is="name">
-                        </component>
+                        <custom-components :model="model" type="form-header-left" />
                     </div>
 
                     <div class="box-header__right">
-                        <component
-                            v-for="name in getComponents('form-header-right')"
-                            :key="name"
-                            :model="model"
-                            :row="row"
-                            :rows="rows.data"
-                            :is="name">
-                        </component>
+                        <custom-components :model="model" type="form-header-right" />
 
                         <button v-if="model.isOpenedRow() && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
                             {{ trans('gettext-open') }}
@@ -63,25 +49,11 @@
                     </div>
                 </div>
 
-                <component
-                    v-for="name in getComponents('form-header')"
-                    :key="name"
-                    :model="model"
-                    :row="row"
-                    :rows="rows.data"
-                    :is="name">
-                </component>
+                <custom-components :model="model" type="form-header" />
             </div>
 
             <div class="box-body box-body--form" :class="{ cantadd : !cansave }">
-                <component
-                    v-for="name in getComponents('form-top')"
-                    :key="name"
-                    :model="model"
-                    :row="row"
-                    :rows="rows.data"
-                    :is="name">
-                </component>
+                <custom-components :model="model" type="form-top" />
 
                 <div class="box-body-wrapper">
                     <input v-for="(value, key) in model.getAdditionalFormData()" type="hidden" :name="key" :value="value">
@@ -94,25 +66,12 @@
                     </form-tabs-builder>
                 </div>
 
-                <component
-                    v-for="name in getComponents('form-bottom')"
-                    :key="name"
-                    :model="model"
-                    :row="row"
-                    :rows="rows.data"
-                    :is="name">
-                </component>
+                <custom-components :model="model" type="form-bottom" />
             </div>
 
             <div :data-footer="model.table" class="box-footer" v-if="canShowFooter">
-                <component
-                    v-for="name in getComponents('form-footer')"
-                    :key="name"
-                    :model="model"
-                    :row="row"
-                    :rows="rows.data"
-                    :is="name">
-                </component>
+                <custom-components :model="model" type="form-footer" />
+
                 <div class="box-footer__actions" v-if="canUpdateForm">
                     <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]">
                         <i class="fa updating fa-refresh"></i> {{ model.isOpenedRow() ? trans('saving') : trans('sending') }}
@@ -130,6 +89,7 @@
 <script>
 import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
 import ModelLanguageSwitch from '@components/Partials/ModelLanguageSwitch.vue';
+import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
     name : 'form-builder',
@@ -137,7 +97,7 @@ export default {
     props : ['model', 'rows', 'gettext_editor'],
 
     components: {
-        FormTabsBuilder, ModelLanguageSwitch
+        FormTabsBuilder, ModelLanguageSwitch, CustomComponents
     },
 
     data(){
@@ -291,7 +251,7 @@ export default {
             return this.model.getSettings('buttons.insert') || this.trans('send');
         },
         canShowFooter(){
-            return this.canUpdateForm || this.getComponents('form-footer').length > 0;
+            return this.canUpdateForm || this.model.getComponents('form-footer').length > 0;
         },
         canUpdateForm(){
             //We cant save form in history row is opened
@@ -333,9 +293,6 @@ export default {
     },
 
     methods: {
-        getComponents(type){
-            return this.$parent.getComponents(type);
-        },
         openNewForm(){
             this.$parent.addNewRow();
         },

@@ -1,14 +1,7 @@
 <template>
     <div>
         <!-- Additional top layouts -->
-        <component
-            v-for="name in getComponents('top')"
-            :key="name"
-            :model="model"
-            :row="row"
-            :rows="rows.data"
-            :is="name">
-        </component>
+        <custom-components :model="model" type="top" />
 
         <div class="alert alert-danger" v-if="languages.length == 0 && isLocaleModel">
             <strong>{{ trans('warning') }}!</strong>
@@ -30,12 +23,11 @@
                 </div>
 
                 <div class="right" v-if="!model.isSingle()">
-                    <div class="searchbar__wrapper" :class="{ '--hasMoreButton' : search.used }">
+                    <div class="searchbar__wrapper" :class="{ '--hasMoreButton' : search.used }" v-show="canShowSearchBar">
                         <div class="searchbar__wrapper__queries">
                             <search
                                 v-for="(query, $index) in search.queries"
                                 :key="$index"
-                                v-show="canShowSearchBar"
                                 :search="query"
                                 :model="model"
                             ></search>
@@ -94,35 +86,37 @@
                 <div class="row grid-table" :class="{ 'grid-fullsize' : model.activeGridSize() == 0 }">
                     <!-- left column -->
                     <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()" v-if="activetab!==false">
+                        <custom-components :model="model" type="form-before" />
+
                         <form-builder
                             :rows="rows"
                             :model="model"
                             :gettext_editor="gettext_editor"
                         ></form-builder>
+
+                        <custom-components :model="model" type="form-after" />
                     </div>
                     <!--/.col (left) -->
 
                     <!-- right column -->
                     <div class="col--rows col-12" :class="['col-lg-'+(12-(12-model.activeGridSize())), { '--noMargin' : !model.canShowForm() }]" v-show="model.canShowRows()">
+                        <custom-components :model="model" type="table-before" />
+
                         <model-rows-builder
+                            v-show="model.isSettingEnabled('table', true)"
                             :model="model"
                             :rows="rows"
                             :gettext_editor="gettext_editor">
                         </model-rows-builder>
+
+                        <custom-components :model="model" type="table-after" />
                     </div>
                     <!--/.col (right) -->
                 </div>
             </div>
         </div>
 
-        <component
-            v-for="name in getComponents('bottom')"
-            :key="name"
-            :model="model"
-            :row="row"
-            :rows="rows.data"
-            :is="name">
-        </component>
+        <custom-components :model="model" type="bottom" />
 
         <history
             v-if="model.getData('history').id"
@@ -146,31 +140,30 @@
     import ModelHelper from '../Helpers/ModelHelper.js';
     import { mapMutations } from 'vuex';
     import {defaultSearchQuery} from '../Helpers/Model/ModelData';
+    import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
     export default {
         props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes', 'parentField'],
 
         name : 'model-builder',
 
-        components : { FormBuilder, ModelRowsBuilder, GettextExtension, Search, History },
+        components : { FormBuilder, ModelRowsBuilder, CustomComponents, GettextExtension, Search, History },
 
         data(){
             return {
                 model : this.model_builder,
 
                 sizes : this.model_builder.setData('sizes', [
-                    { size : 4, key : 'small', name : this.trans('grid-small'), active : false, disabled : this.model_builder.getSettings('grid.small.disabled', false) },
-                    { size : 8, key : 'big', name : this.trans('grid-big'), active : false, disabled : this.model_builder.getSettings('grid.big.disabled', false) },
-                    { size : 6, key : 'medium', name : this.trans('grid-medium'), active : false, disabled : this.model_builder.getSettings('grid.medium.disabled', false) },
-                    { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : this.model_builder.getSettings('grid.full.disabled', false) },
+                    { size : 4, key : 'small', name : this.trans('grid-small'), active : false, disabled : this.model_builder.isSettingDisabled('grid.small') },
+                    { size : 8, key : 'big', name : this.trans('grid-big'), active : false, disabled : this.model_builder.isSettingDisabled('grid.big') },
+                    { size : 6, key : 'medium', name : this.trans('grid-medium'), active : false, disabled : this.model_builder.isSettingDisabled('grid.medium') },
+                    { size : 0, key : 'full', name : this.trans('grid-full'), active : false, disabled : this.model_builder.isSettingDisabled('grid.full') },
                 ]).getData('sizes'),
 
                 /*
                  * Loaded rows from db
                  */
                 rows : this.model_builder.getData('rows'),
-
-                registered_components : [],
 
                 language_id : null,
 
@@ -288,23 +281,13 @@
                     }
                 }
             },
-            /*
-             * Register all layout components
-             */
-            layouts(layouts){
-                var Vue = this;
-
-                for ( var key in layouts )
-                {
-                    var layout = layouts[key];
-
-                    this.registerComponents(layouts);
-
-                    if ( layout.type == 'blade' ){
-                        this.$root.runInlineScripts(layout.view);
-                    }
+            isEnabledOnlyFullScreenMode(state){
+                if ( state === false ){
+                    this.model.exitFullScreenMode();
+                } else if ( state === true ) {
+                    this.model.enableOnlyFullScreen();
                 }
-            }
+            },
         },
 
         methods : {
@@ -372,59 +355,6 @@
             removeModelEvents(){
                 eventHub.$off('sendRowEvent', this.sendRowEvent);
                 eventHub.$off('sendParentRow', this.sendParentRowEvent);
-            },
-            getComponents(type){
-                return this.layouts.filter(item => {
-                    if ( this.registered_components.indexOf(item.name) === -1 && !Vue.options.components[item.component_name] ) {
-                        return false;
-                    }
-
-                    return item.position == type;
-                }).map(item => {
-                    //We want register component from custom bundle. With all other events.
-                    if ( this.isGlobalComponent(item.component_name) ){
-                        return this.componentName(this.model, item.component_name);
-                    }
-
-                    return this.getComponentName(item.name);
-                });
-            },
-            registerComponents(layouts){
-                for ( var i = 0; i < layouts.length; i++ ) {
-                    var name = layouts[i].name,
-                        data = layouts[i].view,
-                        obj;
-
-                    if ( layouts[i].type == 'vuejs' )
-                    {
-                        try {
-                            obj = this.getComponentObject(data);
-                        } catch(error){
-                            console.error('Syntax error in component ' + layouts[i].name + '.Vue' + "\n", error);
-                            continue;
-                        }
-                    }
-
-                    //Create blade component
-                    else {
-                        var data = $(data);
-                            data.find('script').remove();
-                            data.find('style').remove();
-
-                        obj = {
-                            template: '<div class="my-component" data-component="'+name+'">'+data.html()+'</div>',
-                        };
-                    }
-
-                    if ( obj ) {
-                        this.registered_components.push(name);
-
-                        Vue.component(this.getComponentName(name), obj);
-                    }
-                }
-            },
-            getComponentName(name){
-                return name + 'Layout';
             },
             /*
              * Send into parent model all actual row and data changes
@@ -498,25 +428,27 @@
         },
 
         computed: {
+            isEnabledOnlyFullScreenMode(){
+                return this.model.isEnabledOnlyFullScreenMode();
+            },
             //Row unit testing, to receive model row data
             row(){
                 return this.model.getData('row');
-            },
-            layouts(){
-                return this.model.getData('layouts');
             },
             search(){
                 return this.model.getData('search');
             },
             canShowAdminHeader(){
-                if ( this.model.getSettings('header.enabled', true) === false ){
+                if ( this.model.isSettingDisabled('header') ){
                     return false;
                 }
 
                 return (
                     //If is child, we can display header only in this cases
-                    this.ischild
-                    && !this.model.isSingle()
+                    (
+                        this.ischild
+                        && !this.model.isSingle()
+                    )
 
                     //For parent models, we can display header only if
                     || (
@@ -562,8 +494,9 @@
                     return false;
                 }
 
-                if ( this.model.getSettings('grid.enabled') === false || this.model.getSettings('grid.disabled') === true )
+                if ( this.model.isSettingDisabled('grid') ) {
                     return false;
+                }
 
                 return true;
             },
@@ -578,18 +511,16 @@
                     return false;
                 }
 
-                var searching = this.model.getSettings('search.enabled', null),
-                    minimum = 2;
-
-                //If is forced showing searchbar
-                if ( searching === true ) {
-                    return true;
-                }
-
-                else if ( searching === false ) {
+                if ( this.model.isSettingDisabled('search') ){
                     return false;
                 }
 
+                //If is forced showing searchbar
+                if ( this.model.isSettingEnabled('search') ) {
+                    return true;
+                }
+
+                var minimum = 2;
                 return this.search.used === true || (this.model.maximum==0 || this.model.maximum >= minimum) && this.rows.count >= minimum;
             },
             isSearching(){

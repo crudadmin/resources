@@ -47,6 +47,9 @@ var ModelData = (Model, rawModel) => {
             //Selected form language
             selected_language_id : null,
 
+            //Register components for given model
+            registered_components : [],
+
             //Assigned form into model
             form : null,
 

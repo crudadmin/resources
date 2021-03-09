@@ -48,11 +48,11 @@
 
                 <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
                     <div class="buttons-options__item" v-if="isEditable || isDisplayable">
-                        <button data-button="edit" :data-id="item.id" type="button" @click="model.selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && isEditable ? trans('edit') : trans('show')">
+                        <button data-button="edit" :data-id="item.id" type="button" @click="model.selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : model.isActiveRow(item), 'btn-default' : !model.isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && isEditable ? trans('edit') : trans('show')">
                             <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == item.id, 'far fa-edit' : loadingRow != item.id }"></i>
                         </button>
                     </div>
-                    <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="model.showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
+                    <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="model.showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : model.isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowInfo" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
                     <div class="buttons-options__item" v-for="(button, button_key) in getButtonsForRow(item)">
@@ -517,17 +517,6 @@ export default {
         },
         fieldName(key){
             return this.model.fieldName(key);
-        },
-        isActiveRow(row){
-            if ( !this.model.isOpenedRow() ) {
-                return false;
-            }
-
-            if ( row.id == this.model.getRow().id ) {
-                return true;
-            }
-
-            return false;
         },
         getDateByField(row, key){
             if ( key in this.model.fields )

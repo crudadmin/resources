@@ -10,14 +10,7 @@
                 </div>
 
                 <div class="box-header__right">
-                    <component
-                        v-for="name in getComponents('table-header-actions')"
-                        :key="name"
-                        :model="model"
-                        :row="row"
-                        :rows="rows.data"
-                        :is="name">
-                    </component>
+                    <custom-components :model="model" type="table-header-actions" />
 
                     <!-- Sheet download -->
                     <button
@@ -68,14 +61,7 @@
                 </div>
             </div>
 
-            <component
-                v-for="name in getComponents('table-header')"
-                :key="name"
-                :model="model"
-                :row="row"
-                :rows="rows.data"
-                :is="name">
-            </component>
+            <custom-components :model="model" type="table-header" />
         </div>
 
         <div class="box-body box-body--table" v-show="!model.isHiddenMode()">
@@ -91,15 +77,7 @@
         </div>
 
         <div class="box-footer" v-show="!model.isHiddenMode()">
-            <component
-                v-if="getComponents('table-footer').length > 0"
-                v-for="name in getComponents('table-footer')"
-                :key="name"
-                :model="model"
-                :row="row"
-                :rows="rows.data"
-                :is="name">
-            </component>
+            <custom-components :model="model" type="table-footer" />
 
             <div class="box-footer__actions">
                 <div class="box-footer__left"></div>
@@ -126,11 +104,12 @@
 import Refreshing from '../Partials/Refreshing.vue';
 import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
+import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
     props : ['model', 'rows', 'gettext_editor', 'activetab'],
 
-    components : { Refreshing, TableRows, Pagination },
+    components : { Refreshing, TableRows, Pagination, CustomComponents },
 
     data : function(){
         return {
@@ -427,9 +406,6 @@ export default {
                 if ( children.$options._componentTag == 'table-rows' )
                     children.$options.methods.resetAllowedColumns.call(children);
             }
-        },
-        getComponents(type){
-            return this.$parent.getComponents(type);
         },
         canShowColumn(column, key){
             if ( ! column.name )

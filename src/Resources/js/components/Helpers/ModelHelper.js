@@ -8,6 +8,7 @@ import RowActions from './Model/RowActions';
 import FormActions from './Model/FormActions';
 import ModelBus from './Model/ModelBus';
 import ModelTableRows from './Model/ModelTableRows';
+import ModelComponents from './Model/ModelComponents';
 
 const Model = () => {};
 
@@ -21,6 +22,7 @@ var extensions = [
     ModelTableRows,
     RowActions,
     FormActions,
+    ModelComponents,
     ModelBus,
 ];
 

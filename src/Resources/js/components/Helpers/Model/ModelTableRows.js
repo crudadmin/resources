@@ -191,7 +191,7 @@ var ModelTableRows = (Model) => {
     };
 
     Model.prototype.isPaginationEnabled = function(){
-        return this.getSettings('pagination.enabled') !== false && !this.isWithoutParentRow();
+        return this.isSettingEnabled('pagination') && !this.isWithoutParentRow();
     }
 
     Model.prototype.isEnabledAutoSync = function(){
@@ -269,7 +269,7 @@ var ModelTableRows = (Model) => {
                     rows[this.slug] = row.size;
                     rows[this.slug+'_default'] = this.getSettings('grid.default');
 
-                localStorage.sizes = JSON.stringify( rows );
+                localStorage.sizes = JSON.stringify(rows);
             }
 
             return row.active == true;
@@ -280,6 +280,18 @@ var ModelTableRows = (Model) => {
 
     Model.prototype.isEnabledOnlyFormOrTableMode = function(){
         return this.activeGridSize() === 0 && this.isInParent() !== true && this.getSettings('grid.splitmode') !== true;
+    }
+
+    Model.prototype.isActiveRow = function(row){
+        if ( !this.isOpenedRow() ) {
+            return false;
+        }
+
+        if ( row.id == this.getRow().id ) {
+            return true;
+        }
+
+        return false;
     }
 
     Model.prototype.canAddRow = function(){
@@ -305,10 +317,6 @@ var ModelTableRows = (Model) => {
     },
 
     Model.prototype.canShowRows = function(){
-        if ( this.getSettings('table.enabled', true) === false ){
-            return false;
-        }
-
         if ( this.isEnabledOnlyFormOrTableMode() === true && (this.isOpenedRow() || this.isOnlyFormOpened() === true) ){
             return false;
         }
@@ -318,8 +326,6 @@ var ModelTableRows = (Model) => {
         }
 
         if ( this.isSingle() ){
-            this.enableOnlyFullScreen();
-
             return false;
         }
 
@@ -327,10 +333,6 @@ var ModelTableRows = (Model) => {
     }
 
     Model.prototype.canShowForm = function(){
-        if ( this.getSettings('form.enabled', true) === false ){
-            return false;
-        }
-
         if ( (!this.isOpenedRow() && !this.canAddRow() || this.isOpenedRow() && (this.editable == false && this.displayable !== true)) && !this.isInParent() ) {
             return false;
         }
@@ -348,19 +350,6 @@ var ModelTableRows = (Model) => {
         return true;
     }
 
-    Model.prototype.enableOnlyFullScreen = function(){
-        let sizes = this.getData('sizes');
-
-        for ( var key in sizes ) {
-            if ( key != 3 ) {
-                sizes[key].disabled = true;
-                sizes[key].active = false;
-            }
-        }
-
-        return sizes[3].active = true;
-    }
-
     /*
      * Returns if model has next childs
      */
@@ -374,6 +363,39 @@ var ModelTableRows = (Model) => {
         return length;
     };
 
+    Model.prototype.enableOnlyFullScreen = function(){
+        let sizes = this.getData('sizes');
+
+        for ( var key in sizes ) {
+            if ( key != 3 ) {
+                //Save previous disabled value when mode switched to fullscreen
+                sizes[key].beforeOnlyFullScreenMode = sizes[key].disabled;
+
+                sizes[key].disabled = true;
+                sizes[key].active = false;
+            }
+        }
+
+        return sizes[3].active = true;
+    }
+
+    Model.prototype.exitFullScreenMode = function(){
+        let sizes = this.getData('sizes');
+
+        //We want revert disabled state before full screen mode
+        for ( var key in sizes ) {
+            if ( sizes[key].disabled === true && !_.isNil(sizes[key].beforeOnlyFullScreenMode) ) {
+                sizes[key].disabled = sizes[key].beforeOnlyFullScreenMode;
+            }
+        }
+
+        return sizes[3].active = true;
+    }
+
+    Model.prototype.isEnabledOnlyFullScreenMode = function(){
+        return !this.canShowForm() || this.isSingle();
+    }
+
     Model.prototype.checkActiveGridSize = function(columns){
         var data = getStorage(),
             defaultValue = this.getSettings('grid.default'),
@@ -385,8 +407,8 @@ var ModelTableRows = (Model) => {
             sizes[0].disabled = true;
         }
 
-        //Full screen
-        if ( ! this.canShowForm() || this.isSingle() ) {
+        //Full screen only mode
+        if ( this.isEnabledOnlyFullScreenMode() ) {
             return this.enableOnlyFullScreen();
         }
 
