@@ -248,7 +248,7 @@ export default {
             }
 
             let rows = model.rows.map(row => {
-                row.name = this.getLocaleFieldValue(row.name);
+                row.name = this.getLocaleFieldValue(row[model.column]);
 
                 return row;
             });
