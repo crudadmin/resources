@@ -15,20 +15,17 @@
         </div>
 
         <div class="box-body">
-            <draggable
-                :group="{ put : false }"
-                @start="model.onDragStart($event)"
-                @end="model.onDragEnd($event, firstLevel)"
-                v-bind="model.getDragOptions()"
-                handle=".sitetree__item__drag">
-                <TreeItem
-                    v-for="item in firstLevel"
-                    :item="item"
-                    :items="items"
-                    :key="item.id" />
-            </draggable>
+            <TreeItem
+                v-for="item in firstLevel"
+                :item="item"
+                :items="items"
+                :sortable="false"
+                :disabledTypes="firstLevelDisabledTypes"
+                :key="item.id" />
 
-            <TreeItem v-if="model.sitetree_editor" />
+            <TreeItem
+                v-if="model.sitetree_editor"
+                :disabledTypes="firstLevelDisabledTypes" />
         </div>
     </div>
 </div>
@@ -61,7 +58,10 @@ export default {
             });
 
             return items;
-        }
+        },
+        firstLevelDisabledTypes(){
+            return ['url', 'model'];
+        },
     },
 
     methods: {

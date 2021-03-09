@@ -1,37 +1,38 @@
 <template>
 <div class="sitetree__item__wrapper">
     <div class="sitetree__item">
-        <div class="sitetree__item__drag" v-if="row.id">
+        <div class="sitetree__item__drag" v-if="sortable && row.id">
             <i class="fa fa-grip-vertical"></i>
         </div>
         <div class="sitetree__item__inputs">
-            <div class="form-group" :class="{ 'has-error' : hasError('name') }">
+            <div class="form-group" :class="{ 'has-error' : hasError('name') }" data-toggle="tooltip" :title="_('Zadajte názov odkazu/sekcie')">
                 <input
                     type="text"
                     :value="rowName"
                     @keyup="updateName"
-                    :placeholder="getLocaleFieldValue(row.name)||_('Zadajte názov odkazu')"
+                    :placeholder="getLocaleFieldValue(row.name)||_('Zadajte názov odkazu/sekcie')"
                     class="form-control">
             </div>
 
-            <div class="form-group" :class="{ 'has-error' : hasError('type') }" v-if="!isGroup || model.sitetree_editor">
+            <div class="form-group" :class="{ 'has-error' : hasError('type') }" v-if="!isGroup || editorMode" data-toggle="tooltip" :title="_('Vyberte typ podstránky')">
                 <vue-chosen
                     :placeholder="_('Vyberte typ podstránky')"
-                    v-model="row.type"
+                    :value="rowType"
+                    @input="onTypeChange"
                     :options="modelsOptions"></vue-chosen>
             </div>
 
-            <div class="form-group" :class="{ 'has-error' : hasError('key') }" v-if="isGroup && model.sitetree_editor">
+            <div class="form-group" :class="{ 'has-error' : hasError('url') }" v-if="row.type == 'url'" data-toggle="tooltip" :title="_('Zadajte url adresu odkazu')">
                 <input
                     type="text"
-                    v-model="row.key"
-                    :placeholder="_('Zadajte identifikátor skupiny [a-Z|0-9]')"
+                    v-model="row.url"
+                    :placeholder="_('Zadajte url adresu odkazu')"
                     class="form-control">
             </div>
 
-            <div class="form-group" :class="{ 'has-error' : hasError('row_id') }" v-if="row.type && !isGroup">
+            <div class="form-group" :key="rowType" :class="{ 'has-error' : hasError('row_id') }" v-if="row.type == 'model'">
                 <vue-chosen
-                    :placeholder="_('Vyberte typ podstránky')"
+                    :placeholder="_('Vyberte záznam podstránky')"
                     v-model="row.row_id"
                     track-by="id"
                     label="name"
@@ -47,19 +48,30 @@
             <button
                 class="btn btn-sm btn-primary"
                 @click="showSubTree = !showSubTree"
-                v-if="row.id && isGroup"
+                v-if="row.id && isGroup && (row.insertable || nextLevel.length > 0)"
             >
                 <i class="fa" :class="{ 'fa-angle-down' : !showSubTree, 'fa-angle-up' : showSubTree }"></i>
             </button>
 
             <button
                 data-toggle="tooltip"
+                :title="_('Upraviť skupinu')"
+                class="btn btn-sm"
+                :class="{'btn-success' : model.isActiveRow(row), 'btn-default' : !model.isActiveRow(row) }"
+                v-if="isGroup && editorMode"
+                @click="model.selectRow(row)"
+            >
+                <i class="far fa-edit"></i>
+            </button>
+
+            <button
+                data-toggle="tooltip"
                 :title="_('Zámok na pridavanie do skupiny')"
                 class="btn btn-sm btn-default"
-                @click="row.group_locked = !row.group_locked"
-                v-if="isGroup && model.sitetree_editor"
+                @click="row.insertable = !row.insertable"
+                v-if="isGroup && editorMode"
             >
-                <i class="fa" :class="{ 'fa-lock' : row.group_locked, 'fa-lock-open' : !row.group_locked }"></i>
+                <i class="fa" :class="{ 'fa-lock' : !row.insertable, 'fa-lock-open' : row.insertable }"></i>
             </button>
 
             <publish-button
@@ -77,7 +89,8 @@
         </div>
     </div>
     <div class="sitetree__subtree" v-if="showSubTree">
-        <draggable
+        <component
+            :is="item.sortable ? 'draggable' : 'div'"
             :group="{ put : false }"
             @start="model.onDragStart($event)"
             @end="model.onDragEnd($event, nextLevel)"
@@ -87,12 +100,15 @@
                 v-for="subItem in nextLevel"
                 :item="subItem"
                 :parentRow="item"
+                :sortable="item.sortable"
+                :disabledTypes="item.disabled_types"
                 :items="items"
                 :key="subItem.id" />
-        </draggable>
+        </component>
 
         <TreeItem
-            v-if="isGroup && !row.group_locked"
+            v-if="isGroup && row.insertable"
+            :disabledTypes="item.disabled_types"
             :parentRow="item" />
     </div>
 </div>
@@ -108,7 +124,7 @@ import draggable from 'vuedraggable'
 export default {
     name : 'TreeItem',
 
-    props : ['item', 'parentRow', 'items'],
+    props : ['item', 'parentRow', 'items', 'sortable', 'disabledTypes'],
 
     components : { TreeItem, PublishButton, draggable },
 
@@ -125,7 +141,7 @@ export default {
     },
 
     watch: {
-        rowValues : _.debounce(function(old, n){
+        rowValuesWatcher : _.debounce(function(old, n){
             //If row does exists
             if ( this.row.id ) {
                 this.saveItem();
@@ -134,25 +150,36 @@ export default {
     },
 
     computed: {
+        rowType(){
+            if ( this.row.type == 'model' ){
+                return this.row.model;
+            } else if ( this.row.type ) {
+                return '$'+this.row.type;
+            }
+        },
         selectedLink(){
-            if ( this.isGroup || !this.row.type || !this.row.row_id || !this.models[this.row.type] ){
+            if ( this.isUrl ){
+                return this.row.url;
+            }
+
+            if ( this.isGroup || !this.row.type || !this.row.row_id || !this.models[this.row.model] ){
                 return;
             }
 
-            let row = _.find(this.models[this.row.type].rows, { id : this.row.row_id })
-
+            let row = _.find(this.models[this.row.model].rows, { id : this.row.row_id })
             if ( !row ){
                 return;
             }
 
             return row._url;
         },
-        rowValues(){
+        rowValuesWatcher(){
             return [
                 JSON.stringify(this.row.name),
-                this.row.key,
-                this.row.group_locked,
                 this.row.type,
+                this.row.model,
+                this.row.insertable,
+                this.row.url,
                 this.row.row_id,
             ].join(',');
         },
@@ -179,24 +206,42 @@ export default {
             });
         },
         isGroup(){
-            return this.row.type == '$group';
+            return this.row.type == 'group';
+        },
+        isUrl(){
+            return this.row.type == 'url';
+        },
+        editorMode(){
+            return this.model.sitetree_editor == true;
         },
         modelsOptions(){
             let data = {};
 
-            for ( var key in this.models ){
-                data[key] = this.models[key].name;
+            if ( !this.disabledTypes || this.disabledTypes.indexOf('model') == -1 ) {
+                for ( var key in this.models ){
+                    data[key] = this.models[key].name;
+                }
             }
 
-            if ( this.model.sitetree_editor ) {
-                data['$group'] = this._('Skupina');
-            }
+            this.model.fields.type.options.forEach(type => {
+                //Skip adding models
+                if ( ['model'].indexOf(type[0]) > -1 ){
+                    return;
+                }
+
+                //Skip disabled types
+                if ( this.disabledTypes && this.disabledTypes.indexOf(type[0]) > -1 ){
+                    return;
+                }
+
+                data['$'+type[0]] = type[1];
+            });
 
             return data;
         },
         selectedModelRows(){
             let data = {},
-                model = this.models[this.row.type];
+                model = this.models[this.row.model];
 
             if ( !model || model.rows.length == 0 ){
                 return {};
@@ -213,6 +258,14 @@ export default {
     },
 
     methods: {
+        onTypeChange(value){
+            if ( value.substr(0, 1) == '$' ){
+                this.row.type = value.substr(1);
+            } else {
+                this.row.type = 'model';
+                this.row.model = value;
+            }
+        },
         updateName(e){
             var value;
 
