@@ -17,12 +17,20 @@
             <div class="form-group" :class="{ 'has-error' : hasError('type') }" v-if="!isGroup || editorMode" data-toggle="tooltip" :title="_('Vyberte typ podstránky')">
                 <vue-chosen
                     :placeholder="_('Vyberte typ podstránky')"
-                    :value="rowType"
-                    @input="onTypeChange"
-                    :options="modelsOptions"></vue-chosen>
+                    :value="rowGroupType('type')"
+                    @input="onGroupTypeChange('type', $event)"
+                    :options="modelsOptions()"></vue-chosen>
             </div>
 
-            <div class="form-group" :class="{ 'has-error' : hasError('url') }" v-if="row.type == 'url'" data-toggle="tooltip" :title="_('Zadajte url adresu odkazu')">
+            <div class="form-group" :class="{ 'has-error' : hasError('group_type') }" v-if="isGroupLink" data-toggle="tooltip" :title="_('Vyberte typ presmerovania')">
+                <vue-chosen
+                    :placeholder="_('Vyberte typ presmerovania')"
+                    :value="rowGroupType('group_type')"
+                    @input="onGroupTypeChange('group_type', $event)"
+                    :options="modelsOptions(true)"></vue-chosen>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error' : hasError('url') }" v-if="isUrl" data-toggle="tooltip" :title="_('Zadajte url adresu odkazu')">
                 <input
                     type="text"
                     :value="getValueOrLocalized('url')"
@@ -31,7 +39,7 @@
                     class="form-control">
             </div>
 
-            <div class="form-group" :key="rowType" :class="{ 'has-error' : hasError('row_id') }" v-if="row.type == 'model'">
+            <div class="form-group" :key="rowGroupType('type')" :class="{ 'has-error' : hasError('row_id') }" v-if="isModelSelect">
                 <vue-chosen
                     :placeholder="_('Vyberte záznam podstránky')"
                     v-model="row.row_id"
@@ -142,6 +150,12 @@ export default {
     },
 
     watch: {
+        'row.type'(value){
+            //If group link has been removed
+            if ( value !== 'group-link' ){
+                this.row.group_type = null;
+            }
+        },
         rowValuesWatcher : _.debounce(function(old, n){
             //If row does exists
             if ( this.row.id ) {
@@ -151,13 +165,6 @@ export default {
     },
 
     computed: {
-        rowType(){
-            if ( this.row.type == 'model' ){
-                return this.row.model;
-            } else if ( this.row.type ) {
-                return '$'+this.row.type;
-            }
-        },
         selectedLink(){
             if ( this.isUrl ){
                 return this.getValueOrLocalized('url');
@@ -179,6 +186,7 @@ export default {
                 JSON.stringify(this.row.name),
                 JSON.stringify(this.row.url),
                 this.row.type,
+                this.row.group_type,
                 this.row.model,
                 this.row.insertable,
                 this.row.row_id,
@@ -196,39 +204,20 @@ export default {
                 parent_id : this.item.id
             });
         },
+        isModelSelect(){
+            return this.row.type == 'model' || this.row.group_type == 'model';
+        },
         isGroup(){
-            return this.row.type == 'group';
+            return ['group', 'group-link'].indexOf(this.row.type) > -1;
+        },
+        isGroupLink(){
+            return ['group-link'].indexOf(this.row.type) > -1;
         },
         isUrl(){
-            return this.row.type == 'url';
+            return this.row.type == 'url' || this.row.group_type == 'url';
         },
         editorMode(){
             return this.model.sitetree_editor == true;
-        },
-        modelsOptions(){
-            let data = {};
-
-            if ( !this.disabledTypes || this.disabledTypes.indexOf('model') == -1 ) {
-                for ( var key in this.models ){
-                    data[key] = this.models[key].name;
-                }
-            }
-
-            this.model.fields.type.options.forEach(type => {
-                //Skip adding models
-                if ( ['model'].indexOf(type[0]) > -1 ){
-                    return;
-                }
-
-                //Skip disabled types
-                if ( this.disabledTypes && this.disabledTypes.indexOf(type[0]) > -1 ){
-                    return;
-                }
-
-                data['$'+type[0]] = type[1];
-            });
-
-            return data;
         },
         selectedModelRows(){
             let data = {},
@@ -249,6 +238,43 @@ export default {
     },
 
     methods: {
+        modelsOptions(withoutGroups){
+            let data = {};
+
+            if ( !this.disabledTypes || this.disabledTypes.indexOf('model') == -1 ) {
+                for ( var key in this.models ){
+                    data[key] = this.models[key].name;
+                }
+            }
+
+            this.model.fields.type.options.forEach(type => {
+                //Skip groups for group item
+                if ( withoutGroups === true && ['group', 'group-link'].indexOf(type[0]) > -1 ) {
+                    return false;
+                }
+
+                //Skip adding models
+                if ( ['model'].indexOf(type[0]) > -1 ){
+                    return;
+                }
+
+                //Skip disabled types
+                if ( this.disabledTypes && this.disabledTypes.indexOf(type[0]) > -1 ){
+                    return;
+                }
+
+                data['$'+type[0]] = type[1];
+            });
+
+            return data;
+        },
+        rowGroupType(key){
+            if ( this.row[key] == 'model' ){
+                return this.row.model;
+            } else if ( this.row[key] ) {
+                return '$'+this.row[key];
+            }
+        },
         isLocalized(field){
             return 'locale' in this.model.fields[field];
         },
@@ -259,11 +285,11 @@ export default {
 
             return this.row[key];
         },
-        onTypeChange(value){
+        onGroupTypeChange(key, value){
             if ( value.substr(0, 1) == '$' ){
-                this.row.type = value.substr(1);
+                this.row[key] = value.substr(1);
             } else {
-                this.row.type = 'model';
+                this.row[key] = 'model';
                 this.row.model = value;
             }
         },
