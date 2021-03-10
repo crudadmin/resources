@@ -11,7 +11,7 @@
             :disabled="disabled"
             :readonly="readonly"
             :name="field_key"
-            :value="field.value"
+            :value="value"
             :maxlength="field.max"
             :placeholder="field.placeholder || field_name">
         </textarea>
@@ -68,7 +68,10 @@
                     return;
                 }
 
-                this.field.value = Gutenberg.getContent();
+                this.$parent.changeValue(
+                    null,
+                    Gutenberg.getContent()
+                );
             }, 500));
         },
         beforeDestroy() {
@@ -109,19 +112,21 @@
 
                 this.initialized = true;
 
-                Gutenberg.setContent(this.field.value||'');
+                Gutenberg.setContent(this.value||'');
             },
             flushStorage(){
                 sessionStorage.removeItem("wp-autosave-block-editor-post-1");
             },
             tryInitializeEditor(){
-                if ( Gutenberg.editor ){
+                if ( Gutenberg.editor || Gutenberg.initialized ){
                     return;
                 }
 
                 this.initializeEditor();
             },
             initializeEditor: function () {
+                Gutenberg.initialized = true;
+
                 this.initializing = true;
 
                 this.destroying = false;
@@ -136,6 +141,8 @@
                 });
             },
             removeEditor: function (callback) {
+                Gutenberg.initialized = false;
+
                 this.initializing = false;
                 this.initialized = false;
                 this.destroying = true;
