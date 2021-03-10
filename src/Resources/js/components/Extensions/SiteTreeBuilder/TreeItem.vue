@@ -8,8 +8,8 @@
             <div class="form-group" :class="{ 'has-error' : hasError('name') }" data-toggle="tooltip" :title="_('Zadajte názov odkazu/sekcie')">
                 <input
                     type="text"
-                    :value="rowName"
-                    @keyup="updateName"
+                    :value="getValueOrLocalized('name')"
+                    @keyup="updateValue('name', $event)"
                     :placeholder="getLocaleFieldValue(row.name)||_('Zadajte názov odkazu/sekcie')"
                     class="form-control">
             </div>
@@ -25,8 +25,9 @@
             <div class="form-group" :class="{ 'has-error' : hasError('url') }" v-if="row.type == 'url'" data-toggle="tooltip" :title="_('Zadajte url adresu odkazu')">
                 <input
                     type="text"
-                    v-model="row.url"
-                    :placeholder="_('Zadajte url adresu odkazu')"
+                    :value="getValueOrLocalized('url')"
+                    @keyup="updateValue('url', $event)"
+                    :placeholder="getLocaleFieldValue(row.url)||_('Zadajte url adresu odkazu')"
                     class="form-control">
             </div>
 
@@ -159,7 +160,7 @@ export default {
         },
         selectedLink(){
             if ( this.isUrl ){
-                return this.row.url;
+                return this.getValueOrLocalized('url');
             }
 
             if ( this.isGroup || !this.row.type || !this.row.row_id || !this.models[this.row.model] ){
@@ -176,26 +177,16 @@ export default {
         rowValuesWatcher(){
             return [
                 JSON.stringify(this.row.name),
+                JSON.stringify(this.row.url),
                 this.row.type,
                 this.row.model,
                 this.row.insertable,
-                this.row.url,
                 this.row.row_id,
             ].join(',');
         },
         ...mapState('sitetree', [
             'models',
         ]),
-        isLocaledName(){
-            return 'locale' in this.model.fields.name;
-        },
-        rowName(){
-            if ( this.isLocaledName ){
-                return (this.row.name||{})[this.model.selectedLanguage().slug];
-            }
-
-            return this.row.name;
-        },
         nextLevel(){
             if ( !this.item ){
                 return [];
@@ -258,6 +249,16 @@ export default {
     },
 
     methods: {
+        isLocalized(field){
+            return 'locale' in this.model.fields[field];
+        },
+        getValueOrLocalized(key){
+            if ( this.isLocalized(key) ){
+                return (this.row[key]||{})[this.model.selectedLanguage().slug];
+            }
+
+            return this.row[key];
+        },
         onTypeChange(value){
             if ( value.substr(0, 1) == '$' ){
                 this.row.type = value.substr(1);
@@ -266,18 +267,18 @@ export default {
                 this.row.model = value;
             }
         },
-        updateName(e){
+        updateValue(key, e){
             var value;
 
-            if ( this.isLocaledName ){
-                value = this.row.name||{};
+            if ( this.isLocalized(key) ){
+                value = this.row[key]||{};
 
-                value[this.model.selectedLanguage().slug] = e.target.value;
+                this.$set(value, this.model.selectedLanguage().slug, e.target.value);
             } else {
                 value = e.target.value;
             }
 
-            this.$set(this.row, 'name', value);
+            this.$set(this.row, key, value);
         },
         hasError(key){
             return this.errors.indexOf(key) > -1;
@@ -285,18 +286,20 @@ export default {
         castRow(row){
             row = _.cloneDeep(row);
 
-            if ( this.isLocaledName ){
-                for ( var key in row.name||{} ){
-                    if ( !row.name[key] ){
-                        delete row.name[key];
+            ['name', 'url'].forEach(key => {
+                if ( this.isLocalized(key) ){
+                    for ( var k in row[key]||{} ){
+                        if ( !row[key][k] ){
+                            delete row[key][k];
+                        }
+                    }
+
+                    //If none language is present
+                    if ( row[key] && Object.values(row[key]).filter(item => item).length == 0 ){
+                        delete row[key];
                     }
                 }
-
-                //If none language is present
-                if ( row.name && Object.values(row.name).filter(item => item).length == 0 ){
-                    delete row.name;
-                }
-            }
+            });
 
             return row;
         },
@@ -316,7 +319,6 @@ export default {
                     this.model.loadRows();
                 }
             } catch (response){
-                console.error(response);
                 if ( response.status == 422 ) {
                     this.errors = Object.keys(response.body.errors).map(key => {
                         if ( key.split('.').length > 1 ){
