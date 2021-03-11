@@ -8,6 +8,7 @@
             rows="5"
             @keyup="changeValue"
             :id="id"
+            :data-height="field.editor_height"
             :disabled="disabled"
             :readonly="readonly"
             :name="field_key"
