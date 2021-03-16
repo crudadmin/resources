@@ -541,7 +541,20 @@ export default {
         openGettextEditor(item){
             this.$parent.$parent.gettext_editor = item;
         },
-        selectRowFromTable(event, row, fieldKey){
+        clickTree(target){
+            var path = [];
+            var currentElem = target;
+            while (currentElem) {
+              path.push(currentElem);
+              currentElem = currentElem.parentElement;
+            }
+            if (path.indexOf(window) === -1 && path.indexOf(document) === -1)
+              path.push(document);
+            if (path.indexOf(window) === -1)
+              path.push(window);
+            return path;
+        },
+        selectRowFromTable(e, row, fieldKey){
             //if table cannot be opened
             if ( !(this.isEditable || this.isDisplayable) ){
                 return;
@@ -554,9 +567,11 @@ export default {
                 return;
             }
 
+            let tree = this.clickTree(e.target);
+
             //If user click on link or button, we does not want to open row
-            for ( var i = 0; i < event.path.length; i++ ){
-                if ( ['A', 'BUTTON'].indexOf(event.path[i].tagName) > -1 ){
+            for ( var i = 0; i < tree.length; i++ ){
+                if ( ['A', 'BUTTON'].indexOf(tree[i].tagName) > -1 ){
                     return;
                 }
             }

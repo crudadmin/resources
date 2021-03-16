@@ -281,16 +281,16 @@
 
                 //Get value by select option key
                 if ( field.defaultByOption && this.isSelect && this.isEmptyValue(field.value) ) {
-                    var option = field.defaultByOption.split(','),
+                    var option = (field.defaultByOption+'').split(','),
                         defaultOption;
 
-                    if ( option.length == 1 ) {
-                        defaultOption = _.find(field.options, { 1 : optionValue[0] });
-                    } else if ( option.length > 1 ) {
-                        defaultOption = field.options.filter(item => {
+                    defaultOption = field.options.filter(item => {
+                        if ( option.length == 1 ) {
+                            return item[0] == option[0];
+                        } else if ( option.length > 1 ) {
                             return item[1][option[0]] == option[1];
-                        })[0];
-                    }
+                        }
+                    })[0];
 
                     defaultValue = defaultOption ? defaultOption[0] : '';
                 }
