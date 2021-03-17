@@ -82,7 +82,24 @@ var Fields = (Model) => {
             value = null;
         }
 
-        return isIn ? (items.slice(1).filter(item => item == value).length > 0) : value == items[1];
+
+        if (isIn) {
+            return items.slice(1).filter(item => {
+                //Support multiselect values
+                if ( _.isArray(value) ){
+                    return value.indexOf(item) > -1;
+                }
+
+                return item == value;
+            }).length > 0;
+        }
+
+        //Support multiselect values
+        if ( _.isArray(value) && value.length == 1 ){
+            return Object.values(value)[0] == items[1];
+        }
+
+        return value == items[1];
     }
 
     /*
