@@ -393,6 +393,13 @@ var ModelTableRows = (Model) => {
     }
 
     Model.prototype.isEnabledOnlyFullScreenMode = function(){
+        //Enable only fullscreen for these fields
+        for ( var key in this.fields ){
+            if ( ['gutenberg'].indexOf(this.fields[key].type) > -1 ){
+                return true;
+            }
+        }
+
         return !this.canShowForm() || this.isSingle();
     }
 
