@@ -178,6 +178,15 @@ export default {
             return inputlang.slug == slug;
         },
         isGroupVisible(group){
+            if ( group.attributes && Object.keys(group.attributes).length > 0 ){
+                if (
+                    this.model.tryAttribute(group.attributes, 'hideField', this.row)
+                    || this.model.tryAttribute(group.attributes, 'hideFromForm', this.row)
+                ){
+                    return false;
+                }
+            }
+
             if ( ! group.id ) {
                 return true;
             }
