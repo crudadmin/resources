@@ -161,12 +161,13 @@ export default {
 
             //Add models into tabs if neccesary
             if ( this.childs == true ) {
-                for ( var key in this.model.childs )
-                {
-                    var child_model = typeof this.model.childs[key] === 'string' ? this.model : this.model.childs[key];
+                let childs = this.model.getChilds();
+
+                for ( var key in childs ) {
+                    var child_model = typeof childs[key] === 'string' ? this.model : childs[key];
 
                     //Check if model is not in fields group
-                    if ( ! this.isModelInFields(model_fields, this.model.childs[key].slug) ) {
+                    if ( ! this.isModelInFields(model_fields, child_model.slug) ) {
                         tabs.push({
                             fields : [],
                             type : 'tab',

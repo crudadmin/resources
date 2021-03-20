@@ -363,6 +363,34 @@ var ModelTableRows = (Model) => {
         return length;
     };
 
+    Model.prototype.getChilds = function(){
+        let childs = this.childs;
+
+        for ( var key in childs ){
+            let child = childs[key];
+
+            //Remove recursive model which is deeper than given limit
+            if ( child == '$_itself' ){
+                let max = this.getSettings('recursivity.max_depth')||10;
+
+                //If has been reached maximum rercusrivity level
+                if ( this.getParentModels().length >= max ){
+                    delete childs[key];
+
+                    continue;
+                }
+            }
+
+            //If is recusrive model, clone given model
+            if ( child == '$_itself' || typeof child == 'object' && child.table == this.table ){
+                childs[key] = _.cloneDeep($app.models[this.table]);
+                childs[key].name = this.getSettings('recursivity.name', this.name);
+            }
+        }
+
+        return childs;
+    };
+
     Model.prototype.enableOnlyFullScreen = function(){
         let sizes = this.getData('sizes');
 
