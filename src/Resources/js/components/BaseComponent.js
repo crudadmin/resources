@@ -4,7 +4,6 @@ import RequestHelper from './Helpers/RequestHelper';
 import RightNavbar from './Partials/RightNavbar.vue';
 import Sidebar from './Sidebar/Sidebar.vue';
 import Modal from './Partials/Modal.vue';
-import ModelHelper from './Helpers/ModelHelper.js';
 
 import { mapState, mapMutations } from 'vuex';
 
@@ -86,12 +85,14 @@ const BaseComponent = (router, store) => {
                     let defaultModel;
 
                     let hasModelPermission = table => {
-                        return this.models[table].hasAccess('read');
+                        return this.getFreshModel(table).hasAccess('read');
                     };
 
-                    for ( var key in this.models ) {
-                        if ( hasModelPermission(key) && this.models[key].getSettings('default', false) === true ) {
-                            defaultModel = this.models[key].table;
+                    for ( var table in this.models ) {
+                        let model = this.getFreshModel(table);
+
+                        if ( hasModelPermission(table) && model.getSettings('default', false) === true ) {
+                            defaultModel = model.table;
                             break;
                         }
                     }
@@ -207,10 +208,11 @@ const BaseComponent = (router, store) => {
                     if ( typeof tree[key] != 'object' )
                         continue;
 
-                    models[tree[key].slug] = ModelHelper(tree[key]);
+                    models[tree[key].slug] = _.cloneDeep(tree[key]);
 
-                    if ( Object.keys(tree[key].childs).length > 0 )
+                    if ( Object.keys(tree[key].childs).length > 0 ) {
                         models = _.merge(models, this.flattenModelsWithChilds(tree[key].childs));
+                    }
                 }
 
                 return models;

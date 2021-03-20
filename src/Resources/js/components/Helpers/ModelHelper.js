@@ -30,6 +30,15 @@ var extensions = [
  * Bind given model properties
  */
 const ModelHelper = function(rawModel){
+    //Does not initialize already initialized model
+    if ( rawModel._initialized === true ){
+        return rawModel;
+    }
+
+    rawModel = _.cloneDeep(rawModel);
+
+    rawModel._initialized = true;
+
     //Bind scopes attribute
     if ( rawModel.scopes === undefined ) {
         rawModel.scopes = [];

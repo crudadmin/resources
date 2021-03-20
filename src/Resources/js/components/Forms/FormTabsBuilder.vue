@@ -215,10 +215,14 @@ export default {
         getModel(model){
             let cachedModel = () => {
                 if ( typeof this.model.childs[model] == 'string' ) {
-                    return _.cloneDeep(this.$root.models[this.model.slug]);
+                    return this.getFreshModel(this.model.table);
                 }
 
-                return ModelHelper(this.model.childs[model]||this.$root.models[model]);
+                if ( this.model.childs[model] ) {
+                    return ModelHelper(this.model.childs[model]);
+                } else {
+                    return this.getFreshModel(model);
+                }
             };
 
             if ( !this.cachedModel ){

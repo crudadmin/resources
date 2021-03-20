@@ -137,7 +137,6 @@
     import GettextExtension from '../Partials/GettextExtension.vue';
     import Search from '../Partials/Search.vue';
     import History from '../Partials/History.vue';
-    import ModelHelper from '../Helpers/ModelHelper.js';
     import { mapMutations } from 'vuex';
     import {defaultSearchQuery} from '../Helpers/Model/ModelData';
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';

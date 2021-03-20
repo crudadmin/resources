@@ -131,7 +131,7 @@
                     return;
                 }
 
-                return _.cloneDeep(this.$root.models[this.relationTable]);
+                return this.getFreshModel(this.relationTable);
             },
             getRelationModelMutated(){
                 let model = this.getRelationModel;
@@ -166,7 +166,7 @@
                 var field = this.model.fields[filterBy[0]],
                     relationTable = (field.belongsTo||field.belongsToMany).split(',')[0];
 
-                return _.cloneDeep(this.$root.models[relationTable]);
+                return this.getFreshModel(relationTable);
             },
             /*
              * Can show adding row just for first level of forms (not when user click to add new row in form),
@@ -177,7 +177,7 @@
                     return false;
                 }
 
-                var relatedModel = this.$root.models[this.relationTable];
+                var relatedModel = this.getFreshModel(this.relationTable);
 
                 return (!relatedModel || relatedModel.hasAccess('insert'))
                         && (this.field.canAdd === true || this.isCanAddInParentMode)

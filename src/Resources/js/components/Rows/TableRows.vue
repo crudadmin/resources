@@ -263,7 +263,7 @@ export default {
         },
         isEnabledHistory(){
             //Check if history is enabled, and user has acces to read data from history
-            return this.model.history == true && this.$root.models.models_histories.hasAccess('read');
+            return this.model.history == true && this.getFreshModel('models_histories').hasAccess('read');
         },
         canShowGettext(){
             if (

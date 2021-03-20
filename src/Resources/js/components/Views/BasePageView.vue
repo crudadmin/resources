@@ -54,9 +54,7 @@ export default {
          * Return model from actual page
          */
         model(){
-            var model = _.cloneDeep(this.$root.models[this.$route.params.model]);
-
-            return model ? ModelHelper(model) : null;
+            return this.getFreshModel(this.$route.params.model);
         },
         getGroup(){
             if ( this.model.slug in this.$root.models ) {
