@@ -77,7 +77,7 @@ export default {
             }
 
             //We need has delete permissions
-            return this.$root.models.models_histories.hasAccess('delete');
+            return this.getFreshModel('models_histories').hasAccess('delete');
         },
         applyChanges(item){
             this.history.fields = item.changed_fields;
