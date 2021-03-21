@@ -73,6 +73,9 @@ const freshModelData = () => {
         //Is model sending row?
         progress : false,
 
+        //Is button action loading?
+        button_loading : false,
+
         //If model has been booted in field
         parentField : null,
 

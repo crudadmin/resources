@@ -83,6 +83,14 @@
                 <i class="fa" :class="{ 'fa-lock' : !row.insertable, 'fa-lock-open' : row.insertable }"></i>
             </button>
 
+            <buttons-action
+                v-for="(button, buttonKey) in model.getButtonsForRow(row)"
+                :key="buttonKey"
+                :button="button"
+                :row="row"
+                :buttonKey="buttonKey"
+                :model="model"/>
+
             <publish-button
                 v-if="row.id && model.canUnpublishRow(row)"
                 :model="model"
@@ -126,6 +134,7 @@
 <script type="text/javascript">
 import TreeItem from './TreeItem';
 import PublishButton from '@components/Partials/PublishButton.vue';
+import ButtonsAction from '@components/Partials/ButtonsAction.vue';
 import { mapState } from 'vuex';
 import _ from 'lodash';
 import draggable from 'vuedraggable'
@@ -135,7 +144,9 @@ export default {
 
     props : ['item', 'parentRow', 'items', 'sortable', 'disabledTypes'],
 
-    components : { TreeItem, PublishButton, draggable },
+    components : {
+        TreeItem, PublishButton, draggable, ButtonsAction
+    },
 
     data(){
         let model = this.getActiveModel('site_trees');

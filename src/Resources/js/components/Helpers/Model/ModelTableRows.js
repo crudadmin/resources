@@ -728,6 +728,169 @@ var ModelTableRows = (Model) => {
             }
         });
     }
+
+    Model.prototype.getButtonsForRow = function(item){
+        let rows = this.getData('rows');
+
+        if ( ! rows.buttons || !(item.id in rows.buttons) )
+            return {};
+
+        var data = {},
+            buttons = rows.buttons[item.id];
+
+        for ( var key in buttons ) {
+            if ( ['button', 'both', 'multiple'].indexOf(buttons[key].type) > -1 ) {
+                data[key] = buttons[key];
+            }
+        }
+
+        return data;
+    }
+
+    Model.prototype.buttonAction = async function(key, button, row){
+        var ids = row ? [ row.id ] : this.getChecked();
+
+        var makeAction = async (ask, data) => {
+            this.setData('button_loading', row ? this.getButtonKey(row.id, key) : key);
+
+            let pagination = this.getData('pagination');
+
+            try {
+                var response = await $app.$http.post(
+                    $app.requests.buttonAction,
+                    _.merge(data||{}, {
+                        _button : {
+                            model : this.slug,
+                            parent : this.getParentTableName(),
+                            id : ids,
+                            multiple : row ? false : true,
+                            subid : this.getParentRowId(),
+                            limit : pagination.limit,
+                            page : pagination.position,
+                            language_id : this.localization === true ? this.getData('langid') : 0,
+                            button_id : key,
+                            ask : ask ? true : false,
+                        },
+                    })
+                );
+
+                this.setData('button_loading', false);
+
+                var data = response.data,
+                    hasData = 'data' in data,
+                    ask = hasData && data.data.ask == true,
+                    component = hasData && data.data.component ? data.data.component : null;
+
+                //Load rows into array
+                if ( 'data' in data && ! ask ) {
+                    eventHub.$emit(
+                        'buttonAction',
+                        this.buildEventData({
+                            rows : data.data.rows.rows,
+                        }, this)
+                    );
+
+                    //Update received rows by button action
+                    if ( 'rows' in data.data ) {
+                        console.log('updating', data);
+                        this.updateParentData(key, button, row, data);
+                    }
+
+                    //Redirect on page
+                    if ( ('redirect' in data.data) && data.data.redirect ) {
+                        if ( data.data.open == true ) {
+                            window.location.replace(data.data.redirect);
+                        } else {
+                            window.open(data.data.redirect);
+                        }
+                    }
+
+                    //Uncheck all rows
+                    if ( ! row ) {
+                        this.resetChecked();
+                    }
+                }
+
+                //Alert message
+                if ( data && 'type' in data ) {
+                    var component_data = component ? {
+                        name : button.key,
+                        component : component,
+                        model : this,
+                        rows : this.getData('rows').data.filter(item => ids.indexOf(item.id) > -1),
+                        row : row,
+                        request : {},
+                        data : data.data.component_data||[],
+                    } : null;
+
+                    var success_callback = function(){
+                        var data = {};
+
+                        if ( this.alert.component && this.alert.component.request ) {
+                            data = _.clone(this.alert.component.request);
+                        }
+
+                        makeAction(null, data);
+                    }
+
+                    return $app.openAlert(
+                        data.title,
+                        data.message,
+                        data.type,
+                        ask ? success_callback : null,
+                        ask ? true : null,
+                        component_data
+                    );
+                }
+            } catch (error){
+                this.setData('button_loading', false);
+
+                $app.errorResponseLayer(error);
+            }
+        }
+
+        await makeAction(true);
+    }
+
+    Model.prototype.updateParentData = function(key, button, row, data){
+        let rows = this.getData('rows');
+
+        //Reload just one row which owns button
+        if ( button.reloadAll == false ){
+            for ( var k in data.data.rows.rows ) {
+                var row = data.data.rows.rows[k];
+
+                if ( !(row.id in data.data.rows.buttons) ){
+                    rows.buttons[row.id] = [];
+                } else {
+                    rows.buttons[row.id] = data.data.rows.buttons[row.id];
+                }
+
+                //Update just selected row
+                for ( var i in rows.data ) {
+                    if ( rows.data[i].id == row.id ) {
+                        for ( var k in rows.data[i] ) {
+                            if ( rows.data[i][k] != row[k] ) {
+                                rows.data[i][k] = row[k];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //Reload all rows
+        else {
+            this.updateRowsData(data.data.rows.rows, false);
+
+            rows.count = data.data.rows.count;
+            rows.buttons = data.data.rows.buttons;
+        }
+    }
+
+    Model.prototype.getButtonKey = function(id, key){
+        return id + '-' + key;
+    }
 };
 
 export default ModelTableRows;

@@ -47,7 +47,7 @@
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
                             <li v-if="model.deletable && model.hasAccess('delete')"><a @click.prevent="removeRow()"><i class="fa fa-trash-alt"></i> {{ trans('delete') }}</a></li>
                             <li v-if="model.publishable && model.hasAccess('publishable')"><a @click.prevent="togglePublishedAt()"><i class="fa fa-eye"></i> {{ trans('publish-toggle') }}</a></li>
-                            <li v-for="(button, button_key) in availableButtons"><a @click="buttonAction(button_key, button)"><i class="fa" :class="button.icon"></i> {{ button.name }}</a></li>
+                            <li v-for="(button, button_key) in availableButtons"><a @click="model.buttonAction(button_key, button)"><i class="fa" :class="button.icon"></i> {{ button.name }}</a></li>
                         </ul>
                     </div>
 
@@ -70,8 +70,7 @@
                 :buttons="rows.buttons"
                 :count="rows.count"
                 :gettext_editor.sync="gettext_editor"
-                :rows="rows"
-                :button_loading="button_loading">
+                :rows="rows">
             </table-rows>
         </div>
 
@@ -128,8 +127,6 @@ export default {
                 count : 0,
                 interval : this.getRefreshInterval(),
             }).getData('refresh'),
-
-            button_loading : false,
         };
     },
 
@@ -525,150 +522,6 @@ export default {
 
             //Reset checkboxes after published
             this.model.resetChecked();
-        },
-        getButtonKey(id, key){
-            return id + '-' + key;
-        },
-        buildEventData(data, model, isChild){
-            var model = model||this.model;
-
-            return {
-                table : model.slug,
-                model : model,
-
-                //If is child inParent relation, then add depth level + 1 for correct communication
-                depth_level : this.model.getData('depth_level') + (isChild ? 1 : 0),
-                ...data
-            };
-        },
-        buttonAction(key, button, row){
-            var ids = row ? [ row.id ] : this.model.getChecked();
-
-            var makeAction = function(ask, data){
-                this.button_loading = row ? this.getButtonKey(row.id, key) : key;
-
-                this.$http.post( this.$root.requests.buttonAction, _.merge(data||{}, {
-                    _button : {
-                        model : this.model.slug,
-                        parent : this.model.getParentTableName(),
-                        id : ids,
-                        multiple : row ? false : true,
-                        subid : this.model.getParentRowId(),
-                        limit : this.pagination.limit,
-                        page : this.pagination.position,
-                        language_id : this.model.localization === true ? this.langid : 0,
-                        button_id : key,
-                        ask : ask ? true : false,
-                    },
-                })).then(function(response){
-                    this.button_loading = false;
-
-                    var data = response.data,
-                        hasData = 'data' in data,
-                        ask = hasData && data.data.ask == true,
-                        component = hasData && data.data.component ? data.data.component : null;
-
-                    //Load rows into array
-                    if ( 'data' in data && ! ask ) {
-                        eventHub.$emit(
-                            'buttonAction',
-                            this.buildEventData({
-                                rows : data.data.rows.rows,
-                            }, this.model)
-                        );
-
-                        //Update received rows by button action
-                        if ( 'rows' in data.data ) {
-                            this.updateParentData(key, button, row, data);
-                        }
-
-                        //Redirect on page
-                        if ( ('redirect' in data.data) && data.data.redirect ) {
-                            if ( data.data.open == true ) {
-                                window.location.replace(data.data.redirect);
-                            } else {
-                                window.open(data.data.redirect);
-                            }
-                        }
-
-                        //Uncheck all rows
-                        if ( ! row ) {
-                            this.model.resetChecked();
-                        }
-                    }
-
-                    //Alert message
-                    if ( data && 'type' in data ) {
-                        var component_data = component ? {
-                            name : button.key,
-                            component : component,
-                            model : this.model,
-                            rows : this.rows.data.filter(item => ids.indexOf(item.id) > -1),
-                            row : row,
-                            request : {},
-                            data : data.data.component_data||[],
-                        } : null;
-
-                        var success_callback = function(){
-                            var data = {};
-
-                            if ( this.alert.component && this.alert.component.request ) {
-                                data = _.clone(this.alert.component.request);
-                            }
-
-                            makeAction(null, data);
-                        }
-
-                        return this.$root.openAlert(
-                            data.title,
-                            data.message,
-                            data.type,
-                            ask ? success_callback : null,
-                            ask ? true : null,
-                            component_data
-                        );
-                    }
-                }).catch(function(response){
-                    this.button_loading = false;
-
-                    this.$root.errorResponseLayer(response);
-                });
-            }.bind(this);
-
-            makeAction(true);
-        },
-        updateParentData(key, button, row, data){
-            //Reload just one row which owns button
-            if ( button.reloadAll == false ){
-                for ( var k in data.data.rows.rows ) {
-                    var row = data.data.rows.rows[k];
-
-                    if ( !(row.id in data.data.rows.buttons) ){
-                        this.rows.buttons[row.id] = [];
-                    } else {
-                        this.rows.buttons[row.id] = data.data.rows.buttons[row.id];
-                    }
-
-                    //Update just selected row
-                    for ( var i in this.rows.data ) {
-                        if ( this.rows.data[i].id == row.id ) {
-                            for ( var k in this.$parent.rows.data[i] ) {
-                                if ( this.$parent.rows.data[i][k] != row[k] ) {
-                                    this.$parent.rows.data[i][k] = row[k];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            //Reload all rows
-            else {
-                this.model.updateRowsData(data.data.rows.rows, false);
-
-                this.rows.count = data.data.rows.count;
-                this.rows.buttons = data.data.rows.buttons;
-            }
         },
     },
 }

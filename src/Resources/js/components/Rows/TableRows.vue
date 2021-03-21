@@ -55,8 +55,12 @@
                     <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="model.showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : model.isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
                     <div class="buttons-options__item" v-if="canShowInfo" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
-                    <div class="buttons-options__item" v-for="(button, button_key) in getButtonsForRow(item)">
-                        <button type="button" :data-button="'action-'+button.key" v-on:click="buttonAction(button_key, button, item)" :class="['btn', 'btn-sm', button.class]" data-toggle="tooltip" title="" :data-original-title="button.name"><i :class="['fa', button_loading == getButtonKey(item.id, button_key) ? 'fa-sync-alt' : faMigrator(button.icon), { 'fa-spin' : button_loading == getButtonKey(item.id, button_key) }]"></i></button>
+                    <div class="buttons-options__item" v-for="(button, buttonKey) in model.getButtonsForRow(item)">
+                        <buttons-action
+                            :button="button"
+                            :row="item"
+                            :buttonKey="buttonKey"
+                            :model="model"/>
                     </div>
                     <div class="buttons-options__item" v-if="model.canUnpublishRow(item.id)">
                         <publish-button
@@ -75,12 +79,13 @@
 <script>
 import TableRowValue from './TableRowValue.vue';
 import PublishButton from '../Partials/PublishButton.vue';
+import ButtonsAction from '../Partials/ButtonsAction.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'button_loading', 'pagination'],
+    props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'pagination'],
 
-    components: { TableRowValue, PublishButton, draggable },
+    components: { TableRowValue, PublishButton, ButtonsAction, draggable },
 
     data(){
         return {
@@ -124,6 +129,9 @@ export default {
     },
 
     computed: {
+        button_loading(){
+            return this.model.getData('button_loading');
+        },
         loadingRow(){
             return this.model.getData('loadingRow');
         },
@@ -471,7 +479,7 @@ export default {
             this.model.setData('enabled_columns', this.enabled_columns = correctOrder);
         },
         buttonsCount(item){
-            var buttons = this.getButtonsForRow(item),
+            var buttons = this.model.getButtonsForRow(item),
                 additional = 0;
 
             additional += this.isEnabledHistory ? 1 : 0;
@@ -480,27 +488,6 @@ export default {
             additional -= !this.model.publishable ? 1 : 0;
 
             return Object.keys(buttons||{}).length + additional;
-        },
-        getButtonsForRow(item){
-            if ( ! this.rows.buttons || !(item.id in this.rows.buttons) )
-                return {};
-
-            var data = {},
-                buttons = this.rows.buttons[item.id];
-
-            for ( var key in buttons ) {
-                if ( ['button', 'both', 'multiple'].indexOf(buttons[key].type) > -1 ) {
-                    data[key] = buttons[key];
-                }
-            }
-
-            return data;
-        },
-        getButtonKey(id, key){
-            return this.$parent.getButtonKey(id, key);
-        },
-        buttonAction(key, button, row){
-            return this.$parent.buttonAction(key, button, row);
         },
         toggleSorting(key){
             var sortable = this.$root.getModelProperty(this.model, 'settings.sortable');
