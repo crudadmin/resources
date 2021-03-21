@@ -45,7 +45,7 @@ export default {
     },
 
     mounted(){
-        this.setModels(this.model.sitetree_models);
+        this.setModels(this.model.getData('sitetree_models'));
     },
 
     computed: {

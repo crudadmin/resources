@@ -217,7 +217,7 @@ export default {
             return this.row.type == 'url' || this.row.group_type == 'url';
         },
         editorMode(){
-            return this.model.sitetree_editor == true;
+            return this.model.getData('sitetree_editor') == true;
         },
         selectedModelRows(){
             let data = {},

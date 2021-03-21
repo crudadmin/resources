@@ -9,14 +9,26 @@ const customErrorAlert = (response) => {
     $app.openAlert($app.trans('warning'), 'Nastala nečakana chyba, skúste neskôr prosím.<br><br>Príčinu zlyhania požiadavky môžete zistiť na tejto adrese:<br> <a target="_blank" href="'+url+'">'+url+'</a>', 'error');
 }
 
-const updateModel = (model, requestModel) => {
+const updateModel = (model, requestModel, isInitial) => {
+    if ( isInitial == true ) {
+        //Boot initial data
+        let bootData = requestModel.initial_data||{};
+
+        for ( var key in bootData ){
+            model.setData(key, bootData[key]);
+        }
+    }
+
     for ( var key in requestModel ) {
         //If key is missing in admin model, add new data
         if ( (key in $app.originalModels[model.table]) ) {
             continue
         }
 
-        // Rewrite model
+        //Update also actual model
+        $app.$set(model, key, requestModel[key]);
+
+        // Rewrite base model
         $app.$set($app.models[model.table], key, requestModel[key]);
     }
 };
@@ -564,7 +576,7 @@ var ModelTableRows = (Model) => {
 
             var requestModel = response.data.model;
 
-            updateModel(this, requestModel);
+            updateModel(this, requestModel, refresh.count == 0);
 
             //Load rows into array
             this.updateRowsData(response.data.rows, this.enabledColumnsList().length == 0 ? null : 1);
