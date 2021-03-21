@@ -73,12 +73,14 @@
                 <custom-components :model="model" type="form-footer" />
 
                 <div class="box-footer__actions" v-if="canUpdateForm">
-                    <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]">
-                        <i class="fa updating fa-refresh"></i> {{ model.isOpenedRow() ? trans('saving') : trans('sending') }}
-                    </button>
-                    <button v-if="!progress" type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">
-                        {{ model.isOpenedRow() ? saveButton : sendButton }}
-                    </button>
+                    <div class="box-footer__right">
+                        <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]">
+                            <i class="fa updating fa-refresh"></i> {{ model.isOpenedRow() ? trans('saving') : trans('sending') }}
+                        </button>
+                        <button v-if="!progress" type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">
+                            {{ model.isOpenedRow() ? saveButton : sendButton }}
+                        </button>
+                    </div>
                 </div>
             </div>
 

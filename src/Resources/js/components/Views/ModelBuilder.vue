@@ -85,20 +85,6 @@
             <div class="admin-model__body">
                 <div class="row grid-table" :class="{ 'grid-fullsize' : model.activeGridSize() == 0 }">
                     <!-- left column -->
-                    <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()" v-if="activetab!==false">
-                        <custom-components :model="model" type="form-before" />
-
-                        <form-builder
-                            :rows="rows"
-                            :model="model"
-                            :gettext_editor="gettext_editor"
-                        ></form-builder>
-
-                        <custom-components :model="model" type="form-after" />
-                    </div>
-                    <!--/.col (left) -->
-
-                    <!-- right column -->
                     <div class="col--rows col-12" :class="['col-lg-'+(12-(12-model.activeGridSize())), { '--noMargin' : !model.canShowForm() }]" v-show="model.canShowRows()">
                         <custom-components :model="model" type="table-before" />
 
@@ -110,6 +96,20 @@
                         </model-rows-builder>
 
                         <custom-components :model="model" type="table-after" />
+                    </div>
+                    <!--/.col (left) -->
+
+                    <!-- right column -->
+                    <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()" v-if="activetab!==false">
+                        <custom-components :model="model" type="form-before" />
+
+                        <form-builder
+                            :rows="rows"
+                            :model="model"
+                            :gettext_editor="gettext_editor"
+                        ></form-builder>
+
+                        <custom-components :model="model" type="form-after" />
                     </div>
                     <!--/.col (right) -->
                 </div>
