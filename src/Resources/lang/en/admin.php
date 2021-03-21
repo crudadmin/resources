@@ -99,7 +99,7 @@ return [
     'send' => 'Send',
     'sending' => 'Sending',
     'edit-row-n' => 'Edit Record No.',
-    'new-row' => 'New row',
+    'new-row' => 'Add new',
     'general-tab' => 'General',
     'number' => 'No.',
     'rows-list' => 'Columns list',
