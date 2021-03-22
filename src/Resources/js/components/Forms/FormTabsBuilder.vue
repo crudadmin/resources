@@ -20,7 +20,13 @@
             </li>
         </ul>
         <div class="tab-content tab-content--form">
-            <div v-for="(tab, $index) in getTabs" v-if="canRenderTab(tab)" class="tab-pane" :class="{ active : activetab == $index }" :data-tab-model="isModel(tab) ? getModel(tab.model).slug : false" :data-tab-id="tab.id">
+            <div
+                v-for="(tab, $index) in getTabs"
+                v-if="canRenderTab(tab)"
+                class="tab-pane"
+                :class="{ active : activetab == $index }"
+                :data-tab-model="isModel(tab) ? getModel(tab.model).slug : false"
+                :data-tab-id="tab.id">
                 <div class="row">
                     <div v-if="hasTabs(tab.fields) || isModel(tab)" :class="{ model : isModel(tab) }" class="col-lg-12">
                         <form-tabs-builder
@@ -142,7 +148,11 @@ export default {
             var model_fields = this.getModelFields,
                 items = this.tabs||(this.group ? this.group.fields : model_fields),
                 tabs = items.filter(function(group) {
-                    return this.isTab(group);
+                    if ( !this.isTab(group) ){
+                        return false;
+                    }
+
+                    return true;
                 }.bind(this));
 
             if ( tabs.length == 0 || tabs.length > 0 && tabs.length != items.length ){
@@ -193,6 +203,13 @@ export default {
     },
 
     methods: {
+        checkRecursivityModelTab(tab){
+            if ( this.model.table == tab.model ){
+                return this.model.checkMaxRecursivity();
+            }
+
+            return true;
+        },
         canRenderTab(tab, index){
             //If tab has fields or tab is model relation
             if ( this.hasTabs(tab.fields) || this.isModel(tab) )
@@ -270,20 +287,20 @@ export default {
          * if child model is in other tab or group, then we cant add model into end of tabs.
          */
         isModelInFields(childs, model){
-            for ( var i = 0 ; i < childs.length; i++ )
-            {
+            for ( var i = 0 ; i < childs.length; i++ ) {
                 //Check if group field is tab
-                if ( this.isGroup(childs[i]) )
-                {
+                if ( this.isGroup(childs[i]) ) {
                     //If model is in recursive tabs or group
                     if ( childs[i].model === model ){
                         return true;
                     }
 
                     //If tab has other childs, then check recursive
-                    if ( childs[i].fields.length > 0 )
-                        if ( this.isModelInFields(childs[i].fields, model) )
+                    if ( childs[i].fields.length > 0 ) {
+                        if ( this.isModelInFields(childs[i].fields, model) ) {
                             return true;
+                        }
+                    }
                 }
             }
 
@@ -361,6 +378,18 @@ export default {
         isTabVisible(tab){
             if ( ! this.isTab(tab) )
                 return false;
+
+            if ( this.isModel(tab) && this.checkRecursivityModelTab(tab) === false ) {
+                return false;
+            }
+
+            let row = this.model.getRow();
+            if ( tab.attributes && (
+                this.model.tryAttribute(tab.attributes, 'hideField', row)
+                || this.model.tryAttribute(tab.attributes, 'hideFromForm', row)
+            ) ) {
+                return false;
+            }
 
             return (this.model.hidden_tabs||[]).indexOf(tab.model||tab.id) === -1;
         },

@@ -375,6 +375,12 @@ var ModelTableRows = (Model) => {
         return length;
     };
 
+    Model.prototype.checkMaxRecursivity = function(){
+        let max = this.getSettings('recursivity.max_depth')||10;
+
+        return this.getParentModels().length < max;
+    };
+
     Model.prototype.getChilds = function(){
         let childs = this.childs;
 
@@ -383,10 +389,8 @@ var ModelTableRows = (Model) => {
 
             //Remove recursive model which is deeper than given limit
             if ( child == '$_itself' ){
-                let max = this.getSettings('recursivity.max_depth')||10;
-
                 //If has been reached maximum rercusrivity level
-                if ( this.getParentModels().length >= max ){
+                if ( !this.checkMaxRecursivity() ){
                     delete childs[key];
 
                     continue;
