@@ -191,12 +191,13 @@
             },
             canAddScopes(){
                 if ( this.isCanAddInParentMode == false ){
-                    return {};
+                    return [];
                 }
 
-                return {
-                    'filterByParentField' : [this.model.table, this.field_key, this.row.id],
-                };
+                return [{
+                    key : 'filterByParentField',
+                    params : [this.model.table, this.field_key, this.row.id].join(';')
+                }];
             },
             getFilterBy(){
                 return this.model.getFilterBy(this.field_key);

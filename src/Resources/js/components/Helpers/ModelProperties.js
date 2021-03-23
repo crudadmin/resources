@@ -2,14 +2,15 @@ var ModelProperties = (Model) => {
     Model.prototype.setScope = function(key, params){
         this.removeScope(key);
 
-        this.scopes.push({ key, params });
+        this.getData('scopes').push({ key, params });
     }
 
     Model.prototype.removeScope = function(key){
-        let index = _.findIndex(this.scopes, { key });
+        let scopes = this.getData('scopes');
+        let index = _.findIndex(scopes, { key });
 
         if ( index > -1 ){
-            this.scopes.splice(index, 1);
+            scopes.splice(index, 1);
         }
     }
 

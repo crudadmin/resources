@@ -31,8 +31,8 @@
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
                             <li @click="$event.stopPropagation()" v-for="(column, key) in enabled_columns" v-if="canShowColumn(column, key)" :class="{ active : column.enabled }" class="--no-item-padding">
                                 <label class="--dropdown-item-padding --dropdown-item-vertical">
-                                    <input type="checkbox" :data-column="key" v-model="column.enabled">
-                                    {{ model.fieldName(key) }}
+                                    <input type="checkbox" :data-column="key" :checked="column.enabled" @click="toggleColumnEnabled(key)">
+                                    {{ model.fieldName(key) }} {{ column.enabled ? 1 : 0 }}
                                 </label>
                             </li>
                             <li class="default-reset"><a href="#" @click.prevent="resetColumnsList">{{ trans('default') }}</a></li>
@@ -307,19 +307,29 @@ export default {
                 }
             },
         },
-        //On change enabled columns, reload full table with newer data
-        enabled_columns : {
-            deep : true,
-            handler : function(columns, old){
-                if ( ! old || ! columns )
-                    return;
-
-                this.model.loadRows(true);
-            },
-        }
+        paginationEnabled(state, oldstate){
+            if ( oldstate == false && state == true ){
+                this.pagination.limit = this.getLimitFromStorage();
+            }
+        },
+        parentRow(parentrow){
+            if ( parentrow.id ) {
+                //We need reload all rows, because parent has been changed
+                this.reloadRows();
+            }
+        },
     },
 
     computed: {
+        scopes(){
+            return this.model.getData('scopes');
+        },
+        parentRow(){
+            return this.model.getData('parentrow');
+        },
+        paginationEnabled(){
+            return this.model.isPaginationEnabled();
+        },
         activetab(){
             return this.model.getData('activetab');
         },
@@ -371,6 +381,11 @@ export default {
     },
 
     methods: {
+        toggleColumnEnabled(column){
+            this.enabled_columns[column].enabled = !this.enabled_columns[column].enabled;
+
+            this.model.loadRows(true);
+        },
         //We need update modelOptions all the time model or modelOptions has been changed
         //because if model property in base $root models will change. options will dissapear.
         //This is buggy behaviour when data are set in beforeInitialAdminRequest model property

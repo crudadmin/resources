@@ -39,11 +39,6 @@ const ModelHelper = function(rawModel){
 
     rawModel._initialized = true;
 
-    //Bind scopes attribute
-    if ( rawModel.scopes === undefined ) {
-        rawModel.scopes = [];
-    }
-
     var core = new Model;
 
     //Copy all given model attributes

@@ -188,7 +188,7 @@
             this.model.setData('parentField', this.parentField);
             this.model.setData('activetab', this.activetab);
             this.model.setData('langid', this.langid);
-            this.model.setData('scopes', this.scopes);
+            this.model.setData('scopes', this.scopes||[]);
             this.model.setData('parentActiveGridSize', this.parentActiveGridSize);
 
             //Set default search query
@@ -261,23 +261,8 @@
                     //We need rewrite parent model if has been changed
                     this.model.setData('parentrow', this.parentrow);
 
-                    var children = null;
-
-                    //Get rows builder child
-                    for ( var i = 0; i < this.$children.length; i++ ) {
-                        if ( 'reloadRows' in this.$children[i] ){
-                            children = this.$children[i];
-                            break;
-                        }
-                    }
-
-                    if ( children ){
-                        //If parent form has been changed, we need reset actual form
-                        children.model.resetForm();
-
-                        //We need reload all rows, because parent has been changed
-                        children.reloadRows();
-                    }
+                    //If parent form has been changed, we need reset actual form
+                    this.model.resetForm();
                 }
             },
             isEnabledOnlyFullScreenMode(state){

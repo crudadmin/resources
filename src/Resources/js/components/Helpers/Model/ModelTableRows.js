@@ -18,19 +18,6 @@ const updateModel = (model, requestModel, isInitial) => {
             model.setData(key, bootData[key]);
         }
     }
-
-    for ( var key in requestModel ) {
-        //If key is missing in admin model, add new data
-        if ( (key in $app.originalModels[model.table]) ) {
-            continue
-        }
-
-        //Update also actual model
-        $app.$set(model, key, requestModel[key]);
-
-        // Rewrite base model
-        $app.$set($app.models[model.table], key, requestModel[key]);
-    }
 };
 
 const updateFieldOptions = (model, fields, requestModel) => {
@@ -82,15 +69,10 @@ const addScopeParams = (model, data) => {
     }
 
     let scopes = model.getData('scopes');
-    for ( var key in scopes ){
-        let params = scopes[key].join(';');
-
-        data['scopes'][key] = params;
-    }
 
     //Added model scopes
-    for ( var i = 0; i < model.scopes.length; i++ ){
-        let scope = model.scopes[i];
+    for ( var i = 0; i < scopes.length; i++ ){
+        let scope = scopes[i];
 
         data['scopes'][scope.key] = scope.params;
     }
@@ -495,7 +477,7 @@ var ModelTableRows = (Model) => {
         sizes[2].active = true;
     }
 
-    Model.prototype.loadRows = async function(indicator, download){
+    Model.prototype.loadRows = async function(indicator = true, download){
         //On first time allow reload rows without parent, for field options...
         if ( (this.isWithoutParentRow() || this.getData('activetab') === false) && indicator == false ){
             return false;
