@@ -107,7 +107,7 @@ import Pagination from '../Partials/Pagination.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
-    props : ['model', 'rows', 'gettext_editor', 'activetab'],
+    props : ['model', 'rows', 'gettext_editor'],
 
     components : { Refreshing, TableRows, Pagination, CustomComponents },
 
@@ -245,8 +245,9 @@ export default {
             }
         },
         activetab(value){
-            if ( value == true )
+            if ( value == true ) {
                 this.model.enableRowsRefreshing(false);
+            }
         },
         model(){
             this.updateModelOptions();
@@ -319,6 +320,9 @@ export default {
     },
 
     computed: {
+        activetab(){
+            return this.model.getData('activetab');
+        },
         progress(){
             return this.model.getData('progress');
         },
