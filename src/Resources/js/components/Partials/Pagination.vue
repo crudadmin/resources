@@ -16,14 +16,24 @@
 
 <script type="text/javascript">
 export default {
-    props : ['rows', 'pagination'],
+    props : ['model'],
 
     mounted(){
 
     },
 
     computed: {
+        rows(){
+            return this.model.getData('rows');
+        },
+        pagination(){
+            return this.model.getData('pagination');
+        },
         paginateItems(){
+            if ( !this.pagination.limit ){
+                return [];
+            }
+
             var items = [];
 
             for ( var i = 1; i <= Math.ceil(this.rows.count / this.pagination.limit); i++ ) {
@@ -78,8 +88,9 @@ export default {
             var disabledFromLeft = this.pagination.position - offset >= i + Math.ceil(maxpages/2) - 1,
                 disabledFromRight = this.pagination.position < i - (maxpages/2) - offset;
 
-            if ( disabledFromLeft || disabledFromRight )
+            if ( disabledFromLeft || disabledFromRight ) {
                 return false;
+            }
 
             return true;
         },

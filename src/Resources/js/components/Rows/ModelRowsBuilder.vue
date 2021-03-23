@@ -80,7 +80,9 @@
             <div class="box-footer__actions">
                 <div class="box-footer__left"></div>
                 <div class="box-footer__center">
-                    <pagination v-if="model.isPaginationEnabled()" :rows="rows" :pagination="pagination" />
+                    <pagination
+                        v-if="model.isPaginationEnabled()"
+                        :model="model" />
                 </div>
                 <div class="box-footer__right">
                     <div class="pagination-limit d-none d-lg-block" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled()" :title="trans('rows-count')">

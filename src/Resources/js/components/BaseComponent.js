@@ -98,7 +98,7 @@ const BaseComponent = (router, store) => {
                     }
 
                     //Run default permission model, or default model set in properties
-                    let defaultPermissionModel = this.user.roles.filter(role => {
+                    let defaultPermissionModel = (this.user.roles||[]).filter(role => {
                         return role.default_model && hasModelPermission(role.default_model)
                     }).map(role => role.default_model);
 
