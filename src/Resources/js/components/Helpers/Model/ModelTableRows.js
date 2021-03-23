@@ -326,18 +326,26 @@ var ModelTableRows = (Model) => {
         return true;
     }
 
-    Model.prototype.canShowForm = function(){
+    Model.prototype.checkFormVisibility = function(){
         if ( (!this.isOpenedRow() && !this.canAddRow() || this.isOpenedRow() && (this.editable == false && this.displayable !== true)) && !this.isInParent() ) {
-            return false;
-        }
-
-        //If row is not selected, and form is not opened. But in table needs exists rows
-        if ( this.isEnabledOnlyFormOrTableMode() === true && !this.isOpenedRow() && this.isOnlyFormOpened() === false && this.isSingle() == false ){
             return false;
         }
 
         //If user does not have write permissions
         if ( !this.isOpenedRow() && this.hasAccess('insert') == false ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    Model.prototype.canShowForm = function(){
+        if ( this.checkFormVisibility() === false ){
+            return false;
+        }
+
+        //Single mode enabled, only form or row... decide
+        if ( this.isEnabledOnlyFormOrTableMode() === true && !this.isOpenedRow() && this.isOnlyFormOpened() === false && this.isSingle() == false ){
             return false;
         }
 
@@ -426,7 +434,15 @@ var ModelTableRows = (Model) => {
             }
         }
 
-        return !this.canShowForm() || this.isSingle();
+        if ( !this.checkFormVisibility() ){
+            return true;
+        }
+
+        if ( this.isSingle() ) {
+            return true;
+        }
+
+        return false;
     }
 
     Model.prototype.checkActiveGridSize = function(columns){
