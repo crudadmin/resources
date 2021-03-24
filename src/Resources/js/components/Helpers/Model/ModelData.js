@@ -145,7 +145,7 @@ var ModelData = (Model, rawModel) => {
      * @param  key  value
      */
     Model.prototype.setData = function(key, value){
-        this.data[key] = value;
+        $app.$set(this.data, key, value);
 
         let mapValues = this.data.mapValues;
 
