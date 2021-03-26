@@ -312,8 +312,15 @@ export default {
                 this.pagination.limit = this.getLimitFromStorage();
             }
         },
-        parentRow(parentrow){
-            if ( parentrow.id ) {
+        parentRowId(rowId, oldRowId){
+            //Allow this feature only for models which are available/rendered without parent.
+            //Because other models will boot in same time when row is selected, so all rows will be loaded in the same time.
+            //But withoutParent row is loaded all the time, so we need refresh rows manually.
+            if ( this.model.without_parent != true ){
+                return;
+            }
+
+            if ( rowId != oldRowId ) {
                 //We need reload all rows, because parent has been changed
                 this.reloadRows();
             }
@@ -324,8 +331,8 @@ export default {
         scopes(){
             return this.model.getData('scopes');
         },
-        parentRow(){
-            return this.model.getData('parentrow');
+        parentRowId(){
+            return (this.model.getData('parentrow')||{}).id;
         },
         paginationEnabled(){
             return this.model.isPaginationEnabled();
