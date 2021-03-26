@@ -218,7 +218,18 @@ export default {
                     }
 
                     //Return localized value
-                    if ( typeof value == 'object' ) {
+                    if ( value && typeof value == 'object' ) {
+                        for ( var language of this.$root.languages ) {
+                            if ( language.slug in value ){
+                                value = value[language.slug];
+                                break;
+                            }
+                        }
+                    }
+
+                    //If localized value has not been found for default country, we need select first object value
+                    //and hope that it is string
+                    if ( value && typeof value == 'object' ) {
                         for ( var k in value ) {
                             if ( value[k] ){
                                 value = value[k];
