@@ -164,11 +164,17 @@ export default {
             }
 
             //If row can be pushed without reloading rows into first or last page
-            else if ( this.pagination.position == 1 || (this.model.isReversed(true) && this.pagination.position == pages || this.model.isWithoutParentRow()) ) {
-                var rows = array.rows.concat( this.rows.data );
+            else if (
+                this.pagination.position == 1 || (
+                    this.model.isReversed(true) && this.pagination.position == pages
+                    || this.model.isWithoutParentRow()
+                )
+            ) {
+                var rows = array.rows.concat(this.rows.data);
 
-                if ( rows.length > this.pagination.limit )
+                if ( this.model.isPaginationEnabled() && rows.length > this.pagination.limit ) {
                     rows = rows.slice(0, this.pagination.limit);
+                }
 
                 //Update buttons
                 for ( var key in array.buttons ) {
@@ -177,7 +183,9 @@ export default {
 
                 this.rows.data = rows;
                 this.rows.count += array.rows.length;
-            } else {
+            }
+
+            else {
                 this.model.loadRows();
             }
         });
