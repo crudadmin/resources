@@ -20,6 +20,19 @@
             :depth_level="depth_level">
         </string-field>
 
+        <color-field
+            v-if="!hasComponent && isColor"
+            :model="model"
+            :field_name="getName"
+            :field_key="getFieldName"
+            :field="field"
+            :value="getValueOrDefault"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :depth_level="depth_level">
+        </color-field>
+
         <number-field
             v-if="!hasComponent && isNumber"
             :model="model"
@@ -186,12 +199,13 @@
     import FileField from '../Fields/FileField';
     import SelectField from '../Fields/SelectField';
     import RadioField from '../Fields/RadioField';
+    import ColorField from '../Fields/ColorField';
 
     export default {
         name: 'form-input-builder',
         props: ['model', 'field', 'field_key', 'index', 'confirmation', 'inputlang', 'langslug'],
 
-        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField },
+        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField, ColorField },
 
         created(){
             this.registerFieldComponents(this.model, this.field, 'component');
@@ -406,6 +420,10 @@
             isPassword()
             {
                 return this.field.type == 'password';
+            },
+            isColor()
+            {
+                return this.field.type == 'color';
             },
             isSelect()
             {

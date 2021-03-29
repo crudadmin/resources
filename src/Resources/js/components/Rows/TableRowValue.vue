@@ -9,8 +9,12 @@
             :model="model"
             :is="componentName(model, fieldColumn.column_component)" />
 
+        <div v-if="isColor" :style="{ color : fieldValueLimitedAndEncoded }">
+            {{ fieldValueLimitedAndEncoded }}
+        </div>
+
         <!-- File -->
-        <div v-else-if="isFile()" class="filesList">
+        <div v-else-if="isFile" class="filesList">
             <div v-for="(file, index) in getFiles">
                 <file :file="file" :field="field" :model="model" :image="image"></file>
                 <span v-if="index != getFiles.length - 1">, </span>
@@ -227,6 +231,9 @@ export default {
             }
 
             return false;
+        },
+        isColor(){
+            return this.settings.isRealField && this.settings.field.type == 'file';
         },
     }
 }

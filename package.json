@@ -36,6 +36,7 @@
     "lodash": "^4.17.15",
     "moment": "^2.20.1",
     "popper.js": "^1.12",
+    "verte": "0.0.12",
     "vue": "^2.6.11",
     "vue-fragment": "^1.5.1",
     "vue-resource": "^1.5.1",
