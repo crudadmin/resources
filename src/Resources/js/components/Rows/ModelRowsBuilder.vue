@@ -32,7 +32,7 @@
                             <li @click="$event.stopPropagation()" v-for="(column, key) in enabled_columns" v-if="canShowColumn(column, key)" :class="{ active : column.enabled }" class="--no-item-padding">
                                 <label class="--dropdown-item-padding --dropdown-item-vertical">
                                     <input type="checkbox" :data-column="key" :checked="column.enabled" @click="toggleColumnEnabled(key)">
-                                    {{ model.fieldName(key) }} {{ column.enabled ? 1 : 0 }}
+                                    {{ model.fieldName(key) }}
                                 </label>
                             </li>
                             <li class="default-reset"><a href="#" @click.prevent="resetColumnsList">{{ trans('default') }}</a></li>

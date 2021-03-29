@@ -203,6 +203,7 @@ export default {
                             || (
                                 this.model.fields[key].hidden != true
                                 && !this.model.tryAttribute(this.model.fields[key], 'invisible', this.row)
+                                && !this.model.tryAttribute(this.model.fields[key], 'inaccessible', this.row)
                             )
                             || this.model.fields[key].column_visible == true
                     )
@@ -447,7 +448,7 @@ export default {
                 }
 
                 //If fiels is inaccessible
-                if ( this.model.fields[key].inaccessible === true ){
+                if ( this.model.tryAttribute(this.model.fields[key], 'inaccessible', this.row) ){
                     continue;
                 }
 
