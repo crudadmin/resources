@@ -91,7 +91,7 @@ export default {
                     var field = this.model.fields[item];
 
                     return !(
-                        field.invisible && field.invisible == true
+                        this.model.tryAttribute(field, 'invisible', this.row)
                         || this.canRemoveAttribute(field)
                         || ! this.canShowField(field)
                     );
@@ -114,7 +114,7 @@ export default {
                    || this.model.tryAttribute(field, 'hideFromForm', this.row);
         },
         canRenderField(field){
-            return !('invisible' in field && field.invisible == true)
+            return !this.model.tryAttribute(field, 'invisible', this.row)
                    && !this.canRemoveAttribute(field);
         },
         canShowField(field){

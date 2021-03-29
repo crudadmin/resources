@@ -126,9 +126,28 @@ export default {
         columns(){
             this._cacheColumnSettings = {};
         },
+        parentRowId(rowId, oldRowId){
+            //Allow this feature only for models which are available/rendered without parent.
+            //Because other models will boot in same time when row is selected, so all rows will be loaded in the same time.
+            //But withoutParent row is loaded all the time, so we need refresh rows manually.
+            if ( this.model.without_parent != true ){
+                return;
+            }
+
+            if ( rowId != oldRowId ) {
+                //We need reload all rows, because parent has been changed
+                this.$parent.reloadRows();
+
+                //Set allowed columns
+                this.resetAllowedColumns();
+            }
+        },
     },
 
     computed: {
+        parentRowId(){
+            return (this.model.getData('parentrow')||{}).id;
+        },
         button_loading(){
             return this.model.getData('button_loading');
         },
@@ -183,7 +202,7 @@ export default {
                             !(key in this.model.fields)
                             || (
                                 this.model.fields[key].hidden != true
-                                && this.model.fields[key].invisible != true
+                                && !this.model.tryAttribute(this.model.fields[key], 'invisible', this.row)
                             )
                             || this.model.fields[key].column_visible == true
                     )
