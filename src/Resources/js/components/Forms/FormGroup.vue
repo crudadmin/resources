@@ -107,7 +107,8 @@ export default {
         },
         canRemoveAttribute(field){
             return this.model.tryAttribute(field, 'removeField', this.row)
-                   || this.model.tryAttribute(field, 'removeFromForm', this.row);
+                   || this.model.tryAttribute(field, 'removeFromForm', this.row)
+                   || this.model.tryAttribute(field, 'inaccessible', this.row);
         },
         canHideAttribute(field){
             return this.model.tryAttribute(field, 'hideField', this.row)

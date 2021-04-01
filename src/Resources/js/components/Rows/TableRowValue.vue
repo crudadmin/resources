@@ -13,7 +13,6 @@
             {{ fieldValueLimitedAndEncoded }}
         </div>
 
-        <!-- File -->
         <div v-else-if="isFile" class="filesList">
             <div v-for="(file, index) in getFiles">
                 <file :file="file" :field="field" :model="model" :image="image"></file>
@@ -48,6 +47,20 @@ export default {
     // },
 
     computed: {
+        isFile(){
+            if (
+                this.settings.isRealField
+                && this.settings.field.type == 'file'
+                && this.settings.encode
+            ) {
+                return true;
+            }
+
+            return false;
+        },
+        isColor(){
+            return this.settings.isRealField && this.settings.field.type == 'color';
+        },
         getFiles(){
             var value = this.fieldValue||[];
 
@@ -220,20 +233,6 @@ export default {
             } : {};
 
             return this.$root.languageOptions(array, this.settings.field, filter, false);
-        },
-        isFile(){
-            if (
-                this.settings.isRealField
-                && this.settings.field.type == 'file'
-                && this.settings.encode
-            ) {
-                return true;
-            }
-
-            return false;
-        },
-        isColor(){
-            return this.settings.isRealField && this.settings.field.type == 'file';
         },
     }
 }
