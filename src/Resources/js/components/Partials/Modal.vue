@@ -122,11 +122,17 @@ export default {
             }
         },
         closeAlert(callback){
-            if ( typeof callback == 'function' )
-                callback.call(this.$parent);
+            if ( typeof callback == 'function' ){
+                try {
+                    callback.call(this.$parent);
+                } catch(e){
+                    console.error(e);
+                }
+            }
 
-            for ( var key in this.alert )
+            for ( var key in this.alert ) {
                 this.$parent.alert[key] = null;
+            }
         },
     }
 }

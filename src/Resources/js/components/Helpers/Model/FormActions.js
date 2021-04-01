@@ -204,7 +204,7 @@ const sendForm = function(model, e, action, callback){
 
             //Error occured
             if ( $.type(data) != 'object' || ! ('type' in data) ) {
-                return unknownAjaxErrorResponse(this);
+                return unknownAjaxErrorResponse(model);
             }
 
             //Fix for resubmiting form after closing with enter

@@ -7,15 +7,14 @@ var ModelCoreHelpers = (Model) => {
     }
 
     Model.prototype.getParentTableName = function(force){
-        var parentModel = this.getParentModel(),
-            row = parentModel ? parentModel.getRow() : null;
+        var parentModel = this.getParentModel();
 
         //if is model loaded in field, and has parent row, then load model of that parent
         if ( this.hasParentFormModel() && typeof this.hasParentFormModel() == 'object' && 'slug' in this.hasParentFormModel() ) {
             return this.hasParentFormModel().slug;
         }
 
-        if ( force !== true && ((!row || !( 'id' in row )) || this.hasParentFormModel() === false) ) {
+        if ( force !== true && ((!parentModel || !parentModel.isOpenedRow()) || this.hasParentFormModel() === false) ) {
             return 0;
         }
 
