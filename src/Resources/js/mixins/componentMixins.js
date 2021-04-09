@@ -219,6 +219,10 @@ var componentMixins = {
             return obj;
         },
         getLocaleFieldValue(value, dslug){
+            if ( _.isNil(dslug) ){
+                dslug = this.$root.languages.length ? this.$root.languages[0].slug : null;
+            }
+
             if ( value && typeof value === 'object' ) {
                 //Get default language value
                 if ( dslug in value && (value[dslug] || value[dslug] == 0) ){

@@ -189,10 +189,13 @@ export default {
         title(){
             var title;
 
-            if ( this.model.isOpenedRow() )
-            {
+            if ( this.model.isOpenedRow() ) {
                 //If update title has not been set
                 if ( !(title = this.model.getSettings('title.update')) ) {
+                    if ( (this.model.fields.name || this.model.fields.title) && (this.row.name || this.row.title) ){
+                        return this.getLocaleFieldValue(this.row.name || this.row.title);
+                    }
+
                     if ( this.model.editable ) {
                         return this.trans('edit-row-n')+' ' + this.row.id;
                     } else {
@@ -201,8 +204,7 @@ export default {
                 }
 
                 //Bind value from row to title
-                for ( var key in this.row )
-                {
+                for ( var key in this.row ) {
                     var value = this.row[key];
 
                     if ( this.isFieldSelect(key) )

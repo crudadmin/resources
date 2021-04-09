@@ -1,8 +1,12 @@
 var ModelProperties = (Model) => {
-    Model.prototype.setScope = function(key, params){
+    Model.prototype.addScope = function(key, params){
         this.removeScope(key);
 
         this.getData('scopes').push({ key, params });
+    }
+
+    Model.prototype.setScope = function(key, params){
+        this.addScope(key, params);
     }
 
     Model.prototype.removeScope = function(key){

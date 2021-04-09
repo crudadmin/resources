@@ -15,26 +15,13 @@
 export default {
     props : ['model', 'type', 'postfix'],
 
-    watch: {
-        /*
-         * Register all layout components
-         */
-        layouts(layouts){
-            for ( var key in layouts ) {
-                var layout = layouts[key];
-
-                this.registerComponents(layouts);
-
-                if ( layout.type == 'blade' ){
-                    $app.runInlineScripts(layout.view);
-                }
-            }
-        }
+    created(){
+        this.bootComponents();
     },
 
     computed: {
         layouts(){
-            return this.model.getData('layouts');
+            return this.model.layouts;
         },
         row(){
             return this.model.getData('row');
@@ -48,6 +35,24 @@ export default {
     },
 
     methods : {
+        bootComponents(){
+            let layouts = this.model.layouts;
+
+            for ( var key in layouts ) {
+                var layout = layouts[key];
+
+                //Register only layouts of given type layouts
+                if ( layout.position != this.type ){
+                    continue;
+                }
+
+                this.registerComponents(layouts);
+
+                if ( layout.type == 'blade' ){
+                    $app.runInlineScripts(layout.view);
+                }
+            }
+        },
         registerComponents(layouts){
             for ( var i = 0; i < layouts.length; i++ ) {
                 var name = layouts[i].name,

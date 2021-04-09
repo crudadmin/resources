@@ -1,6 +1,6 @@
 var ModelComponents = (Model) => {
     Model.prototype.getComponents = function(type, postfix){
-        return this.getData('layouts').filter(item => {
+        return this.layouts.filter(item => {
             if ( this.getData('registered_components').indexOf(item.name) === -1 && !Vue.options.components[item.component_name] ) {
                 return false;
             }

@@ -281,7 +281,7 @@
 
                 //Get value by other table
                 if ( field.default && this.isEmptyValue(field.value) ) {
-                    var defaultParts = field.default.split('.');
+                    var defaultParts = (field.default+'').split('.');
 
                     if ( defaultParts.length == 2 )
                     {

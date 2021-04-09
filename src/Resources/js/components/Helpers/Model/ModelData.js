@@ -5,7 +5,7 @@ export const defaultSearchQuery = {
     interval : false,
 };
 
-const freshModelData = () => {
+const freshModelData = (rawModel) => {
     return {
         //Each model need to have generated uuid
         uuid : $app.generateUuid(),
@@ -38,7 +38,7 @@ const freshModelData = () => {
         loadingRow: false,
 
         //Order/sorting in table
-        orderBy : null,
+        orderBy : [],
 
         //Is model dragged right now?
         draggind : false,
@@ -85,9 +85,6 @@ const freshModelData = () => {
         //Model scopes
         scopes : [],
 
-        //Model layouts
-        layouts : [],
-
         //Check if model has parent row. For example when we are using filterBy in select
         //we need dynamically set parent of model builder
         hasparentmodel : null,
@@ -128,7 +125,7 @@ const freshModelData = () => {
 
 var ModelData = (Model, rawModel) => {
     if ( rawModel.data === undefined ) {
-        rawModel.data = freshModelData();
+        rawModel.data = freshModelData(rawModel);
     }
 
     /**

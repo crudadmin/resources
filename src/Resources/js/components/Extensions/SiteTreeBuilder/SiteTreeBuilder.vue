@@ -44,11 +44,16 @@ export default {
         TreeItem, draggable, ModelLanguageSwitch
     },
 
-    mounted(){
-        this.setModels(this.model.getData('sitetree_models'));
+    watch : {
+        siteTreeModels(models){
+            this.setModels(models);
+        },
     },
 
     computed: {
+        siteTreeModels(){
+            return this.model.getData('sitetree_models');
+        },
         items(){
             return this.model.getRows();
         },

@@ -74,7 +74,7 @@ const addScopeParams = (model, data) => {
     for ( var i = 0; i < scopes.length; i++ ){
         let scope = scopes[i];
 
-        data['scopes'][scope.key] = scope.params;
+        data['scopes'][scope.key] = _.isNil(scope.params) ? 1 : scope.params;
     }
 
     return data;
@@ -598,9 +598,6 @@ var ModelTableRows = (Model) => {
             if ( refresh.count == 0 ){
                 //Update field options
                 updateFieldOptions(this, requestModel.fields, requestModel);
-
-                //Render additional layouts
-                this.setData('layouts', response.data.layouts);
             }
 
             //Set single model row
