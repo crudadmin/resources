@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="right" v-if="!model.isSingle()">
-                    <div class="searchbar__wrapper" :class="{ '--hasMoreButton' : search.used }" v-show="canShowSearchBar">
+                    <div class="searchbar__wrapper" :class="{ '--hasMoreButton' : model.getData('searching') }" v-show="canShowSearchBar">
                         <div class="searchbar__wrapper__queries">
                             <search
                                 v-for="(query, $index) in search.queries"
@@ -35,7 +35,7 @@
                         <button
                             data-toggle="tooltip"
                             :data-original-title="_('Pridať ďalšie vyhľadávacie pravidlo')"
-                            v-if="search.used"
+                            v-if="model.getData('searching')"
                             type="button"
                             class="btn btn-primary --addQuery"
                             @click="addSearchQuery">
@@ -505,10 +505,10 @@
                 }
 
                 var minimum = 2;
-                return this.search.used === true || (this.model.maximum==0 || this.model.maximum >= minimum) && this.rows.count >= minimum;
+                return this.model.getData('searching') === true || (this.model.maximum==0 || this.model.maximum >= minimum) && this.rows.count >= minimum;
             },
             isSearching(){
-                return this.search.used == true;
+                return this.model.getData('searching') == true;
             },
             isLocaleModel(){
                 if ( this.model.localization === true )

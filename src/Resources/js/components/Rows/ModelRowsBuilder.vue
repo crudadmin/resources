@@ -302,8 +302,6 @@ export default {
 
                 this.model.setData('searching', searching);
 
-                this.search.used = true;
-
                 //On first search query reset pagination
                 if ( this.model.getData('searching') == true && was_searching == false ){
                     this.setPosition(1, true);
