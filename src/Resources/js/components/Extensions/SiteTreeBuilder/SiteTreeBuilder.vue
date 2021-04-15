@@ -24,7 +24,7 @@
                 :key="item.id" />
 
             <TreeItem
-                v-if="model.sitetree_editor"
+                v-if="model.getData('sitetree_editor')"
                 :disabledTypes="firstLevelDisabledTypes" />
         </div>
     </div>
