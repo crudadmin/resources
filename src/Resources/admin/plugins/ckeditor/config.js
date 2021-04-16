@@ -75,4 +75,8 @@ CKEDITOR.editorConfig = function( config ) {
     config.entities = false;
     config.basicEntities = true;
     config.extraPlugins = 'save,oembed,widget,justify,font,lineutils';
+
+    if ( crudadmin.ckeditorConfig ) {
+        crudadmin.ckeditorConfig(config);
+    }
 };
