@@ -26,13 +26,14 @@ const updateFieldOptions = (model, fields, requestModel) => {
         //Update filterBy for each model
         if ( 'filterBy' in (requestModel.fields[key]||{}) && requestModel.fields[key].filterBy ){
             $app.$set(model, 'fields.'+key+'.filterBy', requestModel.fields[key].filterBy);
-        } else if ( 'filterBy' in model.fields[key]||{} ){
+        } else if ( 'filterBy' in (model.fields[key]||{}) ){
             delete model.fields[key].filterBy;
         }
 
         //Update options
         if (
-            'options' in model.fields[key]
+            model.fields[key]
+            && 'options' in model.fields[key]
             && (
                 typeof fields[key].options === 'string'
                 || Object.keys(fields[key].options).length > 0

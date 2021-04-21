@@ -39,6 +39,7 @@
                         <model-builder
                             dusk="model-builder"
                             :data-model="getModel(tab.model).table"
+                            :key="getModel(tab.model).getData('uuid')"
                             v-if="isModel(tab)"
                             :langid="model.getSelectedLanguageId()"
                             :ischild="true"
