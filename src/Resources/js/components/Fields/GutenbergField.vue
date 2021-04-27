@@ -153,11 +153,13 @@
 
                 this.flushStorage();
 
-                Gutenberg.init(this.id, {
-                    laravelFilemanager: { prefix : '/admin/filemanager' },
-                    onBoot : () => {
-                        this.onEditorBoot();
-                    },
+                this.$nextTick(() => {
+                    Gutenberg.init(this.id, {
+                        laravelFilemanager: { prefix : '/admin/filemanager' },
+                        onBoot : () => {
+                            this.onEditorBoot();
+                        },
+                    });
                 });
             },
             removeEditor: function (callback) {
