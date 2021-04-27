@@ -1,19 +1,26 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :key="elementKeyRender" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i> {{ field_name }}
             <span v-if="required" class="required">*</span>
         </label>
+        <!--
+            We want send form value from first textarea element,
+            because second may be modifier from editor in some unexpected behaviours, when vue value is not changed at all
+        -->
+        <textarea
+            rows="3"
+            class="form-control d-none"
+            :name="field_key"
+            :value="value">
+        </textarea>
+
+        <!-- This textare element is connected with gutenberg instance -->
         <textarea
             rows="10"
-            class="form-control d-none"
+            class="d-none"
             :id="id"
-            :disabled="disabled"
-            :readonly="readonly"
-            :name="field_key"
-            :value="value"
-            :maxlength="field.max"
-            :placeholder="field.placeholder || field_name">
+            :value="value">
         </textarea>
         <div v-if="initialized == false" class="alert alert-warning" :class="{ '--loading' : initializing && !initialized }">
             <p>{{ _('Inštanciu editora je možné spustiť len raz. Pre prepnutie inštancie editora kliknite na nasledujúce tlačidlo.') }}</p>
@@ -79,6 +86,19 @@
 
             eventHub.$off('updateField', this.$updateField);
             eventHub.$off('disableGutenbergEditors', this.$disableGutenbergEditors);
+        },
+
+        computed: {
+            //We need rerener whole element before initialization state, and rerender again after unitialized state.
+            //Because when you have multiple langagues, or instances of editor on page at the same time, they wil rewrite their contents.
+            //1. open first initial editor in english language
+            //2. reopen second editor for example in gernam language
+            //3. reopen again english version
+            //4. change state in english
+            //5. save (in this state, textarea of gernam editor will be modified with english value, what is wrong)
+            elementKeyRender(){
+                return this.initializing || this.initialized ? 'initialized' : 'unitialized';
+            }
         },
 
         methods : {
@@ -176,9 +196,6 @@
                 if ( typeof callback == 'function' ){
                     callback();
                 }
-            },
-            changeValue(e){
-                this.$parent.changeValue(e);
             },
         },
     }
