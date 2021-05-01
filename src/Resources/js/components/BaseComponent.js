@@ -323,7 +323,14 @@ const BaseComponent = (router, store) => {
 
                             //Compare single values key
                             else {
-                                if ( array[key][1][k] != filter[k] ) {
+                                //Suport that row has multiple values which we need filter in
+                                if ( array[key][1][k] && typeof array[key][1][k] == 'object' ) {
+                                    if ( array[key][1][k].indexOf(filter[k]) == -1 ){
+                                        continue loop1;
+                                    }
+                                }
+
+                                else if ( array[key][1][k] != filter[k] ) {
                                     continue loop1;
                                 }
                             }
