@@ -5,7 +5,7 @@
             {{ field.name }}
             <span v-if="required || isRequiredIfHasValues" class="required">*</span>
         </label>
-        <div class="form-group__chosen-container" :class="{ 'can-add-select' : canAddRow }">
+        <div class="form-group__chosen-container" :class="{ canPerformActions : hasRelationModal }">
             <select v-if="readonly" :name="!isMultiple ? field_key : ''" class="d-none">
                 <option v-if="!isMultiple" value=""></option>
                 <option v-for="mvalue in missingValueInSelectOptions" :value="mvalue" :selected="hasValue(mvalue, value, isMultiple)"></option>
@@ -25,31 +25,39 @@
                     :selected="hasValue(data[0], value, isMultiple) ? 'selected' : ''"
                     :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
             </select>
-            <button v-if="canAddRow" data-add-relation-row @click="allowRelation = true" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-success">
+            <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-success">
                 <i class="fa fa-plus"></i>
+            </button>
+            <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-default">
+                <i class="fa fa-folder-open"></i>
+            </button>
+            <button v-if="canEditRow" data-add-relation-row @click="performRelationAction('edit')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-default">
+                <i class="fa fa-edit"></i>
             </button>
         </div>
         <small>{{ field.title }}</small>
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+field_key" value="1">
 
         <!-- Modal for adding relation -->
-        <div class="modal fade" :class="{ '--inModal' : isModalInModal }" v-if="canAddRow" :id="getModalId" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal fade" :class="{ '--inModal' : isModalInModal }" v-if="hasRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" @click="closeOpenedCanAddModal"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                         <h4 class="modal-title">&nbsp;</h4>
                     </div>
                     <div class="modal-body">
                         <model-builder
-                            v-if="allowRelation"
+                            v-if="allowRelation && relationModel"
                             :key="modelBuilderId"
                             :langid="langid"
                             :parentField="field_key"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"
                             :scopes="canAddScopes"
-                            :model_builder="getRelationModelMutated">
+                            :model_builder="relationModel">
                         </model-builder>
                     </div>
                 </div><!-- /.modal-content -->
@@ -68,6 +76,7 @@
             return {
                 filterBy : null,
                 allowRelation : false,
+                relationAction : null,
             };
         },
 
@@ -82,6 +91,13 @@
             readonly(){
                 this.$nextTick(this.reloadSelectWithMultipleOrders);
             },
+            allowRelation(state){
+                if ( state == true ) {
+                    this.setRelationModel();
+
+                    this.setModelEvents();
+                }
+            }
         },
 
         mounted(){
@@ -110,6 +126,9 @@
             row(){
                 return this.model.getRow();
             },
+            hasRelationModal(){
+                return this.canAddRow || this.canViewRow || this.canEditRow;
+            },
             isCanAddInParentMode(){
                 return ['parent'].indexOf(this.field.canAdd) > -1;
             },
@@ -125,23 +144,6 @@
             },
             relationTable(){
                 return (this.field.belongsTo||this.field.belongsToMany||'').split(',')[0];
-            },
-            getRelationModel(){
-                if ( ! this.canAddRow ) {
-                    return;
-                }
-
-                return this.getFreshModel(this.relationTable);
-            },
-            getRelationModelMutated(){
-                let model = this.getRelationModel;
-
-                //We want disable refresh interval in model
-                if ( this.isCanAddInParentMode ) {
-                    model.settings.refresh_interval = false;
-                }
-
-                return model;
             },
             getRelationRow(){
                 var filterBy = this.getFilterBy;
@@ -177,17 +179,28 @@
                     return false;
                 }
 
-                var relatedModel = this.getFreshModel(this.relationTable);
-
-                return (!relatedModel || relatedModel.hasAccess('insert'))
+                var temporaryRelationModel = this.getFreshModel(this.relationTable);
+                return (temporaryRelationModel && temporaryRelationModel.hasAccess('insert'))
                         && (this.field.canAdd === true || this.isCanAddInParentMode)
                         && (!this.getFilterBy || this.filterBy);
-
-                        //if we would like to disable canAdd option in already opened form throught canAdd button
-                        // && this.isModalInModal == false
             },
-            isModalInModal(){
-                return this.model.hasParentFormModel() === false
+            canViewRow(){
+                if ( !(this.field.canView && this.field.value) ){
+                    return false;
+                }
+
+                var temporaryRelationModel = this.getFreshModel(this.relationTable);
+                return (temporaryRelationModel && temporaryRelationModel.hasAccess('read'))
+                        && (!this.getFilterBy || this.filterBy);
+            },
+            canEditRow(){
+                if ( !(this.field.canEdit && this.field.value) ){
+                    return false;
+                }
+
+                var temporaryRelationModel = this.getFreshModel(this.relationTable);
+                return (temporaryRelationModel && temporaryRelationModel.hasAccess('update'))
+                        && (!this.getFilterBy || this.filterBy);
             },
             canAddScopes(){
                 if ( this.isCanAddInParentMode == false ){
@@ -284,17 +297,62 @@
         },
 
         methods : {
-            /*
-             * Close only this modal, not all opened. Because canAdd can be opened multiple times inside another modal
-             */
-            closeOpenedCanAddModal(){
-                $('#'+this.getModalId).modal('hide').on('hidden.bs.modal', () => {
+            performRelationAction(action){
+                this.relationAction = action;
+
+                this.allowRelation = true;
+            },
+            setModelEvents(){
+                let originalInsertable = this.relationModel.insertable;
+                let originalEditable = this.relationModel.editable;
+
+                $(this.$refs.relationModalRef).on('show.bs.modal', () => {
+                    if ( ['view', 'edit'].indexOf(this.relationAction) > -1 ) {
+                        this.relationModel.insertable = false;
+                        this.relationModel.displayable = true;
+
+                        //In preview mode we want disable edit
+                        if ( this.relationAction == 'view' ) {
+                            this.relationModel.editable = false;
+                        }
+
+                        this.relationModel.enableOnlyFullScreen();
+
+                        this.relationModel.selectRow({ id : this.field.value });
+                    }
+                });
+
+                //Close only this modal, not all opened. Because canAdd can be opened multiple times inside another modal
+                $(this.$refs.relationModalRef).on('hidden.bs.modal', () => {
+                    if ( ['view', 'edit'].indexOf(this.relationAction) > -1 ){
+                        this.relationModel.insertable = originalInsertable;
+                        this.relationModel.editable = originalEditable;
+                        this.relationModel.exitFullScreenMode();
+                    }
+
+                    //Close relation form
+                    this.relationModel.closeForm();
+
                     //If multiple modals are opened all the time, also after modal close. We want add
                     //model-open class into body, for support of scrolling modal.
                     if ( $('.modal .modal-header:visible').length > 0 ) {
                         $('body').addClass('modal-open');
                     }
                 });
+            },
+            setRelationModel(){
+                if ( !this.hasRelationModal ) {
+                    return;
+                }
+
+                let model = this.getFreshModel(this.relationTable);
+
+                //We want disable refresh interval in model
+                if ( this.isCanAddInParentMode ) {
+                    model.settings.refresh_interval = false;
+                }
+
+                this.relationModel = model;
             },
             /*
              * If field has filters, then check of other fields values for filtrating
