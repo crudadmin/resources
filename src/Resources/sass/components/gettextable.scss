@@ -21,7 +21,7 @@
 
             &:last-child { width: 50%; }
 
-            &.input { background: white; padding: 0; }
+            &.input { background: white; padding: 0; position: relative; }
             &.input.edited { background: #ffe5e5 }
 
             .form-control {
@@ -34,7 +34,9 @@
                 padding: 7px 10px 0;
                 width: 100% !important;
                 resize: none;
-                height: 35px;
+                min-height: 35px;
+                height: 100%;
+                position: absolute;
 
                 &.long {
                     resize: auto;

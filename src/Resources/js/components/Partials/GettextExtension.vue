@@ -27,20 +27,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(values, key) in filtratedTranslates" :class="{ missing : isMissing(key) }">
+                                <tr v-for="(values, key) in filtratedTranslates" :key="translateId(key)" :class="{ missing : isMissing(key) }">
                                     <td>{{ key }}</td>
                                     <td class="input" :class="{ edited : hasChange(key), plural : isPlural(key) }">
-                                        <textarea
-                                            data-toggle="tooltip"
-                                            class="form-control"
-                                            v-for="i in getPluralLength(key)"
-                                            :disabled="isMissing(key)"
-                                            :title="isMissing(key) ? trans('gettext-missing') : getPluralsPlaceholder(key, i-1)"
-                                            :class="{ long : getValue(values, i-1).length > 80 }"
-                                            :value="getValue(values, i-1)"
-                                            :placeholder="getPluralsPlaceholder(key, i-1)"
-                                            @input="changeText($event, key, i-1)">
-                                        </textarea>
+                                        <gettext-field
+                                            v-for="i in  getPluralLength(key)"
+                                            :i="i"
+                                            :key="i"
+                                            :id="translateId(key)+'-'+i"
+                                            :pluralLength="getPluralLength(key)"
+                                            :textKey="key"
+                                            :values="values"
+                                            :changes="changes"
+                                            :translates="translates"
+                                            :plural_forms="plural_forms"
+                                            :isMissing="isMissing(key)"
+                                            :isRaw="isRaw(key)"
+                                            :isPlural="isPlural(key)"
+                                        />
                                     </td>
                                 </tr>
                             </tbody>
@@ -64,16 +68,23 @@
 </template>
 
 <script>
+import GettextField from './GettextField.vue';
+
 export default {
     name : 'gettext-extension',
 
     props : ['gettext_editor', 'gettext_table'],
+
+    components : {
+        GettextField
+    },
 
     data(){
         return {
             translates : {},
             showMissing : false,
             missing : [],
+            raw : [],
             plurals : [],
             plural_forms : '',
             query : null,
@@ -92,9 +103,11 @@ export default {
             var obj = {};
 
             //Filter missing translates
-            for ( var key in this.translates )
-                if ( this.missing.indexOf(key) === -1 || this.showMissing === true )
+            for ( var key in this.translates ) {
+                if ( this.missing.indexOf(key) === -1 || this.showMissing === true ) {
                     obj[key] = this.translates[key];
+                }
+            }
 
             return obj;
         },
@@ -129,58 +142,12 @@ export default {
 
             return parseInt(match[1]||2);
         },
-        getPluralsIntervals(){
-            var forms = this.plural_forms.split(';')[1].replace('plural=', ''),
-                plurals = [],
-                is_double = this.pluralLength == 2;
-
-            for ( var i = 0; i < this.pluralLength; i++ )
-            {
-                var start = null,
-                    end = null;
-
-                for ( var a = 1; a < 100; a++ )
-                {
-                    var statement = forms.replace(/n/g, a),
-                            condition = eval(statement),
-                            result = parseInt(condition);
-
-                    if (
-                        start === null
-                        && (
-                            is_double && ((i == 0 && condition === false) || (i > 0 && condition === true))
-                            || result === i
-                        )
-                    ) {
-                        start = a;
-                    }
-
-                    if ( start !== null && end === null && (!is_double && result != i) ){
-                        if ( i > 0 ) {
-                            end = a - 1;
-                        }
-
-                        break;
-                    }
-                }
-
-                plurals.push([start, start == end ? null : end]);
-            }
-
-            plurals = plurals.map((items, i) => {
-                var items = items.filter(item => item);
-
-                if ( i + 1 == plurals.length && items.length == 1 )
-                    return items[0] + '+';
-
-                return items.join(' - ');
-            });
-
-            return plurals;
-        },
     },
 
     methods: {
+        translateId(key){
+            return 'id-'+Object.keys(this.availableTranslated).indexOf(key);
+        },
         close(){
             this.$parent.gettext_editor = null;
         },
@@ -192,6 +159,7 @@ export default {
                 var messages = response.data.messages;
 
                 this.missing = response.data.missing;
+                this.raw = response.data.raw;
                 this.plurals = response.data.plurals;
                 this.plural_forms = response.data['plural-forms'];
                 this.translates = response.data.messages[Object.keys(messages)[0]]||{};
@@ -205,46 +173,11 @@ export default {
         isMissing(text){
             return this.missing.indexOf(text) > -1;
         },
+        isRaw(text){
+            return this.raw.indexOf(text) > -1;
+        },
         getPluralLength(text){
             return this.isPlural(text) ? this.pluralLength : 1;
-        },
-        getPluralsPlaceholder(text, i){
-            //If is no plural
-            if ( ! this.isPlural(text) )
-                return '';
-
-            if ( text.indexOf('%d') > -1 )
-                return text.replace('%d', this.getPluralsIntervals[i]);
-
-            return this.getPluralsIntervals[i];
-        },
-        getValue(value, i){
-            if ( ! value )
-                return '';
-
-            return value[i]||'';
-        },
-        changeText(e, src, i){
-            var value = e.target.value;
-
-            //Plural forms translates
-            if ( this.isPlural(src) )
-            {
-                //Build plural forms array
-                if ( ! (src in this.changes) )
-                    this.$set(this.changes, src, this.translates[src]);
-
-                //Update specific plural form
-                this.changes[src][i] = value;
-            }
-
-            //Non plural forms
-            else {
-                this.$set(this.changes, src, value);
-            }
-
-            //Update core translates object
-            this.translates[src][i] = value;
         },
         saveAndClose(){
             var url = this.$root.requests.get('update_translations', { id : this.gettext_editor.id, table : this.gettext_table });
