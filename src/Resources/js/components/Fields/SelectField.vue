@@ -170,6 +170,9 @@
 
                 return this.getFreshModel(relationTable);
             },
+            isModalInModal(){
+                return this.model.hasParentFormModel() === false
+            },
             /*
              * Can show adding row just for first level of forms (not when user click to add new row in form),
              * and also when is filter activated, then show just when is filter also selected

@@ -1,7 +1,6 @@
 <template>
 <textarea
     @click="bootEditors()"
-    :readonly="isRaw ? true : false"
     ref="editor"
     data-toggle="tooltip"
     class="form-control js_editor"
@@ -90,8 +89,7 @@ export default {
                 editor.on('change', e => {
                     this.changeText(e.editor.getData(), this.i-1)
                 });
-            })
-
+            });
         },
         getValue(value, i){
             if ( ! value ) {
