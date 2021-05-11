@@ -1,12 +1,14 @@
 <template>
 <textarea
+    @click="bootEditors()"
+    :readonly="isRaw ? true : false"
     ref="editor"
     data-toggle="tooltip"
     class="form-control js_editor"
     :id="id"
     :disabled="isMissing"
     :title="isMissing ? trans('gettext-missing') : getPluralsPlaceholder(i-1)"
-    :class="{ long : getValue(values, i-1).length > 80 }"
+    :class="{ long : getValue(values, i-1).length > 80 || isRaw }"
     :value="getValue(values, i-1)"
     :placeholder="getPluralsPlaceholder(i-1)"
     @input="changeText($event.target.value, i-1)"></textarea>
@@ -16,8 +18,10 @@
 export default {
     props : ['pluralLength', 'i', 'id', 'isMissing', 'isRaw', 'isPlural', 'textKey', 'plural_forms', 'changes', 'translates', 'values'],
 
-    mounted(){
-        this.bootEditors()
+    beforeDestroy(){
+        if ( this.isRaw && CKEDITOR.instances[this.$refs.editor.id] ){
+            CKEDITOR.instances[this.$refs.editor.id].destroy();
+        }
     },
 
     computed: {
