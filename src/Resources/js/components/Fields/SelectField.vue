@@ -82,7 +82,9 @@
 
         watch: {
             value(value){
-                this.$nextTick(this.reloadSelectWithMultipleOrders);
+                this.$nextTick(() => {
+                    this.reloadSelectWithMultipleOrders(false);
+                });
             },
             //If disabled state has been changed, we need reload field
             disabled(){
@@ -457,11 +459,17 @@
                 for ( var i = 0; i < values.length; i++ )
                     fake_select.append($('<option></option>').attr('selected', true).attr('value', values[i]).text(values[i]));
             },
-            reloadSelectWithMultipleOrders(){
+            reloadSelectWithMultipleOrders(canUpdate){
                 var select = $(this.$refs.select).chosen({
                     disable_search_threshold: 10,
                     search_contains : true
-                }).trigger('chosen:updated');
+                });
+
+                //We cant update select on value change, because scroll will jump on the top
+                //when options are opened.
+                if ( canUpdate !== false ) {
+                    select.trigger('chosen:updated');
+                }
 
                 //Rebuild multiple order into fake select which will send data into request
                 if ( this.isMultiple ){
