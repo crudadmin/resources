@@ -379,7 +379,7 @@ export default {
 
     methods: {
         toggleColumnEnabled(column){
-            this.enabled_columns[column].enabled = !this.enabled_columns[column].enabled;
+            this.model.setColumnVisibility(column, !this.enabled_columns[column].enabled);
 
             this.model.loadRows(true);
         },

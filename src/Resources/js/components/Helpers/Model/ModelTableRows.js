@@ -891,6 +891,12 @@ var ModelTableRows = (Model) => {
     Model.prototype.getButtonKey = function(id, key){
         return id + '-' + key;
     }
+
+    Model.prototype.setColumnVisibility = function(column, state){
+        this.data.enabled_columns[column].enabled = state;
+
+        return this;
+    }
 };
 
 export default ModelTableRows;
