@@ -175,7 +175,7 @@ var componentMixins = {
             obj.destroyed = _.castArray(obj.destroyed);
 
             var proxyEventsResend = ['sendRow', 'sendParentRow', 'reloadRows'],
-                proxyEventsReceive = ['getRow', 'getParentRow', 'onCreate', 'onUpdate', 'onDelete', 'onSubmit', 'buttonAction', 'changeFormSaveState', 'selectHistoryRow'],
+                proxyEventsReceive = ['getRow', 'getParentRow', 'onCreate', 'onUpdate', 'onDelete', 'onSubmit', 'buttonAction', 'changeFormSaveState'],
                 events = {};
 
             //Extend created method

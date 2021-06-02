@@ -108,18 +108,6 @@ export default {
         if ( this.autoSize == false ) {
             this.model.checkActiveGridSize(this.columns);
         }
-
-        //On history change
-        eventHub.$on('selectHistoryRow', this.selectHistoryRowEvent = data => {
-            if ( this.model.slug != data.table )
-                return;
-
-            this.model.selectRow({ id : data.row_id }, null, null, data.history_id, data.row);
-        });
-    },
-
-    destroyed() {
-        eventHub.$off('selectHistoryRow', this.selectHistoryRowEvent);
     },
 
     watch: {

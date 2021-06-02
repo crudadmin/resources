@@ -83,12 +83,12 @@ export default {
             this.history.fields = item.changed_fields;
             this.history.history_id = item.id;
 
-            eventHub.$emit('selectHistoryRow', {
-                table : this.model.slug,
-                row_id : this.history.id,
-                history_id : item.id,
-                row : this.model.getRow(),
-            });
+            this.model.selectRow(
+                { id : this.history.id },
+                null,
+                null,
+                item.id, this.model.getRow()
+            );
         },
         deleteHistoryRow(row){
             this.$root.openAlert(this.trans('warning'), this.trans('delete-warning'), 'warning', () => {
