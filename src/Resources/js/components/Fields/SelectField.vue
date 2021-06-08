@@ -6,13 +6,7 @@
             <span v-if="required || isRequiredIfHasValues" class="required">*</span>
         </label>
         <div class="form-group__chosen-container" :class="{ canPerformActions : hasRelationModal }">
-            <select v-if="readonly" :name="!isMultiple ? field_key : ''" class="d-none">
-                <option v-if="!isMultiple" value=""></option>
-                <option v-for="mvalue in missingValueInSelectOptions" :value="mvalue" :selected="hasValue(mvalue, value, isMultiple)"></option>
-                <option v-for="data in fieldOptions" :selected="hasValue(data[0], value, isMultiple)" :value="data[0]">{{ data[0] }}</option>
-            </select>
-
-            <select ref="select" :disabled="disabled || readonly" :name="!isMultiple ? field_key : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
+            <select ref="select" :disabled="disabled" :name="!isMultiple ? field_key : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
                 <option v-if="!isMultiple" value="">{{ trans('select-option') }}</option>
                 <option
                     v-for="mvalue in missingValueInSelectOptions"
@@ -540,3 +534,18 @@
         },
     }
 </script>
+
+<style lang="scss" scoped>
+.form-group.disabled {
+    position: relative;
+
+    &:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+}
+</style>
