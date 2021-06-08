@@ -19,13 +19,13 @@
                     :selected="hasValue(data[0], value, isMultiple) ? 'selected' : ''"
                     :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
             </select>
-            <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-success">
+            <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn-success">
                 <i class="fa fa-plus"></i>
             </button>
-            <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-default">
+            <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn-default">
                 <i class="fa fa-folder-open"></i>
             </button>
-            <button v-if="canEditRow" data-add-relation-row @click="performRelationAction('edit')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="btn-default">
+            <button v-if="canEditRow" data-add-relation-row @click="performRelationAction('edit')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn-default">
                 <i class="fa fa-edit"></i>
             </button>
         </div>
@@ -546,6 +546,10 @@
         right: 0;
         top: 0;
         bottom: 0;
+    }
+
+    .action-button {
+        z-index: 1;
     }
 }
 </style>
