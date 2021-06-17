@@ -309,6 +309,8 @@ export default {
 
             if ( this.isLocalized(key) ){
                 value = this.row[key]||{};
+                //Empty array fix, property wont be reactive
+                value = _.isArray(value) ? {} : value;
 
                 this.$set(value, this.model.selectedLanguage().slug, e.target.value);
             } else {
