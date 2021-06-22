@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 var ModelProperties = (Model) => {
     Model.prototype.addScope = function(key, params){
         this.removeScope(key);
@@ -43,42 +45,17 @@ var ModelProperties = (Model) => {
     }
 
     Model.prototype.getModelProperty = function(key, value){
-        var path = key.split('.'),
-            obj = this;
-
-        if ( !this._settings ) {
-            this._settings = {};
-        }
-
-        //Return from cache
-        if ( key in this._settings ) {
-            obj = this._settings[key];
-        }
-
-        //Find data in object
-        else {
-            for ( var i = 0; i < path.length; i++ ) {
-                if ( ! ( path[i] in obj ) ) {
-                    obj = undefined;
-                    break;
-                }
-
-                obj = obj[path[i]];
-            }
-        }
-
-        //Save into cache
-        this._settings[key] = obj;
-
-        if ( obj === undefined ) {
-            return !_.isNil(value) ? value : null
-        }
-
-        return obj;
+        return _.get(this, key, value);
     }
 
     Model.prototype.getSettings = function(key, value){
         return this.getModelProperty('settings.'+key, value);
+    }
+
+    Model.prototype.setSettings = function(path, value){
+        _.set(this.settings, path, value);
+
+        return this;
     }
 
     Model.prototype.isSettingEnabled = function(key, defaultState){

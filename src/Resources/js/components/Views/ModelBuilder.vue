@@ -57,6 +57,8 @@
                         </li>
                     </ul>
 
+                    <custom-components :model="model" type="actions-grid" />
+
                     <!-- Choose language -->
                     <div class="dropdown" v-if="hasLanguages && isActiveLanguageSwitch && (!model.canShowForm() || model.activeGridSize() != 0)" data-global-language-switch>
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
