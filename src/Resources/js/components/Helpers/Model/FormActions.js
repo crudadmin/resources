@@ -425,6 +425,10 @@ var FormActions = (Model) => {
         return $('#'+this.getFormId());
     }
 
+    Model.prototype.openForm = function(){
+        this.setData('formOpened', true);
+    }
+
     Model.prototype.closeForm = function(){
         this.setData('formOpened', false);
 
@@ -548,6 +552,9 @@ var FormActions = (Model) => {
                             this.scrollToForm();
                         }
                     }
+
+                    //Model events
+                    this.fire('onCreate', this.getRow());
                 }
             }
 
@@ -571,6 +578,9 @@ var FormActions = (Model) => {
 
                     //Send notification about updated row
                     eventHub.$emit('onUpdate', eventData);
+
+                    //Model events
+                    this.fire('onUpdate', this.getRow());
                 }
             }
 
