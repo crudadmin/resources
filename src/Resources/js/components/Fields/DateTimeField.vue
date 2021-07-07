@@ -14,6 +14,7 @@
             :name="isMultipleDatepicker ? '' : field_key"
             :value="value"
             :placeholder="field.placeholder || field_name"
+            autocomplete="off"
             @keyup="changeValue">
 
         <input type="hidden" :name="field_key+'[]'" v-if="isMultipleDatepicker && getMultiDates.length == 0" value="">

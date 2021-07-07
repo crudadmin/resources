@@ -7,7 +7,7 @@
         </label>
         <input
             class="form-control"
-            :autocomplete="isPassword ? 'new-password' : ''"
+            :autocomplete="isPassword ? 'new-password' : 'off'"
             :type="isPassword ? 'password' : 'text'"
             :name="field_key"
             :value="value"
