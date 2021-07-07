@@ -41,6 +41,13 @@
             eventHub.$off('updateField', this.onUpdateEvent);
         },
 
+        watch : {
+            //On step changed we need update steps
+            'field.date_step'(step){
+                this.bindDatepickers();
+            },
+        },
+
         computed : {
             isMultipleDatepicker() {
                 return this.field.multiple == true;
