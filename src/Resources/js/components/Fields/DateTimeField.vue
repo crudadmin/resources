@@ -27,6 +27,10 @@
     export default {
         props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
 
+        created(){
+            $.datetimepicker.setLocale(this.$root.locale);
+        },
+
         mounted(){
             this.bindDatepickers();
 
@@ -84,6 +88,7 @@
                     datepicker: this.field.type != 'time',
                     scrollInput: false,
                     timepickerScrollbar: false,
+                    dayOfWeekStart : 1,
                     step : this.field.date_step ? parseInt(this.field.date_step) : 30,
                     scrollMonth: false,
                     scrollYear: false,
