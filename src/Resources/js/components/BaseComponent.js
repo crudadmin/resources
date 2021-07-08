@@ -57,9 +57,6 @@ const BaseComponent = (router, store) => {
             this.reloadCSRFToken($('meta[name="csrf-token"]')[0].content);
 
             this.bootApp();
-
-            //Set datepickers language
-            jQuery.datetimepicker.setLocale(this.locale);
         },
 
         mounted(){

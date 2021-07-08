@@ -87,6 +87,8 @@ var RowActions = (Model) => {
 
                 this.emitRowData('onDelete', ids);
 
+                this.fire('onDelete', ids);
+
                 if ( typeof callback == 'function' ) {
                     callback(response, requestData);
                 }

@@ -28,6 +28,7 @@ import BaseComponent from './components/BaseComponent.js';
 import CrudAdmin from './components/Helpers/CrudAdmin.js';
 import SiteTreeBuilder from './components/Extensions/SiteTreeBuilder/SiteTreeBuilder.vue';
 import VueChosen from './components/Partials/VueChosen.vue';
+import ModelBuilder from './components/Views/ModelBuilder.vue';
 
 //Router
 import Router from './router.js';
@@ -37,6 +38,7 @@ Vue.component('vue-chosen', VueChosen);
 
 //Global model components
 Vue.component('SiteTreeBuilder', SiteTreeBuilder);
+Vue.component('model-builder', ModelBuilder);
 
 //Global methods
 Vue.mixin(globalVueMixins);

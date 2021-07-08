@@ -34,7 +34,7 @@
                     </div>
                 </td>
 
-                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
+                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { image_field : isImageField(field), '--clickable' : isTableClickable } ]" :data-field="field">
                     <table-row-value
                         :settings="getCachableColumnsSettings(field)"
                         :columns="columns"
@@ -315,6 +315,19 @@ export default {
         canOpenRowOnClick(){
             return this.model.getSettings('table.onclickopen', false) == true;
         },
+        isTableClickable(){
+            //if table cannot be opened
+            if ( !(this.isEditable || this.isDisplayable) ){
+                return false;
+            }
+
+            //If table has disabled clicks for opening rows
+            if ( this.model.getSettings('table.clickable', true) === false ){
+                return false;
+            }
+
+            return true;
+        }
     },
 
     methods: {
@@ -550,17 +563,11 @@ export default {
             return path;
         },
         selectRowFromTable(e, row, fieldKey){
-            //if table cannot be opened
-            if ( !(this.isEditable || this.isDisplayable) ){
+            if ( this.isTableClickable === false ){
                 return;
             }
 
             let field = this.model.fields[fieldKey];
-
-            //If table has disabled clicks for opening rows
-            if ( this.model.getSettings('table.clickable', true) === false ){
-                return;
-            }
 
             let tree = this.clickTree(e.target);
 

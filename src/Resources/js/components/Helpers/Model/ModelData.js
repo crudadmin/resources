@@ -120,6 +120,9 @@ const freshModelData = (rawModel) => {
 
         //Map events
         mapValues : [],
+
+        //Model events
+        events : [],
     }
 }
 

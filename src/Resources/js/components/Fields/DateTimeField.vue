@@ -14,6 +14,7 @@
             :name="isMultipleDatepicker ? '' : field_key"
             :value="value"
             :placeholder="field.placeholder || field_name"
+            autocomplete="off"
             @keyup="changeValue">
 
         <input type="hidden" :name="field_key+'[]'" v-if="isMultipleDatepicker && getMultiDates.length == 0" value="">
@@ -25,6 +26,10 @@
 <script>
     export default {
         props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
+
+        created(){
+            $.datetimepicker.setLocale(this.$root.locale);
+        },
 
         mounted(){
             this.bindDatepickers();
@@ -39,6 +44,13 @@
 
         destroyed(){
             eventHub.$off('updateField', this.onUpdateEvent);
+        },
+
+        watch : {
+            //On step changed we need update steps
+            'field.date_step'(step){
+                this.bindDatepickers();
+            },
         },
 
         computed : {
@@ -76,6 +88,7 @@
                     datepicker: this.field.type != 'time',
                     scrollInput: false,
                     timepickerScrollbar: false,
+                    dayOfWeekStart : 1,
                     step : this.field.date_step ? parseInt(this.field.date_step) : 30,
                     scrollMonth: false,
                     scrollYear: false,
