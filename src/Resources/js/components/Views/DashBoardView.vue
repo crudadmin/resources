@@ -30,10 +30,6 @@
     export default {
         props : ['langid'],
 
-        mounted(){
-            console.log(this.dashboard);
-        },
-
         computed: {
             user(){
                 return this.$root.user;
