@@ -283,6 +283,11 @@
                         &.--hasMoreButton {
                             .searchbar__wrapper__queries {
                                 margin-right: $navbarPadding / 2;
+                                margin-bottom: -($navbarPadding / 2);
+                            }
+
+                            .search-bar {
+                                margin-bottom: $navbarPadding / 2;
                             }
                         }
 
