@@ -305,6 +305,10 @@
                 let originalInsertable = this.relationModel.insertable;
                 let originalEditable = this.relationModel.editable;
 
+                let onFormCreate = () => {
+                    $(this.$refs.relationModalRef).modal('hide');
+                };
+
                 $(this.$refs.relationModalRef).on('show.bs.modal', () => {
                     if ( ['view', 'edit'].indexOf(this.relationAction) > -1 ) {
                         this.relationModel.insertable = false;
@@ -318,6 +322,9 @@
                         this.relationModel.enableOnlyFullScreen();
 
                         this.relationModel.selectRow({ id : this.field.value });
+                    } else if ( ['add'].indexOf(this.relationAction) > -1 ) {
+                        this.relationModel.openForm();
+                        this.relationModel.on('onCreate', onFormCreate);
                     }
                 });
 
@@ -327,6 +334,8 @@
                         this.relationModel.insertable = originalInsertable;
                         this.relationModel.editable = originalEditable;
                         this.relationModel.exitFullScreenMode();
+                    } else if ( ['add'].indexOf(this.relationAction) > -1 ) {
+                        this.relationModel.off('onCreate', onFormCreate);
                     }
 
                     //Close relation form
