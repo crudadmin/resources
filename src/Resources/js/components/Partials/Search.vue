@@ -22,8 +22,8 @@
         <input type="text" v-show="isDate" :value="search.query" data-search-date readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker1">
 
         <select type="text" v-show="isCheckbox" v-model="search.query" class="form-control">
-            <option value="0">{{ trans('off') }}</option>
-            <option value="1">{{ trans('on') }}</option>
+            <option :value="0">{{ trans('off') }}</option>
+            <option :value="1">{{ trans('on') }}</option>
         </select>
 
         <div class="select" v-show="isSelect">
@@ -65,6 +65,11 @@ export default {
                 this.reloadSearchBarSelect();
             },
         },
+        'search.column'(column){
+            if ( this.isCheckbox ){
+                this.search.query = 1;
+            }
+        }
     },
 
     mounted(){
@@ -102,8 +107,7 @@ export default {
 
                 if (
                         ! field.name
-                        || 'belongToMany' in field
-                        || 'multiple' in field
+                        || (!('belongsToMany' in field) && 'multiple' in field)
                         || ( 'removeFromForm' in field && 'hidden' in field )
                         || field.type == 'password'
                 ) {
@@ -119,13 +123,22 @@ export default {
         /*
          * Search columns
          */
+        getColumnField(){
+            var column = this.search.column;
+
+            if ( column && column in this.model.fields && this.model.fields[column] ){
+                return this.model.fields[column];
+            }
+        },
         isSearch(){
             return (this.isCheckbox || this.isDate || this.isSelect) ? false : true;
         },
         isCheckbox(){
-            var column = this.search.column;
+            if ( !this.getColumnField ) {
+                return false;
+            }
 
-            return column && column in this.model.fields && this.model.fields[column].type == 'checkbox' ? true : false;
+            return this.getColumnField.type == 'checkbox' ? true : false;
         },
         isDate(){
             var column = this.search.column;
@@ -134,12 +147,18 @@ export default {
                 return true;
             }
 
-            return column && column in this.model.fields && (['date', 'datetime', 'time'].indexOf(this.model.fields[column].type) > -1) ? true : false;
+            if ( this.getColumnField ) {
+                return (['date', 'datetime', 'time'].indexOf(this.getColumnField.type) > -1) ? true : false;
+            }
+
+            return false;
         },
         isSelect(){
-            var column = this.search.column;
+            if ( this.getColumnField ) {
+                return (['select', 'radio'].indexOf(this.getColumnField.type) > -1) ? true : false;
+            }
 
-            return column && column in this.model.fields && (['select', 'radio'].indexOf(this.model.fields[column].type) > -1) ? true : false;
+            return false;
         },
     },
 
@@ -229,3 +248,9 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.select {
+    min-width: 175px;
+}
+</style>

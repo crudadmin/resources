@@ -121,8 +121,8 @@ return [
     'search-all' => _('Hľadať všade'),
     'get-value' => _('Vyberte hodnotu'),
     'reset' => _('Resetovať'),
-    'on' => _('Vypnuté'),
-    'off' => _('Zapnuté'),
+    'on' => _('Zapnuté'),
+    'off' => _('Vypnuté'),
     'yes' => _('Áno'),
     'no' => _('Nie'),
 

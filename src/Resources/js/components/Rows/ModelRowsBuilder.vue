@@ -279,24 +279,16 @@ export default {
 
                 for ( var i = 0; i < queries.length; i++ ) {
                     let item = queries[i],
-                        query = item.query||item.query_to;
+                        query = !_.isNil(item.query) && item.query !== '' ? item.query : item.query_to;
 
-                    if ( searching === false ){
-                        searching = (
-                            query && (
-                                query.length >= 3
-                                || (
-                                    item.column
-                                    && (
-                                        (
-                                            item.column in this.model.fields
-                                            && ['select', 'option'].indexOf(this.model.fields[item.column].type) > -1
-                                        )
-                                        || $.isNumeric(query)
-                                    )
-                                )
-                            )
-                        ) ? true : false;
+                    if ( searching === false && !_.isNil(query) && query !== '' ){
+                        if ( query.length >= 3 || $.isNumeric(query) ) {
+                            searching = true;
+                        }
+
+                        if ( item.column && item.column in this.model.fields && ['select', 'option', 'checkbox'].indexOf(this.model.fields[item.column].type) > -1 ) {
+                            searching = true;
+                        }
                     }
                 }
 

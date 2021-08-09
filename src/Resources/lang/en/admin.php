@@ -121,8 +121,8 @@ return [
     'search-all' => 'All',
     'get-value' => 'Select value',
     'reset' => 'Reset',
-    'on' => 'Off',
-    'off' => 'On',
+    'on' => 'On',
+    'off' => 'Off',
     'yes' => 'Yes',
     'no' => 'No',
 
