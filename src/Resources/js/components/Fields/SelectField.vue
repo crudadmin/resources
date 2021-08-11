@@ -33,7 +33,7 @@
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+field_key" value="1">
 
         <!-- Modal for adding relation -->
-        <div class="modal fade" :class="{ '--inModal' : isModalInModal }" v-if="hasRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal fade" select-field :class="{ '--inModal' : isModalInModal }" v-if="hasRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -343,8 +343,10 @@
 
                     //If multiple modals are opened all the time, also after modal close. We want add
                     //model-open class into body, for support of scrolling modal.
-                    if ( $('.modal .modal-header:visible').length > 0 ) {
+                    if ( $('.modal[select-field] .modal-header:visible').length > 0 ) {
                         $('body').addClass('modal-open');
+                    } else {
+                        $('body').removeClass('modal-open');
                     }
                 });
             },
