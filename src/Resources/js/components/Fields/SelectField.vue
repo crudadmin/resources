@@ -365,6 +365,8 @@
 
                 this.relationModel.on('onCreate', this.onRelationCreated = (row) => {
                     this.model.pushOption(this.field_key, row, 'store');
+
+                    this.reloadSetters(row.id);
                 });
 
                 this.relationModel.on('onUpdate', this.onRelationUpdate = (row) => {
@@ -407,27 +409,26 @@
              */
             onChangeSelect(){
                 var select = $(this.$refs.select),
-                    is_change = false,
-                    _this = this;
+                    is_change = false;
 
-                select.change(function(e){
+                select.change((e) => {
                     is_change = true;
 
-                    if ( _this.isMultiple ){
+                    if ( this.isMultiple ){
                         //Chosen need to be updated after delay for correct selection order
                         setTimeout(() => {
                             //Send values in correct order
-                            _this.changeValue(null, $(this).getSelectionOrder());
+                            this.changeValue(null, select.getSelectionOrder());
 
                             //Update fake select on change value
-                            _this.rebuildSelect();
+                            this.rebuildSelect();
                         }, 50);
                     } else {
-                        var value = $(this).val();
+                        var value = select.val();
 
-                        _this.changeValue(null, value);
+                        this.changeValue(null, value);
 
-                        _this.reloadSetters(value);
+                        this.reloadSetters(value);
                     }
                 });
 
