@@ -144,7 +144,7 @@
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes', 'parentField'],
+        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes'],
 
         name : 'model-builder',
 
@@ -186,8 +186,6 @@
             this.model.setData('hasparentmodel', this.hasparentmodel);
             this.model.setData('parentrow', this.parentrow);
 
-            //Update parent model properties
-            this.model.setData('parentField', this.parentField);
             this.model.setData('activetab', this.activetab);
             this.model.setData('langid', this.langid);
             this.model.setData('scopes', this.scopes||[]);

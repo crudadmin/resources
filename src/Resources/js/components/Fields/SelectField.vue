@@ -47,7 +47,6 @@
                             v-if="allowRelation && relationModel"
                             :key="modelBuilderId"
                             :langid="langid"
-                            :parentField="field_key"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"
                             :scopes="canAddScopes"
@@ -363,6 +362,20 @@
                 }
 
                 this.relationModel = model;
+
+                this.relationModel.on('onCreate', this.onRelationCreated = (row) => {
+                    this.model.pushOption(this.field_key, row, 'store');
+                });
+
+                this.relationModel.on('onUpdate', this.onRelationUpdate = (row) => {
+                    this.model.pushOption(this.field_key, row, 'update');
+                });
+
+                this.relationModel.on('onDelete', this.onRelationDeleted = (ids) => {
+                    ids.forEach(id => {
+                        this.model.pushOption(this.field_key, id, 'delete');
+                    });
+                });
             },
             /*
              * If field has filters, then check of other fields values for filtrating

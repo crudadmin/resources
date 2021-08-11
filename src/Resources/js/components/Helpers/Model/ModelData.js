@@ -76,9 +76,6 @@ const freshModelData = (rawModel) => {
         //Is button action loading?
         button_loading : false,
 
-        //If model has been booted in field
-        parentField : null,
-
         //Loaded model options
         modelOptions : {},
 

@@ -511,15 +511,6 @@ export default {
             var ids = row ? [ row.id ] : this.model.getChecked();
 
             this.model.removeRow(ids, (response, requestData) => {
-                //Remove row from options
-                if ( this.model.hasParentFormModel() !== true && this.model.getData('parentField') ){
-                    this.model.getParentModel().pushOption(
-                        this.model.getData('parentField'),
-                        requestData.id,
-                        'delete'
-                    );
-                }
-
                 //After remove reset checkbox
                 if ( ! row ) {
                     //We need set length to zero, to keep array reference in admin model
