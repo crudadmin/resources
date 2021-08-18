@@ -143,8 +143,9 @@
             getRelationRow(){
                 var filterBy = this.getFilterBy;
 
-                if ( ! filterBy || ! this.row[filterBy[0]] )
+                if ( !this.getRelationModelParent || ! filterBy || ! this.row[filterBy[0]] ) {
                     return {};
+                }
 
                 return {
                     id : this.row[filterBy[0]],
@@ -161,9 +162,11 @@
                 }
 
                 var field = this.model.fields[filterBy[0]],
-                    relationTable = (field.belongsTo||field.belongsToMany).split(',')[0];
+                    relationTable = ((field.belongsTo||field.belongsToMany)||'').split(',')[0];
 
-                return this.getFreshModel(relationTable);
+                if ( relationTable ) {
+                    return this.getFreshModel(relationTable);
+                }
             },
             isModalInModal(){
                 return this.model.hasParentFormModel() === false
