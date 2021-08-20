@@ -120,7 +120,7 @@ var RowActions = (Model) => {
 
     Model.prototype.scrollToForm = function(){
         //Allow scroll form only on full width table
-        if ( this.activeGridSize() != 0 && $app.isMobileDevice() == false ){
+        if ( this.activeGridSize() != 0 && $app.isTabletDevice() == false ){
             return;
         }
 
