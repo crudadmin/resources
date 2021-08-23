@@ -54,6 +54,8 @@ return [
     'check-all' => 'Check all',
     'uncheck-all' => 'Uncheck all',
     'show' => 'Show',
+    'publish' => 'Publish',
+    'publish-logged' => 'Publish only for logged in',
     'show-image' => 'Show image',
     'download' => 'Download',
     'download-document' => 'Download document',

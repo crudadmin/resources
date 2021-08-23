@@ -268,7 +268,11 @@ var RowActions = (Model) => {
             //Update multiple published at
             for ( var key in rows.data ) {
                 if ( ids.indexOf(rows.data[key].id) > -1 ) {
-                    rows.data[key].published_at = data[rows.data[key].id];
+                    rows.data[key].published_at = data[rows.data[key].id].published_at;
+
+                    if ( this.publishableState == true ) {
+                        rows.data[key].published_state = data[rows.data[key].id].published_state;
+                    }
                 }
             }
         } catch (response){

@@ -107,6 +107,8 @@ return [
 
     'edit' => _('Upraviť'),
     'show' => _('Zobraziť'),
+    'publish' => _('Publikovať'),
+    'publish-logged' => _('Publikovať len prihláseným'),
     'hide' => _('Skryť'),
     'action' => _('Akcia'),
     'publish-toggle' => _('Publikovať/Skryť'),

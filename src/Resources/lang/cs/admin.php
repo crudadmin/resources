@@ -54,6 +54,8 @@ return [
     'check-all' => 'Označit všechny',
     'uncheck-all' => 'Odznačit všechny',
     'show' => 'Zobrazit',
+    'publish' => 'Publikovat',
+    'publish-logged' => 'Publikovat len prihláseným',
     'show-image' => 'Zobrazit obrázek',
     'download' => 'Stáhnout',
     'download-document' => 'Stáhnout dokument',
