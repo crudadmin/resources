@@ -22,7 +22,7 @@ if (! function_exists('admin_asset')) {
         $path = $basepath;
 
         //If no query is available
-        if ( strpos($path, '?') === false && is_dir($path) == false ) {
+        if ( strpos($path, '?') === false && is_dir(public_path($path)) == false ) {
             $path .= '?v='.$version;
 
             if ( file_exists($basepath = public_path($basepath)) ){
