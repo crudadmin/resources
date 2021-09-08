@@ -92,6 +92,11 @@
 
                     this.setModelEvents();
                 }
+            },
+            hasRelationModal(state){
+                if ( state == false ){
+                    this.allowRelation = false;
+                }
             }
         },
 
