@@ -241,6 +241,9 @@ const sendForm = function(model, e, action, callback){
                     bindErrorMessages(model, key, errors);
                 }
             })
+        },
+        uploadProgress(e, sent, total, percentage){
+            model.setData('progress', percentage);
         }
     });
 }
