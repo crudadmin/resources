@@ -68,20 +68,10 @@
                     return item.length == (this.field.type == 'time' ? 5 : 10);
                 });
             },
-        },
-
-        methods : {
-            getInput(){
-                return $(this.$refs.input);
-            },
-            bindDatepickers(){
-                if ( this.readonly === true ){
-                    return;
-                }
-
+            datePickerConfig(){
                 var _this = this;
 
-                this.getInput().datetimepicker({
+                let config = {
                     lang: this.$root.locale,
                     format: this.field.date_format,
                     timepicker: this.field.type != 'date',
@@ -97,7 +87,24 @@
                         _this.onGenerate(this, ct);
                     },
                     onChangeDateTime: this.onChangeDateTime,
-                });
+                }
+
+                this.model.fireField(this.field_key, 'datepicker.config', config, this.getInput());
+
+                return config;
+            }
+        },
+
+        methods : {
+            getInput(){
+                return $(this.$refs.input);
+            },
+            bindDatepickers(){
+                if ( this.readonly === true ){
+                    return;
+                }
+
+                this.getInput().datetimepicker(this.datePickerConfig);
             },
             onGenerate(el, ct){
                 if ( ! this.isMultipleDatepicker )

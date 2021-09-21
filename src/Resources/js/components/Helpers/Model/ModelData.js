@@ -120,6 +120,8 @@ const freshModelData = (rawModel) => {
 
         //Model events
         events : [],
+
+        mutators : [],
     }
 }
 
