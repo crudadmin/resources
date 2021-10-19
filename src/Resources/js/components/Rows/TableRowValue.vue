@@ -122,16 +122,11 @@ export default {
                 }
 
                 //Multi date format values
-                else if ( field.type == 'date' && field.multiple === true ) {
-                    rowValue = this.returnDateFormat(rowValue);
-                }
-
-                //Multi time format values
-                else if ( field.type == 'time' && field.multiple === true ) {
-                    rowValue = (rowValue||[]).join(', ');
+                else if ( ['date', 'datetime', 'time'].indexOf(field.type) > -1 ) {
+                    rowValue = this.returnDateFormat(rowValue, this.field);
                 }
             } else if ( ['created_at', 'updated_at'].indexOf(this.field) > -1 ) {
-                return this.returnDateFormat([rowValue]);
+                return this.returnDateFormat(rowValue, this.field);
             }
 
             var add_before = this.settings.add_before,
@@ -164,11 +159,11 @@ export default {
     },
 
     methods: {
-        returnDateFormat(rowValue){
-            return (rowValue||[]).map(item => {
+        returnDateFormat(rowValue, field){
+            return _.castArray(rowValue||[]).map(item => {
                 var date = moment(item);
 
-                return date._isValid ? date.format('DD.MM.YYYY') : item;
+                return date.isValid() ? date.format(this.fromPHPFormatToMoment(this.model.getFieldFormat(field)||'DD.MM.YYYY')) : item;
             }).join(', ');
         },
         stringLimit(string){

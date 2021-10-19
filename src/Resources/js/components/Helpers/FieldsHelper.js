@@ -274,6 +274,16 @@ var Fields = (Model) => {
 
         return false;
     }
+
+    Model.prototype.getFieldFormat = function(fieldKey){
+        let field = this.fields[fieldKey];
+
+        if ( field.date_format ) {
+            return field.date_format;
+        } else if ( field.date_format_multiple ){
+            return field.date_format_multiple.split(',')[0];
+        }
+    }
 };
 
 export default Fields;

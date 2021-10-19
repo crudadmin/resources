@@ -663,11 +663,6 @@ var ModelTableRows = (Model) => {
             is_decoded = this.getSettings('columns.'+field+'.encode', true) !== true,
             defaultSlug = $app.languages.length ? $app.languages[0].slug : null;
 
-        //If is date field, then receive correct date format of this field
-        if ( isDateValue(this, field) && field in this.fields ){
-            var format = $app.fromPHPFormatToMoment(this.fields[field].date_format);
-        }
-
         return this.getData('rows').data.slice(0).sort((a, b) => {
             //If is null value
             if ( ! a || ! b ) {
@@ -704,9 +699,9 @@ var ModelTableRows = (Model) => {
                 return a - b;
             }
 
-            else if ( is_date && format ) {
-                var c = moment(a, format),
-                        d = moment(b, format);
+            else if ( is_date ) {
+                var c = moment(a),
+                    d = moment(b);
 
                 if ( !c.isValid() || !d.isValid() ) {
                     return 0;

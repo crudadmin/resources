@@ -278,7 +278,7 @@
 
                 //If is current date value in datepicker
                 if ( field.default && this.isDatepickerField(field) && defaultValue.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
-                    defaultValue = moment().format(this.$root.fromPHPFormatToMoment(field.date_format));
+                    defaultValue = moment().format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key)));
                 }
 
                 //Get value by other table

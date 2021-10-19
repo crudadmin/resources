@@ -12,7 +12,7 @@
             :disabled="disabled"
             :readonly="readonly"
             :name="isMultipleDatepicker ? '' : field_key"
-            :value="value"
+            :value="castValue(value)"
             :placeholder="field.placeholder || field_name"
             autocomplete="off"
             @keyup="changeValue">
@@ -74,6 +74,14 @@
             getInput(){
                 return $(this.$refs.input);
             },
+            castValue(value){
+                //If is iso format, we need cast value for required input format
+                if ( value && moment(value, moment.ISO_8601, true).isValid() ) {
+                    return moment(value).format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key)));
+                }
+
+                return value;
+            },
             bindDatepickers(){
                 if ( this.readonly === true ){
                     return;
@@ -83,7 +91,7 @@
 
                 this.getInput().datetimepicker({
                     lang: this.$root.locale,
-                    format: this.field.date_format,
+                    format: this.model.getFieldFormat(this.field_key),
                     timepicker: this.field.type != 'date',
                     datepicker: this.field.type != 'time',
                     scrollInput: false,
@@ -139,7 +147,7 @@
 
                 //Update single date value
                 else {
-                    var pickedDate = moment(current_date_time).format(this.$root.fromPHPFormatToMoment(this.field.date_format));
+                    var pickedDate = moment(current_date_time).format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key)));
 
                     this.changeValue(null, pickedDate);
                 }

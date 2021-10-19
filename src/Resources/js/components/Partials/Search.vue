@@ -208,7 +208,7 @@ export default {
             //Add datepickers
             $(elements).datetimepicker({
                 lang: this.$root.locale,
-                format: column == 'created_at' ? 'd.m.Y' : this.model.fields[column].date_format,
+                format: column == 'created_at' ? 'd.m.Y' : this.model.getFieldFormat(column),
                 timepicker: column == 'created_at' ? false : this.model.fields[column].type != 'date',
                 datepicker: column == 'created_at' ? true : this.model.fields[column].type != 'time',
                 scrollInput: false,
