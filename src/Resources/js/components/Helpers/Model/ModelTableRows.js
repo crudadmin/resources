@@ -792,7 +792,6 @@ var ModelTableRows = (Model) => {
 
                     //Update received rows by button action
                     if ( 'rows' in data.data ) {
-                        console.log('updating', data);
                         this.updateParentData(key, button, row, data);
                     }
 
