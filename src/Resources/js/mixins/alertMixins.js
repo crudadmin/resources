@@ -1,6 +1,6 @@
 var alertMixins = {
     methods: {
-        openAlert(title, message, type, success, close, component){
+        openAlert(title, message, type, success, close, component, key){
             if ( !type ) {
                 type = 'success';
             }
@@ -9,6 +9,7 @@ var alertMixins = {
                 type = 'danger';
             }
 
+            this.$root.alert.key = key;
             this.$root.alert.type = type;
             this.$root.alert.title = title;
             this.$root.alert.message = message;

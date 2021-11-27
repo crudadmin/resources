@@ -1,5 +1,5 @@
 <template>
-<div class="message-modal" v-if="canShowAlert" :data-modal="getRegistredComponent">
+<div class="message-modal" v-if="canShowAlert" :data-modal="modalName">
   <div class="modal" :class="'modal-'+alert.type" v-bind:style="{ display : canShowAlert ? 'block' : 'none' }">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -52,6 +52,9 @@ export default {
     },
 
     computed: {
+        modalName(){
+            return this.alert.key||this.getRegistredComponent;
+        },
         canShowAlert(){
             return this.alert.title != null && this.alert.message != null || this.alert.component;
         },

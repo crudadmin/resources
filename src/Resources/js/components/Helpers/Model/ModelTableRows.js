@@ -833,7 +833,8 @@ var ModelTableRows = (Model) => {
                         data.type,
                         ask ? success_callback : null,
                         ask ? true : null,
-                        component_data
+                        component_data,
+                        button.key
                     );
                 }
             } catch (error){
