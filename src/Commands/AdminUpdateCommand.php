@@ -47,6 +47,8 @@ class AdminUpdateCommand extends Command
 
         Admin::publishAssetsVersion();
 
+        $this->prepareStorage();
+
         $this->line('Updating completed!');
 
         parent::__construct();
@@ -110,5 +112,12 @@ class AdminUpdateCommand extends Command
         }
 
         $this->line('<comment>+ Vendor directories has been successfully published</comment>');
+    }
+
+    public function prepareStorage()
+    {
+        Admin::addGitignoreFiles([
+            storage_path('/crudadmin')
+        ]);
     }
 }
