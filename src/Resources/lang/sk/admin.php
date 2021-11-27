@@ -107,6 +107,8 @@ return [
 
     'edit' => _('Upraviť'),
     'show' => _('Zobraziť'),
+    'publish' => _('Publikovať'),
+    'publish-logged' => _('Publikovať len prihláseným'),
     'hide' => _('Skryť'),
     'action' => _('Akcia'),
     'publish-toggle' => _('Publikovať/Skryť'),
@@ -121,8 +123,8 @@ return [
     'search-all' => _('Hľadať všade'),
     'get-value' => _('Vyberte hodnotu'),
     'reset' => _('Resetovať'),
-    'on' => _('Vypnuté'),
-    'off' => _('Zapnuté'),
+    'on' => _('Zapnuté'),
+    'off' => _('Vypnuté'),
     'yes' => _('Áno'),
     'no' => _('Nie'),
 

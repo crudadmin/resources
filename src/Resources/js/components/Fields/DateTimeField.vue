@@ -68,6 +68,31 @@
                     return item.length == (this.field.type == 'time' ? 5 : 10);
                 });
             },
+            datePickerConfig(){
+                var _this = this;
+
+                let config = {
+                    lang: this.$root.locale,
+                    format: this.model.getFieldFormat(this.field_key),
+                    timepicker: this.field.type != 'date',
+                    datepicker: this.field.type != 'time',
+                    scrollInput: false,
+                    timepickerScrollbar: false,
+                    dayOfWeekStart : 1,
+                    step : this.field.date_step ? parseInt(this.field.date_step) : 30,
+                    scrollMonth: false,
+                    scrollYear: false,
+                    inline : this.isMultipleDatepicker,
+                    onGenerate: function(ct){
+                        _this.onGenerate(this, ct);
+                    },
+                    onChangeDateTime: this.onChangeDateTime,
+                }
+
+                this.model.fireField(this.field_key, 'datepicker.config', config, this.getInput());
+
+                return config;
+            }
         },
 
         methods : {
@@ -87,25 +112,7 @@
                     return;
                 }
 
-                var _this = this;
-
-                this.getInput().datetimepicker({
-                    lang: this.$root.locale,
-                    format: this.model.getFieldFormat(this.field_key),
-                    timepicker: this.field.type != 'date',
-                    datepicker: this.field.type != 'time',
-                    scrollInput: false,
-                    timepickerScrollbar: false,
-                    dayOfWeekStart : 1,
-                    step : this.field.date_step ? parseInt(this.field.date_step) : 30,
-                    scrollMonth: false,
-                    scrollYear: false,
-                    inline : this.isMultipleDatepicker,
-                    onGenerate: function(ct){
-                        _this.onGenerate(this, ct);
-                    },
-                    onChangeDateTime: this.onChangeDateTime,
-                });
+                this.getInput().datetimepicker(this.datePickerConfig);
             },
             onGenerate(el, ct){
                 if ( ! this.isMultipleDatepicker )

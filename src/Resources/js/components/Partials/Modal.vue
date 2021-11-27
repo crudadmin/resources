@@ -1,5 +1,5 @@
 <template>
-<div class="message-modal" v-if="canShowAlert">
+<div class="message-modal" v-if="canShowAlert" :data-modal="getRegistredComponent">
   <div class="modal" :class="'modal-'+alert.type" v-bind:style="{ display : canShowAlert ? 'block' : 'none' }">
     <div class="modal-dialog">
       <div class="modal-content">

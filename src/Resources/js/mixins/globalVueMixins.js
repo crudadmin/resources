@@ -21,6 +21,9 @@ var globalVueMixins = {
                 return match;
             });
         },
+        isTabletDevice(){
+            return $(window).width() < 1200;
+        }
     }
 }
 

@@ -79,6 +79,11 @@ var Linkable = {
                 url = parts[0],
                 newUrl = prompt(CATranslates.texts.updateLink, url);
 
+            //Canceled
+            if ( newUrl === null ){
+                return;
+            }
+
             Linkable.updateLink(element, newUrl);
         }
     }

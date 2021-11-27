@@ -279,24 +279,16 @@ export default {
 
                 for ( var i = 0; i < queries.length; i++ ) {
                     let item = queries[i],
-                        query = item.query||item.query_to;
+                        query = !_.isNil(item.query) && item.query !== '' ? item.query : item.query_to;
 
-                    if ( searching === false ){
-                        searching = (
-                            query && (
-                                query.length >= 3
-                                || (
-                                    item.column
-                                    && (
-                                        (
-                                            item.column in this.model.fields
-                                            && ['select', 'option'].indexOf(this.model.fields[item.column].type) > -1
-                                        )
-                                        || $.isNumeric(query)
-                                    )
-                                )
-                            )
-                        ) ? true : false;
+                    if ( searching === false && !_.isNil(query) && query !== '' ){
+                        if ( query.length >= 3 || $.isNumeric(query) ) {
+                            searching = true;
+                        }
+
+                        if ( item.column && item.column in this.model.fields && ['select', 'option', 'checkbox'].indexOf(this.model.fields[item.column].type) > -1 ) {
+                            searching = true;
+                        }
                     }
                 }
 
@@ -519,15 +511,6 @@ export default {
             var ids = row ? [ row.id ] : this.model.getChecked();
 
             this.model.removeRow(ids, (response, requestData) => {
-                //Remove row from options
-                if ( this.model.hasParentFormModel() !== true && this.model.getData('parentField') ){
-                    this.model.getParentModel().pushOption(
-                        this.model.getData('parentField'),
-                        requestData.id,
-                        'delete'
-                    );
-                }
-
                 //After remove reset checkbox
                 if ( ! row ) {
                     //We need set length to zero, to keep array reference in admin model

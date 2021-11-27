@@ -241,6 +241,9 @@ const sendForm = function(model, e, action, callback){
                     bindErrorMessages(model, key, errors);
                 }
             })
+        },
+        uploadProgress(e, sent, total, percentage){
+            model.setData('progress', percentage);
         }
     });
 }
@@ -533,6 +536,9 @@ var FormActions = (Model) => {
                     //Send notification about new row
                     eventHub.$emit('onCreate', eventData);
 
+                    //Model events
+                    this.fire('onCreate', clonedRow);
+
                     if ( isParentRow ) {
                         //If form has disabled autoreseting
                         var autoreset = this.getSettings('autoreset');
@@ -552,9 +558,6 @@ var FormActions = (Model) => {
                             this.scrollToForm();
                         }
                     }
-
-                    //Model events
-                    this.fire('onCreate', this.getRow());
                 }
             }
 
@@ -582,14 +585,6 @@ var FormActions = (Model) => {
                     //Model events
                     this.fire('onUpdate', this.getRow());
                 }
-            }
-
-            //Add or update select options
-            if ( this.hasParentFormModel() !== true && this.getData('parentField') ) {
-                var incomingRow = action == 'store' ? response.data[0].rows[0] : response.data.rows[this.table],
-                    parentModel = this.getParentModel();
-
-                parentModel.pushOption(this.getData('parentField'), incomingRow, action);
             }
         });
     }

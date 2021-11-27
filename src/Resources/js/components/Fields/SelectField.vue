@@ -33,7 +33,7 @@
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+field_key" value="1">
 
         <!-- Modal for adding relation -->
-        <div class="modal fade" :class="{ '--inModal' : isModalInModal }" v-if="hasRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal fade" select-field :class="{ '--inModal' : isModalInModal }" v-if="hasRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -47,7 +47,6 @@
                             v-if="allowRelation && relationModel"
                             :key="modelBuilderId"
                             :langid="langid"
-                            :parentField="field_key"
                             :hasparentmodel="getRelationModelParent"
                             :parentrow="getRelationRow"
                             :scopes="canAddScopes"
@@ -92,6 +91,11 @@
                     this.setRelationModel();
 
                     this.setModelEvents();
+                }
+            },
+            hasRelationModal(state){
+                if ( state == false ){
+                    this.allowRelation = false;
                 }
             }
         },
@@ -144,8 +148,9 @@
             getRelationRow(){
                 var filterBy = this.getFilterBy;
 
-                if ( ! filterBy || ! this.row[filterBy[0]] )
+                if ( !this.getRelationModelParent || ! filterBy || ! this.row[filterBy[0]] ) {
                     return {};
+                }
 
                 return {
                     id : this.row[filterBy[0]],
@@ -162,9 +167,11 @@
                 }
 
                 var field = this.model.fields[filterBy[0]],
-                    relationTable = (field.belongsTo||field.belongsToMany).split(',')[0];
+                    relationTable = ((field.belongsTo||field.belongsToMany)||'').split(',')[0];
 
-                return this.getFreshModel(relationTable);
+                if ( relationTable ) {
+                    return this.getFreshModel(relationTable);
+                }
             },
             isModalInModal(){
                 return this.model.hasParentFormModel() === false
@@ -305,6 +312,10 @@
                 let originalInsertable = this.relationModel.insertable;
                 let originalEditable = this.relationModel.editable;
 
+                let onFormCreate = () => {
+                    $(this.$refs.relationModalRef).modal('hide');
+                };
+
                 $(this.$refs.relationModalRef).on('show.bs.modal', () => {
                     if ( ['view', 'edit'].indexOf(this.relationAction) > -1 ) {
                         this.relationModel.insertable = false;
@@ -318,6 +329,9 @@
                         this.relationModel.enableOnlyFullScreen();
 
                         this.relationModel.selectRow({ id : this.field.value });
+                    } else if ( ['add'].indexOf(this.relationAction) > -1 ) {
+                        this.relationModel.openForm();
+                        this.relationModel.on('onCreate', onFormCreate);
                     }
                 });
 
@@ -327,6 +341,8 @@
                         this.relationModel.insertable = originalInsertable;
                         this.relationModel.editable = originalEditable;
                         this.relationModel.exitFullScreenMode();
+                    } else if ( ['add'].indexOf(this.relationAction) > -1 ) {
+                        this.relationModel.off('onCreate', onFormCreate);
                     }
 
                     //Close relation form
@@ -334,8 +350,10 @@
 
                     //If multiple modals are opened all the time, also after modal close. We want add
                     //model-open class into body, for support of scrolling modal.
-                    if ( $('.modal .modal-header:visible').length > 0 ) {
+                    if ( $('.modal[select-field] .modal-header:visible').length > 0 ) {
                         $('body').addClass('modal-open');
+                    } else {
+                        $('body').removeClass('modal-open');
                     }
                 });
             },
@@ -352,6 +370,22 @@
                 }
 
                 this.relationModel = model;
+
+                this.relationModel.on('onCreate', this.onRelationCreated = (row) => {
+                    this.model.pushOption(this.field_key, row, 'store');
+
+                    this.reloadSetters(row.id);
+                });
+
+                this.relationModel.on('onUpdate', this.onRelationUpdate = (row) => {
+                    this.model.pushOption(this.field_key, row, 'update');
+                });
+
+                this.relationModel.on('onDelete', this.onRelationDeleted = (ids) => {
+                    ids.forEach(id => {
+                        this.model.pushOption(this.field_key, id, 'delete');
+                    });
+                });
             },
             /*
              * If field has filters, then check of other fields values for filtrating
@@ -383,27 +417,26 @@
              */
             onChangeSelect(){
                 var select = $(this.$refs.select),
-                    is_change = false,
-                    _this = this;
+                    is_change = false;
 
-                select.change(function(e){
+                select.change((e) => {
                     is_change = true;
 
-                    if ( _this.isMultiple ){
+                    if ( this.isMultiple ){
                         //Chosen need to be updated after delay for correct selection order
                         setTimeout(() => {
                             //Send values in correct order
-                            _this.changeValue(null, $(this).getSelectionOrder());
+                            this.changeValue(null, select.getSelectionOrder());
 
                             //Update fake select on change value
-                            _this.rebuildSelect();
+                            this.rebuildSelect();
                         }, 50);
                     } else {
-                        var value = $(this).val();
+                        var value = select.val();
 
-                        _this.changeValue(null, value);
+                        this.changeValue(null, value);
 
-                        _this.reloadSetters(value);
+                        this.reloadSetters(value);
                     }
                 });
 

@@ -74,11 +74,11 @@
 
                 <div class="box-footer__actions" v-if="canUpdateForm">
                     <div class="box-footer__right">
-                        <button v-if="progress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]">
-                            <i class="fa updating fa-refresh"></i> {{ model.isOpenedRow() ? trans('saving') : trans('sending') }}
+                        <button v-if="hasProgress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]">
+                            <i class="fa fa-spin fa-sync mr-1"></i> {{ sendingButtonText }}
                         </button>
-                        <button v-if="!progress" type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">
-                            {{ model.isOpenedRow() ? saveButton : sendButton }}
+                        <button v-if="!hasProgress" type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">
+                            {{ model.isOpenedRow() ? saveButtonText : sendButtonText }}
                         </button>
                     </div>
                 </div>
@@ -180,6 +180,9 @@ export default {
         progress(){
             return this.model.getData('progress');
         },
+        hasProgress(){
+            return _.isNumber(this.progress) || this.progress === true;
+        },
         row(){
             return this.model.getRow();
         },
@@ -259,11 +262,16 @@ export default {
         newRowTitle(){
             return this.$parent.newRowTitle();
         },
-        saveButton(){
+        saveButtonText(){
             return this.model.getSettings('buttons.update') || this.trans('save');
         },
-        sendButton(){
+        sendButtonText(){
             return this.model.getSettings('buttons.insert') || this.trans('send');
+        },
+        sendingButtonText(){
+            let text = this.model.isOpenedRow() ? this.trans('saving') : this.trans('sending');
+
+            return text+(_.isNumber(this.progress) ? ' ('+this.progress+'%)' : '');
         },
         canShowFooter(){
             return this.canUpdateForm || this.model.getComponents('form-footer').length > 0;
