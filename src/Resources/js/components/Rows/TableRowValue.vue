@@ -118,6 +118,10 @@ export default {
                 }
 
                 else if ( field.type == 'checkbox' ) {
+                    if ( rowValue === null ){
+                        return;
+                    }
+
                     return rowValue == 1 ? this.trans('yes') : this.trans('no');
                 }
 
