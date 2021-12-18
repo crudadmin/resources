@@ -357,16 +357,19 @@ export default {
                 return this._cacheColumnSettings[field];
             }
 
+            let isRealField = field in this.model.fields,
+                realField = isRealField ? this.model.fields[field] : null;
+
             var settings = {
-                isRealField: field in this.model.fields,
-                field : this.model.fields[field],
+                isRealField: isRealField,
+                field : realField,
                 string_limit : this.getFieldLimit(field),
                 default_slug : this.$root.languages.length ? this.$root.languages[0].slug : null,
-                field : field in this.model.fields ? this.model.fields[field] : null,
                 add_before : this.model.getSettings('columns.'+field+'.add_before'),
                 add_after : this.model.getSettings('columns.'+field+'.add_after'),
                 encode : this.model.getSettings('columns.'+field+'.encode', true),
                 limit : this.model.getSettings('columns.'+field+'.limit'),
+                component : this.model.getSettings('columns.'+field+'.component', realField ? realField.column_component : null),
             };
 
             return this._cacheColumnSettings[field] = settings;

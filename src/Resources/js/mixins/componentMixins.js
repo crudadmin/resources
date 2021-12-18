@@ -58,18 +58,17 @@ var componentMixins = {
 
             return modelBuilder;
         },
-        registerFieldComponents(model, field, attribute){
-            if ( !field || !(attribute in field) ) {
+        registerModelComponents(model, componentNames){
+            if ( !componentNames ) {
                 return;
             }
 
-            var components = field[attribute].split(','),
-                component = null;
+            var components = (componentNames||'').split(',');
 
             for ( var i = 0; i < components.length; i++ ) {
-
                 var name = components[i].toLowerCase(),
                     data = model.components[name],
+                    component = null,
                     obj;
 
                 if ( ! data ){
@@ -92,14 +91,14 @@ var componentMixins = {
 
                     component.components[components[i]] = obj;
                 }
-            }
 
-            //Register component
-            if ( component ) {
-                Vue.component(
-                    this.componentName(model, field[attribute]),
-                    component
-                );
+                //Register component
+                if ( component ) {
+                    Vue.component(
+                        this.componentName(model, name),
+                        component
+                    );
+                }
             }
         },
         componentName(model, name){
