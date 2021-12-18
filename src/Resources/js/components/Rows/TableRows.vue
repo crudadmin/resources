@@ -220,6 +220,11 @@ export default {
                     for ( var key in data ) {
                         //Add custom column before actual column
                         for ( var k in columns ) {
+                            //Skip hidden column, also if is imaginary
+                            if ( this.model.getSettings('columns.'+k+'.hidden') == true ){
+                                continue;
+                            }
+
                             modifiedData = this.addColumn(modifiedData, k, key, 'before', columns, except);
                         }
 
@@ -227,6 +232,11 @@ export default {
 
                         //Add custom column after actual column
                         for ( var k in columns ) {
+                            //Skip hidden column, also if is imaginary
+                            if ( this.model.getSettings('columns.'+k+'.hidden') == true ){
+                                continue;
+                            }
+
                             modifiedData = this.addColumn(modifiedData, k, key, 'after', columns, except);
                         }
                     }
@@ -245,7 +255,7 @@ export default {
                     ) {
                         var field_key = this.getColumnRightKey(key);
 
-                        data[key] = columns[key].name||columns[key].title||this.model.fields[field_key].column_name||this.model.fields[field_key].name;
+                        data[key] = this.model.fieldName(field_key);
                     }
                 }
             }
@@ -399,7 +409,7 @@ export default {
                 if ( field_key in modifiedData )
                     delete modifiedData[field_key];
 
-                modifiedData[field_key] = columns[k].name||columns[k].title||this.model.fields[field_key].column_name||this.model.fields[field_key].name;
+                modifiedData[field_key] = this.model.fieldName(field_key);
             }
 
             return modifiedData;
