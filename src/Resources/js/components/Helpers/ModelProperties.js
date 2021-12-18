@@ -105,7 +105,7 @@ var ModelProperties = (Model) => {
                     return trans('created');
                     break;
                 case 'updated_at':
-                    return trans('updated');
+                    return trans('last-change');
                     break;
                 default:
                     return key;
