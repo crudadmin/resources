@@ -237,7 +237,7 @@ var ModelTableRows = (Model) => {
             enabledColumns = this.getData('enabled_columns')||{};
 
         for ( var key in enabledColumns ) {
-            if ( enabledColumns[key].enabled == true && this.getData('default_columns').indexOf(key) == -1 ) {
+            if ( enabledColumns[key].enabled == true && (this.getData('default_columns')[key]||{}).enabled != true ) {
                 allowed.push(key);
             }
         }
@@ -895,6 +895,12 @@ var ModelTableRows = (Model) => {
         this.data.enabled_columns[column].enabled = state;
 
         return this;
+    }
+
+    Model.prototype.resetAllowedColumns = function(defaultColumns){
+        var enabled = _.cloneDeep(defaultColumns||this.getData('default_columns'));
+
+        this.setData('enabled_columns', enabled);
     }
 };
 

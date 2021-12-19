@@ -65,7 +65,7 @@ const freshModelData = (rawModel) => {
         parentActiveGridSize : null,
 
         //Default model columns
-        default_columns : [],
+        default_columns : {},
 
         //Enabled columns
         enabled_columns : null,

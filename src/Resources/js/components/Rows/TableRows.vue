@@ -89,7 +89,6 @@ export default {
 
     data(){
         return {
-            enabled_columns : {},
             hidden: ['language_id', '_order', 'slug', 'published_at', 'updated_at', 'created_at'],
             autoSize : false,
         };
@@ -102,7 +101,7 @@ export default {
         }
 
         //Set allowed columns
-        this.resetAllowedColumns();
+        this.model.resetAllowedColumns(this.defaultColumns);
 
         //Automaticaly choose size of tables
         if ( this.autoSize == false ) {
@@ -127,7 +126,7 @@ export default {
                 this.$parent.reloadRows();
 
                 //Set allowed columns
-                this.resetAllowedColumns();
+                this.model.resetAllowedColumns();
             }
         },
     },
@@ -144,6 +143,9 @@ export default {
         },
         history(){
             return this.model.getData('history');
+        },
+        enabled_columns(){
+            return this.model.getData('enabled_columns');
         },
         sortedRows(){
             return this.model.getRows();
@@ -212,7 +214,7 @@ export default {
                 delete data['id'];
             }
 
-            this.model.setData('default_columns', Object.keys(data).filter(key => data[key].enabled == true));
+            this.model.setData('default_columns', data);
 
             return data;
         },
@@ -220,9 +222,11 @@ export default {
             var columns = {}
 
             //Disable changed fields
-            for ( var key in this.enabled_columns )
-                if ( this.enabled_columns[key].enabled == true )
+            for ( var key in this.enabled_columns ) {
+                if ( this.enabled_columns[key].enabled == true ) {
                     columns[key] = this.enabled_columns[key].name;
+                }
+            }
 
             return columns;
         },
@@ -446,11 +450,6 @@ export default {
             }
 
             this.model.toggleChecked(id);
-        },
-        resetAllowedColumns(){
-            var enabled = _.cloneDeep(this.defaultColumns);
-
-            this.model.setData('enabled_columns', this.enabled_columns = enabled);
         },
         buttonsCount(item){
             var buttons = this.model.getButtonsForRow(item),
