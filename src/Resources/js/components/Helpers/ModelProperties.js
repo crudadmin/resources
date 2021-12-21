@@ -89,12 +89,13 @@ var ModelProperties = (Model) => {
     }
 
     Model.prototype.fieldName = function(key){
-        if ( key in this.fields ) {
-            return (
-                this.fields[key].column_name
+        let field = this.fields[key]||{},
+            name = field.column_name
                 || this.getSettings('columns.'+key+'.name')
-                || this.fields[key].name
-            );
+                || field.name;
+
+        if ( name ) {
+            return name;
         } else {
             switch( key ) {
                 case 'id':
@@ -104,7 +105,7 @@ var ModelProperties = (Model) => {
                     return trans('created');
                     break;
                 case 'updated_at':
-                    return trans('updated');
+                    return trans('last-change');
                     break;
                 default:
                     return key;

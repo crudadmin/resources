@@ -210,8 +210,13 @@
         components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField, ColorField },
 
         created(){
-            this.registerFieldComponents(this.model, this.field, 'component');
-            this.registerFieldComponents(this.model, this.field, 'sub_component');
+            if ( this.field.component ) {
+                this.registerModelComponents(this.model, this.field.component);
+            }
+
+            if ( this.field.sub_component ) {
+                this.registerModelComponents(this.model, this.field.sub_component);
+            }
         },
 
         mounted(){

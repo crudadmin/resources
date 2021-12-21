@@ -4,12 +4,12 @@
             v-if="hasComponent"
             :mutatedValue="fieldValue"
             :value="item[field]"
-            :field="fieldColumn"
+            :field="settings.field"
             :row="item"
             :model="model"
-            :is="componentName(model, fieldColumn.column_component)" />
+            :is="componentName(model, settings.component)" />
 
-        <div v-if="isColor" :style="{ color : fieldValueLimitedAndEncoded }">
+        <div v-else-if="isColor" :style="{ color : fieldValueLimitedAndEncoded }">
             {{ fieldValueLimitedAndEncoded }}
         </div>
 
@@ -34,8 +34,8 @@ export default {
     components : { File },
 
     created(){
-        if ( this.fieldColumn ) {
-            this.registerFieldComponents(this.model, this.fieldColumn, 'column_component');
+        if ( this.settings.component ) {
+            this.registerModelComponents(this.model, this.settings.component);
         }
 
         //Performance tests
@@ -118,6 +118,10 @@ export default {
                 }
 
                 else if ( field.type == 'checkbox' ) {
+                    if ( rowValue === null ){
+                        return;
+                    }
+
                     return rowValue == 1 ? this.trans('yes') : this.trans('no');
                 }
 
@@ -150,11 +154,8 @@ export default {
         fieldValueLimitedAndEncoded(){
             return this.encodeValue(this.stringLimit(this.fieldValue));
         },
-        fieldColumn(){
-            return this.model.fields[this.field]
-        },
         hasComponent(){
-            return this.fieldColumn && 'column_component' in this.fieldColumn && this.fieldColumn.column_component;
+            return this.settings.component ? true : false;
         },
     },
 

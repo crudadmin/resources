@@ -516,8 +516,9 @@
             getFilter(options){
                 var filter = {};
 
-                if ( (options && options[0] && typeof options[0][1] == 'object' && options[0][1] !== null) && ('language_id' in options[0][1]) == true )
-                    filter['language_id'] = this.row.language_id||(this.inputlang ? this.inputlang.id : null)||this.langid;
+                if ( (options && options[0] && typeof options[0][1] == 'object' && options[0][1] !== null) && ('language_id' in options[0][1]) == true ) {
+                    filter['language_id'] = this.row.language_id||this.model.getSelectedLanguageId();
+                }
 
                 if ( this.getFilterBy )
                     filter[this.getFilterBy[1]] = this.isStaticFilterColumn ? this.getStaticFilterBy : this.filterBy;

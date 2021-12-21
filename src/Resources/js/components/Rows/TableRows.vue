@@ -89,7 +89,6 @@ export default {
 
     data(){
         return {
-            enabled_columns : {},
             hidden: ['language_id', '_order', 'slug', 'published_at', 'updated_at', 'created_at'],
             autoSize : false,
         };
@@ -102,7 +101,7 @@ export default {
         }
 
         //Set allowed columns
-        this.resetAllowedColumns();
+        this.model.resetAllowedColumns(this.defaultColumns);
 
         //Automaticaly choose size of tables
         if ( this.autoSize == false ) {
@@ -127,7 +126,7 @@ export default {
                 this.$parent.reloadRows();
 
                 //Set allowed columns
-                this.resetAllowedColumns();
+                this.model.resetAllowedColumns();
             }
         },
     },
@@ -144,6 +143,9 @@ export default {
         },
         history(){
             return this.model.getData('history');
+        },
+        enabled_columns(){
+            return this.model.getData('enabled_columns');
         },
         sortedRows(){
             return this.model.getRows();
@@ -175,86 +177,44 @@ export default {
                 key;
 
             //Get columns from row
-            for ( var i = 0; i < this.model.columns.length; i++ ) {
-                key = this.model.columns[i];
-
-                //If is column hidden
-                if (this.model.getSettings('columns.'+key+'.hidden')) {
+            for ( var key in this.model.fields ) {
+                //We want skip inacessible fields
+                if (
+                    this.model.tryAttribute(this.model.fields[key], 'inaccessible', this.row)
+                    || this.model.tryAttribute(this.model.fields[key], 'inaccessible_column', this.row)
+                ){
                     continue;
                 }
 
-                if (
-                    this.hidden.indexOf( key ) == -1
-                    && this.avaliableColumns.indexOf( key ) > -1
+                let enabled =
+                    this.model.getSettings('columns.'+key+'.hidden') !== true
+                    && this.hidden.includes(key) === false
+                    && this.avaliableColumns.includes(key) === true
                     && (
+                            //Is virtual column
                             !(key in this.model.fields)
                             || (
+                                //Is not hidden field
                                 this.model.fields[key].hidden != true
                                 && !this.model.tryAttribute(this.model.fields[key], 'invisible', this.row)
-                                && !this.model.tryAttribute(this.model.fields[key], 'inaccessible', this.row)
                             )
                             || this.model.fields[key].column_visible == true
-                    )
-                ) {
-                    data[ this.model.columns[i] ] = this.fieldName( this.model.columns[i] );
-                }
+                    );
+
+                data[ key ] = {
+                    name : this.fieldName(key),
+                    enabled,
+                };
             }
 
-            var columns = this.model.getSettings('columns');
-
-            /*
-             * Check if can be added column after other column
-             */
-            var except = [];
-
-            //Add before and after column values
-            if ( columns ) {
-                for ( var i in columns ) {
-                    //Skip hidden column, also if is imaginary
-                    if ( this.model.getSettings('columns.'+i+'.hidden') == true ){
-                        continue;
-                    }
-
-                    var modifiedData = {};
-
-                    for ( var key in data ) {
-                        //Add custom column before actual column
-                        for ( var k in columns ) {
-                            modifiedData = this.addColumn(modifiedData, k, key, 'before', columns, except);
-                        }
-
-                        modifiedData[key] = data[key];
-
-                        //Add custom column after actual column
-                        for ( var k in columns ) {
-                            modifiedData = this.addColumn(modifiedData, k, key, 'after', columns, except);
-                        }
-                    }
-
-                    data = modifiedData;
-                }
-
-                for ( var key in columns ) {
-                    if ( !(key in data) && (
-                            (
-                                columns[key].hidden != true
-                                && columns[key].invisible != true
-                            )
-                            || columns[key].column_visible == true
-                        )
-                    ) {
-                        var field_key = this.getColumnRightKey(key);
-
-                        data[key] = columns[key].name||columns[key].title||this.model.fields[field_key].column_name||this.model.fields[field_key].name;
-                    }
-                }
-            }
+            data = this.addVirtualColumns(data);
 
             //Remove increments
-            if ( this.$root.getModelProperty(this.model, 'settings.increments') === false && 'id' in data )
+            if ( this.$root.getModelProperty(this.model, 'settings.increments') === false && 'id' in data ) {
                 delete data['id'];
+            }
 
-            this.model.setData('default_columns', Object.keys(data));
+            this.model.setData('default_columns', data);
 
             return data;
         },
@@ -262,9 +222,11 @@ export default {
             var columns = {}
 
             //Disable changed fields
-            for ( var key in this.enabled_columns )
-                if ( this.enabled_columns[key].enabled == true )
+            for ( var key in this.enabled_columns ) {
+                if ( this.enabled_columns[key].enabled == true ) {
                     columns[key] = this.enabled_columns[key].name;
+                }
+            }
 
             return columns;
         },
@@ -331,6 +293,62 @@ export default {
     },
 
     methods: {
+        addVirtualColumns(data){
+            /*
+             * Check if can be added column after other column
+             */
+            var except = [],
+                columns = this.model.getSettings('columns');
+
+            //Add before and after column values
+            if ( columns ) {
+                for ( var vKey in columns ) {
+                    var modifiedData = {};
+
+                    for ( var parentKey in data ) {
+                        let parentColumnEnabled = this.model.getSettings('columns.'+parentKey+'.hidden') !== true;
+
+                        //Add custom column before actual column
+                        for ( var k in columns ) {
+                            let enabled = parentColumnEnabled === false ? false : this.model.getSettings('columns.'+k+'.hidden') != true;
+
+                            modifiedData = this.addColumn(modifiedData, k, parentKey, 'before', columns, except, enabled);
+                        }
+
+                        modifiedData[parentKey] = data[parentKey];
+
+                        //Add custom column after actual column
+                        for ( var k in columns ) {
+                            let enabled = parentColumnEnabled === false ? false : this.model.getSettings('columns.'+k+'.hidden') != true;
+
+                            modifiedData = this.addColumn(modifiedData, k, parentKey, 'after', columns, except, enabled);
+                        }
+                    }
+
+                    data = modifiedData;
+                }
+
+                for ( var key in columns ) {
+                    if ( !(key in data) ) {
+                        var field_key = this.getColumnRightKey(key),
+                            enabled = (
+                                (
+                                    columns[key].hidden != true
+                                    && columns[key].invisible != true
+                                )
+                                || columns[key].column_visible == true
+                            );
+
+                        data[key] = {
+                            name : this.model.fieldName(field_key),
+                            enabled
+                        };
+                    }
+                }
+            }
+
+            return data;
+        },
         /*
          * We need cache all settings for columns, for better performance
          */
@@ -343,16 +361,19 @@ export default {
                 return this._cacheColumnSettings[field];
             }
 
+            let isRealField = field in this.model.fields,
+                realField = isRealField ? this.model.fields[field] : null;
+
             var settings = {
-                isRealField: field in this.model.fields,
-                field : this.model.fields[field],
+                isRealField: isRealField,
+                field : realField,
                 string_limit : this.getFieldLimit(field),
                 default_slug : this.$root.languages.length ? this.$root.languages[0].slug : null,
-                field : field in this.model.fields ? this.model.fields[field] : null,
                 add_before : this.model.getSettings('columns.'+field+'.add_before'),
                 add_after : this.model.getSettings('columns.'+field+'.add_after'),
                 encode : this.model.getSettings('columns.'+field+'.encode', true),
                 limit : this.model.getSettings('columns.'+field+'.limit'),
+                component : this.model.getSettings('columns.'+field+'.component', realField ? realField.column_component : null),
             };
 
             return this._cacheColumnSettings[field] = settings;
@@ -382,7 +403,7 @@ export default {
 
             return settingsLimit||defaultLimit;
         },
-        addColumn(modifiedData, k, key, where, columns, except){
+        addColumn(modifiedData, k, key, where, columns, except, enabled){
             if ( where in columns[k] && (columns[k][where] == key || columns[k][where] + '_id' == key) )
             {
                 var field_key = this.getColumnRightKey(k);
@@ -399,7 +420,10 @@ export default {
                 if ( field_key in modifiedData )
                     delete modifiedData[field_key];
 
-                modifiedData[field_key] = columns[k].name||columns[k].title||this.model.fields[field_key].column_name||this.model.fields[field_key].name;
+                modifiedData[field_key] = {
+                    name : this.model.fieldName(field_key),
+                    enabled,
+                };
             }
 
             return modifiedData;
@@ -426,78 +450,6 @@ export default {
             }
 
             this.model.toggleChecked(id);
-        },
-        resetAllowedColumns(){
-            var columns = _.cloneDeep(this.defaultColumns),
-                enabled = {},
-                order = Object.keys(columns),
-                model_keys = Object.keys(this.model.fields);
-
-            //Add allowed keys
-            for ( var key in columns ) {
-                enabled[key] = {
-                    name : columns[key],
-                    enabled : true,
-                };
-            }
-
-            //After allowed keys, add all hidden
-            for ( var key in this.model.fields ) {
-                //Skip existing columns
-                if ( key in enabled ) {
-                    continue;
-                }
-
-                //If fiels is inaccessible
-                if ( this.model.tryAttribute(this.model.fields[key], 'inaccessible', this.row) ){
-                    continue;
-                }
-
-                var add_index = null,
-                    after = true,
-                    before_columns = model_keys.slice(0, model_keys.indexOf(key)),
-                    after_columns = model_keys.slice(model_keys.indexOf(key) + 1);
-
-                //Add column after first visible column before this field
-                for ( var i = before_columns.length - 1; i >= 0; i-- )
-                {
-                    if ( order.indexOf(before_columns[i]) > -1 ){
-                        add_index = order.indexOf(before_columns[i]);
-                        break;
-                    }
-                }
-
-                //Add column before first visible column after this field
-                if ( ! add_index )
-                {
-                    for ( var i = 0; i < after_columns.length; i++ )
-                    {
-                        if ( order.indexOf(after_columns[i]) > -1 ){
-                            add_index = order.indexOf(after_columns[i]);
-                            after = false;
-                            break;
-                        }
-                    }
-                }
-
-                if ( add_index === null ) {
-                    order.push(key);
-                } else {
-                    order.splice(add_index + (after ? 1 : 0), 0, key);
-                }
-
-                enabled[key] = {
-                    name : this.fieldName(key),
-                    enabled : false,
-                };
-            }
-
-            var correctOrder = {};
-            for ( var i = 0; i < order.length; i++ ) {
-                correctOrder[order[i]] = enabled[order[i]];
-            }
-
-            this.model.setData('enabled_columns', this.enabled_columns = correctOrder);
         },
         buttonsCount(item){
             var buttons = this.model.getButtonsForRow(item),

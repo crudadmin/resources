@@ -35,7 +35,9 @@
                                     {{ model.fieldName(key) }}
                                 </label>
                             </li>
-                            <li class="default-reset"><a href="#" @click.prevent="resetColumnsList">{{ trans('default') }}</a></li>
+                            <li class="default-reset">
+                                <a href="#" @click.prevent="toggleColumnsList">{{ isDefaultColumnsList ? _('Zobraziť všetky') : trans('default') }}</a>
+                            </li>
                         </ul>
                     </div>
 
@@ -367,6 +369,12 @@ export default {
 
             return this.trans('rows');
         },
+        isDefaultColumnsList(){
+            var defaultColumns = this.model.getData('default_columns'),
+                defaultColumnsKeys = Object.keys(_.cloneDeep(defaultColumns));
+
+            return defaultColumnsKeys.filter(column => defaultColumns[column].enabled != (this.enabled_columns[column]||{}).enabled).length == 0;
+        },
     },
 
     methods: {
@@ -404,13 +412,17 @@ export default {
 
             return $.isNumeric(limit) ? parseInt(limit) : limit;
         },
-        resetColumnsList(){
-            for ( var key in this.$children )
-            {
-                var children = this.$children[key];
+        toggleColumnsList(){
+            if ( this.isDefaultColumnsList ) {
+                let defaultColumns = this.model.getData('default_columns');
 
-                if ( children.$options._componentTag == 'table-rows' )
-                    children.$options.methods.resetAllowedColumns.call(children);
+                for ( var key in defaultColumns ){
+                    this.model.setColumnVisibility(key, true);
+                }
+
+                this.model.loadRows(true);
+            } else {
+                this.model.resetAllowedColumns();
             }
         },
         canShowColumn(column, key){
