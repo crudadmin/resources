@@ -119,5 +119,27 @@ class AdminUpdateCommand extends Command
         Admin::addGitignoreFiles([
             storage_path('/crudadmin')
         ]);
+
+        $this->moveStorageFromCrudadminv3();
+    }
+
+    private function moveStorageFromCrudadminv3()
+    {
+        $oldUploadsPath = public_path('uploads');
+        $newUploadsFolder = Admin::getUploadsStorage()->getAdapter()->getPathPrefix();
+
+        //Move uploads directory into crudadmin storage
+        if ( file_exists($oldUploadsPath) && !is_link($oldUploadsPath) ){
+            if ( count(Admin::getUploadsStorage()->allFiles()) > 0 ){
+                $this->error('+ Transfer of old uploads directory could not be completed. Ensure uploads directory in storage folder is empty.');
+                return;
+            }
+
+            $this->line('<comment>+ Moving uploads directory into storage.</comment>');
+
+            rename($oldUploadsPath, $newUploadsFolder);
+
+            Artisan::call('storage:link');
+        }
     }
 }
