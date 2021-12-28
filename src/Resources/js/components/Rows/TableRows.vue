@@ -209,11 +209,6 @@ export default {
 
             data = this.addVirtualColumns(data);
 
-            //Remove increments
-            if ( this.$root.getModelProperty(this.model, 'settings.increments') === false && 'id' in data ) {
-                delete data['id'];
-            }
-
             this.model.setData('default_columns', data);
 
             return data;
@@ -294,6 +289,17 @@ export default {
 
     methods: {
         addVirtualColumns(data){
+            //Remove increments
+            if ( this.$root.getModelProperty(this.model, 'settings.increments', true) !== false && !('id' in data) ) {
+                data = {
+                    id : {
+                        name : this.model.fieldName('id'),
+                        enabled : true,
+                    },
+                    ...data,
+                };
+            }
+
             /*
              * Check if can be added column after other column
              */
