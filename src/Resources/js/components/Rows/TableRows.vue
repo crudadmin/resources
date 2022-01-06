@@ -23,7 +23,7 @@
             tag="tbody"
             @start="model.onDragStart($event)"
             @end="model.onDragEnd($event, sortedRows)">
-            <tr v-for="(item, key) in sortedRows" :key="item.id" :data-id="item.id" :class="{ '--active' : model.getChecked().indexOf(item.id) > -1, '--loading' : loadingRow == item.id }">
+            <tr v-for="(item, key) in sortedRows" :key="item.id" :data-id="item.id" :class="getRowClass(item)">
                 <td class="row-draggable" v-if="model.isDragEnabled()" @click="checkRow(item.id)">
                     <i class="fa fa-grip-vertical"></i>
                 </td>
@@ -164,7 +164,11 @@ export default {
             return true;
         },
         isSmallTable(){
-            var limit = 100,
+            if ( this.model.getSettings('table.small', false) == true ){
+                return true;
+            }
+
+            var limit = 30,
                 columnsCount = Object.keys(this.columns).length;
 
             return this.pagination.limit >= limit && this.rows.count >= limit || columnsCount > 10;
@@ -571,6 +575,20 @@ export default {
 
             return k;
         },
+        //Add custom tr classes
+        getRowClass(row){
+            let classes = {
+                    '--active' : this.model.getChecked().indexOf(row.id) > -1,
+                    '--loading' : this.loadingRow == row.id
+                },
+                customClass = (row['$row.class']||'').split(' ');
+
+            customClass.forEach(name => {
+                classes[name] = true;
+            });
+
+            return classes;
+        }
     },
 }
 </script>
