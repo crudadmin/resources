@@ -9,6 +9,7 @@
                         <span class="checkmark"></span>
                     </div>
                 </th>
+                <th v-if="hasIndicatorInTable"></th>
                 <th v-for="(name, field) in columns" :class="'th-'+field" @click="toggleSorting(field)">
                     <i class="arrow-sorting fa fa-angle-up" v-if="orderBy[0] == field && orderBy[1] == 0"></i>
                     <i class="arrow-sorting fa fa-angle-down" v-if="orderBy[0] == field && orderBy[1] == 1"></i>
@@ -27,11 +28,17 @@
                 <td class="row-draggable" v-if="model.isDragEnabled()" @click="checkRow(item.id)">
                     <i class="fa fa-grip-vertical"></i>
                 </td>
+
                 <td class="select-row-checkbox" v-if="hasCheckingEnabled" @click="checkRow(item.id)">
+                    <span v-if="item['$checkbox.slot']" v-html="item['$checkbox.slot']" class="checkbox-box-slot"></span>
                     <div class="checkbox-box">
                         <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
                         <span class="checkmark"></span>
                     </div>
+                </td>
+
+                <td class="row-indicator" v-if="item.$indicator" data-toggle="tooltip" :title="item.$indicator.title">
+                    <i :class="item.$indicator.class" :style="{ background : item.$indicator.color }"></i>
                 </td>
 
                 <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { image_field : isImageField(field), '--clickable' : isTableClickable } ]" :data-field="field">
@@ -182,11 +189,6 @@ export default {
 
             //Get columns from row
             for ( var key in this.model.fields ) {
-                //Display only enabled columns from backend
-                if ( !this.model.columns.includes(key) && this.model.fields[key].column_visible !== true ){
-                    continue;
-                }
-
                 //We want skip inacessible fields
                 if (
                     this.model.tryAttribute(this.model.fields[key], 'inaccessible', this.row)
@@ -196,7 +198,8 @@ export default {
                 }
 
                 let enabled =
-                    this.model.getSettings('columns.'+key+'.hidden') !== true
+                    (this.model.columns.includes(key) === true || this.model.fields[key].column_visible === true)
+                    && this.model.getSettings('columns.'+key+'.hidden') !== true
                     && this.hidden.includes(key) === false
                     && this.avaliableColumns.includes(key) === true
                     && (
@@ -293,6 +296,9 @@ export default {
             }
 
             return true;
+        },
+        hasIndicatorInTable(){
+            return (this.sortedRows[0]||{}).$indicator ? true : false;
         }
     },
 
@@ -581,7 +587,7 @@ export default {
                     '--active' : this.model.getChecked().indexOf(row.id) > -1,
                     '--loading' : this.loadingRow == row.id
                 },
-                customClass = (row['$row.class']||'').split(' ');
+                customClass = (row['$class']||'').split(' ');
 
             customClass.forEach(name => {
                 classes[name] = true;
