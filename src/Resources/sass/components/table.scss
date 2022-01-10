@@ -171,6 +171,20 @@
                         .checkbox-box input:checked ~ .checkmark:after { display: block; border-color: $primary }
                         .checkbox-box .checkmark:after { left: 0; top: 0; bottom: 0; right: 0; margin: auto; width: 5px; height: 10px; border: solid white; border-width: 0 3px 3px 0; -webkit-transform: rotate(45deg); -ms-transform: rotate(45deg); transform: rotate(45deg); }
                     }
+
+                    .row-indicator {
+                        width: 20px;
+                        padding-right: 0;
+
+                        i {
+                            width: 5px;
+                            height: 5px;
+                            background: #8292a594;
+                            border-radius: 100%;
+                            display: block;
+                            margin: 0 auto;
+                        }
+                    }
                 }
             }
 
