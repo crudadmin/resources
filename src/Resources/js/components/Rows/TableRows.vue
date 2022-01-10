@@ -28,6 +28,7 @@
                     <i class="fa fa-grip-vertical"></i>
                 </td>
                 <td class="select-row-checkbox" v-if="hasCheckingEnabled" @click="checkRow(item.id)">
+                    <span v-if="item['$row.checkbox.slot']" v-html="item['$row.checkbox.slot']" class="checkbox-box-slot"></span>
                     <div class="checkbox-box">
                         <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
                         <span class="checkmark"></span>
