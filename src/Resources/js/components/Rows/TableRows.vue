@@ -178,11 +178,6 @@ export default {
 
             //Get columns from row
             for ( var key in this.model.fields ) {
-                //Display only enabled columns from backend
-                if ( !this.model.columns.includes(key) && this.model.fields[key].column_visible !== true ){
-                    continue;
-                }
-
                 //We want skip inacessible fields
                 if (
                     this.model.tryAttribute(this.model.fields[key], 'inaccessible', this.row)
@@ -192,7 +187,8 @@ export default {
                 }
 
                 let enabled =
-                    this.model.getSettings('columns.'+key+'.hidden') !== true
+                    (this.model.columns.includes(key) === true || this.model.fields[key].column_visible === true)
+                    && this.model.getSettings('columns.'+key+'.hidden') !== true
                     && this.hidden.includes(key) === false
                     && this.avaliableColumns.includes(key) === true
                     && (
