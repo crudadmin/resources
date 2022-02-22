@@ -278,6 +278,10 @@ var Fields = (Model) => {
     Model.prototype.getFieldFormat = function(fieldKey){
         let field = this.fields[fieldKey];
 
+        if ( !field ){
+            return;
+        }
+
         if ( field.date_format ) {
             return field.date_format;
         } else if ( field.date_format_multiple ){
