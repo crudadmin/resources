@@ -700,27 +700,24 @@ var ModelTableRows = (Model) => {
             }
 
             else if ( is_date ) {
-                var c = moment(a),
-                    d = moment(b);
+                var c = moment(a, moment.ISO_8601, true),
+                    d = moment(b, moment.ISO_8601, true);
 
-                if ( !c.isValid() || !d.isValid() ) {
-                    return 0;
+                if ( c.isValid() && d.isValid() ) {
+                    if ( orderBy[1] == 1 ) {
+                        return d - c;
+                    }
+
+                    return c - d;
                 }
 
-                if ( orderBy[1] == 1 ) {
-                    return d - c;
-                }
-
-                return c - d;
             }
 
-            else {
-                if ( orderBy[1] == 1 ) {
-                    return b.toLowerCase().localeCompare(a.toLowerCase(), 'sk');
-                }
-
-                return a.toLowerCase().localeCompare(b.toLowerCase(), 'sk');
+            if ( orderBy[1] == 1 ) {
+                return b.toLowerCase().localeCompare(a.toLowerCase(), 'sk');
             }
+
+            return a.toLowerCase().localeCompare(b.toLowerCase(), 'sk');
         });
     }
 
