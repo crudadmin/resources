@@ -43,7 +43,7 @@
     import File from '../Partials/File.vue';
 
     export default {
-        props: ['id', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level'],
+        props: ['id', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level', 'langslug'],
 
         components : { File },
 
@@ -152,10 +152,11 @@
             },
             removeFile(){
                 if ( ! this.isMultiple ){
-                    if ( this.hasLocale )
+                    if ( this.hasLocale ) {
                         this.field.value[this.langslug] = null;
-                    else
+                    } else {
                         this.field.value = null;
+                    }
                 }
 
                 this.file_will_remove = true;
