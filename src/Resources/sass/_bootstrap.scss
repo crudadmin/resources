@@ -1,0 +1,152 @@
+$spacer: 1rem;
+$spacers: ();
+$spacers: map-merge(
+    (
+        0: 0,
+        0h: (
+            $spacer * 0.5
+        ),
+        1: $spacer,
+        1h: (
+            $spacer * 1.5
+        ),
+        2: (
+            $spacer * 2
+        ),
+        2h: (
+            $spacer * 2.5
+        ),
+        3: (
+            $spacer * 3
+        ),
+        3h: (
+            $spacer * 3.5
+        ),
+        4: (
+            $spacer * 4
+        ),
+        4h: (
+            $spacer * 4.5
+        ),
+        5: (
+            $spacer * 5
+        ),
+        6: (
+            $spacer * 6
+        ),
+        7: (
+            $spacer * 7
+        ),
+        7h: (
+            $spacer * 7.5
+        ),
+        8: (
+            $spacer * 8
+        ),
+        9: (
+            $spacer * 9
+        ),
+        10: (
+            $spacer * 10
+        ),
+        11: (
+            $spacer * 11
+        ),
+        12: (
+            $spacer * 12
+        )
+    ),
+    $spacers
+);
+
+$paragraph-margin-bottom: 1.4rem !default;
+$border-radius: 0.35rem !default;
+$border-radius-lg: 0.42rem !default;
+$border-radius-sm: 0.28rem !default;
+$rounded-pill: 70rem !default;
+$font-size-base: 1.4rem !default;
+$display1-size: 8.4rem !default;
+$display2-size: 7.7rem !default;
+$display3-size: 6.3rem !default;
+$display4-size: 4.9rem !default;
+$list-inline-padding: 0.7rem !default;
+$table-cell-padding: 1.05rem !default;
+$table-cell-padding-sm: 0.42rem !default;
+$input-btn-padding-y: 0.52rem !default;
+$input-btn-padding-x: 1.05rem !default;
+$input-btn-focus-width: 0.28rem !default;
+$input-btn-padding-y-sm: 0.35rem !default;
+$input-btn-padding-x-sm: 0.7rem !default;
+$input-btn-padding-y-lg: 0.7rem !default;
+$input-btn-padding-x-lg: 1.4rem !default;
+$btn-block-spacing-y: 0.7rem !default;
+$label-margin-bottom: 0.7rem !default;
+$form-text-margin-top: 0.35rem !default;
+$form-check-input-gutter: 1.75rem !default;
+$form-check-input-margin-y: 0.42rem !default;
+$form-check-input-margin-x: 0.35rem !default;
+$form-check-inline-margin-x: 1.05rem !default;
+$form-check-inline-input-margin-x: 0.44rem !default;
+$form-group-margin-bottom: 1.4rem !default;
+$custom-control-gutter: 0.7rem !default;
+$custom-control-spacer-x: 1.4rem !default;
+$custom-control-indicator-size: 1.4rem !default;
+$custom-select-indicator-padding: 1.4rem !default;
+$custom-range-track-height: 0.7rem !default;
+$custom-range-track-border-radius: 1.4rem !default;
+$custom-range-thumb-width: 1.4rem !default;
+$custom-range-thumb-border-radius: 1.4rem !default;
+$nav-link-padding-y: 0.7rem !default;
+$nav-link-padding-x: 1.4rem !default;
+$navbar-nav-link-padding-x: 0.7rem !default;
+$navbar-toggler-padding-y: 0.35rem !default;
+$navbar-toggler-padding-x: 1.05rem !default;
+$dropdown-min-width: 14rem !default;
+$dropdown-padding-y: 0.7rem !default;
+$dropdown-spacer: 0.17rem !default;
+$dropdown-item-padding-y: 0.35rem !default;
+$dropdown-item-padding-x: 2.1rem !default;
+$pagination-padding-y: 0.7rem !default;
+$pagination-padding-x: 1.05rem !default;
+$pagination-padding-y-sm: 0.35rem !default;
+$pagination-padding-x-sm: 0.7rem !default;
+$pagination-padding-y-lg: 1.05rem !default;
+$pagination-padding-x-lg: 2.1rem !default;
+$jumbotron-padding: 2.8rem !default;
+$card-spacer-y: 1.05rem !default;
+$card-spacer-x: 1.75rem !default;
+$card-img-overlay-padding: 1.75rem !default;
+$card-columns-gap: 1.75rem !default;
+$tooltip-padding-y: 0.35rem !default;
+$tooltip-padding-x: 0.7rem !default;
+$tooltip-arrow-width: 1.12rem !default;
+$tooltip-arrow-height: 0.56rem !default;
+$popover-header-padding-y: 0.7rem !default;
+$popover-header-padding-x: 1.05rem !default;
+$popover-arrow-width: 1.4rem !default;
+$popover-arrow-height: 0.7rem !default;
+$toast-padding-x: 1.05rem !default;
+$toast-padding-y: 0.35rem !default;
+$toast-font-size: 1.22rem !default;
+$toast-border-radius: 0.35rem !default;
+$badge-pill-border-radius: 14rem !default;
+$modal-inner-padding: 1.4rem !default;
+$modal-dialog-margin: 0.7rem !default;
+$modal-dialog-margin-y-sm-up: 2.45rem !default;
+$modal-header-padding-y: 1.4rem !default;
+$modal-header-padding-x: 1.4rem !default;
+$alert-padding-y: 1.05rem !default;
+$alert-padding-x: 1.75rem !default;
+$alert-margin-bottom: 1.4rem !default;
+$progress-height: 1.4rem !default;
+$list-group-item-padding-y: 1.05rem !default;
+$list-group-item-padding-x: 1.75rem !default;
+$thumbnail-padding: 0.35rem !default;
+$breadcrumb-padding-y: 1.05rem !default;
+$breadcrumb-padding-x: 1.4rem !default;
+$breadcrumb-item-padding: 0.7rem !default;
+$breadcrumb-margin-bottom: 1.4rem !default;
+$spinner-width: 2.8rem !default;
+$spinner-width-sm: 1.4rem !default;
+$kbd-padding-y: 0.28rem !default;
+$kbd-padding-x: 0.56rem !default;
