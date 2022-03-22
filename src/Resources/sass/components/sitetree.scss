@@ -1,0 +1,41 @@
+.sitetree__item__wrapper {
+    .sitetree__item {
+        display: flex;
+        align-items: center;
+        background: rgb(249 249 249);
+        padding: $form-group-margin-bottom / 2;
+        margin-bottom: $form-group-margin-bottom / 2;
+
+        &__drag {
+            padding: 6px;
+            padding-right: 12px;
+
+            i {
+                color: $navbarBorderColor;
+            }
+        }
+
+        &__inputs {
+            display: flex;
+            width: 100%;
+
+            .form-group {
+                width: 20%;
+                margin-right: $form-group-margin-bottom / 2;
+                margin-bottom: 0;
+            }
+        }
+
+        &__actions {
+            display: flex;
+
+            > .btn:not(:last-child) {
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .sitetree__subtree {
+        margin-left: $form-group-margin-bottom * 2;
+    }
+}
