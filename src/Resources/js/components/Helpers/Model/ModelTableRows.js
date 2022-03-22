@@ -398,6 +398,10 @@ var ModelTableRows = (Model) => {
         return childs;
     };
 
+    Model.prototype.isRecursive = function(){
+        return this.table in (this.foreign_column||{}) ? true : false;
+    };
+
     Model.prototype.enableOnlyFullScreen = function(){
         let sizes = this.getData('sizes');
 
@@ -654,16 +658,23 @@ var ModelTableRows = (Model) => {
         };
     }
 
-    Model.prototype.getRows = function(){
-        var orderBy = this.getData('orderBy'),
+    Model.prototype.getRows = function(options){
+        var { withAllRows = false } = options||{},
+            orderBy = this.getData('orderBy'),
             field = orderBy[0],
             is_numeric = isNumericValue(this, field),
             is_date = isDateValue(this, field),
             is_locale = isLocaleValue(this, field),
             is_decoded = this.getSettings('columns.'+field+'.encode', true) !== true,
-            defaultSlug = $app.languages.length ? $app.languages[0].slug : null;
+            defaultSlug = $app.languages.length ? $app.languages[0].slug : null,
+            rows = this.getData('rows').data.slice(0);
 
-        return this.getData('rows').data.slice(0).sort((a, b) => {
+        //If all rows has been given, and recursive rows are present. We need filter out that rows.
+        if ( withAllRows !== true && this.isRecursive() && this.getData('depth_level') === 0 ) {
+            rows = rows.filter(row => !row[this.foreign_column[this.table]]);
+        }
+
+        return rows.sort((a, b) => {
             //If is null value
             if ( ! a || ! b ) {
                 return false;
