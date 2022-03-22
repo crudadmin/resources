@@ -133,8 +133,6 @@
 
 <script type="text/javascript">
 import TreeItem from './TreeItem';
-import PublishButton from '@components/Partials/PublishButton.vue';
-import ButtonsAction from '@components/Partials/ButtonsAction.vue';
 import { mapState } from 'vuex';
 import _ from 'lodash';
 import draggable from 'vuedraggable'
@@ -145,7 +143,7 @@ export default {
     props : ['item', 'parentRow', 'items', 'sortable', 'disabledTypes'],
 
     components : {
-        TreeItem, PublishButton, draggable, ButtonsAction
+        TreeItem, draggable
     },
 
     data(){
