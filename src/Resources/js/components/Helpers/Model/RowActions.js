@@ -310,11 +310,43 @@ var RowActions = (Model) => {
         };
     }
 
+    Model.prototype.onDragChange = async function(e, list, parentRow){
+        if ( e.added && this.isRecursive() ){
+            let draggedRow = e.added.element,
+                rows = {};
+
+            //Sort all rows between sorted rows
+            for ( var i = 0; i < list.length; i++ ){
+                let row = list[i];
+
+                if ( i > e.added.newIndex ){
+                    if ( i === e.added.newIndex + 1 ) {
+                        draggedRow._order = row._order;
+                    }
+
+                    row._order += 1;
+                    rows[row.id] = row._order;
+                }
+            }
+
+            draggedRow[this.foreign_column[this.table]] = parentRow ? parentRow.id : null;
+            rows[draggedRow.id] = { _order : draggedRow._order }
+            rows[draggedRow.id][this.foreign_column[this.table]] = draggedRow[this.foreign_column[this.table]];
+
+            this.updateDragOrder(rows);
+        }
+    }
+
     Model.prototype.onDragEnd = async function(dragged, list){
         //Disable sorting when is used sorting columns
         if ( this.getData('orderBy')[0] != '_order' ) {
             enableDragging(this);
 
+            return;
+        }
+
+        //Dragging between multiple tables is disabled
+        if ( dragged.from !== dragged.to ){
             return;
         }
 
@@ -344,6 +376,10 @@ var RowActions = (Model) => {
             }
         }
 
+        this.updateDragOrder(rows);
+    }
+
+    Model.prototype.updateDragOrder = async function(rows){
         try {
             let response = await $app.$http.post($app.requests.updateOrder, {
                 model : this.slug,
