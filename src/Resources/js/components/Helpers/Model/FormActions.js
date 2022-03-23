@@ -428,6 +428,16 @@ var FormActions = (Model) => {
         return $('#'+this.getFormId());
     }
 
+    Model.prototype.createNewEntry = function(){
+        if ( this.isEnabledOnlyFormOrTableMode() == true ){
+            this.openForm();
+        }
+
+        setTimeout(() => {
+            this.resetFormWithEvents(true, true, true);
+        }, 50);
+    }
+
     Model.prototype.openForm = function(){
         this.setData('formOpened', true);
     }

@@ -75,7 +75,7 @@
                     <button
                         v-if="canShowAddButton"
                         :data-create-new-row="model.table"
-                        @click.prevent="addNewRow"
+                        @click.prevent="model.createNewEntry()"
                         type="button"
                         class="btn--icon btn btn-primary">
                         <i class="fa fa-plus"></i>
@@ -399,15 +399,6 @@
             },
             newRowTitle(){
                 return this.model.getSettings('buttons.create', this.trans('new-row'));
-            },
-            addNewRow(){
-                if ( this.model.isEnabledOnlyFormOrTableMode() == true ){
-                    this.model.setData('formOpened', true);
-                }
-
-                this.$nextTick(() => {
-                    this.model.resetFormWithEvents(true, true, true);
-                });
             },
         },
 
