@@ -126,7 +126,17 @@ class AdminUpdateCommand extends Command
     private function moveStorageFromCrudadminv3()
     {
         $oldUploadsPath = public_path('uploads');
-        $newUploadsFolder = Admin::getUploadsStorage()->getAdapter()->getPathPrefix();
+        $storage = Admin::getUploadsStorage();
+
+        try {
+            //Laravel 9 support
+            $newUploadsFolder = $storage->getConfig()['root'];
+        }
+
+        //Laravel 8 and lower
+        catch (\Throwable $e){
+            $newUploadsFolder = $storage->getAdapter()->getPathPrefix();
+        }
 
         //Move uploads directory into crudadmin storage
         if ( file_exists($oldUploadsPath) && !is_link($oldUploadsPath) ){
