@@ -12,6 +12,7 @@
 
 // Variables
 @import 'variables';
+@import 'bootstrap';
 @import 'mixins';
 
 // Bootstrap
@@ -31,7 +32,12 @@
 @import 'components/user_roles';
 @import 'components/spacers';
 @import 'components/sitebuilder';
+@import 'components/sitetree';
 @import 'style.css';
+
+html {
+    font-size: 10px;
+}
 
 body {
     -webkit-font-smoothing: antialiased;

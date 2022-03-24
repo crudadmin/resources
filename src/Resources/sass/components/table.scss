@@ -25,8 +25,8 @@
                     color: $darkText;
 
                     &.table-sm {
-                        td:first-child, th:first-child { padding-left: 0.75rem; padding-right: 0.3rem; }
-                        td:last-child, th:last-child { padding-right: 0.75rem; }
+                        td:first-child, th:first-child { padding-left: 1.05rem; padding-right: 0.42rem; }
+                        td:last-child, th:last-child { padding-right: 1.05rem; }
                     }
 
                     th, td {

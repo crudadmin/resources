@@ -112,6 +112,7 @@
             :required="isRequired"
             :disabled="isDisabled"
             :readonly="isReadonly"
+            :langslug="langslug"
             :depth_level="depth_level">
         </file-field>
 

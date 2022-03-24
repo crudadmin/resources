@@ -85,14 +85,12 @@
 
 <script>
 import TableRowValue from './TableRowValue.vue';
-import PublishButton from '../Partials/PublishButton.vue';
-import ButtonsAction from '../Partials/ButtonsAction.vue';
 import draggable from 'vuedraggable'
 
 export default {
     props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'pagination'],
 
-    components: { TableRowValue, PublishButton, ButtonsAction, draggable },
+    components: { TableRowValue, draggable },
 
     data(){
         return {
