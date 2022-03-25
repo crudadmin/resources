@@ -118,21 +118,9 @@ export default {
         columns(){
             this._cacheColumnSettings = {};
         },
-        parentRowId(rowId, oldRowId){
-            if ( rowId != oldRowId ) {
-                //We need reload all rows, because parent has been changed
-                this.$parent.reloadRows();
-
-                //Set allowed columns
-                this.model.resetAllowedColumns();
-            }
-        },
     },
 
     computed: {
-        parentRowId(){
-            return (this.model.getParentModel().getRow()||{}).id;
-        },
         button_loading(){
             return this.model.getData('button_loading');
         },
