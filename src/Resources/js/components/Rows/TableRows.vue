@@ -119,13 +119,6 @@ export default {
             this._cacheColumnSettings = {};
         },
         parentRowId(rowId, oldRowId){
-            //Allow this feature only for models which are available/rendered without parent.
-            //Because other models will boot in same time when row is selected, so all rows will be loaded in the same time.
-            //But withoutParent row is loaded all the time, so we need refresh rows manually.
-            if ( this.model.without_parent != true ){
-                return;
-            }
-
             if ( rowId != oldRowId ) {
                 //We need reload all rows, because parent has been changed
                 this.$parent.reloadRows();
@@ -138,7 +131,7 @@ export default {
 
     computed: {
         parentRowId(){
-            return (this.model.getData('parentrow')||{}).id;
+            return (this.model.getParentModel().getRow()||{}).id;
         },
         button_loading(){
             return this.model.getData('button_loading');
