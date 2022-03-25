@@ -41,7 +41,10 @@ const freshModelData = (rawModel) => {
         orderBy : [],
 
         //Is model dragged right now?
-        draggind : false,
+        dragging : {
+            active : false,
+            list : null,
+        },
 
         //Selected form language
         selected_language_id : null,

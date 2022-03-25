@@ -5,10 +5,12 @@
         background: rgb(249 249 249);
         padding: $form-group-margin-bottom / 2;
         margin-bottom: $form-group-margin-bottom / 2;
+        user-select: none;
 
         &__drag {
             padding: 6px;
             padding-right: 12px;
+            cursor: move;
 
             i {
                 color: $navbarBorderColor;

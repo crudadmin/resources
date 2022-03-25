@@ -22,8 +22,9 @@
             v-bind="model.isDragEnabled() ? model.getDragOptions() : {}"
             :is="model.isDragEnabled() ? 'draggable' : 'tbody'"
             tag="tbody"
+            :list="sortedRows"
             @start="model.onDragStart($event)"
-            @end="model.onDragEnd($event, sortedRows)">
+            @change="model.onDragChange($event)">
             <tr v-for="(item, key) in sortedRows" :key="item.id" :data-id="item.id" :class="getRowClass(item)">
                 <td class="row-draggable" v-if="model.isDragEnabled()" @click="checkRow(item.id)">
                     <i class="fa fa-grip-vertical"></i>

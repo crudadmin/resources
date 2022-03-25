@@ -482,7 +482,7 @@ var FormActions = (Model) => {
 
                 //Set value and default value of field from database
                 fields[key].value = value;
-                fields[key].$original_value = value;
+                fields[key].$originalValue = value;
 
                 eventHub.$emit('updateField', this.buildEventData({
                     key : key,

@@ -239,22 +239,24 @@
 
                 var options = this.fieldOptions,
                     missing = [],
-                    original_value = this.$parent.getLocalizedValue(this.field.$original_value);
+                    originalValue = this.$parent.getLocalizedValue(
+                        !_.isNil(this.field.$originalValue) ? this.field.$originalValue : this.field.value
+                    );
 
                 //For multiple selects
                 if ( this.isMultiple )
                 {
-                    if ( original_value )
+                    if ( originalValue )
                     {
-                        for (var i = 0; i < original_value.length; i++)
+                        for (var i = 0; i < originalValue.length; i++)
                         {
                             var searched = options.filter(function(item){
-                                return item[0] == original_value[i];
+                                return item[0] == originalValue[i];
                             }.bind(this));
 
                             //Add missing values, when is filter off
                             if (searched.length == 0 && !this.filterBy){
-                                missing.push(original_value[i]);
+                                missing.push(originalValue[i]);
                             }
                         }
                     }
@@ -265,11 +267,11 @@
                     //Check if is value in options
                     for ( var i = 0; i < options.length; i++ )
                     {
-                        if ( options[i][0] == original_value )
+                        if ( options[i][0] == originalValue )
                             return [];
                     }
 
-                    return this.filterBy || [null, undefined].indexOf(original_value) > -1 ? [] : [original_value];
+                    return this.filterBy || [null, undefined].indexOf(originalValue) > -1 ? [] : [originalValue];
                 }
 
                 return missing;
