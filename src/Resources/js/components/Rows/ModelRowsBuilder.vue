@@ -312,6 +312,15 @@ export default {
                 this.pagination.limit = this.getLimitFromStorage();
             }
         },
+        parentRowId(rowId, oldRowId){
+            if ( rowId != oldRowId ) {
+                //We need reload all rows, because parent has been changed
+                this.reloadRows();
+
+                //Set allowed columns
+                this.model.resetAllowedColumns();
+            }
+        },
     },
 
     computed: {
@@ -374,6 +383,11 @@ export default {
                 defaultColumnsKeys = Object.keys(_.cloneDeep(defaultColumns));
 
             return defaultColumnsKeys.filter(column => defaultColumns[column].enabled != (this.enabled_columns[column]||{}).enabled).length == 0;
+        },
+        parentRowId(){
+            let parentModel = this.model.getParentModel();
+
+            return parentModel ? (parentModel.getRow()||{}).id : null;
         },
     },
 
