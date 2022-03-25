@@ -203,6 +203,22 @@ var ModelData = (Model, rawModel) => {
         });
     }
 
+    Model.prototype.getChildModels = function(table){
+        let children = $store.state.models.models.filter(model => {
+            return model.getData('tree').includes(this.getData('uuid'));
+        });
+
+        return table ? _.find(children, { table }) : children;
+    };
+
+    Model.prototype.getChildModel = function(table){
+        return this.getChildModels(table);
+    };
+
+    Model.prototype.hasParentModel = function(table){
+        return this.getParentModels().map(model => model.table).includes(table);
+    }
+
     Model.prototype.emptyRowInstance = function(){
         var row = {},
             table;

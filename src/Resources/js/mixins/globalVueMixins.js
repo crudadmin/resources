@@ -14,7 +14,7 @@ var globalVueMixins = {
 
             var re = new RegExp(Object.keys(mapObj).join("|"),"gi");
 
-            return format.replace(re, function(match){
+            return (format||'').replace(re, function(match){
                 if ( match in mapObj )
                     return mapObj[match];
 
