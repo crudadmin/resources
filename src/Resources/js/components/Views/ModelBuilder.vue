@@ -476,7 +476,7 @@
                 return true;
             },
             canShowAddButton(){
-                return this.model.canAddRow() && !this.model.isSingle() && this.model.hasAccess('insert') && !this.model.isOnlyFormOpened();
+                return this.model.canAddRow() && !this.model.isSingle() && this.model.hasAccess('insert') && !this.model.isOnlyFormOpened() && this.model.isSettingEnabled('buttons.create', true);
             },
             /*
              * Show search if has been at least one time used, or if is not single row, or if is more then 10 rows

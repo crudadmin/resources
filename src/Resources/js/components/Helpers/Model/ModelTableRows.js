@@ -564,7 +564,7 @@ var ModelTableRows = (Model) => {
             });
 
             //If has been component destroyed, and request is delivered... and some conditions
-            if ( this.getData('dragging') === true || this.getData('progress') === true || isModelDestroyed() ){
+            if ( this.getData('dragging').active === true || this.getData('progress') === true || isModelDestroyed() ){
                 return;
             }
 
