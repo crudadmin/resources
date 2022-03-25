@@ -1,13 +1,73 @@
-const enableDragging = function(model){
-    model.enableRowsRefreshing(false);
-
-    model.setData('dragging', false);
-
-    //Enable all tooltips
-    $('[data-toggle="tooltip"]').tooltip('enable');
-};
-
 var RowActions = (Model) => {
+    Model.prototype.getRow = function(key){
+        return this.getData('row');
+    }
+
+    Model.prototype.setRow = function(row){
+        return this.setData('row', row);
+    }
+
+    Model.prototype.setValue = function(key, value){
+        this.data.row[key] = value;
+
+        return this;
+    }
+
+    Model.prototype.getParentModel = function(){
+        return $store.getters['models/getModel'](this.data.tree[0]);
+    }
+
+    Model.prototype.getParentModels = function(){
+        return this.data.tree.map(uuid => {
+            return $store.getters['models/getModel'](uuid);
+        });
+    }
+
+    Model.prototype.getChildModels = function(table){
+        let children = $store.state.models.models.filter(model => {
+            return model.getData('tree').includes(this.getData('uuid'));
+        });
+
+        return table ? _.find(children, { table }) : children;
+    };
+
+    Model.prototype.getChildModel = function(table){
+        return this.getChildModels(table);
+    };
+
+    Model.prototype.hasParentModel = function(table){
+        return this.getParentModels().map(model => model.table).includes(table);
+    }
+
+    Model.prototype.emptyRowInstance = function(){
+        var row = {},
+            table;
+
+        //Add foreign columns
+        if ( this.getData('parentrow') && this.foreign_column != null ) {
+            if ( table = this.foreign_column[this.getParentTableName()] ) {
+                row[table] = this.getData('parentrow').id;
+            }
+        }
+
+        //Add default columns
+        for ( var key in this.fields ) {
+            row[key] = null;
+        }
+
+        return row;
+    }
+
+    Model.prototype.isOpenedRow = function(){
+        let row = this.getData('row');
+
+        return row && 'id' in row && row.id;
+    }
+
+    Model.prototype.resetForm = function(){
+        return this.setData('row', this.emptyRowInstance());
+    }
+
     Model.prototype.isReservedRow = function(id){
         //check multiple input
         if ( typeof id === 'object' && id.length && this.reserved ) {
@@ -279,125 +339,6 @@ var RowActions = (Model) => {
             $app.errorResponseLayer(response);
         }
     };
-
-    Model.prototype.isDragEnabled = function(){
-        if ( $app.isMobileDevice() ){
-            return false;
-        }
-
-        return this.sortable == true;
-    }
-
-    Model.prototype.onDragStart = function(dragged){
-        //Destroy table reload rows timeout
-        this.disableRowsRefreshing();
-
-        //Set drag&drop state as true, because if we drag, we do not want reload rows
-        //from ajax request. We want stop syncing rows. Also ajax request which
-        //has been sent already.
-        this.setData('dragging', true);
-
-        //Disable all tooltips
-        $('[data-toggle="tooltip"]').tooltip('disable');
-    }
-
-    Model.prototype.getDragOptions = function(){
-        return {
-            animation: 200,
-            group: this.table,
-            disabled: false,
-            ghostClass: 'ghost'
-        };
-    }
-
-    Model.prototype.onDragChange = async function(e, list, parentRow){
-        if ( e.added && this.isRecursive() ){
-            let draggedRow = e.added.element,
-                rows = {};
-
-            //Sort all rows between sorted rows
-            for ( var i = 0; i < list.length; i++ ){
-                let row = list[i];
-
-                if ( i > e.added.newIndex ){
-                    if ( i === e.added.newIndex + 1 ) {
-                        draggedRow._order = row._order;
-                    }
-
-                    row._order += 1;
-                    rows[row.id] = row._order;
-                }
-            }
-
-            draggedRow[this.foreign_column[this.table]] = parentRow ? parentRow.id : null;
-            rows[draggedRow.id] = { _order : draggedRow._order }
-            rows[draggedRow.id][this.foreign_column[this.table]] = draggedRow[this.foreign_column[this.table]];
-
-            this.updateDragOrder(rows);
-        }
-    }
-
-    Model.prototype.onDragEnd = async function(dragged, list){
-        //Disable sorting when is used sorting columns
-        if ( this.getData('orderBy')[0] != '_order' ) {
-            enableDragging(this);
-
-            return;
-        }
-
-        //Dragging between multiple tables is disabled
-        if ( dragged.from !== dragged.to ){
-            return;
-        }
-
-        var rowsData = list,
-            draggedRow = list[dragged.oldIndex],
-            droppedRow = list[dragged.newIndex],
-            draggedOrder = draggedRow._order,
-            droppedOrder = droppedRow._order,
-            rows = {},
-            changed_ids = [];
-
-        //Sort all rows between sorted rows
-        for ( var i = rowsData.length - 1; i >= 0; i-- ) {
-            var row = rowsData[i];
-
-            //From top to bottom
-            if ( row.id == draggedRow.id ){
-                row._order = droppedOrder;
-                rows[row.id] = row._order;
-            } else if ( draggedOrder > droppedOrder && row._order >= droppedOrder && row._order <= draggedOrder ){
-                row._order += 1;
-                rows[row.id] = row._order;
-            //From bottom to top
-            } else if ( draggedOrder < droppedOrder && row._order <= droppedOrder && row._order > draggedOrder) {
-                row._order -= 1;
-                rows[row.id] = row._order;
-            }
-        }
-
-        this.updateDragOrder(rows);
-    }
-
-    Model.prototype.updateDragOrder = async function(rows){
-        try {
-            let response = await $app.$http.post($app.requests.updateOrder, {
-                model : this.slug,
-                rows : rows
-            });
-
-            var data = response.data;
-            if ( data && 'type' in data ) {
-                return $app.openAlert(data.title, data.message, 'danger');
-            }
-
-            enableDragging(this);
-        } catch (response){
-            $app.errorResponseLayer(response);
-
-            enableDragging(this);
-        }
-    }
 };
 
 export default RowActions;

@@ -166,7 +166,6 @@ var ModelData = (Model, rawModel) => {
         return this.data[key];
     }
 
-
     Model.prototype.mapData = function(keys, callbackOrComponent){
         _.castArray(keys).forEach(key => {
             let callback = typeof callbackOrComponent == 'function' ? callbackOrComponent : (value) => {
@@ -177,106 +176,6 @@ var ModelData = (Model, rawModel) => {
         });
 
         return this;
-    }
-
-    Model.prototype.getRow = function(key){
-        return this.getData('row');
-    }
-
-    Model.prototype.setRow = function(row){
-        return this.setData('row', row);
-    }
-
-    Model.prototype.setValue = function(key, value){
-        this.data.row[key] = value;
-
-        return this;
-    }
-
-    Model.prototype.getParentModel = function(){
-        return $store.getters['models/getModel'](this.data.tree[0]);
-    }
-
-    Model.prototype.getParentModels = function(){
-        return this.data.tree.map(uuid => {
-            return $store.getters['models/getModel'](uuid);
-        });
-    }
-
-    Model.prototype.getChildModels = function(table){
-        let children = $store.state.models.models.filter(model => {
-            return model.getData('tree').includes(this.getData('uuid'));
-        });
-
-        return table ? _.find(children, { table }) : children;
-    };
-
-    Model.prototype.getChildModel = function(table){
-        return this.getChildModels(table);
-    };
-
-    Model.prototype.hasParentModel = function(table){
-        return this.getParentModels().map(model => model.table).includes(table);
-    }
-
-    Model.prototype.emptyRowInstance = function(){
-        var row = {},
-            table;
-
-        //Add foreign columns
-        if ( this.getData('parentrow') && this.foreign_column != null ) {
-            if ( table = this.foreign_column[this.getParentTableName()] ) {
-                row[table] = this.getData('parentrow').id;
-            }
-        }
-
-        //Add default columns
-        for ( var key in this.fields ) {
-            row[key] = null;
-        }
-
-        return row;
-    }
-
-    Model.prototype.isOpenedRow = function(){
-        let row = this.getData('row');
-
-        return row && 'id' in row && row.id;
-    }
-
-    Model.prototype.resetChecked = function(){
-        this.setData('checked', []);
-    }
-
-    Model.prototype.getChecked = function(){
-        return this.getData('checked');
-    }
-
-    Model.prototype.setChecked = function(ids){
-        ids = _.castArray(ids);
-
-        if ( ids.length > 0 ){
-            let checked = _.uniq(this.data.checked.concat(ids));
-
-            this.setData('checked', checked);
-        } else {
-            this.resetChecked();
-        }
-    }
-
-    Model.prototype.toggleChecked = function(id){
-        var checked = this.getData('checked'),
-            index = checked.indexOf(id);
-
-        if ( index == -1 ) {
-            checked.push(id);
-        } else {
-            checked.splice(index, 1);
-        }
-    }
-
-    Model.prototype.resetForm = function(){
-        return this.setData('row', this.emptyRowInstance());
     }
 };
 

@@ -906,6 +906,37 @@ var ModelTableRows = (Model) => {
 
         this.setData('enabled_columns', enabled);
     }
+
+    Model.prototype.resetChecked = function(){
+        this.setData('checked', []);
+    }
+
+    Model.prototype.getChecked = function(){
+        return this.getData('checked');
+    }
+
+    Model.prototype.setChecked = function(ids){
+        ids = _.castArray(ids);
+
+        if ( ids.length > 0 ){
+            let checked = _.uniq(this.data.checked.concat(ids));
+
+            this.setData('checked', checked);
+        } else {
+            this.resetChecked();
+        }
+    }
+
+    Model.prototype.toggleChecked = function(id){
+        var checked = this.getData('checked'),
+            index = checked.indexOf(id);
+
+        if ( index == -1 ) {
+            checked.push(id);
+        } else {
+            checked.splice(index, 1);
+        }
+    }
 };
 
 export default ModelTableRows;
