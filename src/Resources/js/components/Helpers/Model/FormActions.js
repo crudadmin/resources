@@ -412,11 +412,7 @@ var FormActions = (Model) => {
         }
 
         if ( resetActiveTab === true ) {
-            eventHub.$emit('changeActiveTab', {
-                table : this.table,
-                depth_level : this.getData('depth_level'),
-                activetab : 0,
-            });
+            this.setActiveTab(0);
         }
     };
 

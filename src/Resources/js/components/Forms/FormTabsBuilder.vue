@@ -3,7 +3,7 @@
         <ul class="nav nav-tabs" v-if="hasTabsAvailable">
             <li
                 class="nav-item"
-                :class="{ 'model-tab' : isModel(tab), active : activetab == $index }"
+                :class="{ 'model-tab' : isModel(tab), active : activeTab == $index }"
                 v-for="(tab, $index) in getTabs"
                 v-if="isTab(tab) && !tab.model || isModel(tab)"
                 v-show="isTabVisible(tab)"
@@ -12,8 +12,8 @@
                 :default-tab="isModel(tab) && getModel(tab.model) ? false : ''"
                 :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table"
                 :data-tab-id="tab.id"
-                @click="activetab = $index">
-                <a data-toggle="tab" class="nav-link" :class="{ active : activetab == $index }" aria-expanded="true">
+                @click="model.setActiveTab($index)">
+                <a data-toggle="tab" class="nav-link" :class="{ active : activeTab == $index }" aria-expanded="true">
                     <i v-if="getTabIcon(tab)" class="fa nav-link--icon-left" :class="[faMigrator(getTabIcon(tab))]"></i>
                     {{ getTabName(tab)||trans('general-tab') }}
                 </a>
@@ -24,7 +24,7 @@
                 v-for="(tab, $index) in getTabs"
                 v-if="canRenderTab(tab)"
                 class="tab-pane"
-                :class="{ active : activetab == $index }"
+                :class="{ active : activeTab == $index }"
                 :data-tab-model="isModel(tab) ? getModel(tab.model).slug : false"
                 :data-tab-id="tab.id">
                 <div class="row">
@@ -44,7 +44,7 @@
                             :langid="model.getSelectedLanguageId()"
                             :ischild="true"
                             :model_builder="getModel(tab.model)"
-                            :activetab="isLoadedModel(getModel(tab.model), $index)"
+                            :activeTab="isLoadedModel(getModel(tab.model), $index)"
                             :parentActiveGridSize="model.activeGridSize()"
                             :parentrow="row">
                         </model-builder>
@@ -79,51 +79,32 @@ export default {
     data(){
         return {
             //Which child models has been loaded
-            models_loaded : [],
-            models_data : {},
-
-            activetab : 0,
+            modelsLoaded : [],
         };
     },
 
     created() {
         /*
-         * Fir for double recursion in VueJS
+         * Fix for double recursion in VueJS
          */
         this.$options.components['model-builder'] = Vue.extend(ModelBuilder);
-
-        //Reset tabs on change id
-        this.$watch('row.id', function(id, oldid){
-            //If is created new row, or id does exists. We does not want reset active tab, because for will not be reseted
-            if ( this.model.getSettings('autoreset') !== false || !id ) {
-                this.activetab = 0;
-            }
-
-            this.models_loaded = [];
-        });
-
-        eventHub.$on('rowsChanged', this.rowsChangedEvent = item => {
-            if ( this.model.getData('depth_level')+1 != item.depth_level )
-                return;
-
-            this.$set(this.models_data, item.table, item);
-        });
-
-        eventHub.$on('changeActiveTab', this.changeActiveTab = item => {
-            if ( this.model.getData('depth_level') != item.depth_level )
-                return;
-
-            this.activetab = item.activetab;
-        });
     },
 
     destroyed(){
         eventHub.$off('rowsChanged', this.rowsChangedEvent);
-        eventHub.$off('changeActiveTab', this.rowsChangedEvent);
     },
 
     watch: {
-        activetab(tabid){
+        //Reset tabs on change id
+        'row.id'(id, oldid){
+            //If is created new row, or id does exists. We does not want reset active tab, because for will not be reseted
+            if ( this.model.getSettings('autoreset') !== false || !id ) {
+                this.model.setActiveTab(0);
+            }
+
+            this.modelsLoaded = [];
+        },
+        activeTab(tabid){
             //If tab is in subgroup of field, we do not want change save button state
             if ( typeof this.cansave == 'undefined' )
                 return;
@@ -138,6 +119,9 @@ export default {
     computed: {
         row(){
             return this.model.getRow();
+        },
+        activeTab(){
+            return this.model.getActiveTab();
         },
         getModelFields(){
             if (this.model.fields_groups.length == 1 && this.model.fields_groups[0].type == 'default')
@@ -259,15 +243,14 @@ export default {
          * Return tab name
          */
         getTabName(tab){
-            if ( this.isModel(tab) )
-            {
+            if ( this.isModel(tab) ) {
                 var model = this.getModel(tab.model),
-                    name = tab.name||model.name,
-                    data = this.models_data[model.slug];
+                    name = tab.name||model.name;
 
                 //If is not single model, then show rows count
-                if ( ! model.isSingle() || ! model.isInParent() )
-                    name += ' (' + (data ? parseInt(data.count||0) : '0') + ')';
+                if ( (! model.isSingle() || ! model.isInParent()) ) {
+                    name += ' (' + ((model.getData('rows')||{}).count||0) + ')';
+                }
 
                 return name;
             }
@@ -370,11 +353,11 @@ export default {
         isLoadedModel(model, index){
             //Tab is active only when is selected, or when is inParentMode
             //because we need loaded fields also when tab is not opened. For proper validation errors.
-            if ( (index === this.activetab || model.isInParent() || model.getSettings('tab_loaded')) && this.models_loaded.indexOf(model.slug) === -1 ) {
-                this.models_loaded.push(model.slug);
+            if ( (index === this.activeTab || model.isInParent() || model.getSettings('tab_loaded')) && this.modelsLoaded.indexOf(model.slug) === -1 ) {
+                this.modelsLoaded.push(model.slug);
             }
 
-            return this.models_loaded.indexOf(model.slug) > -1;
+            return this.modelsLoaded.indexOf(model.slug) > -1;
         },
         isTabVisible(tab){
             if ( ! this.isTab(tab) )
