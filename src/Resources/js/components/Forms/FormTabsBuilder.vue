@@ -16,7 +16,8 @@
                 <a data-toggle="tab" class="nav-link" :class="{ active : activeTab == $index }" aria-expanded="true">
                     <i v-if="getTabIcon(tab)" class="fa nav-link--icon-left" :class="[faMigrator(getTabIcon(tab))]"></i>
                     {{ getTabName(tab)||trans('general-tab') }}
-                    <span class="tab-count">{{ getTabNameCount(tab) }}</span>
+
+                    <span class="tab-count" v-if="isModel(tab)">{{ getTabNameCount(tab) }}</span>
                 </a>
             </li>
         </ul>
@@ -45,7 +46,7 @@
                             :langid="model.getSelectedLanguageId()"
                             :ischild="true"
                             :model_builder="getModel(tab.model)"
-                            :activeTab="isLoadedModel(getModel(tab.model), $index)"
+                            :activeTab="isLoadedModel(getModel(tab.model), $index, true)"
                             :parentActiveGridSize="model.activeGridSize()"
                             :parentrow="row">
                         </model-builder>
@@ -190,8 +191,9 @@ export default {
             }
 
             //We need create cached version of given model. To share UUID accross all model session
-            //under this tab
-            return this.cachedModel[model] = cachedModel();
+            //under this tab. We also need to create object observable from start. To be able retrieve data
+            //after component mount.
+            return this.cachedModel[model] = Vue.observable(cachedModel());
         },
         /*
          * Return tab name
@@ -285,10 +287,10 @@ export default {
 
             return items;
         },
-        isLoadedModel(model, index){
+        isLoadedModel(model, index, autoLoadModel = false){
             //Tab is active only when is selected, or when is inParentMode
             //because we need loaded fields also when tab is not opened. For proper validation errors.
-            if ( (index === this.activeTab || model.isInParent() || model.getSettings('tab_loaded')) && this.modelsLoaded.indexOf(model.slug) === -1 ) {
+            if ( autoLoadModel === true && ((index === this.activeTab || model.isInParent() || model.getSettings('tab_loaded')) && this.modelsLoaded.indexOf(model.slug) === -1) ) {
                 this.modelsLoaded.push(model.slug);
             }
 
