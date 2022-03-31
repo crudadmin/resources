@@ -86,7 +86,7 @@ export default {
                     var field = this.model.fields[item];
 
                     return !(
-                        this.model.tryAttribute(field, 'invisible', this.row)
+                        this.model.tryAttribute(field, 'invisible')
                         || this.canRemoveAttribute(field)
                         || ! this.canShowField(field)
                     );
@@ -101,16 +101,16 @@ export default {
             });
         },
         canRemoveAttribute(field){
-            return this.model.tryAttribute(field, 'removeField', this.row)
-                   || this.model.tryAttribute(field, 'removeFromForm', this.row)
-                   || this.model.tryAttribute(field, 'inaccessible', this.row);
+            return this.model.tryAttribute(field, 'removeField')
+                   || this.model.tryAttribute(field, 'removeFromForm')
+                   || this.model.tryAttribute(field, 'inaccessible');
         },
         canHideAttribute(field){
-            return this.model.tryAttribute(field, 'hideField', this.row)
-                   || this.model.tryAttribute(field, 'hideFromForm', this.row);
+            return this.model.tryAttribute(field, 'hideField')
+                   || this.model.tryAttribute(field, 'hideFromForm');
         },
         canRenderField(field){
-            return !this.model.tryAttribute(field, 'invisible', this.row)
+            return !this.model.tryAttribute(field, 'invisible')
                    && !this.canRemoveAttribute(field);
         },
         canShowField(field){
@@ -176,8 +176,8 @@ export default {
         isGroupVisible(group){
             if ( group.attributes && Object.keys(group.attributes).length > 0 ){
                 if (
-                    this.model.tryAttribute(group.attributes, 'hideField', this.row)
-                    || this.model.tryAttribute(group.attributes, 'hideFromForm', this.row)
+                    this.model.tryAttribute(group.attributes, 'hideField')
+                    || this.model.tryAttribute(group.attributes, 'hideFromForm')
                 ){
                     return false;
                 }

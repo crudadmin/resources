@@ -171,8 +171,8 @@ export default {
             for ( var key in this.model.fields ) {
                 //We want skip inacessible fields
                 if (
-                    this.model.tryAttribute(this.model.fields[key], 'inaccessible', this.row)
-                    || this.model.tryAttribute(this.model.fields[key], 'inaccessible_column', this.row)
+                    this.model.tryAttribute(this.model.fields[key], 'inaccessible')
+                    || this.model.tryAttribute(this.model.fields[key], 'inaccessible_column')
                 ){
                     continue;
                 }
@@ -188,7 +188,7 @@ export default {
                             || (
                                 //Is not hidden field
                                 this.model.fields[key].hidden != true
-                                && !this.model.tryAttribute(this.model.fields[key], 'invisible', this.row)
+                                && !this.model.tryAttribute(this.model.fields[key], 'invisible')
                             )
                             || this.model.fields[key].column_visible == true
                     );

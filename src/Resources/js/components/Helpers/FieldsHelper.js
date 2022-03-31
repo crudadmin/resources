@@ -37,19 +37,34 @@ var Fields = (Model) => {
         return value[1];
     }
 
-    /*
-     * Try atribute values with all combinations (attr as tru, attrIf, attrIfNot...)
-     */
-    Model.prototype.isMatchedAttributesValues = function(params, isIn, row){
-        var items = (params||'').split(','),
-            fieldOperator = items[0].split('.'),
-            relatedField = this.fields[fieldOperator[0]]||this.fields[fieldOperator[0]+'_id'],
+    Model.prototype.getModelFieldValueSelector = function(paramsOperator){
+        let operators = (paramsOperator||'').split(','),
+            fieldKey = operators[0].split('.'),
+            //Determine if we want retrieve parent model table with $tablename.columns selector
+            hasParentTableFieldLookup = fieldKey[0][0] == '$',
+            hasChildTableFieldLookup = fieldKey[0][0] == '$$',
+            model = hasParentTableFieldLookup
+                    ? this.getParentModel(fieldKey[0].substr(1))
+                    : (
+                        hasChildTableFieldLookup
+                            ? this.getChildModel(fieldKey[0].substr(2))
+                            : this
+                    ),
+            row = model?.getRow();
+
+        //We need throw away table selector. Because selector may be $parenttable.column.optionattribute
+        if ( hasParentTableFieldLookup || hasChildTableFieldLookup ){
+            fieldKey = fieldKey.slice(hasChildTableFieldLookup ? 2 : 1);
+        }
+
+        //We need retrieve selected field from given model
+        let field = model ? (model.fields[fieldKey[0]]||model.fields[fieldKey[0]+'_id']) : null,
 
             //If static field does not exists, and we want do actions by non existing columns, then look for value in row data.
-            value = relatedField ? relatedField.value : row[fieldOperator[0]];
+            value = field ? field.value : (row||{}[fieldKey[0]]);
 
         //Cast values
-        items = items.map(item => {
+        operators = operators.map(item => {
             var value = item;
                 value = _.isNil(item) || ['', 'NULL'].indexOf(item) > -1 ? null : value;
                 value = ['TRUE'].indexOf(item) > -1 ? true : value;
@@ -58,18 +73,34 @@ var Fields = (Model) => {
             return value;
         });
 
+        return {
+            operators,
+            row,
+            value,
+            field,
+            fieldKey,
+            model,
+        }
+    }
+
+    /*
+     * Try atribute values with all combinations (attr as tru, attrIf, attrIfNot...)
+     */
+    Model.prototype.isMatchedAttributesValues = function(params, isIn){
+        let { operators, model, fieldKey, field, row, value } = this.getModelFieldValueSelector(params);
+
         //If is key in item from options fields
-        if ( relatedField && fieldOperator.length > 1 ) {
-            var options = relatedField.options,
+        if ( field && fieldKey.length > 1 ) {
+            var options = field.options,
                 option = _.find(options, item => ( item[0] == value ));
 
             //Implement is in
             if ( isIn ) {
-                if ( option && items.slice(1).filter(item => (item == option[1][fieldOperator[1]])).length > 0 ) {
+                if ( option && operators.slice(1).filter(item => (item == option[1][fieldKey[1]])).length > 0 ) {
                     return true;
                 }
             } else {
-                if ( option && option[1][fieldOperator[1]] === items[1] ) {
+                if ( option && option[1][fieldKey[1]] === operators[1] ) {
                     return true;
                 }
             }
@@ -84,7 +115,7 @@ var Fields = (Model) => {
 
 
         if (isIn) {
-            return items.slice(1).filter(item => {
+            return operators.slice(1).filter(item => {
                 //Support multiselect values
                 if ( _.isArray(value) ){
                     return value.indexOf(item) > -1;
@@ -96,16 +127,16 @@ var Fields = (Model) => {
 
         //Support multiselect values
         if ( _.isArray(value) && value.length == 1 ){
-            return Object.values(value)[0] == items[1];
+            return Object.values(value)[0] == operators[1];
         }
 
-        return value == items[1];
+        return value == operators[1];
     }
 
     /*
      * Try atribute values with all combinations (attr as tru, attrIf, attrIfNot...)
      */
-    Model.prototype.tryAttribute = function(field, type, row){
+    Model.prototype.tryAttribute = function(field, type){
         let param;
 
         //If is static value, non dynamical...
@@ -118,19 +149,19 @@ var Fields = (Model) => {
         }
 
         if ( param = field[type+'If'] ) {
-            return this.isMatchedAttributesValues(param, false, row);
+            return this.isMatchedAttributesValues(param, false);
         }
 
         if ( param = field[type+'IfIn'] ) {
-            return this.isMatchedAttributesValues(param, true, row);
+            return this.isMatchedAttributesValues(param, true);
         }
 
         if ( param = field[type+'IfNot'] ) {
-            return !this.isMatchedAttributesValues(param, false, row);
+            return !this.isMatchedAttributesValues(param, false);
         }
 
         if ( param = field[type+'IfNotIn'] ) {
-            return !this.isMatchedAttributesValues(param, true, row);
+            return !this.isMatchedAttributesValues(param, true);
         }
 
         return false;

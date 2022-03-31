@@ -304,10 +304,9 @@ export default {
                 return false;
             }
 
-            let row = this.model.getRow();
             if ( tab.attributes && (
-                this.model.tryAttribute(tab.attributes, 'hideField', row)
-                || this.model.tryAttribute(tab.attributes, 'hideFromForm', row)
+                this.model.tryAttribute(tab.attributes, 'hideField')
+                || this.model.tryAttribute(tab.attributes, 'hideFromForm')
             ) ) {
                 return false;
             }

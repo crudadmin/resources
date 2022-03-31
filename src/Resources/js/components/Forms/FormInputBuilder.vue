@@ -460,11 +460,11 @@
                     return true;
                 }
 
-                return this.model.tryAttribute(this.field, 'disabled', this.row);
+                return this.model.tryAttribute(this.field, 'disabled');
             },
             isReadonly()
             {
-                return this.model.tryAttribute(this.field, 'readonly', this.row);
+                return this.model.tryAttribute(this.field, 'readonly');
             },
             isMultiple()
             {
