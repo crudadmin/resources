@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import FormTabsBuilder from './FormTabsBuilder.vue';
 import FormInputBuilder from './FormInputBuilder.vue';
 
 export default {
@@ -61,13 +60,9 @@ export default {
 
     props : ['model', 'group', 'inputlang'],
 
-    components : { FormInputBuilder, FormTabsBuilder },
-
-    created(){
-        /*
-         * Fir for double recursion in VueJS
-         */
-        this.$options.components['form-tabs-builder'] = Vue.extend(FormTabsBuilder);
+    components : {
+        FormInputBuilder,
+        FormTabsBuilder : () => import('./FormTabsBuilder.vue'),
     },
 
     computed: {

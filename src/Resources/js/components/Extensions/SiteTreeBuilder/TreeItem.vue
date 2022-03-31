@@ -132,18 +132,17 @@
 </template>
 
 <script type="text/javascript">
-import TreeItem from './TreeItem';
 import { mapState } from 'vuex';
 import _ from 'lodash';
 import draggable from 'vuedraggable'
-
 export default {
     name : 'TreeItem',
 
     props : ['item', 'parentRow', 'items', 'sortable', 'disabledTypes'],
 
     components : {
-        TreeItem, draggable
+        draggable,
+        TreeItem : () => import('./TreeItem.vue'),
     },
 
     data(){

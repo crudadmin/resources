@@ -1,6 +1,6 @@
 require('./bootstrap');
 
-window.Vue = require('vue');
+window.Vue = require('vue').default;
 window.eventHub = window.$bus = new Vue();
 window.store = window.$store = require('./store/store').default;
 
@@ -24,13 +24,13 @@ if ( window.Gettext ) {
 }
 
 // Components
-import BaseComponent from './components/BaseComponent.js';
-import CrudAdmin from './components/Helpers/CrudAdmin.js';
-import SiteTreeBuilder from './components/Extensions/SiteTreeBuilder/SiteTreeBuilder.vue';
-import ModelBuilder from './components/Views/ModelBuilder.vue';
-import VueChosen from './components/Partials/VueChosen.vue';
-import PublishButton from './components/Partials/PublishButton.vue';
-import ButtonsAction from './components/Partials/ButtonsAction.vue';
+import BaseComponent from '@components/BaseComponent.js';
+import CrudAdmin from '@components/Helpers/CrudAdmin.js';
+import SiteTreeBuilder from '@components/Extensions/SiteTreeBuilder/SiteTreeBuilder.vue';
+import ModelBuilder from '@components/Views/ModelBuilder.vue';
+import VueChosen from '@components/Partials/VueChosen.vue';
+import PublishButton from '@components/Partials/PublishButton.vue';
+import ButtonsAction from '@components/Partials/ButtonsAction.vue';
 
 //Router
 import Router from './router.js';

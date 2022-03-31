@@ -9,24 +9,22 @@ mix.webpackConfig({
     ]
 });
 
-//Where sould be compiled assets
-var config = require('./config.js');
+var mixConfig = require('./config.js');
 
-config.setMixConfig(mix);
-
-mix.sass('src/Resources/sass/frontend.scss', mix.config.publicPath+'/css')
-   .js('src/Resources/js/plugins/FrontendEditor.js', mix.config.publicPath+'/js')
-   .js([
-    'src/Resources/js/plugins/Frontend/Encryptable.js',
-    'src/Resources/js/plugins/Frontend/VisibleRoutes.js',
-    'src/Resources/js/plugins/Gettextable.js',
-   ], mix.config.publicPath+'/js/Gettextable.js');
+mixConfig.setMixConfig(mix, ({ paths, publicPath }) => {
+    mix.sass('src/Resources/sass/frontend.scss', publicPath+'/css')
+       .js('src/Resources/js/plugins/FrontendEditor.js', publicPath+'/js')
+       .js([
+        'src/Resources/js/plugins/Frontend/Encryptable.js',
+        'src/Resources/js/plugins/Frontend/VisibleRoutes.js',
+        'src/Resources/js/plugins/Gettextable.js',
+       ], publicPath+'/js/Gettextable.js');
 
 
-for ( key in config.paths )
-{
-    mix.copy(mix.config.publicPath+'/js/Gettextable.js', config.paths[key] + '/js/Gettextable.js')
-       .copy(mix.config.publicPath+'/js/FrontendEditor.js', config.paths[key] + '/js/FrontendEditor.js')
-       .copy(mix.config.publicPath+'/css/frontend.css', config.paths[key] + '/css/frontend.css')
-       .copy(mix.config.publicPath+'/images', config.paths[key] + '/images')
-}
+    for ( copyPath of paths ) {
+        mix.copy(publicPath+'/js/Gettextable.js', copyPath + '/js/Gettextable.js')
+           .copy(publicPath+'/js/FrontendEditor.js', copyPath + '/js/FrontendEditor.js')
+           .copy(publicPath+'/css/frontend.css', copyPath + '/css/frontend.css')
+           .copy(publicPath+'/images', copyPath + '/images');
+    }
+});
