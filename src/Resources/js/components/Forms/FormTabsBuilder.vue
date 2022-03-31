@@ -16,6 +16,7 @@
                 <a data-toggle="tab" class="nav-link" :class="{ active : activeTab == $index }" aria-expanded="true">
                     <i v-if="getTabIcon(tab)" class="fa nav-link--icon-left" :class="[faMigrator(getTabIcon(tab))]"></i>
                     {{ getTabName(tab)||trans('general-tab') }}
+                    <span class="tab-count">{{ getTabNameCount(tab) }}</span>
                 </a>
             </li>
         </ul>
@@ -68,6 +69,7 @@
 import FormGroup from './FormGroup.vue';
 import ModelBuilder from '../Views/ModelBuilder.vue';
 import ModelHelper from '../Helpers/ModelHelper.js';
+import { isTab, isGroup } from '../Helpers/TabsHelper.js';
 
 export default {
     name : 'form-tabs-builder',
@@ -123,60 +125,12 @@ export default {
         activeTab(){
             return this.model.getActiveTab();
         },
-        getModelFields(){
-            if (this.model.fields_groups.length == 1 && this.model.fields_groups[0].type == 'default')
-                return this.model.fields_groups[0].fields;
-
-            return this.model.fields_groups;
-        },
         getTabs(){
-            var model_fields = this.getModelFields,
-                items = this.tabs||(this.group ? this.group.fields : model_fields),
-                tabs = items.filter(function(group) {
-                    if ( !this.isTab(group) ){
-                        return false;
-                    }
-
-                    return true;
-                }.bind(this));
-
-            if ( tabs.length == 0 || tabs.length > 0 && tabs.length != items.length ){
-                items = items.filter(function(group) {
-                    return ! this.isTab(group);
-                }.bind(this));
-
-                tabs = [{
-                    name : this.group ? this.group.name : this.model.getSettings('title.tab', this.trans('general-tab')),
-                    icon : this.group ? this.group.icon : this.model.icon,
-                    fields : items,
-                    type : 'tab',
-                    default : true,
-                }].concat(tabs);
-            }
-
-            //Add models into tabs if neccesary
-            if ( this.childs == true ) {
-                let childs = this.model.getChilds();
-
-                for ( var key in childs ) {
-                    var child_model = typeof childs[key] === 'string' ? this.model : childs[key];
-
-                    //Check if model is not in fields group
-                    if ( ! this.isModelInFields(model_fields, child_model.slug) ) {
-                        tabs.push({
-                            fields : [],
-                            type : 'tab',
-                            model : child_model.slug,
-                        });
-                    }
-                }
-            }
-
-            return tabs;
+            return this.model.getTabs(this.tabs, this.group);
         },
         hasTabsAvailable(){
             return !(this.getTabs.filter(function(item){
-                if ( ! this.isTab(item) )
+                if ( ! isTab(item) )
                     return false;
 
                 if ( item.model && ! this.isModel(item) )
@@ -208,7 +162,7 @@ export default {
         },
         tabsFields(fields){
             return fields.filter(item => {
-                return this.isTab(item);
+                return isTab(item);
             });
         },
         /*
@@ -247,15 +201,24 @@ export default {
                 var model = this.getModel(tab.model),
                     name = tab.name||model.name;
 
-                //If is not single model, then show rows count
-                if ( (! model.isSingle() || ! model.isInParent()) ) {
-                    name += ' (' + ((model.getData('rows')||{}).count||0) + ')';
-                }
-
                 return name;
             }
 
             return tab.name;
+        },
+        getTabNameCount(tab){
+            if ( !this.isModel(tab) ) {
+                return;
+            }
+
+            var model = this.getModel(tab.model);
+
+            //If is not single model, then show rows count
+            if ( model.isSingle() || model.isInParent() ) {
+                return;
+            }
+
+            return '('+((model.getData('rows')||{}).count||0)+')';
         },
         /*
          * Return tab icon
@@ -265,30 +228,6 @@ export default {
                 return tab.icon||this.getModel(tab.model).icon;
 
             return tab.icon;
-        },
-        /*
-         * Check if can be model child added into table list
-         * if child model is in other tab or group, then we cant add model into end of tabs.
-         */
-        isModelInFields(childs, model){
-            for ( var i = 0 ; i < childs.length; i++ ) {
-                //Check if group field is tab
-                if ( this.isGroup(childs[i]) ) {
-                    //If model is in recursive tabs or group
-                    if ( childs[i].model === model ){
-                        return true;
-                    }
-
-                    //If tab has other childs, then check recursive
-                    if ( childs[i].fields.length > 0 ) {
-                        if ( this.isModelInFields(childs[i].fields, model) ) {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
         },
         /*
          * Check if tabs is model type
@@ -302,15 +241,11 @@ export default {
         isField(field){
             return typeof field == 'string' && field in this.model.fields;
         },
-        isGroup(group){
-            return typeof group == 'object' && 'type' in group;
-        },
-        isTab(group){
-            return this.isGroup(group) && group.type == 'tab';
-        },
+        isGroup,
+        isTab,
         hasTabs(fields){
             return fields.filter(function(group) {
-                return this.isTab(group);
+                return isTab(group);
             }.bind(this)).length > 0;
         },
         //Return group class
@@ -360,7 +295,7 @@ export default {
             return this.modelsLoaded.indexOf(model.slug) > -1;
         },
         isTabVisible(tab){
-            if ( ! this.isTab(tab) )
+            if ( ! isTab(tab) )
                 return false;
 
             if ( this.isModel(tab) && this.checkRecursivityModelTab(tab) === false ) {
@@ -380,3 +315,5 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped></style>
