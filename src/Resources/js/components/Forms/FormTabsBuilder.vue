@@ -74,7 +74,7 @@ import { isTab, isGroup } from '../Helpers/TabsHelper.js';
 export default {
     name : 'form-tabs-builder',
 
-    props : ['model', 'group', 'tabs', 'childs', 'inputlang', 'cansave'],
+    props : ['model', 'group', 'tabs', 'withChilds', 'inputlang', 'cansave'],
 
     components : { FormGroup },
 
@@ -126,7 +126,7 @@ export default {
             return this.model.getActiveTab();
         },
         getTabs(){
-            return this.model.getTabs(this.tabs, this.group);
+            return this.model.getTabs(this.tabs, this.group, this.withChilds||false);
         },
         hasTabsAvailable(){
             return !(this.getTabs.filter(function(item){

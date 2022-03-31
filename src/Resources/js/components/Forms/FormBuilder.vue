@@ -60,7 +60,7 @@
 
                     <form-tabs-builder
                         :model="model"
-                        :childs="true"
+                        :withChilds="true"
                         :inputlang="model.selectedLanguage()"
                         :cansave="cansave">
                     </form-tabs-builder>

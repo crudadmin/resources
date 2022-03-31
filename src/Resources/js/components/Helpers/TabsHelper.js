@@ -74,7 +74,7 @@ var Tabs = (Model) => {
         }
     }
 
-    Model.prototype.getTabs = function(tabs, group){
+    Model.prototype.getTabs = function(tabs, group, withChilds = true){
         var modelFields = getModelFields(this),
             items = tabs||(group ? group.fields : null)||modelFields,
             tabs = items.filter(function(group) {
@@ -100,7 +100,7 @@ var Tabs = (Model) => {
         }
 
         //Add models into tabs if neccesary
-        if ( this.childs == true ) {
+        if ( withChilds == true ) {
             let childs = this.getChilds();
 
             for ( var key in childs ) {
