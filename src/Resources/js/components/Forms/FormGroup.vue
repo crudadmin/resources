@@ -181,6 +181,12 @@ export default {
                 ){
                     return false;
                 }
+
+                //Check if tab/group can be visible
+                let visible = this.model.tryAttribute(group.attributes, 'visible');
+                if ( _.isBoolean(visible) ){
+                    return visible;
+                }
             }
 
             if ( ! group.id ) {

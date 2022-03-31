@@ -304,11 +304,16 @@ export default {
                 return false;
             }
 
-            if ( tab.attributes && (
-                this.model.tryAttribute(tab.attributes, 'hideField')
-                || this.model.tryAttribute(tab.attributes, 'hideFromForm')
-            ) ) {
-                return false;
+            if ( tab.attributes ) {
+                if ( this.model.tryAttribute(tab.attributes, 'hideField') || this.model.tryAttribute(tab.attributes, 'hideFromForm') ) {
+                    return false;
+                }
+
+                //Check if tab/group can be visible
+                let visible = this.model.tryAttribute(tab.attributes, 'visible');
+                if ( _.isBoolean(visible) ){
+                    return visible;
+                }
             }
 
             return (this.model.hidden_tabs||[]).indexOf(tab.model||tab.id) === -1;

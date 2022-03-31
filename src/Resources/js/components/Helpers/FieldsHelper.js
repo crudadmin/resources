@@ -164,7 +164,7 @@ var Fields = (Model) => {
             return !this.isMatchedAttributesValues(param, true);
         }
 
-        return false;
+        return undefined;
     }
 
     Model.prototype.getFilterBy = function(key){
