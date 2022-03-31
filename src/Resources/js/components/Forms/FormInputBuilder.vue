@@ -291,12 +291,13 @@
                 if ( field.default && this.isEmptyValue(field.value) ) {
                     var defaultParts = (field.default+'').split('.');
 
-                    if ( defaultParts.length == 2 )
-                    {
-                        var model = this.getModelBuilder(defaultParts[0]);
+                    if ( defaultParts.length == 2 ) {
+                        var model = this.model.getParentModel(defaultParts[0]);
 
-                        if ( model && (defaultParts[1] in model.row) ) {
-                            defaultValue = model.row[defaultParts[1]];
+                        if ( model && (defaultParts[1] in model.getRow()) ) {
+                            defaultValue = model.getRow()[defaultParts[1]];
+                        } else {
+                            defaultValue = null;
                         }
                     }
                 }
