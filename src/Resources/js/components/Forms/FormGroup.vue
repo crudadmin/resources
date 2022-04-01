@@ -106,8 +106,11 @@ export default {
                    || this.model.tryAttribute(field, 'inaccessible');
         },
         canHideAttribute(field){
+            let visibleField = this.model.tryAttribute(field, 'visibleField');
+
             return this.model.tryAttribute(field, 'hideField')
-                   || this.model.tryAttribute(field, 'hideFromForm');
+                   || this.model.tryAttribute(field, 'hideFromForm')
+                   || visibleField === false;
         },
         canRenderField(field){
             return !this.model.tryAttribute(field, 'invisible')
