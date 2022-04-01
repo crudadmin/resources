@@ -500,7 +500,7 @@ var ModelTableRows = (Model) => {
 
     Model.prototype.loadRows = async function(indicator = true, download){
         //On first time allow reload rows without parent, for field options...
-        if ( (this.isWithoutParentRow() || this.getData('activetab') === false) && indicator == false ){
+        if ( (this.isWithoutParentRow() || this.getData('loadWithRows') === false) && indicator == false ){
             return false;
         }
 

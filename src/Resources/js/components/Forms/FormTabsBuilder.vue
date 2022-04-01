@@ -46,7 +46,7 @@
                             :langid="model.getSelectedLanguageId()"
                             :ischild="true"
                             :model_builder="getModel(tab.model)"
-                            :activeTab="isLoadedModel(getModel(tab.model), $index, true)"
+                            :loadWithRows="isLoadedModel(getModel(tab.model), $index, true)"
                             :parentActiveGridSize="model.activeGridSize()"
                             :parentrow="row">
                         </model-builder>

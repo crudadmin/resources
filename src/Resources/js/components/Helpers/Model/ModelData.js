@@ -55,8 +55,8 @@ const freshModelData = (rawModel) => {
         //Assigned form into model
         form : null,
 
-        //Active tab of parent model
-        activetab : null,
+        //Determine if rows should be loaded on rendered model
+        loadWithRows : true,
 
         //Parent model language id
         langid : null,

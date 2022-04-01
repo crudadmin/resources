@@ -102,7 +102,7 @@
                     <!--/.col (left) -->
 
                     <!-- right column -->
-                    <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()" v-if="activetab!==false">
+                    <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()" v-if="loadWithRows!==false">
                         <custom-components :model="model" type="form-before" />
 
                         <form-builder
@@ -144,7 +144,7 @@
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'activetab', 'hasparentmodel', 'parentActiveGridSize', 'scopes'],
+        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'loadWithRows', 'hasparentmodel', 'parentActiveGridSize', 'scopes'],
 
         name : 'model-builder',
 
@@ -186,7 +186,7 @@
             this.model.setData('hasparentmodel', this.hasparentmodel);
             this.model.setData('parentrow', this.parentrow);
 
-            this.model.setData('activetab', this.activetab);
+            this.model.setData('loadWithRows', this.loadWithRows);
             this.model.setData('langid', this.langid);
             this.model.setData('scopes', this.scopes||[]);
             this.model.setData('parentActiveGridSize', this.parentActiveGridSize);
@@ -247,9 +247,9 @@
             scopes(value){
                 this.model.setData('scopes', value);
             },
-            activetab(value){
+            loadWithRows(value){
                 //Update parent model active tab
-                this.model.setData('activetab', value);
+                this.model.setData('loadWithRows', value);
 
                 if ( value === true ) {
                     this.sendRowsData();

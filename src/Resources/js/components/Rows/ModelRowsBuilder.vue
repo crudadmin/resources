@@ -254,7 +254,7 @@ export default {
                 this.setPosition(1, true);
             }
         },
-        activetab(value){
+        loadWithRows(value){
             if ( value == true ) {
                 this.model.enableRowsRefreshing(false);
             }
@@ -330,8 +330,8 @@ export default {
         paginationEnabled(){
             return this.model.isPaginationEnabled();
         },
-        activetab(){
-            return this.model.getData('activetab');
+        loadWithRows(){
+            return this.model.getData('loadWithRows');
         },
         progress(){
             return this.model.getData('progress');
