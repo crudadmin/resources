@@ -59,6 +59,7 @@
                     <input v-for="(value, key) in model.getAdditionalFormData()" type="hidden" :name="key" :value="value">
 
                     <form-tabs-builder
+                        :level="0"
                         :model="model"
                         :withChilds="true"
                         :inputlang="model.selectedLanguage()"

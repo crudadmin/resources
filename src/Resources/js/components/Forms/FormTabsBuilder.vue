@@ -12,7 +12,7 @@
                 :default-tab="isModel(tab) && getModel(tab.model) ? false : ''"
                 :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table"
                 :data-tab-id="tab.id"
-                @click="model.setActiveTab($index)">
+                @click="model.setActiveTab($index, level)">
                 <a data-toggle="tab" class="nav-link" :class="{ active : activeTab == $index }" aria-expanded="true">
                     <i v-if="getTabIcon(tab)" class="fa nav-link--icon-left" :class="[faMigrator(getTabIcon(tab))]"></i>
                     {{ getTabName(tab)||trans('general-tab') }}
@@ -33,6 +33,7 @@
                     <div v-if="hasTabs(tab.fields) || isModel(tab)" :class="{ model : isModel(tab) }" class="col-lg-12">
                         <form-tabs-builder
                             v-if="hasTabs(tab.fields)"
+                            :level="level + 1"
                             :tabs="tabsFields(tab.fields)"
                             :model="model"
                             :inputlang="inputlang">
@@ -55,6 +56,7 @@
                     <form-group
                         v-for="(item, $index) in chunkGroups(tab.fields)"
                         :key="$index"
+                        :level="level + 1"
                         v-if="isGroup(item) && !isTab(item)"
                         :group="item"
                         :model="model"
@@ -75,7 +77,7 @@ import { isTab, isGroup } from '../Helpers/TabsHelper.js';
 export default {
     name : 'form-tabs-builder',
 
-    props : ['model', 'group', 'tabs', 'withChilds', 'inputlang', 'cansave'],
+    props : ['model', 'group', 'tabs', 'withChilds', 'inputlang', 'cansave', 'level'],
 
     components : { FormGroup },
 
@@ -102,7 +104,7 @@ export default {
         'row.id'(id, oldid){
             //If is created new row, or id does exists. We does not want reset active tab, because for will not be reseted
             if ( this.model.getSettings('autoreset') !== false || !id ) {
-                this.model.setActiveTab(0);
+                this.model.setActiveTab(0, true);
             }
 
             this.modelsLoaded = [];
@@ -124,7 +126,7 @@ export default {
             return this.model.getRow();
         },
         activeTab(){
-            return this.model.getActiveTab();
+            return this.model.getActiveTab(this.level);
         },
         getTabs(){
             return this.model.getTabs(this.tabs, this.group, this.withChilds||false);

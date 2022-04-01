@@ -412,7 +412,7 @@ var FormActions = (Model) => {
         }
 
         if ( resetActiveTab === true ) {
-            this.setActiveTab(0);
+            this.setActiveTab(0, true);
         }
     };
 

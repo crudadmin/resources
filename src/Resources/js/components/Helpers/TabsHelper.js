@@ -120,12 +120,15 @@ var Tabs = (Model) => {
         return tabs;
     }
 
-    Model.prototype.getActiveTab = function(){
-        return this.getData('activetab') || 0;
+    Model.prototype.getActiveTab = function(level = 0){
+        let tabs = this.getData('activeTab');
+
+        return tabs[level] || 0;
     }
 
-    Model.prototype.setActiveTab = function(index){
-        let tabsLength = this.getTabs().length;
+    Model.prototype.setActiveTab = function(index, level = 0){
+        let tabsLength = this.getTabs().length,
+            tabs = this.getData('activeTab');
 
         if ( index == -1 ){
             index = tabsLength - 1;
@@ -133,7 +136,14 @@ var Tabs = (Model) => {
             index = 0;
         }
 
-        this.setData('activetab', index);
+        //We want reset all levels
+        if ( level === true ) {
+            Object.keys(tabs).forEach(tabLevel => {
+                Vue.set(tabs, tabLevel, index);
+            });
+        } else {
+            Vue.set(tabs, level, index);
+        }
     }
 };
 
