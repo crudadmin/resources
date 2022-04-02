@@ -61,7 +61,7 @@ var Fields = (Model) => {
         let field = model ? (model.fields[fieldKey[0]]||model.fields[fieldKey[0]+'_id']) : null,
 
             //If static field does not exists, and we want do actions by non existing columns, then look for value in row data.
-            value = field ? field.value : (row||{}[fieldKey[0]]);
+            value = field ? field.value : (row||{})[fieldKey[0]];
 
         //Cast values
         operators = operators.map(item => {
