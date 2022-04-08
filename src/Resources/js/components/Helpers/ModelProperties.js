@@ -1,6 +1,10 @@
 import _ from 'lodash';
 
 var ModelProperties = (Model) => {
+    Model.prototype.getScopes = function(){
+        return this.getData('scopes');
+    }
+
     Model.prototype.addScope = function(key, params){
         this.removeScope(key);
 
@@ -12,7 +16,7 @@ var ModelProperties = (Model) => {
     }
 
     Model.prototype.removeScope = function(key){
-        let scopes = this.getData('scopes');
+        let scopes = this.getScopes();
         let index = _.findIndex(scopes, { key });
 
         if ( index > -1 ){

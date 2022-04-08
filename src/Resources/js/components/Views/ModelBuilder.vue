@@ -2,6 +2,7 @@
     <div>
         <!-- Additional top layouts -->
         <custom-components :model="model" type="top" />
+        <custom-components :model="model" type="mutators" />
 
         <div class="alert alert-danger" v-if="languages.length == 0 && isLocaleModel">
             <strong>{{ trans('warning') }}!</strong>

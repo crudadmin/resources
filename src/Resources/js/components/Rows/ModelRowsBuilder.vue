@@ -11,6 +11,7 @@
 
                 <div class="box-header__right">
                     <custom-components :model="model" type="table-header-actions" />
+                    <RowsFilter :model="model" />
 
                     <!-- Sheet download -->
                     <button
@@ -105,13 +106,14 @@
 <script>
 import Refreshing from '../Partials/Refreshing.vue';
 import TableRows from './TableRows.vue';
+import RowsFilter from './RowsFilter.vue';
 import Pagination from '../Partials/Pagination.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
     props : ['model', 'rows', 'gettext_editor'],
 
-    components : { Refreshing, TableRows, Pagination, CustomComponents },
+    components : { Refreshing, TableRows, RowsFilter, Pagination, CustomComponents },
 
     data : function(){
         return {
