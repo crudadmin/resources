@@ -48,6 +48,7 @@ const displayButtonModal = (model, button, response, ids) => {
         title : response.title,
         message : response.message,
         type : response.type,
+        toast : response.toast,
         success : hasAcceptableQuestion ? successCallback : null,
         close : hasAcceptableQuestion ? true : null,
         component : modalComponentBuilder,

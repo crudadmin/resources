@@ -204,6 +204,7 @@ const sendForm = function(model, e, action, callback){
                     title : data.title,
                     message : data.message,
                     type : data.type,
+                    toast : data.toast,
                     close : () => {
                         //Timeout for sending new request with enter
                         setTimeout(() => {

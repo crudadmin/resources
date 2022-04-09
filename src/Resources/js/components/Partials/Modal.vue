@@ -1,39 +1,64 @@
 <template>
-<div v-if="canShowModal">
+<div v-if="canShowModal" :data-opened-at="modal.openedAt">
     <div class="message-modal" v-if="isToast === false" :data-modal="modalName">
-      <div class="modal" :class="'modal-'+modalTypeClass" :style="{ display : canShowModal ? 'block' : 'none' }">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">{{ modal.title }}</h4>
-              <button type="button" v-on:click="closeModal({ callback : modal.close })" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
+        <div class="modal fade d-block" :class="['modal-'+modalTypeClass, { show : isVisibleModal }]">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h4 class="modal-title">{{ modal.title }}</h4>
+                    <button type="button" @click="closeModalWithAnimation({ callback : modal.close })" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p v-if="modal.message" v-html="modal.message"></p>
+                    <component
+                        v-if="getRegistredComponent"
+                        :is="getRegistredComponent"
+                        :model="modal.component.model"
+                        :rows="modal.component.rows"
+                        :row="modal.component.row"
+                        :request="modal.component.request"
+                        :data="modal.component.data" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="closeModalWithAnimation({ callback : modal.close })" v-if="modal.close || modal.type=='success' && !modal.close || !modal.close && !modal.success" :class="{ 'pull-left' : modal.success }" data-dismiss="modal">{{ trans('close') }}</button>
+                    <button type="button" @click="closeModalWithAnimation({ callback : modal.success })" v-if="modal.success" class="btn btn-primary">{{ trans('accept') }}</button>
+                </div>
             </div>
-            <div class="modal-body">
-              <p v-if="modal.message" v-html="modal.message"></p>
-              <component
-                v-if="getRegistredComponent"
-                :is="getRegistredComponent"
-                :model="modal.component.model"
-                :rows="modal.component.rows"
-                :row="modal.component.row"
-                :request="modal.component.request"
-                :data="modal.component.data" />
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" v-on:click="closeModal({ callback : modal.close })" v-if="modal.close || modal.type=='success' && !modal.close || !modal.close && !modal.success" :class="{ 'pull-left' : modal.success }" data-dismiss="modal">{{ trans('close') }}</button>
-              <button type="button" v-on:click="closeModal({ callback : modal.success })" v-if="modal.success" class="btn btn-primary">{{ trans('accept') }}</button>
-            </div>
-          </div>
-          <!-- /.modal-content -->
+            <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
-      </div>
-      <!-- /.modal -->
+        </div>
+    <!-- /.modal -->
     </div>
-    <div v-else>
-        <h1>toast</h1>
+    <div v-else class="adminToasts">
+        <div class="toast" :class="['--'+modalTypeClass, { show : isVisibleModal }]" role="alert" aria-live="assertive" aria-atomic="true" :key="modal.openedAt">
+            <button type="button" @click="closeModalWithAnimation({ callback : modal.close })" class="close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+            <div class="toast-header" v-if="modal.title">
+                <strong class="mr-auto">
+                    <i class="fa icon" :class="toastIcon" />
+                    {{ modal.title }}
+                </strong>
+            </div>
+
+            <div class="toast-body">
+                <p v-if="modal.message">
+                    <i class="fa icon" :class="toastIcon" v-if="toastIcon && !modal.title" /> {{ modal.message }}
+                </p>
+                <component
+                    v-if="getRegistredComponent"
+                    :is="getRegistredComponent"
+                    :model="modal.component.model"
+                    :rows="modal.component.rows"
+                    :row="modal.component.row"
+                    :request="modal.component.request"
+                    :data="modal.component.data" />
+            </div>
+        </div>
     </div>
 </div>
 </template>
@@ -45,6 +70,7 @@ export default {
     data(){
         return {
             registredComponents : [],
+            isVisibleModal : false,
         };
     },
 
@@ -53,6 +79,24 @@ export default {
     },
 
     watch : {
+        'modal.visible'(state){
+            setTimeout(() => {
+                this.isVisibleModal = state;
+            }, 50);
+        },
+        'modal.openedAt'(){
+            //We need remove previous timeout when modal opens
+            if ( this.closeTimeout ){
+                clearTimeout(this.closeTimeout);
+            }
+
+            //Create auto close timeout
+            if ( this.isToast ){
+                this.closeTimeout = setTimeout(() => {
+                    this.closeModalWithAnimation({ callback : this.modal.close });
+                }, 2000)
+            }
+        },
         'modal.component'(component){
             this.bindAlertComponent(component);
         }
@@ -60,6 +104,13 @@ export default {
 
     computed: {
         ...mapState('modal', ['modal']),
+        toastIcon(){
+            if ( ['success'].includes(this.modal.type) ) {
+                return 'fa-check';
+            } else if ( ['error'].includes(this.modal.type) ) {
+                return 'fa-times';
+            }
+        },
         modalTypeClass(){
             if ( this.modal.type == 'error' ){
                 return 'danger';
@@ -94,7 +145,7 @@ export default {
     },
 
     methods: {
-        ...mapActions('modal', ['closeModal']),
+        ...mapActions('modal', ['closeModal', 'closeModalWithAnimation']),
         checkAlertEvents(){
             $(window).keyup(e => {
                 //If is opened alert
@@ -106,9 +157,9 @@ export default {
                     }
 
                     if ( e.keyCode == 13 ) {
-                        this.closeModal({ callback : this.modal.success || this.modal.close });
+                        this.closeModalWithAnimation({ callback : this.modal.success || this.modal.close });
                     } else if ( e.keyCode == 27 ) {
-                        this.closeModal({ callback : this.modal.close });
+                        this.closeModalWithAnimation({ callback : this.modal.close });
                     }
                 }
 
