@@ -356,7 +356,7 @@ var FormActions = (Model) => {
         this.getData('rows').save_children = [];
 
         //If actual row has no parent, and need to ba saved when parent will be saved in the future
-        if ( this.isWithoutParentRow() ) {
+        if ( this.isWithoutExistingParentRow() ) {
             let parentModel = this.getParentModel(),
                 parentRowsData = parentModel.getData('rows');
 

@@ -450,7 +450,7 @@
              * Return if acutal model can be added without parent row, and if parent row is not selected
              */
             getModelKey(){
-                return this.model.slug + '-' + this.model.getParentTableName();
+                return this.model.slug + '-' + (this.model.getParentTableName()||0);
             },
             //Checks if is enabled grid system
             isEnabledGrid(){

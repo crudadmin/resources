@@ -8,6 +8,7 @@ import RowActions from './Model/RowActions';
 import FormActions from './Model/FormActions';
 import ModelBus from './Model/ModelBus';
 import ModelTableRows from './Model/ModelTableRows';
+import ModelButtonActions from './Model/ModelButtonActions';
 import ModelDragAndDrop from './Model/ModelDragAndDrop';
 import ModelComponents from './Model/ModelComponents';
 import ModelEvents from './Model/ModelEvents';
@@ -22,6 +23,7 @@ var extensions = [
     ModelData,
     ModelCoreHelpers,
     ModelTableRows,
+    ModelButtonActions,
     ModelDragAndDrop,
     RowActions,
     FormActions,

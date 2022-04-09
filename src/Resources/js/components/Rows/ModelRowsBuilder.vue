@@ -17,7 +17,7 @@
                     <button
                         v-if="model.getSettings('xls') == true && rows.count > 0"
                         data-export-xls
-                        @click.prevent="exportXlsTable"
+                        @click.prevent="exportXlsTable()"
                         type="button"
                         class="btn--icon btn btn-default">
                         <i class="fa fa-file-excel"></i>
@@ -42,22 +42,21 @@
                         </ul>
                     </div>
 
-                    <div class="dropdown actions-list fields-list" v-if="model.getChecked().length > 0 && hasAnyActions" data-action-list>
+                    <div class="dropdown actions-list fields-list" v-if="model.getChecked().length > 0 && hasButtons" data-action-list>
                         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             {{ trans('action') }}
                             <i class="--icon-right fa fa-angle-down"></i>
                         </button>
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
                             <li v-if="model.deletable && model.hasAccess('delete')"><a @click.prevent="removeRow()"><i class="fa fa-trash-alt"></i> {{ trans('delete') }}</a></li>
-                            <li v-if="model.publishable && model.hasAccess('publishable')"><a @click.prevent="togglePublishedAt()"><i class="fa fa-eye"></i> {{ trans('publish-toggle') }}</a></li>
-                            <li v-for="(button, button_key) in availableButtons"><a @click="model.buttonAction(button_key, button)"><i class="fa" :class="button.icon"></i> {{ button.name }}</a></li>
+                            <li v-for="button in availableButtons" @click="model.buttonAction(button.key)"><i class="fa" :class="button.icon"></i> {{ button.name }}</li>
                         </ul>
                     </div>
 
                     <div class="pagination-limit" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled()" :title="trans('rows-count')">
-                        <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
-                            <option value="hide">{{ _('Skryť') }}</option>
-                            <option v-for="count in pagination.limits">{{ count }}</option>
+                        <select class="form-control" :value="rows.limit" @change="model.setLimit($event.target.value)" data-limit>
+                            <option :value="0">{{ _('Skryť') }}</option>
+                            <option :value="count" v-for="count in rows.limits">{{ count }}</option>
                         </select>
                     </div>
                 </div>
@@ -69,7 +68,6 @@
         <div class="box-body box-body--table" v-show="!model.isHiddenMode()">
             <table-rows
                 :model="model"
-                :pagination="pagination"
                 :buttons="rows.buttons"
                 :count="rows.count"
                 :gettext_editor.sync="gettext_editor"
@@ -89,16 +87,16 @@
                 </div>
                 <div class="box-footer__right">
                     <div class="pagination-limit d-none d-lg-block" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled()" :title="trans('rows-count')">
-                        <select @change="changeLimit" class="form-control" v-model="pagination.limit" data-limit>
-                            <option value="hide">{{ _('Skryť') }}</option>
-                            <option v-for="count in pagination.limits">{{ count }}</option>
+                        <select class="form-control" :value="rows.limit" @change="model.setLimit($event.target.value)" data-limit>
+                            <option :value="0">{{ _('Skryť') }}</option>
+                            <option :value="count" v-for="count in rows.limits">{{ count }}</option>
                         </select>
                     </div>
                 </div>
             </div>
         </div>
 
-        <refreshing v-if="pagination.refreshing"></refreshing>
+        <refreshing v-if="rows.refreshing"></refreshing>
     </div>
     <!-- /.box -->
 </template>
@@ -119,15 +117,6 @@ export default {
         return {
             table : null,
 
-            //Sorting
-            pagination: this.model.setData('pagination', {
-                position: 1,
-                limit : this.getLimitFromStorage(),
-                limits : [ 5, 10, 20, 30, 50, 100, 200, 500, 1000 ],
-                refreshing : false,
-                maxpages : 10,
-            }).getData('pagination'),
-
             refresh : this.model.setData('refresh', {
                 refreshing : true,
                 count : 0,
@@ -143,6 +132,8 @@ export default {
         //Set default order rows
         this.setOrder();
 
+        this.setDefaultModelLimit();
+
         //Refresh rows refreshInterval
         this.model.loadRows();
 
@@ -155,29 +146,29 @@ export default {
             }
 
             var array = data.request,
-                pages = Math.ceil(this.rows.count / this.pagination.limit);
+                pages = Math.ceil(this.rows.count / this.rows.limit);
 
             //If last page is full, and need to add new page
-            if ( this.model.isReversed(true) && this.rows.count > 0 && !this.model.isWithoutParentRow() && pages == this.rows.count / this.pagination.limit ){
-                this.setPosition( pages + 1, this.model.isWithoutParentRow() ? true : null );
+            if ( this.model.isReversed(true) && this.rows.count > 0 && !this.model.isWithoutExistingParentRow() && pages == this.rows.count / this.rows.limit ){
+                this.model.setPage( pages + 1, this.model.isWithoutExistingParentRow() ? true : null );
             }
 
             //If user is not on lage page, then change page into last, for see added rows
-            else if ( this.model.isReversed(true) && this.pagination.position < pages && !this.model.isWithoutParentRow() ){
-                this.setPosition( pages );
+            else if ( this.model.isReversed(true) && this.rows.page < pages && !this.model.isWithoutExistingParentRow() ){
+                this.model.setPage( pages );
             }
 
             //If row can be pushed without reloading rows into first or last page
             else if (
-                this.pagination.position == 1 || (
-                    this.model.isReversed(true) && this.pagination.position == pages
-                    || this.model.isWithoutParentRow()
+                this.rows.page == 1 || (
+                    this.model.isReversed(true) && this.rows.page == pages
+                    || this.model.isWithoutExistingParentRow()
                 )
             ) {
                 var rows = array.rows.concat(this.rows.data);
 
-                if ( this.model.isPaginationEnabled() && rows.length > this.pagination.limit ) {
-                    rows = rows.slice(0, this.pagination.limit);
+                if ( this.model.isPaginationEnabled() && rows.length > this.rows.limit ) {
+                    rows = rows.slice(0, this.rows.limit);
                 }
 
                 //Update buttons
@@ -253,7 +244,7 @@ export default {
         },
         langid(langid){
             if ( this.model.localization == true ) {
-                this.setPosition(1, true);
+                this.model.setPage(1);
             }
         },
         loadWithRows(value){
@@ -272,7 +263,7 @@ export default {
         },
         'model.scopes' : {
             handler(a, b){
-                this.setPosition(1, true);
+                this.model.setPage(1);
             },
         },
         'search.queries' : {
@@ -300,18 +291,18 @@ export default {
 
                 //On first search query reset pagination
                 if ( this.model.getData('searching') == true && was_searching == false ){
-                    this.setPosition(1, true);
+                    this.model.setPage(1);
                 }
 
                 //If is normal searching, then search in every char, or if is turned searching from on to off state, then show normal rows
                 else if ( this.model.getData('searching') || ( this.model.getData('searching') == false && was_searching == true ) ) {
-                    this.model.loadRows(true);
+                    this.model.loadRows();
                 }
             },
         },
         paginationEnabled(state, oldstate){
             if ( oldstate == false && state == true ){
-                this.pagination.limit = this.getLimitFromStorage();
+                this.setDefaultModelLimit();
             }
         },
         parentRowId(rowId, oldRowId){
@@ -353,20 +344,8 @@ export default {
         search(){
             return this.model.getData('search');
         },
-        hasAnyActions(){
-            return this.hasButtons
-                   || this.model.publishable && this.model.hasAccess('publishable')
-                   || this.model.deletable && this.model.hasAccess('delete');
-        },
         availableButtons(){
-            var buttons = {};
-
-            for ( var row_key in this.rows.buttons )
-                for ( var key in this.rows.buttons[row_key] )
-                    if ( ['action', 'both', 'multiple'].indexOf(this.rows.buttons[row_key][key].type) > -1 )
-                        buttons[key] = this.rows.buttons[row_key][key];
-
-            return buttons;
+            return this.model.getAllButtons();
         },
         hasButtons(){
             return Object.keys(this.availableButtons).length > 0;
@@ -394,10 +373,13 @@ export default {
     },
 
     methods: {
+        setDefaultModelLimit(){
+            this.rows.limit = this.model.getLimitFromStorage();
+        },
         toggleColumnEnabled(column){
             this.model.setColumnVisibility(column, !this.enabled_columns[column].enabled);
 
-            this.model.loadRows(true);
+            this.model.loadRows();
         },
         //We need update modelOptions all the time model or modelOptions has been changed
         //because if model property in base $root models will change. options will dissapear.
@@ -410,23 +392,11 @@ export default {
             }
         },
         exportXlsTable(){
-            this.model.loadRows(true, true)
-        },
-        getLimitFromStorage(){
-            if ( !this.model.isPaginationEnabled() ){
-                return 0;
-            }
-
-            //Load pagination limit from localStorage
-            var limit = this.model.isWithoutParentRow() ?
-                            500
-                            : (
-                                'limit' in localStorage
-                                    ? localStorage.limit
-                                    : this.model.getSettings('pagination.limit', 10)
-                            );
-
-            return $.isNumeric(limit) ? parseInt(limit) : limit;
+            this.model.loadRows({
+                indicator : true,
+                download : true,
+                limit : -1,
+            })
         },
         toggleColumnsList(){
             if ( this.isDefaultColumnsList ) {
@@ -436,7 +406,7 @@ export default {
                     this.model.setColumnVisibility(key, true);
                 }
 
-                this.model.loadRows(true);
+                this.model.loadRows();
             } else {
                 this.model.resetAllowedColumns();
             }
@@ -460,12 +430,6 @@ export default {
             this.model.loadRows();
 
             return true;
-        },
-        changeLimit(){
-            localStorage.limit = this.pagination.limit;
-
-            //Reset pagination to first page
-            this.setPosition(1);
         },
         /*
          * Sets default order after loading compoennt
@@ -511,20 +475,6 @@ export default {
             //Add default order of rows
             this.model.setData('orderBy', defaultOrder);
         },
-        setPosition(position, indicator){
-            //We need allow reload position 1 also when max pages are 0 (when zero rows)
-            if (
-                position == 0
-                || (this.rows.count > 0 && (position - 1) > Math.ceil(this.rows.count/this.pagination.limit))
-            ) {
-                return;
-            }
-
-            this.pagination.position = position;
-
-            //Load paginated rows...
-            this.model.loadRows(indicator);
-        },
         getRefreshInterval(){
             var interval = this.model.getSettings('refresh_interval', 10000);
 
@@ -545,12 +495,6 @@ export default {
                     this.model.resetChecked();
                 }
             });
-        },
-        togglePublishedAt(){
-            this.model.togglePublishedAt(this.model.getChecked());
-
-            //Reset checkboxes after published
-            this.model.resetChecked();
         },
     },
 }

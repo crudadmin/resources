@@ -96,91 +96,7 @@ var RowActions = (Model) => {
      * Hide input
      */
     Model.prototype.removeRow = function(ids, callback){
-        ids = _.castArray(ids);
-
-        var onRemoveAccepted = async () => {
-            var requestData = {
-                model : this.slug,
-                parent : this.getParentTableName(this.without_parent),
-                id : ids,
-                subid : this.getParentRowId(),
-                limit : this.getData('pagination').limit,
-                page : this.getData('pagination').position,
-                _method : 'delete',
-            };
-
-            //Check if is enabled language
-            if ( $app.language_id != null ) {
-                requestData['language_id'] = parseInt($app.language_id);
-            }
-
-            try {
-                var response = await $app.$http.post($app.requests.delete, requestData),
-                    data = response.data;
-
-                let modelRows = this.data.rows;
-
-                if ( data && 'type' in data && data.type == 'error' ) {
-                    return $app.openAlert(data.title, data.message, 'danger');
-                }
-
-                //Load rows into array
-                if ( this.isWithoutParentRow() ){
-                    //Remove row
-                    var remove = [];
-
-                    for ( var key in modelRows.data ) {
-                        if ( ids.indexOf(modelRows.data[key].id) > -1 ) {
-                            remove.push(key);
-                        }
-                    }
-
-                    //Remove deleted keys from rows objects. For correct working we need remove items from end to start
-                    for ( var i = 0; i < remove.sort((a, b) =>  (b - a)).length; i++ ) {
-                        modelRows.data.splice(remove[i], 1);
-                    }
-                } else {
-                    this.updateRowsData(data.data.rows.rows);
-                    modelRows.count = data.data.rows.count;
-
-                    this.data.pagination.position = data.data.rows.page;
-                }
-
-                if ( this.getRow() && ids.indexOf(this.getRow().id) > -1 ) {
-                    this.resetForm();
-                }
-
-                this.emitRowData('onDelete', ids);
-
-                this.fire('onDelete', ids);
-
-                if ( typeof callback == 'function' ) {
-                    callback(response, requestData);
-                }
-            } catch (response){
-                $app.errorResponseLayer(response);
-
-                throw response;
-            }
-        };
-
-        //Check if is row can be deleted
-        //If not, throw error
-        if ( this.isReservedRow(ids) ) {
-            return $app.openAlert(
-                $app.trans('warning'),
-                $app.trans(ids.length > 1 ? 'cannot-delete-multiple' : 'cannot-delete'),
-                'warning'
-            );
-        }
-
-        $app.openAlert(
-            $app.trans('warning'),
-            $app.trans('delete-warning'),
-            'warning',
-            onRemoveAccepted,
-            true
-        );
+        this.buttonAction('RemoveRow', ids);
     }
 
     Model.prototype.scrollToForm = function(){
@@ -314,35 +230,7 @@ var RowActions = (Model) => {
     }
 
     Model.prototype.togglePublishedAt = async function(ids){
-        ids = _.cloneDeep(_.castArray(ids));
-
-        try {
-            let response = await $app.$http.post( $app.requests.togglePublishedAt, {
-                model : this.slug,
-                id : ids,
-            });
-
-            var data = response.data;
-
-            if ( data && 'type' in data ) {
-                return $app.openAlert(data.title, data.message, 'danger');
-            }
-
-            let rows = this.getData('rows');
-
-            //Update multiple published at
-            for ( var key in rows.data ) {
-                if ( ids.indexOf(rows.data[key].id) > -1 ) {
-                    rows.data[key].published_at = data[rows.data[key].id].published_at;
-
-                    if ( this.publishableState == true ) {
-                        rows.data[key].published_state = data[rows.data[key].id].published_state;
-                    }
-                }
-            }
-        } catch (response){
-            $app.errorResponseLayer(response);
-        }
+        this.buttonAction('TogglePublishRow', ids);
     };
 };
 

@@ -70,14 +70,6 @@
                             :buttonKey="buttonKey"
                             :model="model"/>
                     </div>
-                    <div class="buttons-options__item" v-if="model.canUnpublishRow(item.id)">
-                        <publish-button
-                            :model="model"
-                            :row="item" />
-                    </div>
-                    <div class="buttons-options__item" v-if="model.deletable && count > model.minimum && model.hasAccess('delete')">
-                        <button data-button="delete" type="button" v-on:click="removeRow(item, key)" class="btn btn-danger btn-sm" :class="{ disabled : model.isReservedRow(item.id) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="far fa-trash-alt"></i></button>
-                    </div>
                 </td>
             </tr>
         </component>
@@ -89,7 +81,7 @@ import TableRowValue from './TableRowValue.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'pagination'],
+    props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model'],
 
     components: { TableRowValue, draggable },
 
@@ -158,7 +150,7 @@ export default {
             var limit = 30,
                 columnsCount = Object.keys(this.columns).length;
 
-            return this.pagination.limit >= limit && this.rows.count >= limit || columnsCount > 10;
+            return this.rows.limit >= limit && this.rows.count >= limit || columnsCount > 10;
         },
         multipleCheckbox(){
             return this.model.getChecked().length > 0;
@@ -459,7 +451,6 @@ export default {
             additional += this.isEnabledHistory ? 1 : 0;
             additional += this.canShowGettext ? 1 : 0;
             additional -= !this.canShowGettext ? 1 : 0;
-            additional -= !this.model.publishable ? 1 : 0;
 
             return Object.keys(buttons||{}).length + additional;
         },

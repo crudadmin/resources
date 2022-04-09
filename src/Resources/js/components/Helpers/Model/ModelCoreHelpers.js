@@ -15,7 +15,7 @@ var ModelCoreHelpers = (Model) => {
         }
 
         if ( force !== true && ((!parentModel || !parentModel.isOpenedRow()) || this.hasParentFormModel() === false) ) {
-            return 0;
+            return;
         }
 
         let parentTable = this.getParentModel();
@@ -27,13 +27,13 @@ var ModelCoreHelpers = (Model) => {
         var row = this.getData('parentrow');
 
         if ( !row || !( 'id' in row ) ){
-            return 0;
+            return null;
         }
 
         return row.id;
     }
 
-    Model.prototype.isWithoutParentRow = function(){
+    Model.prototype.isWithoutExistingParentRow = function(){
         return this.without_parent == true && !this.getParentRowId() && this.hasParentFormModel() == true;
     }
 };

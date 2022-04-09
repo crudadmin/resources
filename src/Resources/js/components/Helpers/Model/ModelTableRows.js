@@ -64,21 +64,34 @@ const updateFieldOptions = (model, fields, requestModel) => {
     }
 };
 
-const addScopeParams = (model, data) => {
-    if ( !('scopes' in data) ){
-        data['scopes'] = {};
-    }
-
-    let scopes = model.getData('scopes');
+const getQueryScopes = (model) => {
+    let query = {};
 
     //Added model scopes
-    for ( var i = 0; i < scopes.length; i++ ){
-        let scope = scopes[i];
-
-        data['scopes'][scope.key] = _.isNil(scope.params) ? 1 : scope.params;
+    for ( let scope of model.getData('scopes') ){
+        query[scope.key] = _.isNil(scope.params) ? 1 : scope.params;
     }
 
-    return data;
+    return query;
+}
+
+const getQuerySearch = (model) => {
+    if ( model.getData('searching') !== true ){
+        return [];
+    }
+
+    return model.getData('search').queries.map(item => {
+        let obj = {
+            query : item.query,
+            column : item.column,
+        };
+
+        if ( item.interval === true ) {
+            obj.query_to = item.query_to;
+        }
+
+        return obj;
+    });
 }
 
 const isModelDestroyed = () => {
@@ -159,38 +172,77 @@ const getEncodedValue = (value, is_decoded) => {
     return (is_decoded ? $('<div>'+value+'</div>').text() : value) + '';
 }
 
+const getRowsLimit = (model, limit) => {
+    //Custom limit has been given
+    if ( !_.isNil(limit) ){
+        return limit;
+    }
+
+    //Pagination is disabled, we does not want to limit rows
+    if ( model.isPaginationEnabled() === false ){
+        return -1;
+    }
+
+    return model.getData('rows').limit;
+}
+
 var ModelTableRows = (Model) => {
     /*
      * Change updated rows in db
      */
-    Model.prototype.updateRowsData = function(data, update){
+    Model.prototype.setRowsData = function(data, options){
+        const {
+            update = true,
+        } = options;
+
         let rows = this.getData('rows');
 
-        //This update rows just in table, not in forms
-        if ( update !== true && (rows.data.length != data.length || rows.data.length == 0 || rows.data[0].id != data[0].id || update === 1) ) {
-            rows.data = data;
-            return;
+        if (update === false){
+            rows.data = data.rows;
+            rows.buttons = data.buttons;
         }
 
-        //Update changed data in vue object
-        for ( var i in rows.data ) {
-            for ( var k in data[i] ) {
-                var isArray = $.isArray(data[i][k]);
+        //Update given rows
+        else {
+            //Update changed data in vue object
+            for ( let updatedRow of data.rows ) {
+                let existingRow = _.find(rows.data, { id : updatedRow.id });
 
-                //Compare also arrays
-                if ( isArray && !_.isEqual(rows.data[i][k], data[i][k]) || !isArray ) {
-                    rows.data[i][k] = data[i][k];
+                if ( existingRow ) {
+                    for ( var updatedKey in updatedRow ) {
+                        var isArray = _.isArray(updatedRow[updatedKey]);
+
+                        //Compare also arrays
+                        if ( !isArray || !_.isEqual(existingRow[updatedKey], updatedRow[updatedKey]) ) {
+                            existingRow[updatedKey] = updatedRow[updatedKey];
+                        }
+                    }
                 }
             }
+
+            //Update buttons
+            for ( var existingRow of data.rows ) {
+                rows.buttons[existingRow.id] = (existingRow.id in data.buttons) ? data.buttons[existingRow.id] : [];
+            }
         }
+
+        //If page has been given
+        ['page', 'limit', 'count'].forEach(key => {
+            if ( _.isNil(data[key]) === false ) {
+                rows[key] = parseInt(data[key]);
+            }
+        });
+
+        //Rows are successfully loaded
+        rows.loaded = true;
     };
 
     Model.prototype.isPaginationEnabled = function(){
-        return this.isSettingEnabled('pagination') && !this.isWithoutParentRow();
+        return this.isSettingEnabled('pagination') && !this.isWithoutExistingParentRow();
     }
 
     Model.prototype.isEnabledAutoSync = function(){
-        var limit = this.isPaginationEnabled() ? this.getData('pagination').limit : 0,
+        var limit = this.isPaginationEnabled() ? this.getData('rows').limit : 0,
             refreshingRowsLimit = 100;
 
         return !(
@@ -222,14 +274,14 @@ var ModelTableRows = (Model) => {
         }
 
         let timeout = setTimeout(() => {
-            this.loadRows(indicator);
+            this.loadRows({ indicator });
         }, this.getData('refresh').interval);
 
         this.setData('refreshUpdateTimeout', timeout);
     }
 
     Model.prototype.isHiddenMode = function(){
-        return this.getData('pagination').limit == 'hide';
+        return this.getData('rows').limit === 0;
     }
 
     Model.prototype.enabledColumnsList = function(){
@@ -249,11 +301,7 @@ var ModelTableRows = (Model) => {
      * Return if model is in reversed mode
      * new rows will be added on the end
      */
-    Model.prototype.isReversed = function(except){
-        if ( except != true && ( !(2 in this.orderBy) || this.orderBy[2] != true ) ) {
-            return false;
-        }
-
+    Model.prototype.isReversed = function(){
         return ['id', '_order'].indexOf(this.orderBy[0]) > -1 && this.orderBy[1].toLowerCase() == 'asc';
     }
 
@@ -498,69 +546,72 @@ var ModelTableRows = (Model) => {
         sizes[2].active = true;
     }
 
-    Model.prototype.loadRows = async function(indicator = true, download){
+    Model.prototype.setPage = function(page, options = {}){
+        let rows = this.getData('rows');
+
+        //We need allow reload position 1 also when max pages are 0 (when zero rows)
+        if ( page == 0 || (rows.count > 0 && (page - 1) > Math.ceil(rows.count/rows.limit)) ) {
+            return;
+        }
+
+        //Load paginated rows...
+        this.loadRows({ page, ...options });
+    };
+
+    Model.prototype.setLimit = function(limit, options = {}){
+        localStorage.limit = limit;
+
+        //Reset pagination to first page
+        this.setPage(1, {
+            limit,
+        });
+    };
+
+    Model.prototype.loadRows = async function(options){
+        const {
+            indicator = true,
+            download = false,
+            page = null,
+            limit = null,
+            update = false,
+        } = (options||{});
+
         //On first time allow reload rows without parent, for field options...
-        if ( (this.isWithoutParentRow() || this.getData('loadWithRows') === false) && indicator == false ){
+        if ( (this.isWithoutExistingParentRow() || this.getData('loadWithRows') === false) && indicator == false ){
             return false;
         }
 
-        let pagination = this.getData('pagination'),
-            refresh = this.getData('refresh'),
-            search = this.getData('search'),
+        let refresh = this.getData('refresh'),
             rows = this.getData('rows');
 
         if ( indicator !== false ) {
-            pagination.refreshing = true;
+            rows.refreshing = true;
         }
 
         // Remove previous refresh timeout
         this.disableRowsRefreshing();
 
-        var search_query = {},
-            rowsLimit = this.isPaginationEnabled() ? (this.isHiddenMode() ? 1 : pagination.limit) : 0,
-            query = {
-                model : this.slug,
-                parent : this.getParentTableName(this.without_parent),
-                subid : this.getParentRowId(),
-                langid : this.localization === true ? this.getData('langid') : 0,
-                limit : rowsLimit,
-                page : pagination.position,
+        var query = {
+                parentTable : this.getParentTableName(this.without_parent),
+                parentId : this.getParentRowId(),
+                language_id : this.localization === true ? this.getData('langid') : 0,
+                limit : getRowsLimit(this, limit),
+                page : !_.isNil(page) ? page : rows.page,
                 count : refresh.count,
+                download : download == true ? true : false,
+                scopes : getQueryScopes(this),
+                search : getQuerySearch(this),
             };
-
-        if ( download == true ){
-            search_query.download = 1;
-        }
-
-        //If is enabled searching
-        if ( this.getData('searching') == true ){
-            search_query.search = [];
-
-            for ( var i = 0; i < search.queries.length; i++ ){
-                let item = search.queries[i],
-                    obj = {
-                        query : item.query,
-                        column : item.column,
-                    }
-
-                if ( item.interval === true ) {
-                    obj.query_to = item.query_to;
-                }
-
-                search_query.search.push(obj);
-            }
-        }
 
         //Add additional columns which are not in default rows state
         if ( this.enabledColumnsList().length > 0 ) {
-            search_query.enabled_columns = this.enabledColumnsList().join(';');
+            query.enabled_columns = this.enabledColumnsList().join(';');
         }
 
-        addScopeParams(this, search_query);
-
         try {
-            let response = await $app.$http.get($app.requests.get('rows', query), {
-                params : search_query,
+            let response = await $app.$http.post($app.requests.get('rows', { table : this.slug }), {
+                ...query,
+                params : query,
             });
 
             //If has been component destroyed, and request is delivered... and some conditions
@@ -574,7 +625,7 @@ var ModelTableRows = (Model) => {
             }
 
             //Disable loader
-            pagination.refreshing = false;
+            rows.refreshing = false;
 
             //Download response
             if ( response.data.download ){
@@ -586,19 +637,9 @@ var ModelTableRows = (Model) => {
             updateModel(this, requestModel, refresh.count == 0);
 
             //Load rows into array
-            this.updateRowsData(response.data.rows, this.enabledColumnsList().length == 0 ? null : 1);
-            rows.count = response.data.count;
-
-            //Bind additional buttons for rows
-            rows.buttons = response.data.buttons;
-
-            //Rows are successfully loaded
-            rows.loaded = true;
-
-            //If is reversed sorting in model, then set pagination into last page after first displaying table
-            if ( this.isReversed() && refresh.count == 0 ) {
-                pagination.position = Math.ceil(rows.count / pagination.limit);
-            }
+            this.setRowsData(response.data, {
+                update: update === true
+            });
 
             if ( refresh.count == 0 ){
                 //Update field options
@@ -732,14 +773,15 @@ var ModelTableRows = (Model) => {
         });
     }
 
-    Model.prototype.getButtonsForRow = function(item){
+    Model.prototype.getButtonsForRow = function(row){
         let rows = this.getData('rows');
 
-        if ( ! rows.buttons || !(item.id in rows.buttons) )
+        if ( ! rows.buttons || !(row.id in rows.buttons) ) {
             return {};
+        }
 
         var data = {},
-            buttons = rows.buttons[item.id];
+            buttons = rows.buttons[row.id];
 
         for ( var key in buttons ) {
             if ( ['button', 'both', 'multiple'].indexOf(buttons[key].type) > -1 ) {
@@ -748,151 +790,6 @@ var ModelTableRows = (Model) => {
         }
 
         return data;
-    }
-
-    Model.prototype.buttonAction = async function(key, button, row){
-        var ids = row ? [ row.id ] : this.getChecked();
-
-        var makeAction = async (ask, data) => {
-            this.setData('button_loading', row ? this.getButtonKey(row.id, key) : key);
-
-            let pagination = this.getData('pagination');
-
-            try {
-                var response = await $app.$http.post(
-                    $app.requests.buttonAction,
-                    _.merge(data||{}, {
-                        _button : {
-                            model : this.slug,
-                            parent : this.getParentTableName(),
-                            id : ids,
-                            multiple : row ? false : true,
-                            subid : this.getParentRowId(),
-                            limit : pagination.limit,
-                            page : pagination.position,
-                            language_id : this.localization === true ? this.getData('langid') : 0,
-                            button_id : key,
-                            ask : ask ? true : false,
-                        },
-                    })
-                );
-
-                this.setData('button_loading', false);
-
-                var data = response.data,
-                    hasData = 'data' in data,
-                    ask = hasData && data.data.ask == true,
-                    component = hasData && data.data.component ? data.data.component : null;
-
-                //Load rows into array
-                if ( 'data' in data && ! ask ) {
-                    eventHub.$emit(
-                        'buttonAction',
-                        this.buildEventData({
-                            rows : data.data.rows.rows,
-                        }, this)
-                    );
-
-                    //Update received rows by button action
-                    if ( 'rows' in data.data ) {
-                        this.updateParentData(key, button, row, data);
-                    }
-
-                    //Redirect on page
-                    if ( ('redirect' in data.data) && data.data.redirect ) {
-                        if ( data.data.open == true ) {
-                            window.location.replace(data.data.redirect);
-                        } else {
-                            window.open(data.data.redirect);
-                        }
-                    }
-
-                    //Uncheck all rows
-                    if ( ! row ) {
-                        this.resetChecked();
-                    }
-                }
-
-                //Alert message
-                if ( data && 'type' in data ) {
-                    var component_data = component ? {
-                        name : button.key,
-                        component : component,
-                        model : this,
-                        rows : this.getData('rows').data.filter(item => ids.indexOf(item.id) > -1),
-                        row : row,
-                        request : {},
-                        data : data.data.component_data||[],
-                    } : null;
-
-                    var success_callback = function(){
-                        var data = {};
-
-                        if ( this.alert.component && this.alert.component.request ) {
-                            data = _.clone(this.alert.component.request);
-                        }
-
-                        makeAction(null, data);
-                    }
-
-                    return $app.openAlert(
-                        data.title,
-                        data.message,
-                        data.type,
-                        ask ? success_callback : null,
-                        ask ? true : null,
-                        component_data,
-                        button.key
-                    );
-                }
-            } catch (error){
-                this.setData('button_loading', false);
-
-                $app.errorResponseLayer(error);
-            }
-        }
-
-        await makeAction(true);
-    }
-
-    Model.prototype.updateParentData = function(key, button, row, data){
-        let rows = this.getData('rows');
-
-        //Reload just one row which owns button
-        if ( button.reloadAll == false ){
-            for ( var k in data.data.rows.rows ) {
-                var row = data.data.rows.rows[k];
-
-                if ( !(row.id in data.data.rows.buttons) ){
-                    rows.buttons[row.id] = [];
-                } else {
-                    rows.buttons[row.id] = data.data.rows.buttons[row.id];
-                }
-
-                //Update just selected row
-                for ( var i in rows.data ) {
-                    if ( rows.data[i].id == row.id ) {
-                        for ( var k in rows.data[i] ) {
-                            if ( rows.data[i][k] != row[k] ) {
-                                rows.data[i][k] = row[k];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //Reload all rows
-        else {
-            this.updateRowsData(data.data.rows.rows, false);
-
-            rows.count = data.data.rows.count;
-            rows.buttons = data.data.rows.buttons;
-        }
-    }
-
-    Model.prototype.getButtonKey = function(id, key){
-        return id + '-' + key;
     }
 
     Model.prototype.setColumnVisibility = function(column, state){
@@ -936,6 +833,23 @@ var ModelTableRows = (Model) => {
         } else {
             checked.splice(index, 1);
         }
+    }
+
+    Model.prototype.getLimitFromStorage = function(){
+        if ( !this.isPaginationEnabled() ){
+            return 0;
+        }
+
+        //Load pagination limit from localStorage
+        var limit = this.isWithoutExistingParentRow() ?
+                        500
+                        : (
+                            'limit' in localStorage
+                                ? localStorage.limit
+                                : this.getSettings('pagination.limit', 10)
+                        );
+
+        return $.isNumeric(limit) ? parseInt(limit) : limit;
     }
 };
 

@@ -24,8 +24,13 @@ const freshModelData = (rawModel) => {
             data : [],
             buttons : {},
             count : 0,
+            page : 1,
             loaded : false,
             save_children : [],
+            limit : 0,
+            limits : [ 5, 10, 20, 30, 50, 100, 200, 500, 1000 ],
+            refreshing : false,
+            maxpages : 10,
         },
 
         //Grid model sizes
@@ -95,9 +100,6 @@ const freshModelData = (rawModel) => {
         //Assigned parent row. May be parent model, or imaginary parent row
         //only to filter displayed rows
         parentrow : null,
-
-        //Pagination data for given model
-        pagination : {},
 
         //Search data
         search : {

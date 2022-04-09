@@ -29,7 +29,6 @@ import CrudAdmin from '@components/Helpers/CrudAdmin.js';
 import SiteTreeBuilder from '@components/Extensions/SiteTreeBuilder/SiteTreeBuilder.vue';
 import ModelBuilder from '@components/Views/ModelBuilder.vue';
 import VueChosen from '@components/Partials/VueChosen.vue';
-import PublishButton from '@components/Partials/PublishButton.vue';
 import ButtonsAction from '@components/Partials/ButtonsAction.vue';
 
 //Router
@@ -41,7 +40,6 @@ Vue.component('vue-chosen', VueChosen);
 //Global model components
 Vue.component('SiteTreeBuilder', SiteTreeBuilder);
 Vue.component('model-builder', ModelBuilder);
-Vue.component('publish-button', PublishButton);
 Vue.component('buttons-action', ButtonsAction);
 
 //Global methods

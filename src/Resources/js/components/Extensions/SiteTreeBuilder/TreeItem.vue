@@ -90,19 +90,6 @@
                 :row="row"
                 :buttonKey="buttonKey"
                 :model="model"/>
-
-            <publish-button
-                v-if="row.id && model.canUnpublishRow(row)"
-                :model="model"
-                :row="item" />
-
-            <button
-                v-if="row.id"
-                class="btn btn-sm btn-danger"
-                @click="removeItem(row)"
-            >
-                <i class="fa fa-trash"></i>
-            </button>
         </div>
     </div>
     <div class="sitetree__subtree" v-if="showSubTree">
