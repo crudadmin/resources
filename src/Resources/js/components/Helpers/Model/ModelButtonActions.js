@@ -16,7 +16,7 @@ const removeMissingRows = (model, responseRows, ids) => {
 const displayButtonModal = (model, button, response, ids) => {
     //Alert message
     let rows = model.getData('rows').data.filter(item => ids.indexOf(item.id) > -1),
-        component = response?.data?.component,
+        component = response.data?.component,
         modalComponentBuilder = component ? {
             name : button.key,
             component : component,
@@ -35,17 +35,22 @@ const displayButtonModal = (model, button, response, ids) => {
             requestData = _.clone(this.alert.component.request);
         }
 
-        model.buttonAction(button.key, ids, requestData);
+        model.buttonAction(button.key, ids, {
+            requestData,
+
+            //We may continue on different/following step
+            action : response.data?.action,
+        });
     }
 
-    let hasQuestion = response?.data?.hasQuestion === true;
+    let hasAcceptableQuestion = response?.data?.shouldAccept === true;
 
     return $app.openAlert(
         response.title,
         response.message,
         response.type,
-        hasQuestion ? successCallback : null,
-        hasQuestion ? true : null,
+        hasAcceptableQuestion ? successCallback : null,
+        hasAcceptableQuestion ? true : null,
         modalComponentBuilder,
         button.key
     );
@@ -108,9 +113,10 @@ var ModelButtonActions = (Model) => {
         return buttons;
     }
 
-    Model.prototype.buttonAction = async function(buttonKey, rowOrIds, componentData = null){
+    Model.prototype.buttonAction = async function(buttonKey, rowOrIds, previousStep = null){
         var button = this.getAllButtons()[buttonKey],
-            ids = _.castArray(rowOrIds||[]).map(row => row?.id||row);
+            ids = _.castArray(rowOrIds||[]).map(row => row?.id||row),
+            { requestData = null, action = null } = previousStep||{};
 
         ids = ids.length > 0 ? ids : this.getChecked();
 
@@ -123,18 +129,17 @@ var ModelButtonActions = (Model) => {
 
         try {
             let query = {
-                ...(componentData||{}),
+                ...(requestData||{}),
                 _button : {
                     model : this.slug,
                     parentTable : this.getParentTableName(true),
                     parentId : this.getParentRowId(),
                     id : ids,
-                    multiple : ids.length > 1,
                     limit : this.getData('rows').limit,
                     page : this.getData('rows').page,
                     language_id : this.localization === true ? this.getData('langid') : 0,
                     button_key : button.key,
-                    hasQuestion : componentData === null ? true : false,
+                    action : previousStep && 'action' in previousStep ? action : button.action,
                 },
             };
 
@@ -145,12 +150,13 @@ var ModelButtonActions = (Model) => {
 
             this.setData('button_loading', false);
 
-            //Load rows into array
-            if ( response.data && !response?.data?.hasQuestion ) {
+            //Load and update given rows from button response
+            if ( response.data && response.data.rows ) {
                 updateActionData(this, button, ids, response);
             }
 
-            if ( 'type' in response ){
+            //If type, or custom component has been returned, we need display modal.
+            if ( response.type || response.data?.component ){
                 displayButtonModal(this, button, response, ids);
             }
         } catch (error){
