@@ -138,7 +138,9 @@ export default {
         this.model.loadRows();
 
         /*
+         *
          * When row is added, then push it into table
+         * TODO: REFACTOR THIS
          */
         eventHub.$on('onCreate', this.onCreateEvent = data => {
             if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') ) {
@@ -173,7 +175,7 @@ export default {
 
                 //Update buttons
                 for ( var key in array.buttons ) {
-                    this.rows.buttons[key] = array.buttons[key];
+                    Vue.set(this.rows.buttons, key, array.buttons[key]);
                 }
 
                 this.rows.data = rows;
