@@ -10,7 +10,6 @@ import Fragment from 'vue-fragment'
 
 import globalVueMixins from './mixins/globalVueMixins';
 import componentMixins from './mixins/componentMixins';
-import alertMixins from './mixins/alertMixins';
 import modelMixins from './mixins/modelMixins';
 
 //Uses
@@ -46,7 +45,6 @@ Vue.component('buttons-action', ButtonsAction);
 Vue.mixin(globalVueMixins);
 Vue.mixin(CrudAdmin);
 Vue.mixin(componentMixins);
-Vue.mixin(alertMixins);
 Vue.mixin(modelMixins);
 
 //Create base VueApp instance

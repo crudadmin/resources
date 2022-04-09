@@ -63,9 +63,7 @@
         </div>
         <!-- ./wrapper -->
 
-        <modal
-          :alert="alert"
-        />
+        <modal />
 
         <?php if (Admin::isDev() == false) { ?>
         <!-- REQUIRED JS SCRIPTS -->

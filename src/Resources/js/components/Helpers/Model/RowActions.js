@@ -126,7 +126,11 @@ var RowActions = (Model) => {
             var data = response.data;
 
             if ( data.length <= 1 ) {
-                return $app.openAlert($app.trans('info'), $app.trans('no-changes'), 'warning');
+                return $app.openModal({
+                    title : $app.trans('info'),
+                    message : $app.trans('no-changes'),
+                    type : 'warning'
+                });
             }
 
             this.getData('history').id = row.id;

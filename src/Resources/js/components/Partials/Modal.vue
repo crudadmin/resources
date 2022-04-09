@@ -1,42 +1,47 @@
 <template>
-<div class="message-modal" v-if="canShowAlert" :data-modal="modalName">
-  <div class="modal" :class="'modal-'+alert.type" v-bind:style="{ display : canShowAlert ? 'block' : 'none' }">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">{{ alert.title }}</h4>
-          <button type="button" v-on:click="closeAlert( alert.close )" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
+<div v-if="canShowModal">
+    <div class="message-modal" v-if="isToast === false" :data-modal="modalName">
+      <div class="modal" :class="'modal-'+modalTypeClass" :style="{ display : canShowModal ? 'block' : 'none' }">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">{{ modal.title }}</h4>
+              <button type="button" v-on:click="closeModal({ callback : modal.close })" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p v-if="modal.message" v-html="modal.message"></p>
+              <component
+                v-if="getRegistredComponent"
+                :is="getRegistredComponent"
+                :model="modal.component.model"
+                :rows="modal.component.rows"
+                :row="modal.component.row"
+                :request="modal.component.request"
+                :data="modal.component.data" />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" v-on:click="closeModal({ callback : modal.close })" v-if="modal.close || modal.type=='success' && !modal.close || !modal.close && !modal.success" :class="{ 'pull-left' : modal.success }" data-dismiss="modal">{{ trans('close') }}</button>
+              <button type="button" v-on:click="closeModal({ callback : modal.success })" v-if="modal.success" class="btn btn-primary">{{ trans('accept') }}</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
         </div>
-        <div class="modal-body">
-          <p v-if="alert.message" v-html="alert.message"></p>
-          <component
-            v-if="getRegistredComponent"
-            :is="getRegistredComponent"
-            :model="alert.component.model"
-            :rows="alert.component.rows"
-            :row="alert.component.row"
-            :request="alert.component.request"
-            :data="alert.component.data" />
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" v-on:click="closeAlert( alert.close )" v-if="alert.close || alert.type=='success' && !alert.close || !alert.close && !alert.success" v-bind:class="{ 'pull-left' : alert.success }" data-dismiss="modal">{{ trans('close') }}</button>
-          <button type="button" v-on:click="closeAlert( alert.success )" v-if="alert.success" class="btn btn-primary">{{ trans('accept') }}</button>
-        </div>
+        <!-- /.modal-dialog -->
       </div>
-      <!-- /.modal-content -->
+      <!-- /.modal -->
     </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- /.modal -->
+    <div v-else>
+        <h1>toast</h1>
+    </div>
 </div>
 </template>
 
 <script type="text/javascript">
-export default {
-    props : ['alert'],
+import { mapState, mapActions } from 'vuex';
 
+export default {
     data(){
         return {
             registredComponents : [],
@@ -44,22 +49,35 @@ export default {
     },
 
     mounted(){
-        this.$watch('alert.component', component => {
-            this.bindAlertComponent(component);
-        });
-
         this.checkAlertEvents();
     },
 
+    watch : {
+        'modal.component'(component){
+            this.bindAlertComponent(component);
+        }
+    },
+
     computed: {
-        modalName(){
-            return this.alert.key||this.getRegistredComponent;
+        ...mapState('modal', ['modal']),
+        modalTypeClass(){
+            if ( this.modal.type == 'error' ){
+                return 'danger';
+            }
+
+            return this.modal.type;
         },
-        canShowAlert(){
-            return this.alert.title != null && this.alert.message != null || this.alert.component;
+        isToast(){
+            return this.modal.toast === true;
+        },
+        modalName(){
+            return this.modal.key||this.getRegistredComponent;
+        },
+        canShowModal(){
+            return this.modal.type || this.modal.component;
         },
         getRegistredComponent(){
-            let component = this.alert.component;
+            let component = this.modal.component;
 
             if ( ! component || !component.name ){
                 return;
@@ -76,11 +94,11 @@ export default {
     },
 
     methods: {
+        ...mapActions('modal', ['closeModal']),
         checkAlertEvents(){
             $(window).keyup(e => {
-
                 //If is opened alert
-                if ( this.canShowAlert !== true ) {
+                if ( this.canShowModal !== true ) {
                     //Close other alerts, which are not associated with this component
                     if ( e.keyCode == 27 ) {
                         $('.modal .modal-header .close:visible').last().click();
@@ -91,14 +109,14 @@ export default {
 
                 //If enter/esc has been pressed 300ms after alert has been opened
                 //does not close this alert and ignore enter
-                if ( this.alert.opened && new Date().getTime() - this.alert.opened < 300 )
+                if ( this.modal.opened && new Date().getTime() - this.modal.opened < 300 )
                     return;
 
                 if ( e.keyCode == 13 )
-                    this.closeAlert( this.alert.success || this.alert.close );
+                    this.closeModal({ callback : this.modal.success || this.modal.close });
 
                 if ( e.keyCode == 27 )
-                    this.closeAlert( this.alert.close );
+                    this.closeModal({ callback : this.modal.close });
 
             });
         },
@@ -120,21 +138,8 @@ export default {
                 } catch(error){
                     console.error('Syntax error in component button component.' + "\n", error);
 
-                    this.alert.component = null;
+                    this.modal.component = null;
                 }
-            }
-        },
-        closeAlert(callback){
-            if ( typeof callback == 'function' ){
-                try {
-                    callback.call(this.$parent);
-                } catch(e){
-                    console.error(e);
-                }
-            }
-
-            for ( var key in this.alert ) {
-                this.$parent.alert[key] = null;
             }
         },
     }

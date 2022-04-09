@@ -91,21 +91,27 @@ export default {
             );
         },
         deleteHistoryRow(row){
-            this.$root.openAlert(this.trans('warning'), this.trans('delete-warning'), 'warning', () => {
-                this.$http.post(this.$root.requests.removeFromHistory, {
-                    model : this.model.table,
-                    id : row.id,
-                })
-                .then(response => {
-                    var data = response.data;
+            this.openModal({
+                title : this.trans('warning'),
+                message : this.trans('delete-warning'),
+                type : 'warning',
+                success: () => {
+                    this.$http.post(this.$root.requests.removeFromHistory, {
+                        model : this.model.table,
+                        id : row.id,
+                    })
+                    .then(response => {
+                        var data = response.data;
 
-                    this.history.rows = data;
-                })
+                        this.history.rows = data;
+                    })
 
-                .catch(response => {
-                    $app.errorResponseLayer(response);
-                });
-            }, true);
+                    .catch(response => {
+                        $app.errorResponseLayer(response);
+                    });
+                },
+                close : true
+            });
         },
         date(date){
             return moment(date).format('D.M.Y H:mm');

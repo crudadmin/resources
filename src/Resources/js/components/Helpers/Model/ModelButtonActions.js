@@ -28,11 +28,10 @@ const displayButtonModal = (model, button, response, ids) => {
         } : null;
 
     //This will be binded from modal component
-    var successCallback = function(){
+    var successCallback = (modal) => {
         var requestData = {};
-
-        if ( this.alert.component && this.alert.component.request ) {
-            requestData = _.clone(this.alert.component.request);
+        if ( modal.component && modal.component.request ) {
+            requestData = _.clone(modal.component.request);
         }
 
         model.buttonAction(button.key, ids, {
@@ -45,15 +44,15 @@ const displayButtonModal = (model, button, response, ids) => {
 
     let hasAcceptableQuestion = response?.data?.shouldAccept === true;
 
-    return $app.openAlert(
-        response.title,
-        response.message,
-        response.type,
-        hasAcceptableQuestion ? successCallback : null,
-        hasAcceptableQuestion ? true : null,
-        modalComponentBuilder,
-        button.key
-    );
+    return $app.openModal({
+        title : response.title,
+        message : response.message,
+        type : response.type,
+        success : hasAcceptableQuestion ? successCallback : null,
+        close : hasAcceptableQuestion ? true : null,
+        component : modalComponentBuilder,
+        key : button.key
+    });
 }
 
 const updateActionData = (model, button, ids, response) => {
@@ -98,15 +97,15 @@ const updateActionData = (model, button, ids, response) => {
 var ModelButtonActions = (Model) => {
     Model.prototype.getAllButtons = function(){
         var buttons = {},
-            modelButtons = this.getData('rows').buttons;
+            buttonRows = this.getData('rows').buttons;
 
-        for ( var rowId in modelButtons ) {
-            for ( var buttonIndex in modelButtons[rowId] ) {
-                let button = modelButtons[rowId][buttonIndex];
+        for ( var rowId in buttonRows ) {
+            let rowButtons = buttonRows[rowId];
 
-                if ( ['action', 'both', 'multiple'].indexOf(button.type) > -1 ) {
-                    buttons[button.key] = button;
-                }
+            for ( var buttonIndex in rowButtons ) {
+                let button = rowButtons[buttonIndex];
+
+                buttons[button.key] = button;
             }
         }
 
@@ -121,6 +120,7 @@ var ModelButtonActions = (Model) => {
         ids = ids.length > 0 ? ids : this.getChecked();
 
         if ( !button ){
+            $app.errorModal();
             return;
         }
 

@@ -33,15 +33,6 @@ const BaseComponent = (router, store) => {
                 admin_languages: [],
                 language_id : null,
                 languages_active : false,
-                alert: {
-                    type : null, // success,danger,warning...
-                    title : null,
-                    message : null,
-                    success: null,
-                    close: null,
-                    component: null,
-                    opened : null,
-                }
             }
         },
 
@@ -222,53 +213,6 @@ const BaseComponent = (router, store) => {
                     localStorage.language_id = this.languages[0].id;
 
                 this.language_id = localStorage.language_id;
-            },
-            //Check for all error response in all requests
-            errorResponseLayer(response, code, callback){
-                console.error(response);
-
-                //Fix for jquery response
-                if ( 'responseJSON' in response ) {
-                    response.data = response.responseJSON;
-                }
-
-                //Set response data
-                if ( ! response.data && response.body ) {
-                    response.data = response.body;
-                }
-
-                //If error response comes with some message information, then display it
-                if ( response.data && response.data.message && response.data.title && response.data.type ) {
-                    return this.$root.openAlert(response.data.title, response.data.message, response.data.type, null, () => {
-                        if ( response.status == 401 ) {
-                            window.location.href = window.crudadmin.baseURL;
-                        }
-                    });
-                }
-
-                if ( response.status == 404 ) {
-                    return this.$root.openAlert(this.trans('warning'), this.trans('row-error'), 'warning');
-                }
-
-                //If has been client logged off
-                if ( response.status == 401 ) {
-                    return this.$root.openAlert(this.trans('warning'), this.trans('auto-logout'), 'warning', null, function(){
-                        window.location.reload();
-                    });
-                }
-
-                //Callback on code
-                if ( callback && (code === response.status || code === null) ) {
-                    return callback(response);
-                }
-
-                //Unknown HTTP error
-                if ( response.data.message ) {
-                    return this.$root.openAlert('Error ' + response.status, response.data.message, 'error');
-                }
-
-                //Unknown error
-                this.$root.errorAlert();
             },
             //Check specifics property in model
             getModelProperty(model, key, value){

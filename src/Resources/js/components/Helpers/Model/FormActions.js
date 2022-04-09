@@ -1,14 +1,3 @@
-const unknownAjaxErrorResponse = (model) => {
-    $app.errorAlert(() => {
-        model.setData('progress', false);
-
-        //Timeout for sending new request with enter
-        setTimeout(() => {
-            model.setData('submit', false);
-        }, 500);
-    });
-}
-
 const colorizeTab = function(model, input){
     input.parents('.tab-pane').each(function(){
         var getActiveTab = (panel) => {
@@ -72,7 +61,11 @@ const colorizeLangDropdown = (model, input) => {
     dropdown.next().find('li[data-slug="'+field_lang+'"]').addClass('has-error');
 
     if ( field_lang == $app.languages[0].slug ) {
-        $app.openAlert($app.trans('warning'), $app.trans('lang-error'), 'warning');
+        $app.openModal({
+            title : $app.trans('warning'),
+            message : $app.trans('lang-error'),
+            type : 'warning'
+        });
     }
 }
 
@@ -204,16 +197,21 @@ const sendForm = function(model, e, action, callback){
 
             //Error occured
             if ( $.type(data) != 'object' || ! ('type' in data) ) {
-                return unknownAjaxErrorResponse(model);
+                return $app.errorModal();
             }
 
             //Fix for resubmiting form after closing with enter
             setTimeout(() => {
-               $app.openAlert(data.title, data.message, data.type, null, () => {
-                    //Timeout for sending new request with enter
-                    setTimeout(() => {
-                        model.setData('submit', false);
-                    }, 500);
+               $app.openModal({
+                    title : data.title,
+                    message : data.message,
+                    type : data.type,
+                    close : () => {
+                        //Timeout for sending new request with enter
+                        setTimeout(() => {
+                            model.setData('submit', false);
+                        }, 500);
+                    }
                 });
             }, 100);
 

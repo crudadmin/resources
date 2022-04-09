@@ -147,7 +147,11 @@ var ModelDragAndDrop = (Model) => {
 
             var data = response.data;
             if ( data && 'type' in data ) {
-                return $app.openAlert(data.title, data.message, 'danger');
+                return $app.openModal({
+                    title : data.title,
+                    message : data.message,
+                    type : 'danger'
+                });
             }
 
             enableDragging(this);

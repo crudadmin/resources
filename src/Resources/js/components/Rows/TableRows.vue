@@ -488,7 +488,12 @@ export default {
             if ( row.published_at != null )
                 data += this.trans('published-at') + ': <strong>' + this.getDateByField(row, 'published_at') + '</strong>';
 
-            this.$root.openAlert(this.trans('row-info-n') + ' ' + row.id, data, 'primary', null, function(){});
+            this.openModal({
+                title : this.trans('row-info-n') + ' ' + row.id,
+                message : data,
+                type : 'primary',
+                close : TableRowValue
+            });
         },
         openGettextEditor(item){
             this.$parent.$parent.gettext_editor = item;

@@ -1,14 +1,3 @@
-//My error
-const customErrorAlert = (response) => {
-    var url = response.request.url;
-
-    for ( var key in response.request.params ) {
-        url = url.replace('{'+key+'}', response.request.params[key]);
-    }
-
-    $app.openAlert($app.trans('warning'), 'Nastala nečakana chyba, skúste neskôr prosím.<br><br>Príčinu zlyhania požiadavky môžete zistiť na tejto adrese:<br> <a target="_blank" href="'+url+'">'+url+'</a>', 'error');
-}
-
 const updateModel = (model, requestModel, isInitial) => {
     if ( isInitial == true ) {
         //Boot initial data
@@ -619,8 +608,8 @@ var ModelTableRows = (Model) => {
                 return;
             }
 
-            if ( typeof response.data == 'string' ){
-                customErrorAlert(response);
+            if ( typeof response.data == 'string' || response.data.type === 'error' ){
+                $app.errorResponseLayer(response);
                 return;
             }
 
