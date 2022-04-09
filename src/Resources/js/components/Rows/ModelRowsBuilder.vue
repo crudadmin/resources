@@ -173,7 +173,7 @@ export default {
                     rows = rows.slice(0, this.rows.limit);
                 }
 
-                //Update buttons
+                //Insert buttons of new created row
                 for ( var key in array.buttons ) {
                     Vue.set(this.rows.buttons, key, array.buttons[key]);
                 }

@@ -94,7 +94,7 @@ export default {
             if ( this.isToast ){
                 this.closeTimeout = setTimeout(() => {
                     this.closeModalWithAnimation({ callback : this.modal.close });
-                }, 2000)
+                }, 4000)
             }
         },
         'modal.component'(component){
