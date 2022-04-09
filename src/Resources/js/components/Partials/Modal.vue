@@ -47,7 +47,7 @@
 
             <div class="toast-body">
                 <p v-if="modal.message">
-                    <i class="fa icon" :class="toastIcon" v-if="toastIcon && !modal.title" /> {{ modal.message }}
+                    <i class="fa icon" :class="toastIcon" v-if="toastIcon && !modal.title" /> <span v-html="modal.message"></span>
                 </p>
                 <component
                     v-if="getRegistredComponent"
