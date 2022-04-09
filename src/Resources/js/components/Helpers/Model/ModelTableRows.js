@@ -309,10 +309,10 @@ var ModelTableRows = (Model) => {
         var size = this.getData('sizes').filter(row => {
             if ( row.active == true ) {
                 var rows = getStorage();
-                    rows[this.slug] = row.size;
-                    rows[this.slug+'_default'] = this.getSettings('grid.default');
+                    rows[this.table] = row.size;
+                    rows[this.table+'_default'] = this.getSettings('grid.default');
 
-                localStorage.sizes = JSON.stringify(rows);
+                localStorage.setItem('sizes', JSON.stringify(rows));
             }
 
             return row.active == true;
@@ -559,7 +559,7 @@ var ModelTableRows = (Model) => {
     };
 
     Model.prototype.setLimit = function(limit, options = {}){
-        localStorage.limit = limit;
+        localStorage.setItem('limit.'+this.table, limit);
 
         //Reset pagination to first page
         this.setPage(1, {
@@ -840,16 +840,14 @@ var ModelTableRows = (Model) => {
             return 0;
         }
 
-        //Load pagination limit from localStorage
-        var limit = this.isWithoutExistingParentRow() ?
-                        500
-                        : (
-                            'limit' in localStorage
-                                ? localStorage.limit
-                                : this.getSettings('pagination.limit', 10)
-                        );
+        if ( this.isWithoutExistingParentRow() ){
+            return 500;
+        }
 
-        return $.isNumeric(limit) ? parseInt(limit) : limit;
+        let storageLimit = localStorage.getItem('limit.'+this.table),
+            limit = !_.isNil(storageLimit) ? storageLimit : this.getSettings('pagination.limit', 10);
+
+        return parseInt(limit);
     }
 };
 
