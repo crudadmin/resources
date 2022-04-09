@@ -74,7 +74,7 @@ export default {
             return this.modal.key||this.getRegistredComponent;
         },
         canShowModal(){
-            return this.modal.type || this.modal.component;
+            return (this.modal.type || this.modal.component) ? true : false;
         },
         getRegistredComponent(){
             let component = this.modal.component;
@@ -98,26 +98,26 @@ export default {
         checkAlertEvents(){
             $(window).keyup(e => {
                 //If is opened alert
-                if ( this.canShowModal !== true ) {
-                    //Close other alerts, which are not associated with this component
+                if ( this.canShowModal === true ) {
+                    //If enter/esc has been pressed 300ms after alert has been opened.
+                    //We want prevent this action which may be unwanted
+                    if ( this.modal.openedAt && new Date().getTime() - this.modal.openedAt < 300 ) {
+                        return;
+                    }
+
+                    if ( e.keyCode == 13 ) {
+                        this.closeModal({ callback : this.modal.success || this.modal.close });
+                    } else if ( e.keyCode == 27 ) {
+                        this.closeModal({ callback : this.modal.close });
+                    }
+                }
+
+                //Close other alerts, which are not associated with this component
+                else {
                     if ( e.keyCode == 27 ) {
                         $('.modal .modal-header .close:visible').last().click();
                     }
-
-                    return;
                 }
-
-                //If enter/esc has been pressed 300ms after alert has been opened
-                //does not close this alert and ignore enter
-                if ( this.modal.opened && new Date().getTime() - this.modal.opened < 300 )
-                    return;
-
-                if ( e.keyCode == 13 )
-                    this.closeModal({ callback : this.modal.success || this.modal.close });
-
-                if ( e.keyCode == 27 )
-                    this.closeModal({ callback : this.modal.close });
-
             });
         },
         bindAlertComponent(component){

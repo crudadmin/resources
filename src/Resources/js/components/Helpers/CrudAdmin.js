@@ -19,7 +19,7 @@ const CrudAdmin = {
     },
 
     methods: {
-        ...mapActions('modal', ['openModal', 'errorModal', 'errorResponseLayer']),
+        ...mapActions('modal', ['openModal', 'successModal', 'errorModal', 'warningModal', 'errorResponseLayer']),
         trans(key){
             if ( key in this.$root.localization ) {
                 return this.$root.localization[key];
@@ -62,19 +62,15 @@ const CrudAdmin = {
             }
 
             if ( response.status == 404 ) {
-                return this.openModal({
-                    type : 'warning',
-                    title: this.trans('warning'),
+                return this.warningModal({
                     message : this.trans('row-error'),
                 });
             }
 
             //If has been client logged off
             if ( response.status == 401 ) {
-                return this.openModal({
-                    title : this.trans('warning'),
+                return this.warningModal({
                     message : this.trans('auto-logout'),
-                    type : 'warning',
                     close(){
                         window.location.reload();
                     }
@@ -88,10 +84,9 @@ const CrudAdmin = {
 
             //Unknown HTTP error
             if ( response.data?.message ) {
-                return this.openModal({
+                return this.errorModal({
                     title : 'Error ' + response.status,
                     message : response.data.message,
-                    type : 'error'
                 });
             }
 

@@ -61,10 +61,8 @@ const colorizeLangDropdown = (model, input) => {
     dropdown.next().find('li[data-slug="'+field_lang+'"]').addClass('has-error');
 
     if ( field_lang == $app.languages[0].slug ) {
-        $app.openModal({
-            title : $app.trans('warning'),
+        $app.warningModal({
             message : $app.trans('lang-error'),
-            type : 'warning'
         });
     }
 }

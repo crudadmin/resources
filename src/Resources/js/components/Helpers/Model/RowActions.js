@@ -126,10 +126,9 @@ var RowActions = (Model) => {
             var data = response.data;
 
             if ( data.length <= 1 ) {
-                return $app.openModal({
+                return $app.warningModal({
                     title : $app.trans('info'),
                     message : $app.trans('no-changes'),
-                    type : 'warning'
                 });
             }
 

@@ -91,10 +91,8 @@ export default {
             );
         },
         deleteHistoryRow(row){
-            this.openModal({
-                title : this.trans('warning'),
+            this.warningModal({
                 message : this.trans('delete-warning'),
-                type : 'warning',
                 success: () => {
                     this.$http.post(this.$root.requests.removeFromHistory, {
                         model : this.model.table,

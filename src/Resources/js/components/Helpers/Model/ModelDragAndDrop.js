@@ -147,10 +147,9 @@ var ModelDragAndDrop = (Model) => {
 
             var data = response.data;
             if ( data && 'type' in data ) {
-                return $app.openModal({
+                return $app.errorModal({
                     title : data.title,
                     message : data.message,
-                    type : 'danger'
                 });
             }
 

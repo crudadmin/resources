@@ -5,7 +5,7 @@ const defaultModalState = {
     success: null,
     close: null,
     component: null,
-    opened : null,
+    openedAt : null,
 }
 
 const modal = {
@@ -18,13 +18,13 @@ const modal = {
     mutations: {
         openModal(state, { title, message, type, success, close, component, key }){
             state.modal.key = key;
-            state.modal.type = type||'success';
+            state.modal.type = type||'primary';
             state.modal.title = title;
             state.modal.message = message;
             state.modal.success = success;
             state.modal.close = close;
             state.modal.component = component;
-            state.modal.opened = new Date().getTime();
+            state.modal.openedAt = new Date().getTime();
 
             return state.modal;
         },
@@ -43,11 +43,25 @@ const modal = {
                 document.activeElement.blur();
             }
         },
+        successModal({ commit }, options = {}){
+            commit('openModal', {
+                title : $app.trans('info'),
+                type : 'success',
+                ...(options||{}),
+            });
+        },
         errorModal({ commit }, options = {}){
             commit('openModal', {
                 title : $app.trans('warning'),
                 message : $app.trans('unknown-error'),
                 type : 'danger',
+                ...(options||{}),
+            });
+        },
+        warningModal({ commit }, options = {}){
+            commit('openModal', {
+                title : $app.trans('warning'),
+                type : 'warning',
                 ...(options||{}),
             });
         },
