@@ -13,6 +13,10 @@ var RowActions = (Model) => {
         return this;
     }
 
+    Model.prototype.getValue = function(key){
+        return this.data.row[key];
+    }
+
     Model.prototype.getParentModel = function(table){
         //if table $parent has been received, we want return parent instead of table.
         if ( table && table !== '$parent' ){

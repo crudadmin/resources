@@ -556,13 +556,14 @@ var ModelTableRows = (Model) => {
         });
     };
 
-    Model.prototype.loadRows = async function(options){
+    Model.prototype.loadRows = async function(options = {}){
         const {
             indicator = true,
             download = false,
             page = null,
             limit = null,
             update = false,
+            query = {},
         } = (options||{});
 
         //On first time allow reload rows without parent, for field options...
@@ -571,7 +572,8 @@ var ModelTableRows = (Model) => {
         }
 
         let refresh = this.getData('refresh'),
-            rows = this.getData('rows');
+            rows = this.getData('rows'),
+            isInitialRequest = refresh.count == 0 || this.getSettings('rows.eachRequestInitial', false) === true;
 
         if ( indicator !== false ) {
             rows.refreshing = true;
@@ -580,28 +582,27 @@ var ModelTableRows = (Model) => {
         // Remove previous refresh timeout
         this.disableRowsRefreshing();
 
-        var query = {
-                parentTable : this.getParentTableName(this.without_parent),
-                parentId : this.getParentRowId(),
-                language_id : this.localization === true ? this.getData('langid') : 0,
-                limit : getRowsLimit(this, limit),
-                page : !_.isNil(page) ? page : rows.page,
-                count : refresh.count,
-                download : download == true ? true : false,
-                scopes : getQueryScopes(this),
-                search : getQuerySearch(this),
-            };
+        let queryParams = {
+            ...(query||{}),
+            parentTable : this.getParentTableName(this.without_parent),
+            parentId : this.getParentRowId(),
+            language_id : this.localization === true ? this.getData('langid') : 0,
+            limit : getRowsLimit(this, limit),
+            page : !_.isNil(page) ? page : rows.page,
+            count : refresh.count,
+            initial : isInitialRequest,
+            download : download == true ? true : false,
+            scopes : getQueryScopes(this),
+            search : getQuerySearch(this),
+        };
 
         //Add additional columns which are not in default rows state
         if ( this.enabledColumnsList().length > 0 ) {
-            query.enabled_columns = this.enabledColumnsList().join(';');
+            queryParams.enabled_columns = this.enabledColumnsList().join(';');
         }
 
         try {
-            let response = await $app.$http.post($app.requests.get('rows', { table : this.slug }), {
-                ...query,
-                params : query,
-            });
+            let response = await $app.$http.post($app.requests.get('rows', { table : this.slug }), queryParams);
 
             //If has been component destroyed, and request is delivered... and some conditions
             if ( this.getData('dragging').active === true || this.getData('progress') === true || isModelDestroyed() ){
@@ -623,14 +624,14 @@ var ModelTableRows = (Model) => {
 
             var requestModel = response.data.model;
 
-            updateModel(this, requestModel, refresh.count == 0);
+            updateModel(this, requestModel, isInitialRequest);
 
             //Load rows into array
             this.setRowsData(response.data, {
                 update: update === true
             });
 
-            if ( refresh.count == 0 ){
+            if ( isInitialRequest ){
                 //Update field options
                 updateFieldOptions(this, requestModel.fields, requestModel);
             }
@@ -680,7 +681,7 @@ var ModelTableRows = (Model) => {
             }
 
             //Show error alert at first request
-            else if ( refresh.count == 0 && this.getData('hasShowedError') !== true || response.status == 401 ){
+            else if ( isInitialRequest && this.getData('hasShowedError') !== true || response.status == 401 ){
                 this.setData('hasShowedError', true);
 
                 $app.errorResponseLayer(response, null);

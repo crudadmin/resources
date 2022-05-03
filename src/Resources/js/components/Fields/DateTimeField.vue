@@ -12,7 +12,7 @@
             :disabled="disabled"
             :readonly="readonly"
             :name="isMultipleDatepicker ? '' : field_key"
-            :value="castValue(value)"
+            :value="model.getCastedValue(field_key)"
             :placeholder="field.placeholder || field_name"
             autocomplete="off"
             @keyup="changeValue">
@@ -98,14 +98,6 @@
         methods : {
             getInput(){
                 return $(this.$refs.input);
-            },
-            castValue(value){
-                //If is iso format, we need cast value for required input format
-                if ( value && moment(value, moment.ISO_8601, true).isValid() ) {
-                    return moment(value).format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key)));
-                }
-
-                return value;
             },
             bindDatepickers(){
                 if ( this.readonly === true ){

@@ -1,3 +1,6 @@
+import DateCast from './Casts/DateCast.js';
+import _ from 'lodash';
+
 var Fields = (Model) => {
     /*
      * Hide input
@@ -318,6 +321,31 @@ var Fields = (Model) => {
         } else if ( field.date_format_multiple ){
             return field.date_format_multiple.split(',')[0];
         }
+    }
+
+    Model.prototype.getFieldCast = function(key)
+    {
+        let field = this.fields[key];
+
+        if ( !field ){
+            return;
+        }
+
+        if ( ['date', 'datetime', 'time'].includes(field.type) ){
+            return new DateCast(this, field, key);
+        }
+    }
+
+    Model.prototype.getCastedValue = function(key, value){
+        let cast = this.getFieldCast(key, value);
+
+        value = !_.isNil(value) ? value : this.getValue(key);
+
+        if ( cast ){
+            return cast.get(value);
+        }
+
+        return value;
     }
 };
 
