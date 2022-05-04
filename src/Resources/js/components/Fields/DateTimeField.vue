@@ -2,7 +2,7 @@
     <div class="form-group" :class="{ disabled : disabled || readonly, 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
-            {{ field_name }} <span v-if="required" class="required">*</span>
+            {{ field_name }}<span v-if="required" class="required">*</span>
         </label>
 
         <input
@@ -12,7 +12,7 @@
             :disabled="disabled"
             :readonly="readonly"
             :name="isMultipleDatepicker ? '' : field_key"
-            :value="model.getCastedValue(field_key)"
+            :value="model.getCastedValue(field_key_original)"
             :placeholder="field.placeholder || field_name"
             autocomplete="off"
             @keyup="changeValue">
@@ -25,7 +25,7 @@
 
 <script>
     export default {
-        props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
+        props: ['model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
 
         created(){
             $.datetimepicker.setLocale(this.$root.locale);
@@ -73,7 +73,7 @@
 
                 let config = {
                     lang: this.$root.locale,
-                    format: this.model.getFieldFormat(this.field_key),
+                    format: this.model.getFieldFormat(this.field_key_original),
                     timepicker: this.field.type != 'date',
                     datepicker: this.field.type != 'time',
                     scrollInput: false,
@@ -89,7 +89,7 @@
                     onChangeDateTime: this.onChangeDateTime,
                 }
 
-                this.model.fireField(this.field_key, 'datepicker.config', config, this.getInput());
+                this.model.fireField(this.field_key_original, 'datepicker.config', config, this.getInput());
 
                 return config;
             }
@@ -146,7 +146,7 @@
 
                 //Update single date value
                 else {
-                    var pickedDate = moment(current_date_time).format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key)));
+                    var pickedDate = moment(current_date_time).format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key_original)));
 
                     this.changeValue(null, pickedDate);
                 }
