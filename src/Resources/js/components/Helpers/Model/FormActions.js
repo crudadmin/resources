@@ -322,6 +322,10 @@ var FormActions = (Model) => {
             data['_row_id'] = parentRow.id;
         }
 
+        if ( this.isInParent() ){
+            data['_in_parent'] = true;
+        }
+
         //If is updating, then add row ID
         if ( this.getFormAction() == 'update' ) {
             data['_id'] = this.getRow().id;
