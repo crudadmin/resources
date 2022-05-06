@@ -109,7 +109,7 @@ const showErrorMessage = (model, message, i) => {
                 where = null;
         }
 
-        else if ( $(this).parent().hasClass('input-group') ) {
+        else if ( $(this).parent().hasClass('input-group') || $(this).parent().hasClass('vue-tel-input') ) {
             where = $(this).parent();
         }
 

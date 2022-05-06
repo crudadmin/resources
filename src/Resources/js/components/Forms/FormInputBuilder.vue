@@ -33,6 +33,19 @@
             :depth_level="depth_level">
         </color-field>
 
+        <phone-field
+            v-if="!hasComponent && isPhone"
+            :model="model"
+            :field_name="getName"
+            :field_key="getFieldName"
+            :field="field"
+            :value="getValueOrDefault"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :depth_level="depth_level">
+        </phone-field>
+
         <number-field
             v-if="!hasComponent && isNumber"
             :model="model"
@@ -204,12 +217,13 @@
     import SelectField from '../Fields/SelectField';
     import RadioField from '../Fields/RadioField';
     import ColorField from '../Fields/ColorField';
+    import PhoneField from '../Fields/PhoneField';
 
     export default {
         name: 'form-input-builder',
         props: ['model', 'field', 'field_key', 'index', 'confirmation', 'inputlang', 'langslug'],
 
-        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField, ColorField },
+        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField, ColorField, PhoneField },
 
         created(){
             if ( this.field.component ) {
@@ -434,6 +448,10 @@
             isColor()
             {
                 return this.field.type == 'color';
+            },
+            isPhone()
+            {
+                return this.field.type == 'phone';
             },
             isSelect()
             {

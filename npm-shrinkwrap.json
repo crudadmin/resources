@@ -3085,8 +3085,7 @@
     "core-js": {
       "version": "3.21.1",
       "resolved": "https://registry.npmjs.org/core-js/-/core-js-3.21.1.tgz",
-      "integrity": "sha512-FRq5b/VMrWlrmCzwRrpDYNxyHP9BcAZC+xHJaqTgIE5091ZV1NTmyh0sGOg5XqpnHvR0svdy0sv1gWA1zmhxig==",
-      "dev": true
+      "integrity": "sha512-FRq5b/VMrWlrmCzwRrpDYNxyHP9BcAZC+xHJaqTgIE5091ZV1NTmyh0sGOg5XqpnHvR0svdy0sv1gWA1zmhxig=="
     },
     "core-js-compat": {
       "version": "3.21.1",
@@ -6360,6 +6359,11 @@
       "requires": {
         "invert-kv": "^1.0.0"
       }
+    },
+    "libphonenumber-js": {
+      "version": "1.9.53",
+      "resolved": "https://registry.npmjs.org/libphonenumber-js/-/libphonenumber-js-1.9.53.tgz",
+      "integrity": "sha512-3cuMrA2CY3TbKVC0wKye5dXYgxmVVi4g13gzotprQSguFHMqf0pIrMM2Z6ZtMsSWqvtIqi5TuQhGjMhxz0O9Mw=="
     },
     "liftoff": {
       "version": "2.5.0",
@@ -10551,6 +10555,16 @@
             "json5": "^1.0.1"
           }
         }
+      }
+    },
+    "vue-tel-input": {
+      "version": "5.11.0",
+      "resolved": "https://registry.npmjs.org/vue-tel-input/-/vue-tel-input-5.11.0.tgz",
+      "integrity": "sha512-kw13LdbnSH+Zk5Qb06vflG7Abu6QsM1cQyKvTA9T4kaZeARvyvKo9YZmziy7WiSuar932DWRjGI0SJnban4a2A==",
+      "requires": {
+        "core-js": "^3.14.0",
+        "libphonenumber-js": "^1.9.6",
+        "vue": "^2.6.14"
       }
     },
     "vue-template-compiler": {
