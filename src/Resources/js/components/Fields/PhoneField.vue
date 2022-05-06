@@ -20,6 +20,7 @@
                 width: '300px',
                 showFlags: true,
                 showSearchBox: true,
+                showDialCodeInList: true,
             }"
             :inputOptions="{
                 name: field_key,
