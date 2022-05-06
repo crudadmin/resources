@@ -1,7 +1,7 @@
 <template>
     <div>
         <button
-            v-for="(filter, key) in model.getSettings('rows.filters.items')"
+            v-for="(filter, key) in model.getSettings('rows.filter.items')"
             @click="setFilter(key)"
             data-toggle="tooltip"
             :title="filter.title"
@@ -30,7 +30,7 @@ export default {
     },
     methods: {
         setFilter(filterId) {
-            if ( this.model.getSettings('rows.filters.single') ){
+            if ( this.model.getSettings('rows.filter.single') ){
                 this.filterId = this.filterId.includes(filterId) == false ? [filterId] : [];
             } else {
                 this.filterId = _.xor(this.filterId, [filterId]);

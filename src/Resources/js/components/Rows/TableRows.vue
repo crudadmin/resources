@@ -38,8 +38,8 @@
                     </div>
                 </td>
 
-                <td class="row-indicator" v-if="item.$indicator" data-toggle="tooltip" :title="item.$indicator.title">
-                    <i :class="item.$indicator.class" :style="{ background : item.$indicator.color }"></i>
+                <td class="row-indicator" v-if="hasIndicatorInTable" data-toggle="tooltip" :title="item.$indicator ? (item.$indicator.name||item.$indicator.title) : ''">
+                    <i v-if="item.$indicator" :class="item.$indicator.class" :style="{ background : item.$indicator.color }"></i>
                 </td>
 
                 <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { image_field : isImageField(field), '--clickable' : isTableClickable } ]" :data-field="field">
