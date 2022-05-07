@@ -138,7 +138,7 @@ export default {
                 return component.component;
             }
 
-            if (this.registredComponents.indexOf(component.name) > -1){
+            if (this.registredComponents.includes(component.name)){
                 return component.name;
             }
         },

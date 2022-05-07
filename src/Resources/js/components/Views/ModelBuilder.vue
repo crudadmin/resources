@@ -357,7 +357,7 @@
                     depth = 0,
                     treeUuids = [];
 
-                while(parent.$options.name != 'base-page-view') {
+                while(parent && parent.$options.name != 'base-page-view') {
                     if ( parent.$options.name == 'model-builder' ) {
                         treeUuids.push(parent.model.getData('uuid'));
 

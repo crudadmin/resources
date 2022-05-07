@@ -48,7 +48,6 @@
                             <i class="--icon-right fa fa-angle-down"></i>
                         </button>
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
-                            <li v-if="model.deletable && model.hasAccess('delete')"><a @click.prevent="removeRow()"><i class="fa fa-trash-alt"></i> {{ trans('delete') }}</a></li>
                             <li v-for="button in availableButtons" @click="model.buttonAction(button.key)"><i class="fa" :class="button.icon"></i> {{ button.name }}</li>
                         </ul>
                     </div>

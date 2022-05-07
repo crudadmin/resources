@@ -167,6 +167,11 @@ const getRowsLimit = (model, limit) => {
         return limit;
     }
 
+    //We need have ability to disable fetching rows
+    if ( model.getSettings('pagination.limit') === 0 ){
+        return 0;
+    }
+
     //Pagination is disabled, we does not want to limit rows
     if ( model.isPaginationEnabled() === false ){
         return -1;

@@ -47,7 +47,6 @@ export default {
 
     methods: {
         changeValue(value) {
-            console.log(value);
             this.$parent.changeValue(null, value);
         }
     },
