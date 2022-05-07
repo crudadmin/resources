@@ -24,7 +24,7 @@
                     <div class="box-header__right">
                         <custom-components :model="model" type="form-header-right" />
 
-                        <button v-if="model.isOpenedRow() && canShowGettext" @click="openGettextEditor" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
+                        <button v-if="model.isOpenedRow() && canShowGettext" @click="model.openGettextEditor(row)" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
                             {{ trans('gettext-open') }}
                         </button>
                         <button v-if="model.isOpenedRow() && model.history && model.isSingle()" type="button" @click="model.showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
@@ -93,7 +93,7 @@ import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents
 export default {
     name : 'form-builder',
 
-    props : ['model', 'rows', 'gettext_editor'],
+    props : ['model', 'rows'],
 
     components: {
         FormTabsBuilder, ModelLanguageSwitch, CustomComponents, SubmitButton
@@ -313,9 +313,6 @@ export default {
     methods: {
         openNewForm(){
             this.$parent.addNewRow();
-        },
-        openGettextEditor(){
-            this.$parent.gettext_editor = this.row;
         },
         isFieldSelect(column){
             return column && column in this.model.fields && (['select', 'radio'].indexOf(this.model.fields[column].type) > -1) ? true : false;

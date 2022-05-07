@@ -1,4 +1,5 @@
 import HistoryModal from '@components/Modal/HistoryModal.vue';
+import ModalGettext from '@components/Modal/ModalGettext.vue';
 
 var RowActions = (Model) => {
     Model.prototype.getRow = function(key){
@@ -156,6 +157,21 @@ var RowActions = (Model) => {
         } catch (response){
             $app.errorResponseLayer(response);
         }
+    };
+
+    Model.prototype.openGettextEditor = async function(row){
+        $app.openModal({
+            title : $app.trans('gettext-update')+' - '+row.name,
+            class : '--wide',
+            component : {
+                name : 'GettextExtension',
+                component : ModalGettext,
+                props : {
+                    model : this,
+                    row : row,
+                },
+            }
+        });
     };
 
     /*

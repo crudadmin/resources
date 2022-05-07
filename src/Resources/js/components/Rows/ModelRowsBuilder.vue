@@ -69,7 +69,6 @@
                 :model="model"
                 :buttons="rows.buttons"
                 :count="rows.count"
-                :gettext_editor.sync="gettext_editor"
                 :rows="rows">
             </table-rows>
         </div>
@@ -108,7 +107,7 @@ import Pagination from '../Partials/Pagination.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
-    props : ['model', 'rows', 'gettext_editor'],
+    props : ['model', 'rows'],
 
     components : { Refreshing, TableRows, RowsFilter, Pagination, CustomComponents },
 

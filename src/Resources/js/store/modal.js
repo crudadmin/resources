@@ -10,6 +10,38 @@ const defaultModalState = {
     toast : false,
     visible : false,
     class : null,
+    actions : [],
+}
+
+const getModalActions = (modal) => {
+    let actions = [];
+
+    if (
+        //Is close modal
+        modal.close ||
+
+        //Is success modal
+        modal.type=='success' && !modal.close
+
+        //Is modal without any action
+        || !modal.close && !modal.success
+    ) {
+        actions.push({
+            name : $app.trans('close'),
+            class : 'btn-secondary',
+            callback : modal.close,
+        });
+    }
+
+    if ( modal.success ) {
+        actions.push({
+            name : $app.trans('accept'),
+            class : 'btn-primary',
+            callback : modal.success,
+        });
+    }
+
+    return actions;
 }
 
 const modal = {
@@ -23,9 +55,9 @@ const modal = {
 
     mutations: {
         openModal(state, options){
-            const { title, message, type, toast, success, close, component, key } = options;
+            const { title, message, type, toast, success, close, component, key, actions } = options;
 
-            const modal = {
+            let modal = {
                 key : key,
                 type : type||'primary',
                 toast : toast||false,
@@ -39,6 +71,8 @@ const modal = {
                 visible : true,
                 class : options.class||'',
             };
+
+            modal.actions = _.isNil(actions) ? getModalActions(modal) : actions;
 
             state.modals.push(modal);
 
@@ -83,22 +117,29 @@ const modal = {
                 ...(options||{}),
             });
         },
-        closeModal({state, commit}, { modal, callback, animation = true }){
+        async closeModal({state, commit}, { modal, callback, animation = true, progress }){
             const delay = animation === true ? 250 : 0;
 
-            modal.visible = false;
-            setTimeout(() => {
-
-                if ( callback && typeof callback == 'function' ){
-                    try {
-                        callback(modal);
-                    } catch(e){
-                        console.error(e);
+            if ( callback && typeof callback == 'function' ){
+                try {
+                    //Disable modal closing
+                    if ( (await callback(modal)) === false ){
+                        return;
                     }
+                } catch(e){
+                    console.error(e);
                 }
+            }
 
-                commit('closeModal', modal);
-            }, delay);
+            modal.visible = false;
+
+            await new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve();
+
+                    commit('closeModal', modal);
+                }, delay);
+            });
         },
     },
 

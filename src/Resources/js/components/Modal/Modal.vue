@@ -5,26 +5,33 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h4 class="modal-title">{{ modal.title }}</h4>
-                    <button type="button" @click="closeModal({ modal, callback : modal.close })" class="close" ref="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p v-if="modal.message" v-html="modal.message"></p>
+                        <slot name="header"></slot>
+                        <h4 class="modal-title">{{ modal.title }}</h4>
 
-                    <slot></slot>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="closeModal({ modal, callback : modal.close })" v-if="modal.close || modal.type=='success' && !modal.close || !modal.close && !modal.success" data-dismiss="modal">{{ trans('close') }}</button>
-                    <button type="button" @click="closeModal({ modal, callback : modal.success })" v-if="modal.success" class="btn btn-primary" ref="success">{{ trans('accept') }}</button>
+                        <button type="button" @click="closeModal({ modal, callback : modal.close })" class="close" ref="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+
+                    </div>
+                    <div class="modal-body">
+                        <p v-if="modal.message" v-html="modal.message"></p>
+
+                        <slot></slot>
+                    </div>
+                    <div class="modal-footer">
+                        <slot name="footer"></slot>
+
+                        <button
+                            v-for="(action, index) in actions"
+                            type="button"
+                            :class="['btn', action.class, { disabled : actionInProgress === index }]"
+                            @click="onActionPress(index, action)">
+                            {{ action.name }}
+                        </button>
+                    </div>
                 </div>
             </div>
-            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-dialog -->
-        </div>
-    <!-- /.modal -->
     </div>
 
     <div v-else class="adminToasts">
@@ -69,6 +76,7 @@ export default {
                 return {
                     class : '',
                     key : '',
+                    actions : null,
                 }
             },
         },
@@ -77,6 +85,7 @@ export default {
     data(){
         return {
             isVisibleModal : false,
+            actionInProgress : null,
         };
     },
 
@@ -131,6 +140,9 @@ export default {
         canRenderModal(){
             return this.modal.type ? true : false;
         },
+        actions(){
+            return this.options.actions||modal.actions||[];
+        }
     },
 
     methods: {
@@ -175,6 +187,21 @@ export default {
                 }, 4000)
             }
         },
+        async onActionPress(index, action){
+            //Disable double action click
+            if ( this.actionInProgress == index ){
+                return;
+            }
+
+            this.actionInProgress = index;
+
+            await this.closeModal({
+                modal : this.modal,
+                callback : action.callback
+            });
+
+            this.actionInProgress = null;
+        }
     }
 }
 </script>

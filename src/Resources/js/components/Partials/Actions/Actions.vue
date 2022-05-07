@@ -16,7 +16,7 @@
 
     <!-- gettext -->
     <div class="buttons-options__item" v-if="canShowGettext">
-        <button data-button="gettext" type="button" v-on:click="openGettextEditor(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')">
+        <button data-button="gettext" type="button" v-on:click="model.openGettextEditor(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')">
             <i class="fa fa-globe-americas"></i>
         </button>
     </div>
@@ -73,9 +73,6 @@ export default {
         },
     },
     methods : {
-        openGettextEditor(item){
-            this.$parent.$parent.gettext_editor = item;
-        },
         getDateByField(row, key){
             if ( key in this.model.fields ){
                 return row[key];

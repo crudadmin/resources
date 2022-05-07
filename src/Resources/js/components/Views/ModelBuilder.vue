@@ -94,8 +94,7 @@
                         <model-rows-builder
                             v-show="model.isSettingEnabled('table', true)"
                             :model="model"
-                            :rows="rows"
-                            :gettext_editor="gettext_editor">
+                            :rows="rows">
                         </model-rows-builder>
 
                         <custom-components :model="model" type="table-after" />
@@ -109,7 +108,6 @@
                         <form-builder
                             :rows="rows"
                             :model="model"
-                            :gettext_editor="gettext_editor"
                         ></form-builder>
 
                         <custom-components :model="model" type="form-after" />
@@ -120,12 +118,6 @@
         </div>
 
         <custom-components :model="model" type="bottom" />
-
-        <gettext-extension
-            v-if="gettext_editor"
-            :gettext_editor="gettext_editor"
-            :gettext_table="model.table"
-            ></gettext-extension>
     </div>
 </template>
 
@@ -133,10 +125,9 @@
     import _ from 'lodash';
     import FormBuilder from '../Forms/FormBuilder.vue';
     import ModelRowsBuilder from '../Rows/ModelRowsBuilder.vue';
-    import GettextExtension from '../Partials/GettextExtension.vue';
     import Search from '../Partials/Search.vue';
     import { mapMutations } from 'vuex';
-    import {defaultSearchQuery} from '../Helpers/Model/ModelData';
+    import { defaultSearchQuery } from '../Helpers/Model/ModelData';
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
     export default {
@@ -144,7 +135,7 @@
 
         name : 'model-builder',
 
-        components : { FormBuilder, ModelRowsBuilder, CustomComponents, GettextExtension, Search },
+        components : { FormBuilder, ModelRowsBuilder, CustomComponents, Search },
 
         data(){
             return {
@@ -163,8 +154,6 @@
                 rows : this.model_builder.getData('rows'),
 
                 language_id : null,
-
-                gettext_editor: null,
             };
         },
 

@@ -41,7 +41,7 @@ const displayButtonModal = (model, button, response, ids) => {
 
     //This will be binded from modal component
     var successCallback = (modal) => {
-        var requestData = _.cloneDeep(modal.component.props.request||{});
+        var requestData = _.cloneDeep(modal.component?.props?.request||{});
 
         model.buttonAction(button.key, ids, {
             requestData,

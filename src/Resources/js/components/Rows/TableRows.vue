@@ -68,7 +68,7 @@ import Actions from '@components/Partials/Actions/Actions.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model'],
+    props : ['rows', 'buttons', 'count', 'field', 'model'],
 
     components: { TableRowValue, Actions, draggable },
 
