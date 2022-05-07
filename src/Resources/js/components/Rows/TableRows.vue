@@ -54,22 +54,9 @@
                     </table-row-value>
                 </td>
 
-                <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
-                    <div class="buttons-options__item" v-if="isEditable || isDisplayable">
-                        <button data-button="edit" :data-id="item.id" type="button" @click="model.selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : model.isActiveRow(item), 'btn-default' : !model.isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && isEditable ? trans('edit') : trans('show')">
-                            <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == item.id, 'far fa-edit' : loadingRow != item.id }"></i>
-                        </button>
-                    </div>
-                    <div class="buttons-options__item" v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="model.showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : model.isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
-                    <div class="buttons-options__item" v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe-americas"></i></button></div>
-                    <div class="buttons-options__item" v-if="canShowInfo" ><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="far fa-question-circle"></i></button></div>
-                    <div class="buttons-options__item" v-for="(button, buttonKey) in model.getButtonsForRow(item)">
-                        <buttons-action
-                            :button="button"
-                            :row="item"
-                            :buttonKey="buttonKey"
-                            :model="model"/>
-                    </div>
+                <!-- <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]"> -->
+                <td class="buttons-options" :data-model="model.slug">
+                    <Actions :model="model" :row="item" />
                 </td>
             </tr>
         </component>
@@ -78,12 +65,13 @@
 
 <script>
 import TableRowValue from './TableRowValue.vue';
+import Actions from '@components/Partials/Actions/Actions.vue';
 import draggable from 'vuedraggable'
 
 export default {
     props : ['rows', 'buttons', 'count', 'field', 'gettext_editor', 'model'],
 
-    components: { TableRowValue, draggable },
+    components: { TableRowValue, Actions, draggable },
 
     data(){
         return {
@@ -119,9 +107,6 @@ export default {
         },
         loadingRow(){
             return this.model.getData('loadingRow');
-        },
-        history(){
-            return this.model.getData('history');
         },
         enabled_columns(){
             return this.model.getData('enabled_columns');
@@ -212,34 +197,6 @@ export default {
         avaliableColumns(){
             return ['id'].concat( Object.keys( this.model.fields ) );
         },
-        isEditable(){
-            return this.model.editable == true || this.model.hasChilds() > 0;
-        },
-        isDisplayable(){
-            return this.model.displayable == true;
-        },
-        isEnabledHistory(){
-            //Check if history is enabled, and user has acces to read data from history
-            return this.model.history == true && this.getFreshModel('models_histories').hasAccess('read');
-        },
-        canShowGettext(){
-            if (
-                ['languages', 'admin_languages'].indexOf(this.model.slug) > -1
-                && this.$root.gettext == true
-                && this.model.hasAccess('update')
-            ) {
-                return true;
-            }
-
-            return false;
-        },
-        canShowInfo(){
-            if ( this.model.getSettings('dates') == true ) {
-                return true;
-            }
-
-            return false;
-        },
         availableButtons(){
             return this.$parent.availableButtons;
         },
@@ -258,7 +215,7 @@ export default {
         },
         isTableClickable(){
             //if table cannot be opened
-            if ( !(this.isEditable || this.isDisplayable) ){
+            if ( !(this.model.isEditable() || this.model.isDisplayable()) ){
                 return false;
             }
 
@@ -427,7 +384,7 @@ export default {
             this.model.setChecked(this.isCheckedAll ? [] : ids);
         },
         checkRow(id, field, row){
-            if ( row && this.canOpenRowOnClick && (this.isEditable || this.isDisplayable) ) {
+            if ( row && this.canOpenRowOnClick && (this.model.isEditable() || this.model.isDisplayable()) ) {
                 this.model.selectRow(row);
 
                 return;
@@ -469,34 +426,6 @@ export default {
         },
         fieldName(key){
             return this.model.fieldName(key);
-        },
-        getDateByField(row, key){
-            if ( key in this.model.fields )
-                return row[key];
-
-            return moment(row[key]).format('DD.MM.Y HH:mm');
-        },
-        showInfo(row){
-            var data = '';
-
-            if ( row.created_at != null )
-                data += this.trans('created-at') + ': <strong>' + this.getDateByField(row, 'created_at') + '</strong><br>';
-
-            if ( row.updated_at != null && this.model.editable != false )
-                data += this.trans('last-change') + ': <strong>' + this.getDateByField(row, 'updated_at') + '</strong><br>';
-
-            if ( row.published_at != null )
-                data += this.trans('published-at') + ': <strong>' + this.getDateByField(row, 'published_at') + '</strong>';
-
-            this.openModal({
-                title : this.trans('row-info-n') + ' ' + row.id,
-                message : data,
-                type : 'primary',
-                close : TableRowValue
-            });
-        },
-        openGettextEditor(item){
-            this.$parent.$parent.gettext_editor = item;
         },
         clickTree(target){
             var path = [];

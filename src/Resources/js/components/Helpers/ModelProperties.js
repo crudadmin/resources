@@ -32,6 +32,14 @@ var ModelProperties = (Model) => {
         return this.minimum == 1 && this.maximum == 1 || this.single === true;
     }
 
+    Model.prototype.isEditable = function(){
+        return this.editable == true || this.hasChilds() > 0;
+    }
+
+    Model.prototype.isDisplayable = function(){
+        return this.displayable == true;
+    }
+
     Model.prototype.formPrefix = function(){
         if ( this.isInParent() ) {
             return '$'+this.table+'_';
