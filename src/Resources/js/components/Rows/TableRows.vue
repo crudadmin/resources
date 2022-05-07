@@ -54,7 +54,6 @@
                     </table-row-value>
                 </td>
 
-                <!-- <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]"> -->
                 <td class="buttons-options" :data-model="model.slug">
                     <Actions :model="model" :row="item" />
                 </td>
@@ -400,16 +399,6 @@ export default {
             }
 
             this.model.toggleChecked(id);
-        },
-        buttonsCount(item){
-            var buttons = this.model.getButtonsForRow(item),
-                additional = 0;
-
-            additional += this.isEnabledHistory ? 1 : 0;
-            additional += this.canShowGettext ? 1 : 0;
-            additional -= !this.canShowGettext ? 1 : 0;
-
-            return Object.keys(buttons||{}).length + additional;
         },
         toggleSorting(key){
             var sortable = this.$root.getModelProperty(this.model, 'settings.sortable');
