@@ -1,4 +1,4 @@
-import HistoryModal from '@components/Partials/Modal/HistoryModal.vue';
+import HistoryModal from '@components/Modal/HistoryModal.vue';
 
 var RowActions = (Model) => {
     Model.prototype.getRow = function(key){

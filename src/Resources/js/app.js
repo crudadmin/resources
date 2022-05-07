@@ -29,8 +29,8 @@ import SiteTreeBuilder from '@components/Extensions/SiteTreeBuilder/SiteTreeBuil
 import ModelBuilder from '@components/Views/ModelBuilder.vue';
 import VueChosen from '@components/Partials/VueChosen.vue';
 import ButtonsAction from '@components/Partials/ButtonsAction.vue';
-import Modal from '@components/Partials/Modal.vue';
-import ModelAddRow from '@components/Partials/Modal/ModelAddRow.vue';
+import Modal from '@components/Modal/Modal.vue';
+import ModalAddNewRow from '@components/Modal/ModalAddNewRow.vue';
 
 //Router
 import Router from './router.js';
@@ -43,7 +43,7 @@ Vue.component('SiteTreeBuilder', SiteTreeBuilder);
 Vue.component('model-builder', ModelBuilder);
 Vue.component('buttons-action', ButtonsAction);
 Vue.component('Modal', Modal);
-Vue.component('ModelAddRow', ModelAddRow);
+Vue.component('ModalAddNewRow', ModalAddNewRow);
 
 //Global methods
 Vue.mixin(globalVueMixins);

@@ -3,7 +3,7 @@ import RequestHelper from './Helpers/RequestHelper';
 
 import RightNavbar from './Partials/RightNavbar.vue';
 import Sidebar from './Sidebar/Sidebar.vue';
-import ModalRenderer from '@components/Partials/Modal/ModalRenderer.vue';
+import ModalRenderer from '@components/Modal/ModalRenderer.vue';
 
 import { mapState, mapMutations } from 'vuex';
 
