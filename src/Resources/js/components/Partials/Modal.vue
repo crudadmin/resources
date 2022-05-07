@@ -1,6 +1,6 @@
 <template>
 <div v-if="canRenderModal" :data-opened-at="modal.openedAt">
-    <div class="message-modal" v-if="isToast === false" :data-modal="modalName" :class="modal.class">
+    <div class="message-modal" v-if="isToast === false" :data-modal="modalName" :class="[modal.class, options.class]">
         <div class="modal fade d-block" :class="['modal-'+modalTypeClass, { show : isVisibleModal }]">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -62,10 +62,16 @@ export default {
         modal : {
             type : Object,
         },
-        keyName : {
-            type : String,
+        options : {
+            type : Object,
             required : false,
-        }
+            default(){
+                return {
+                    class : '',
+                    key : '',
+                }
+            },
+        },
     },
 
     data(){
@@ -120,7 +126,7 @@ export default {
             return this.modal.toast === true;
         },
         modalName(){
-            return this.keyName||this.modal.key||'modal';
+            return this.options.key||this.modal.key||'modal';
         },
         canRenderModal(){
             return this.modal.type ? true : false;

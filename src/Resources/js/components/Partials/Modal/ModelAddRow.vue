@@ -1,12 +1,12 @@
 <template>
-    <Modal :modal="modal">
+    <Modal :modal="modal" :options="{ class : '--wide --modelAddRow' }">
         <model-builder :model_builder="relationModel"></model-builder>
     </Modal>
 </template>
 
 <script type="text/javascript">
 export default {
-    props: ['modal', 'model'],
+    props: ['modal', 'model', 'data'],
     data() {
         return {};
     },

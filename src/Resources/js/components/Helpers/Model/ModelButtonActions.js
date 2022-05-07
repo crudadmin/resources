@@ -1,6 +1,3 @@
-import ButtonsModal from '@components/Partials/Modal/ButtonsModal.vue';
-import ModelAddRow from '@components/Partials/Modal/ModelAddRow.vue';
-
 const removeMissingRows = (model, responseRows, ids) => {
     let rows = model.getData('rows');
 
@@ -17,34 +14,20 @@ const removeMissingRows = (model, responseRows, ids) => {
 }
 
 const buildComponentData = (button, model, rows, ids, response) => {
-    const componentProps = {
-        model : model,
-        rows : rows,
-        row : ids.length == 1 ? rows[0] : null,
-        data : response?.data?.component_data||[],
-    }
+    let component = response.data?.component;
 
-    if ( response.data.model ) {
+    if ( component ) {
         return {
-            class : '--modelAddRow --wide',
+            class : component.class,
             component : {
                 name : button.key,
-                component : ModelAddRow,
+                component : component.template,
                 props : {
-                    ...componentProps,
-                    data : response?.data?.model||{}
-                },
-            }
-        };
-    } else if ( response.data?.component ) {
-        return {
-            component : {
-                component : ButtonsModal,
-                props : {
-                    buttonComponent : {
-                        component : response.data.component,
-                        props : componentProps,
-                    },
+                    model : model,
+                    rows : rows,
+                    row : ids.length == 1 ? rows[0] : null,
+                    data : component.data,
+                    request : {},
                 },
             }
         };
@@ -58,7 +41,7 @@ const displayButtonModal = (model, button, response, ids) => {
 
     //This will be binded from modal component
     var successCallback = (modal) => {
-        var requestData = _.cloneDeep(modal.request||{});
+        var requestData = _.cloneDeep(modal.component.props.request||{});
 
         model.buttonAction(button.key, ids, {
             requestData,
