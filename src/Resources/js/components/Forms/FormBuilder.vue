@@ -86,7 +86,7 @@
 </template>
 <script>
 import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
-import SubmitButton from '../Forms/SubmitButton.vue';
+import SubmitButton from '@components/Forms/SubmitButton.vue';
 import ModelLanguageSwitch from '@components/Partials/ModelLanguageSwitch.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 

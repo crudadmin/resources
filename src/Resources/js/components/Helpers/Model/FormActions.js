@@ -544,7 +544,7 @@ var FormActions = (Model) => {
                     eventHub.$emit('onCreate', eventData);
 
                     //Model events
-                    this.fire('onCreate', clonedRow);
+                    this.fire(['create', 'submit', 'onCreate'], clonedRow);
 
                     if ( isParentRow ) {
                         //If form has disabled autoreseting
@@ -590,7 +590,7 @@ var FormActions = (Model) => {
                     eventHub.$emit('onUpdate', eventData);
 
                     //Model events
-                    this.fire('onUpdate', this.getRow());
+                    this.fire(['update', 'onUpdate'], this.getRow());
                 }
             }
         });

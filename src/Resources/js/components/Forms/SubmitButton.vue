@@ -3,7 +3,7 @@
     <button v-if="hasProgress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]">
         <i class="fa fa-spin fa-sync mr-1"></i> {{ sendingButtonText }}
     </button>
-    <button v-else type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">
+    <button v-else type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary" :form="model.getFormId()">
         {{ model.isOpenedRow() ? saveButtonText : sendButtonText }}
     </button>
 </div>

@@ -12,8 +12,10 @@ var ModelBus = (Model) => {
     }
 
     Model.prototype.fire = function(type){
+        type = _.castArray(type);
+
         this.data.events.forEach(event => {
-            if ( event.type === type ){
+            if ( type.includes(event.type) ){
                 event.callback(..._.toArray(arguments).slice(1));
             }
         });

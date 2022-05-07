@@ -1,12 +1,22 @@
 <template>
-    <Modal :modal="modal" :options="{ class : '--wide --modelAddRow' }">
+    <Modal :modal="modal" :options="{ class : '--wide --modelAddRow', actions : [] }">
         <model-builder :model_builder="relationModel"></model-builder>
+
+        <template v-slot:footer>
+            <SubmitButton :model="relationModel" />
+        </template>
     </Modal>
 </template>
 
 <script type="text/javascript">
+import SubmitButton from '@components/Forms/SubmitButton.vue';
+import { mapActions } from 'vuex';
+
 export default {
     props: ['modal', 'model', 'data'],
+
+    components : {SubmitButton},
+
     data() {
         return {};
     },
@@ -24,8 +34,15 @@ export default {
             model.setSettings('pagination.enabled', false);
             model.setSettings('pagination.limit', 0);
 
+            model.on('create', () => {
+                this.closeModal({ modal : this.modal });
+            });
+
             return model;
         },
+    },
+    methods : {
+        ...mapActions('modal', ['closeModal']),
     },
 };
 </script>
