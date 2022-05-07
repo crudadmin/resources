@@ -1,3 +1,4 @@
+import ButtonsModal from '@components/Partials/Modal/ButtonsModal.vue';
 import ModelAddRow from '@components/Partials/Modal/ModelAddRow.vue';
 
 const removeMissingRows = (model, responseRows, ids) => {
@@ -16,11 +17,10 @@ const removeMissingRows = (model, responseRows, ids) => {
 }
 
 const buildComponentData = (button, model, rows, ids, response) => {
-    const props = {
+    const componentProps = {
         model : model,
         rows : rows,
         row : ids.length == 1 ? rows[0] : null,
-        request : {},
         data : response?.data?.component_data||[],
     }
 
@@ -31,7 +31,7 @@ const buildComponentData = (button, model, rows, ids, response) => {
                 name : button.key,
                 component : ModelAddRow,
                 props : {
-                    ...props,
+                    ...componentProps,
                     data : response?.data?.model||{}
                 },
             }
@@ -39,9 +39,13 @@ const buildComponentData = (button, model, rows, ids, response) => {
     } else if ( response.data?.component ) {
         return {
             component : {
-                name : button.key,
-                component : response.data.component,
-                props,
+                component : ButtonsModal,
+                props : {
+                    buttonComponent : {
+                        component : response.data.component,
+                        props : componentProps,
+                    },
+                },
             }
         };
     }
@@ -54,10 +58,7 @@ const displayButtonModal = (model, button, response, ids) => {
 
     //This will be binded from modal component
     var successCallback = (modal) => {
-        var requestData = {};
-        if ( modal.component && modal.component.request ) {
-            requestData = _.clone(modal.component.request);
-        }
+        var requestData = _.cloneDeep(modal.request||{});
 
         model.buttonAction(button.key, ids, {
             requestData,

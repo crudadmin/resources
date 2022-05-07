@@ -91,7 +91,7 @@ const modal = {
 
                 if ( callback && typeof callback == 'function' ){
                     try {
-                        callback(state.modal);
+                        callback(modal);
                     } catch(e){
                         console.error(e);
                     }

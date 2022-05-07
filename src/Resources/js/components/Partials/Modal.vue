@@ -14,10 +14,6 @@
                     <p v-if="modal.message" v-html="modal.message"></p>
 
                     <slot></slot>
-                    <!-- <component
-                        v-if="getModalComponent"
-                        :is="getModalComponent"
-                        v-bind="modal.component.props||{}" /> -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="closeModal({ modal, callback : modal.close })" v-if="modal.close || modal.type=='success' && !modal.close || !modal.close && !modal.success" data-dismiss="modal">{{ trans('close') }}</button>
@@ -50,10 +46,6 @@
                 </p>
 
                 <slot></slot>
-                <!-- <component
-                    v-if="getModalComponent"
-                    :is="getModalComponent"
-                    v-bind="modal.component.props||{}" /> -->
             </div>
         </div>
     </div>
@@ -69,12 +61,15 @@ export default {
     props : {
         modal : {
             type : Object,
+        },
+        keyName : {
+            type : String,
+            required : false,
         }
     },
 
     data(){
         return {
-            registredComponents : [],
             isVisibleModal : false,
         };
     },
@@ -83,8 +78,6 @@ export default {
         this.registerCloseEvents();
 
         this.setDelayedModalVisibility();
-
-        this.registerModalComponent(this.modal.component);
 
         //We need unblur previoisly clicked element. Because
         //when we have opened multiple modals, and previous button click opened new modal,
@@ -127,25 +120,10 @@ export default {
             return this.modal.toast === true;
         },
         modalName(){
-            return this.modal.key||this.getModalComponent||'modal';
+            return this.keyName||this.modal.key||'modal';
         },
         canRenderModal(){
-            return (this.modal.type || this.modal.component) ? true : false;
-        },
-        getModalComponent(){
-            let component = this.modal.component;
-
-            if ( ! component || !component.name ){
-                return;
-            }
-
-            if ( this.isGlobalComponent(component.component) ){
-                return component.component;
-            }
-
-            if (this.registredComponents.includes(component.name)){
-                return component.name;
-            }
+            return this.modal.type ? true : false;
         },
     },
 
@@ -172,28 +150,6 @@ export default {
                     }
                 }
             });
-        },
-        registerModalComponent(component){
-            if ( component ){
-                var obj;
-
-                try {
-                    obj = this.getComponentObject(component.component);
-
-                    if ( !this.isGlobalComponent(component.component) ) {
-                        obj.name = component.name;
-
-                        this.$options.components[obj.name] = obj;
-
-                        this.registredComponents.push(obj.name);
-                    }
-
-                } catch(error){
-                    console.error('Syntax error in component button component.' + "\n", error);
-
-                    this.modal.component = null;
-                }
-            }
         },
         setDelayedModalVisibility(){
             setTimeout(() => {

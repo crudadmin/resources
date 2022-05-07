@@ -1,17 +1,14 @@
 <template>
-    <div>
+    <Modal :modal="modal">
         <model-builder :model_builder="relationModel"></model-builder>
-    </div>
+    </Modal>
 </template>
 
 <script type="text/javascript">
 export default {
-    props: ['model', 'data'],
+    props: ['modal', 'model'],
     data() {
         return {};
-    },
-    mounted(){
-        console.log(this.model, this.data);
     },
     computed: {
         modelData(){

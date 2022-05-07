@@ -20,7 +20,7 @@ export default {
             return this.modals.map(modal => {
                 return {
                     is : this.isModalWrapper(modal) ? modal.component.component : 'Modal',
-                    modal : modal,
+                    modal,
                     props : {
                         ...(modal.component?.props||{})
                     }
