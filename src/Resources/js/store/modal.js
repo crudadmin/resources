@@ -10,7 +10,16 @@ const defaultModalState = {
     toast : false,
     visible : false,
     class : null,
-    actions : [],
+    actions : [
+        // Example:
+        // {
+        //     name : 'My button',
+        //     class : 'btn-primary',
+        //     callback : (modal) => {},
+        //     enter : true,
+        //     close : false,
+        // }
+    ],
 }
 
 const getModalActions = (modal) => {
@@ -21,7 +30,7 @@ const getModalActions = (modal) => {
         modal.close ||
 
         //Is success modal
-        modal.type=='success' && !modal.close
+        modal.type == 'success' && !modal.close
 
         //Is modal without any action
         || !modal.close && !modal.success

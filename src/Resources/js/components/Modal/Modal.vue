@@ -224,7 +224,7 @@ export default {
                 for ( let i = 0; i < this.actions.length; i++ ) {
                     let action = this.actions[i];
 
-                    if ( prefix in action ) {
+                    if ( prefix in action && action[prefix] ) {
                         this.onActionPress(i, action);
 
                         hasAction = true;
