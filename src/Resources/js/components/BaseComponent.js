@@ -3,7 +3,7 @@ import RequestHelper from './Helpers/RequestHelper';
 
 import RightNavbar from './Partials/RightNavbar.vue';
 import Sidebar from './Sidebar/Sidebar.vue';
-import Modal from './Partials/Modal.vue';
+import ModalWrapper from '@components/Partials/Modal/ModalWrapper.vue';
 
 import { mapState, mapMutations } from 'vuex';
 
@@ -42,7 +42,7 @@ const BaseComponent = (router, store) => {
             }
         },
 
-        components: { Sidebar, RightNavbar, Modal },
+        components: { Sidebar, RightNavbar, ModalWrapper },
 
         created(){
             this.reloadCSRFToken($('meta[name="csrf-token"]')[0].content);

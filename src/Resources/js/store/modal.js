@@ -16,6 +16,8 @@ const modal = {
     namespaced: true,
 
     state: {
+        modals : [],
+
         modal : _.cloneDeep(defaultModalState),
     },
 
@@ -23,26 +25,30 @@ const modal = {
         openModal(state, options){
             const { title, message, type, toast, success, close, component, key } = options;
 
-            state.modal.key = key;
-            state.modal.type = type||'primary';
-            state.modal.toast = toast||false;
-            state.modal.title = title;
-            state.modal.message = message;
-            state.modal.success = success;
-            state.modal.close = close;
-            state.modal.component = component;
-            state.modal.openedAt = new Date().getTime();
-            state.modal.visible = true;
-            state.modal.class = options.class||'';
+            const modal = {
+                key : key,
+                type : type||'primary',
+                toast : toast||false,
+                title : title,
+                message : message,
 
-            return state.modal;
+                success : success,
+                close : close,
+                component : component,
+                openedAt : new Date().getTime(),
+                visible : true,
+                class : options.class||'',
+            };
+
+            state.modals.push(modal);
+
+            return state.modals[state.modals.length - 1];
         },
-        closeModal(state){
-            state.modal = _.cloneDeep(defaultModalState);
+        closeModal(state, modal){
+            let index = _.findIndex(state.modals, { openedAt : modal.openedAt });
+
+            state.modals.splice(index, 1);
         },
-        closeModalWithAnimation(state){
-            state.modal.visible = false;
-        }
     },
 
     actions: {
@@ -77,34 +83,24 @@ const modal = {
                 ...(options||{}),
             });
         },
-        closeModal({state, commit}, { callback }){
-            if ( callback && typeof callback == 'function' ){
-                try {
-                    callback(state.modal);
-                } catch(e){
-                    console.error(e);
-                }
-            }
+        closeModal({state, commit}, { modal, callback, animation = true }){
+            const delay = animation === true ? 250 : 0;
 
-            commit('closeModal');
-        },
-        closeModalWithAnimation({state, commit, dispatch}, options){
-            commit('closeModalWithAnimation');
-
-            let openedAt = state.modal.openedAt;
-
-            //We can close with delay only modal with same opening time.
+            modal.visible = false;
             setTimeout(() => {
-                if ( state.modal.openedAt === openedAt ) {
-                    dispatch('closeModal', options);
+
+                if ( callback && typeof callback == 'function' ){
+                    try {
+                        callback(state.modal);
+                    } catch(e){
+                        console.error(e);
+                    }
                 }
-            }, 250);
+
+                commit('closeModal', modal);
+            }, delay);
         },
     },
-
-    getters: {
-
-    }
 }
 
 export default modal;
