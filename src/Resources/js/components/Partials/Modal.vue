@@ -1,6 +1,6 @@
 <template>
 <div v-if="canShowModal" :data-opened-at="modal.openedAt">
-    <div class="message-modal" v-if="isToast === false" :data-modal="modalName">
+    <div class="message-modal" v-if="isToast === false" :data-modal="modalName" :class="modal.class">
         <div class="modal fade d-block" :class="['modal-'+modalTypeClass, { show : isVisibleModal }]">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -22,7 +22,7 @@
                         :data="modal.component.data" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="closeModalWithAnimation({ callback : modal.close })" v-if="modal.close || modal.type=='success' && !modal.close || !modal.close && !modal.success" :class="{ 'pull-left' : modal.success }" data-dismiss="modal">{{ trans('close') }}</button>
+                    <button type="button" class="btn btn-secondary" @click="closeModalWithAnimation({ callback : modal.close })" v-if="modal.close || modal.type=='success' && !modal.close || !modal.close && !modal.success" data-dismiss="modal">{{ trans('close') }}</button>
                     <button type="button" @click="closeModalWithAnimation({ callback : modal.success })" v-if="modal.success" class="btn btn-primary">{{ trans('accept') }}</button>
                 </div>
             </div>

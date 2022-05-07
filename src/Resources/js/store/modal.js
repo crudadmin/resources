@@ -9,6 +9,7 @@ const defaultModalState = {
     openedAt : null,
     toast : false,
     visible : false,
+    class : null,
 }
 
 const modal = {
@@ -19,7 +20,9 @@ const modal = {
     },
 
     mutations: {
-        openModal(state, { title, message, type, toast, success, close, component, key }){
+        openModal(state, options){
+            const { title, message, type, toast, success, close, component, key } = options;
+
             state.modal.key = key;
             state.modal.type = type||'primary';
             state.modal.toast = toast||false;
@@ -30,6 +33,7 @@ const modal = {
             state.modal.component = component;
             state.modal.openedAt = new Date().getTime();
             state.modal.visible = true;
+            state.modal.class = options.class||'';
 
             return state.modal;
         },

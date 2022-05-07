@@ -1,3 +1,5 @@
+import ModelAddRow from '@components/Partials/Modal/ModelAddRow.vue';
+
 const removeMissingRows = (model, responseRows, ids) => {
     let rows = model.getData('rows');
 
@@ -13,19 +15,39 @@ const removeMissingRows = (model, responseRows, ids) => {
     });
 }
 
+const buildComponentData = (button, model, rows, ids, response) => {
+    const componentData = {
+        name : button.key,
+        model : model,
+        rows : rows,
+        row : ids.length == 1 ? rows[0] : null,
+        request : {},
+    }
+
+    if ( response.data.model ) {
+        return {
+            class : '--modelAddRow',
+            component : {
+                component : ModelAddRow,
+                data : response?.data?.model||{},
+                ...componentData,
+            }
+        };
+    } else if ( response.data?.component ) {
+        return {
+            component : {
+                component : response.data.component,
+                data : response?.data?.component_data||[],
+                ...componentData,
+            }
+        };
+    }
+}
+
 const displayButtonModal = (model, button, response, ids) => {
     //Alert message
     let rows = model.getData('rows').data.filter(item => ids.indexOf(item.id) > -1),
-        component = response.data?.component,
-        modalComponentBuilder = component ? {
-            name : button.key,
-            component : component,
-            model : model,
-            rows : rows,
-            row : ids.length == 1 ? rows[0] : null,
-            request : {},
-            data : response?.data?.component_data||[],
-        } : null;
+        modalBuilder = response.data ? buildComponentData(button, model, rows, ids, response) : {};
 
     //This will be binded from modal component
     var successCallback = (modal) => {
@@ -51,8 +73,8 @@ const displayButtonModal = (model, button, response, ids) => {
         toast : response.toast,
         success : hasAcceptableQuestion ? successCallback : null,
         close : hasAcceptableQuestion ? true : null,
-        component : modalComponentBuilder,
-        key : button.key
+        key : button.key,
+        ...modalBuilder,
     });
 }
 
@@ -157,7 +179,7 @@ var ModelButtonActions = (Model) => {
             }
 
             //If type, or custom component has been returned, we need display modal.
-            if ( response.type || response.data?.component ){
+            if ( response.type || response.data?.component || response.data?.model ){
                 displayButtonModal(this, button, response, ids);
             }
         } catch (error){

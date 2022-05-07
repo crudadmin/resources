@@ -75,12 +75,7 @@
 
                 <div class="box-footer__actions" v-if="canUpdateForm">
                     <div class="box-footer__right">
-                        <button v-if="hasProgress" type="button" data-action-type="updating" :class="['btn', 'btn-' + ( model.isOpenedRow() ? 'success' : 'primary')]">
-                            <i class="fa fa-spin fa-sync mr-1"></i> {{ sendingButtonText }}
-                        </button>
-                        <button v-if="!hasProgress" type="submit" :data-action-type="model.isOpenedRow() ? 'update' : 'create'" name="submit" class="btn btn-primary">
-                            {{ model.isOpenedRow() ? saveButtonText : sendButtonText }}
-                        </button>
+                        <SubmitButton :model="model" />
                     </div>
                 </div>
             </div>
@@ -91,6 +86,7 @@
 </template>
 <script>
 import FormTabsBuilder from '../Forms/FormTabsBuilder.vue';
+import SubmitButton from '../Forms/SubmitButton.vue';
 import ModelLanguageSwitch from '@components/Partials/ModelLanguageSwitch.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
@@ -100,7 +96,7 @@ export default {
     props : ['model', 'rows', 'gettext_editor'],
 
     components: {
-        FormTabsBuilder, ModelLanguageSwitch, CustomComponents
+        FormTabsBuilder, ModelLanguageSwitch, CustomComponents, SubmitButton
     },
 
     data(){
@@ -178,12 +174,6 @@ export default {
     },
 
     computed: {
-        progress(){
-            return this.model.getData('progress');
-        },
-        hasProgress(){
-            return _.isNumber(this.progress) || this.progress === true;
-        },
         row(){
             return this.model.getRow();
         },
@@ -263,18 +253,11 @@ export default {
         newRowTitle(){
             return this.$parent.newRowTitle();
         },
-        saveButtonText(){
-            return this.model.getSettings('buttons.update') || this.trans('save');
-        },
-        sendButtonText(){
-            return this.model.getSettings('buttons.insert') || this.trans('send');
-        },
-        sendingButtonText(){
-            let text = this.model.isOpenedRow() ? this.trans('saving') : this.trans('sending');
-
-            return text+(_.isNumber(this.progress) ? ' ('+this.progress+'%)' : '');
-        },
         canShowFooter(){
+            if ( this.model.isSettingDisabled('form.footer') ){
+                return false;
+            }
+
             return this.canUpdateForm || this.model.getComponents('form-footer').length > 0;
         },
         canUpdateForm(){
