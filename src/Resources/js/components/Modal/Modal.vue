@@ -8,7 +8,7 @@
                         <slot name="header"></slot>
                         <h4 class="modal-title">{{ modal.title }}</h4>
 
-                        <button type="button" @click="closeModal({ modal, callback : modal.close })" class="close" ref="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" @click="runModalCloser(true)" class="close" ref="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
 
@@ -36,7 +36,7 @@
 
     <div v-else class="adminToasts">
         <div class="toast" :class="['--'+modalTypeClass, { show : isVisibleModal }]" role="alert" aria-live="assertive" aria-atomic="true" :key="modal.openedAt">
-            <button type="button" @click="closeModal({ modal, callback : modal.close })" class="close" data-dismiss="toast" aria-label="Close">
+            <button type="button" @click="runModalCloser(true)" class="close" data-dismiss="toast" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
 
@@ -102,13 +102,22 @@ export default {
 
     destroyed(){
         $(window).off('keyup', this.$modalEvents);
+
+        //If toast has been removed, we need clear timeouts
+        if ( this.closeTimeout ){
+            clearTimeout(this.closeTimeout);
+        }
+
+        if ( this.delayedModalVisibilityTimeout ){
+            clearTimeout(this.delayedModalVisibilityTimeout);
+        }
     },
 
     watch : {
         'modal.visible'(state){
             this.setDelayedModalVisibility();
         },
-        'isVisibleModal'(state){
+        isVisibleModal(state){
             if ( state === true ){
                 this.tryAutoClose();
             }
@@ -141,7 +150,7 @@ export default {
             return this.modal.type ? true : false;
         },
         actions(){
-            return this.options.actions||modal.actions||[];
+            return this.options.actions||this.modal.actions||[];
         }
     },
 
@@ -158,19 +167,20 @@ export default {
                     }
 
                     //Enter
-                    if ( e.keyCode == 13 ) {
-                        this.closeModal({ modal : this.modal, callback : this.modal.success || this.modal.close });
+                    if ( e.keyCode == 13 && this.isToast === false ) {
+                        this.runModalCloser(false, ['enter', 'success', 'close']);
                     }
 
                     //Escape
                     else if ( e.keyCode == 27 ) {
-                        this.closeModal({ modal : this.modal, callback : this.modal.close });
+                        //Run only closable actions with esc
+                        this.runModalCloser(false);
                     }
                 }
             });
         },
         setDelayedModalVisibility(){
-            setTimeout(() => {
+            this.delayedModalVisibilityTimeout = setTimeout(() => {
                 this.isVisibleModal = this.modal.visible;
             }, 50);
         },
@@ -183,7 +193,7 @@ export default {
             //Create auto close timeout
             if ( this.isToast ){
                 this.closeTimeout = setTimeout(() => {
-                    this.closeModal({ modal : this.modal, callback : this.modal.close });
+                    this.runModalCloser(true);
                 }, 4000)
             }
         },
@@ -201,6 +211,32 @@ export default {
             });
 
             this.actionInProgress = null;
+        },
+        /**
+         * Try run actions with close/success/enter states in given order.
+         * If no action with this type could not be found, we can close modal without action, but only in force state.
+         */
+        runModalCloser(force = false, actionPrefixes = ['close']){
+            let hasAction = false;
+
+            mainloop:
+            for ( var prefix of actionPrefixes ){
+                for ( let i = 0; i < this.actions.length; i++ ) {
+                    let action = this.actions[i];
+
+                    if ( prefix in action ) {
+                        this.onActionPress(i, action);
+
+                        hasAction = true;
+
+                        break mainloop;
+                    }
+                };
+            }
+
+            if ( hasAction === false && force === true ){
+                this.closeModal({ modal : this.modal });
+            }
         }
     }
 }

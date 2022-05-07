@@ -30,6 +30,7 @@ const getModalActions = (modal) => {
             name : $app.trans('close'),
             class : 'btn-secondary',
             callback : modal.close,
+            close : true,
         });
     }
 
@@ -38,6 +39,7 @@ const getModalActions = (modal) => {
             name : $app.trans('accept'),
             class : 'btn-primary',
             callback : modal.success,
+            enter : true,
         });
     }
 
