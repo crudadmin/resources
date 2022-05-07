@@ -16,29 +16,32 @@ const removeMissingRows = (model, responseRows, ids) => {
 }
 
 const buildComponentData = (button, model, rows, ids, response) => {
-    const componentData = {
-        name : button.key,
+    const props = {
         model : model,
         rows : rows,
         row : ids.length == 1 ? rows[0] : null,
         request : {},
+        data : response?.data?.component_data||[],
     }
 
     if ( response.data.model ) {
         return {
-            class : '--modelAddRow',
+            class : '--modelAddRow --wide',
             component : {
+                name : button.key,
                 component : ModelAddRow,
-                data : response?.data?.model||{},
-                ...componentData,
+                props : {
+                    ...props,
+                    data : response?.data?.model||{}
+                },
             }
         };
     } else if ( response.data?.component ) {
         return {
             component : {
+                name : button.key,
                 component : response.data.component,
-                data : response?.data?.component_data||[],
-                ...componentData,
+                props,
             }
         };
     }

@@ -46,14 +46,14 @@ export default {
                     continue;
                 }
 
-                this.registerComponents(layouts);
+                this.registerLayouts(layouts);
 
                 if ( layout.type == 'blade' ){
                     $app.runInlineScripts(layout.view);
                 }
             }
         },
-        registerComponents(layouts){
+        registerLayouts(layouts){
             for ( var i = 0; i < layouts.length; i++ ) {
                 var name = layouts[i].name,
                     data = layouts[i].view,

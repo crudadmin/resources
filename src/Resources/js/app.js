@@ -29,6 +29,7 @@ import SiteTreeBuilder from '@components/Extensions/SiteTreeBuilder/SiteTreeBuil
 import ModelBuilder from '@components/Views/ModelBuilder.vue';
 import VueChosen from '@components/Partials/VueChosen.vue';
 import ButtonsAction from '@components/Partials/ButtonsAction.vue';
+import Modal from '@components/Partials/Modal.vue';
 
 //Router
 import Router from './router.js';
@@ -40,6 +41,7 @@ Vue.component('vue-chosen', VueChosen);
 Vue.component('SiteTreeBuilder', SiteTreeBuilder);
 Vue.component('model-builder', ModelBuilder);
 Vue.component('buttons-action', ButtonsAction);
+Vue.component('Modal', Modal);
 
 //Global methods
 Vue.mixin(globalVueMixins);

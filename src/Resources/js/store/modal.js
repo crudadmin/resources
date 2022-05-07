@@ -101,6 +101,14 @@ const modal = {
             }, delay);
         },
     },
+
+    getters : {
+        isModalActive : (state, getters) => modal => {
+            let index = _.findIndex(state.modals, { openedAt : modal.openedAt });
+
+            return index === state.modals.length - 1;
+        }
+    }
 }
 
 export default modal;

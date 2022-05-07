@@ -10,6 +10,9 @@ export default {
     data() {
         return {};
     },
+    mounted(){
+        console.log(this.model, this.data);
+    },
     computed: {
         modelData(){
             return this.data;
@@ -32,8 +35,6 @@ export default {
 
 <style lang="scss">
 [data-modal].--modelAddRow .modal-dialog {
-    max-width: 100rem;
-
     [data-form='contracts_states'] .box {
         box-shadow: none !important;
     }

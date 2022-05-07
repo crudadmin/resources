@@ -63,7 +63,7 @@
         </div>
         <!-- ./wrapper -->
 
-        <modal-wrapper></modal-wrapper>
+        <modal-renderer></modal-renderer>
 
         <?php if (Admin::isDev() == false) { ?>
         <!-- REQUIRED JS SCRIPTS -->

@@ -1,3 +1,5 @@
+import HistoryModal from '@components/Partials/Modal/HistoryModal.vue';
+
 var RowActions = (Model) => {
     Model.prototype.getRow = function(key){
         return this.getData('row');
@@ -136,8 +138,21 @@ var RowActions = (Model) => {
                 });
             }
 
+
             this.getData('history').id = row.id;
             this.getData('history').rows = data;
+
+            $app.openModal({
+                title : $app.trans('history.changes'),
+                class : '--wide --history',
+                component : {
+                    name : 'History',
+                    component : HistoryModal,
+                    props : {
+                        model : this,
+                    },
+                }
+            });
         } catch (response){
             $app.errorResponseLayer(response);
         }
@@ -174,7 +189,7 @@ var RowActions = (Model) => {
             return this.setRow(null);
         }
 
-        var render = response => {
+        var render = async response => {
             for ( var key in response ){
                 row[key] = response[key];
             }
@@ -206,7 +221,7 @@ var RowActions = (Model) => {
         this.setData('loadingRow', row.id);
 
         if ( data ) {
-            render(data);
+            await render(data);
         } else {
             try {
                 let response = await $app.$http.get($app.requests.get('show', {
@@ -225,7 +240,7 @@ var RowActions = (Model) => {
                     data = data.row;
                 }
 
-                render(data);
+                await render(data);
             } catch (response){
                 $app.errorResponseLayer(response);
             }

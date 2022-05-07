@@ -121,10 +121,6 @@
 
         <custom-components :model="model" type="bottom" />
 
-        <history
-            v-if="model.getData('history').id"
-            :model="model">
-        </history>
         <gettext-extension
             v-if="gettext_editor"
             :gettext_editor="gettext_editor"
@@ -139,7 +135,6 @@
     import ModelRowsBuilder from '../Rows/ModelRowsBuilder.vue';
     import GettextExtension from '../Partials/GettextExtension.vue';
     import Search from '../Partials/Search.vue';
-    import History from '../Partials/History.vue';
     import { mapMutations } from 'vuex';
     import {defaultSearchQuery} from '../Helpers/Model/ModelData';
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
@@ -149,7 +144,7 @@
 
         name : 'model-builder',
 
-        components : { FormBuilder, ModelRowsBuilder, CustomComponents, GettextExtension, Search, History },
+        components : { FormBuilder, ModelRowsBuilder, CustomComponents, GettextExtension, Search },
 
         data(){
             return {
