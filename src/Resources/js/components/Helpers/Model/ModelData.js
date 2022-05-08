@@ -130,6 +130,9 @@ const freshModelData = (rawModel) => {
         events : [],
 
         mutators : [],
+
+        //Additional form request data
+        formRequest : {},
     }
 }
 

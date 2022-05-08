@@ -304,10 +304,17 @@ var FormActions = (Model) => {
                     : this.getData('langid');
     }
 
+    Model.prototype.setAdditionalFormData = function (data){
+        this.setData('formRequest', data);
+
+        return this;
+    }
+
     Model.prototype.getAdditionalFormData = function(){
         //Data for request
         var data = {
             _model : this.slug,
+            ...(this.getData('formRequest')||{}),
         };
 
         let parentRow = this.getData('parentRow');

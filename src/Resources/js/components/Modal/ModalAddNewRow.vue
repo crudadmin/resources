@@ -1,5 +1,5 @@
 <template>
-    <Modal :modal="modal" :options="{ class : '--wide --modelAddRow', actions : [] }">
+    <Modal :modal="modal" :options="{ class : '--wide --modelAddRow', actions : [], escClose : true }">
         <model-builder :model_builder="relationModel"></model-builder>
 
         <template v-slot:footer>
@@ -13,10 +13,9 @@ import SubmitButton from '@components/Forms/SubmitButton.vue';
 import { mapActions } from 'vuex';
 
 export default {
-    props: ['modal', 'model', 'data'],
+    props: ['modal', 'model', 'data', 'rows'],
 
     components : {SubmitButton},
-
     data() {
         return {};
     },
@@ -34,7 +33,11 @@ export default {
             model.setSettings('pagination.enabled', false);
             model.setSettings('pagination.limit', 0);
 
+            model.setAdditionalFormData(this.getFormData(model));
+
             model.on('create', () => {
+                this.model.resetChecked();
+
                 this.closeModal({ modal : this.modal });
             });
 
@@ -43,6 +46,15 @@ export default {
     },
     methods : {
         ...mapActions('modal', ['closeModal']),
+        getFormData(model){
+            let obj = {};
+
+            this.rows.forEach((row, i) => {
+                obj[model.foreign_column[this.model.table]+'['+i+']'] = row.id;
+            });
+
+            return obj;
+        },
     },
 };
 </script>

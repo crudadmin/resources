@@ -77,6 +77,7 @@ export default {
                     class : '',
                     key : '',
                     actions : null,
+                    escClose : false,
                 }
             },
         },
@@ -173,8 +174,12 @@ export default {
 
                     //Escape
                     else if ( e.keyCode == 27 ) {
-                        //Run only closable actions with esc
-                        this.runModalCloser(false);
+                        this.runModalCloser(
+                            //If escClose is enabled, we will allow close modal with esc by force.
+                            //(without any closing action). Otherwise when no close action is present,
+                            //close will not be performed.
+                            this.options.escClose === true ? true : false
+                        );
                     }
                 }
             });
