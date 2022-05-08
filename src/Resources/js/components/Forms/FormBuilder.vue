@@ -2,7 +2,7 @@
     <!-- Horizontal Form -->
     <component ref="form" :is="formType" method="post" action="" :id="model.getFormId()" :data-form="model.slug" @submit.prevent="model.saveForm($event)" class="form crudadmin-form" :data-state="model.isOpenedRow() ? 'update' : 'create'">
         <div class="box" :class="{ 'box--active' : isActive }">
-            <div data-header class="box-header" v-show="isBoxHeaderVisible" :class="{ '--opened' : model.isOpenedRow() }">
+            <div data-header class="box-header" v-show="model.isSettingDisabled('form.header') === false" :class="{ '--opened' : model.isOpenedRow(), '--forceVisible' : isBoxHeaderPermantlyVisible }">
                 <div class="box-header__actions">
                     <div class="box-header__left">
                         <h3 class="box-header__title">
@@ -297,13 +297,9 @@ export default {
 
             return false;
         },
-        isBoxHeaderVisible(){
+        isBoxHeaderPermantlyVisible(){
             if ( this.model.getSettings('header.visiblePermanently', false) === true ){
                 return true;
-            }
-
-            if ( this.model.isSettingDisabled('form.header') ){
-                return false;
             }
 
             return this.model.hasLocaleFields() || this.canShowGettext || (this.model.isOpenedRow() && this.model.history);
