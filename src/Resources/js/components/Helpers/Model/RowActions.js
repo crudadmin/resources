@@ -56,9 +56,9 @@ var RowActions = (Model) => {
             table;
 
         //Add foreign columns
-        if ( this.getData('parentrow') && this.foreign_column != null ) {
+        if ( this.getData('parentRow') && this.foreign_column != null ) {
             if ( table = this.foreign_column[this.getParentTableName()] ) {
-                row[table] = this.getData('parentrow').id;
+                row[table] = this.getData('parentRow').id;
             }
         }
 

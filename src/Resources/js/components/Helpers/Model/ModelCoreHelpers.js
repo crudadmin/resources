@@ -1,9 +1,9 @@
 var ModelCoreHelpers = (Model) => {
     Model.prototype.hasParentFormModel = function(){
-        let hasparentmodel = this.getData('hasparentmodel');
+        let hasParentModel = this.getData('hasParentModel');
 
         //If parent model builder does not exists, return true
-        return _.isNil(hasparentmodel) ? true : hasparentmodel;
+        return _.isNil(hasParentModel) ? true : hasParentModel;
     }
 
     Model.prototype.getParentTableName = function(force){
@@ -24,7 +24,7 @@ var ModelCoreHelpers = (Model) => {
     };
 
     Model.prototype.getParentRowId = function(){
-        var row = this.getData('parentrow');
+        var row = this.getData('parentRow');
 
         if ( !row || !( 'id' in row ) ){
             return null;

@@ -47,8 +47,8 @@
                             v-if="allowRelation && relationModel"
                             :key="modelBuilderId"
                             :langid="langid"
-                            :hasparentmodel="getRelationModelParent"
-                            :parentrow="getRelationRow"
+                            :hasParentModel="getRelationModelParent"
+                            :parentRow="getRelationRow"
                             :scopes="canAddScopes"
                             :model_builder="relationModel">
                         </model-builder>

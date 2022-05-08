@@ -131,7 +131,7 @@
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentrow', 'loadWithRows', 'hasparentmodel', 'parentActiveGridSize', 'scopes'],
+        props : ['model_builder', 'langid', 'ischild', 'parentRow', 'loadWithRows', 'hasParentModel', 'parentActiveGridSize', 'scopes'],
 
         name : 'model-builder',
 
@@ -168,8 +168,8 @@
             this.model.setRow(this.model.emptyRowInstance());
 
             //Set model properties
-            this.model.setData('hasparentmodel', this.hasparentmodel);
-            this.model.setData('parentrow', this.parentrow);
+            this.model.setData('hasParentModel', this.hasParentModel);
+            this.model.setData('parentRow', this.parentRow);
 
             this.model.setData('loadWithRows', this.loadWithRows);
             this.model.setData('langid', this.langid);
@@ -240,11 +240,11 @@
                     this.sendRowsData();
                 }
             },
-            parentrow(row, oldrow){
+            parentRow(row, oldrow){
                 //When parent row has been changed, then load children rows
                 if ( ! _.isEqual(row, oldrow) && (row.id != oldrow.id || this.model.isInParent()) ){
                     //We need rewrite parent model if has been changed
-                    this.model.setData('parentrow', this.parentrow);
+                    this.model.setData('parentRow', this.parentRow);
 
                     //If parent form has been changed, we need reset actual form
                     this.model.resetForm();

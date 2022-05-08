@@ -95,11 +95,11 @@ const freshModelData = (rawModel) => {
 
         //Check if model has parent row. For example when we are using filterBy in select
         //we need dynamically set parent of model builder
-        hasparentmodel : null,
+        hasParentModel : null,
 
         //Assigned parent row. May be parent model, or imaginary parent row
         //only to filter displayed rows
-        parentrow : null,
+        parentRow : null,
 
         //Search data
         search : {
