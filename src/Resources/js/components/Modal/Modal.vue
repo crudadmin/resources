@@ -18,7 +18,7 @@
 
                         <slot></slot>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer" v-if="hasFooter">
                         <slot name="footer"></slot>
 
                         <button
@@ -151,7 +151,19 @@ export default {
             return this.modal.type ? true : false;
         },
         actions(){
+            if ( this.options.actions === false ){
+                return [];
+            }
+
             return this.options.actions||this.modal.actions||[];
+        },
+        hasFooter(){
+            if ( this.options.actions === false ){
+                //TODO: check slots
+                return false;
+            }
+
+            return true;
         }
     },
 

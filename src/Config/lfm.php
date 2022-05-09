@@ -33,7 +33,9 @@ return [
     // Then you can rewrite userField function in App\Handler\ConfigHandler class
     // And set 'user_field' to App\Handler\ConfigHandler::class
     // Ex: The private folder of user will be named as the user id.
-    'private_folder_name'      => UniSharp\LaravelFilemanager\Handlers\ConfigHandler::class,
+    'private_folder_name'      => function(){
+        return admin()->getKey();
+    },
 
     'allow_shared_folder'      => true,
 
@@ -63,6 +65,18 @@ return [
         'image' => [
             'folder_name'  => 'images',
             'startup_view' => 'grid',
+            'max_size'     => 50000, // size in KB
+            'valid_mime'   => [
+                'image/jpeg',
+                'image/pjpeg',
+                'image/png',
+                'image/gif',
+                'image/svg+xml',
+            ],
+        ],
+        'model' => [
+            'folder_name'  => null, //will be calculated automatically
+            'startup_view' => 'list',
             'max_size'     => 50000, // size in KB
             'valid_mime'   => [
                 'image/jpeg',

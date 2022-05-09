@@ -23,7 +23,8 @@ mixConfig.setMixConfig(mix, ({ paths, publicPath }) => {
     mix.webpackConfig({
         resolve: {
             alias: {
-                '@': path.resolve(__dirname, 'src/Resources/js'),
+                '@': path.resolve(__dirname, 'src/Resources/'),
+                '@sass': path.resolve(__dirname, 'src/Resources/sass'),
                 '@components': path.resolve(__dirname, 'src/Resources/js/components'),
             }
         }

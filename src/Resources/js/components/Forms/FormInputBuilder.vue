@@ -130,6 +130,22 @@
             :depth_level="depth_level">
         </file-field>
 
+        <uploader-field
+            v-if="!hasComponent && isUploader"
+            :id="getId"
+            :model="model"
+            :field_name="getName"
+            :field_key="getFieldName"
+            :field_key_original="field_key"
+            :field="field"
+            :value="getValueOrDefault"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :langslug="langslug"
+            :depth_level="depth_level">
+        </uploader-field>
+
         <select-field
             v-if="!hasComponent && isSelect"
             :id="getId"
@@ -218,12 +234,13 @@
     import RadioField from '../Fields/RadioField';
     import ColorField from '../Fields/ColorField';
     import PhoneField from '../Fields/PhoneField';
+    import UploaderField from '../Fields/UploaderField';
 
     export default {
         name: 'form-input-builder',
         props: ['model', 'field', 'field_key', 'index', 'confirmation', 'inputlang', 'langslug'],
 
-        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField, ColorField, PhoneField },
+        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField, ColorField, PhoneField, UploaderField },
 
         created(){
             if ( this.field.component ) {
@@ -440,6 +457,10 @@
             isFile()
             {
                 return this.field.type == 'file';
+            },
+            isUploader()
+            {
+                return this.field.type == 'uploader';
             },
             isPassword()
             {

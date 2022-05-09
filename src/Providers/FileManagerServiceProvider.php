@@ -2,6 +2,7 @@
 
 namespace Admin\Resources\Providers;
 
+use Admin\Resources\Helpers\Lfm\ModelMiddleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +21,7 @@ class FileManagerServiceProvider extends ServiceProvider
 
         $this->mergeConfigs('lfm');
 
-        Route::group(['prefix' => 'admin/filemanager', 'middleware' => ['web', 'ckfinder']], function () {
+        Route::group(['prefix' => 'admin/filemanager', 'middleware' => ['web', 'ckfinder', ModelMiddleware::class]], function () {
             \UniSharp\LaravelFilemanager\Lfm::routes();
         });
     }
