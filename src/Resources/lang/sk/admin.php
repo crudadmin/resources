@@ -60,7 +60,7 @@ return [
     'download-file' => _('Stiahnuť súbor'),
 
     'history.changes' => _('História zmien'),
-    'history.who' => _('Zmeny vykonal'),
+    'history.who' => _('Vykonal'),
     'history.count' => _('Počet zmien'),
     'history.date' => _('Dátum zmeny'),
     'history.system' => _('Systém'),

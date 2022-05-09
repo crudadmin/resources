@@ -5,26 +5,30 @@
                 <tr>
                     <th class="td-id">{{ trans('number') }}</th>
                     <th>{{ trans('history.who') }}</th>
+                    <th>{{ __('Akcia') }}</th>
                     <th>{{ trans('history.count') }}</th>
                     <th>{{ trans('history.date') }}</th>
                     <th class="th-history-buttons"></th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, $index) in sortedHistory" :key="item.id" :data-history-id="item.id">
+                <tr v-for="(row, $index) in sortedHistory" :key="row.id" :data-history-id="row.id">
                     <td class="td-id">{{ history.rows.length - $index }}</td>
-                    <td>{{ item.user ? item.user.username : trans('history.system') }}</td>
+                    <td>{{ row.user ? row.user.username : trans('history.system') }}</td>
+                    <td>{{ row.actionName }}</td>
                     <td data-changes-length>
-                        <span data-toggle="tooltip" title="" :data-original-title="changedFields(item)">{{ item.changed_fields.length }} <i class="fa fa-eye"></i></span>
+                        <span data-toggle="tooltip" title="" :data-original-title="changedFields(row)" v-if="isEditableAction(row)">
+                            {{ row.changedFields.length }} <i class="fa fa-eye"></i>
+                        </span>
                     </td>
-                    <td>{{ date(item.created_at) }}</td>
+                    <td>{{ date(row.created_at) }}</td>
                     <td>
                         <div class="history-actions">
-                            <button type="button" @click="applyChanges(item)" class="btn btn-sm btn-success" :class="{ 'enabled-history' : history.history_id == item.id }" data-toggle="tooltip" :title="trans('history.show')">
+                            <button v-if="isEditableAction(row)" type="button" @click="applyChanges(row)" class="btn btn-sm btn-success" :class="{ 'enabled-history' : history.history_id == row.id }" data-toggle="tooltip" :title="trans('history.show')">
                                 <i class="fa fa-eye"></i>
                             </button>
 
-                            <button type="button" v-if="canDeleteHistoryItem(item, $index)" @click="deleteHistoryRow(item)" class="btn btn-sm btn-danger" data-toggle="tooltip" :title="_('Zmazať zmenu z histórie')">
+                            <button type="button" v-if="canDeleteHistoryItem(row, $index)" @click="deleteHistoryRow(row)" class="btn btn-sm btn-danger" data-toggle="tooltip" :title="_('Zmazať zmenu z histórie')">
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </div>
@@ -66,7 +70,7 @@ export default {
             return this.getFreshModel('models_histories').hasAccess('delete');
         },
         async applyChanges(item){
-            this.history.fields = item.changed_fields;
+            this.history.fields = item.changedFields;
             this.history.history_id = item.id;
 
             await this.model.selectRow(
@@ -105,8 +109,8 @@ export default {
         changedFields(items){
             var changes = [];
 
-            for ( var k in items.changed_fields ) {
-                var key = items.changed_fields[k];
+            for ( var k in items.changedFields ) {
+                var key = items.changedFields[k];
 
                 if ( key in this.model.fields ) {
                     changes.push(this.model.fields[key].name);
@@ -116,6 +120,9 @@ export default {
             }
 
             return changes.join(', ');
+        },
+        isEditableAction(row){
+            return ['insert', 'update'].includes(row.action);
         }
     },
 }
@@ -125,12 +132,10 @@ export default {
 .message-modal {
     &[data-modal].--history {
         .modal-dialog {
-            max-width: 70rem;
-
             table {
                 background: white;
                 width: 100%;
-                max-width: 70rem;
+                max-width: 100%;
                 margin-bottom: 0;
             }
 
@@ -141,6 +146,7 @@ export default {
 
             .history-actions {
                 display: flex;
+                justify-content: flex-end;
 
                 button:not(:last-child) {
                     margin-right: 3px;

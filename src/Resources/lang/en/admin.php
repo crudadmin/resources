@@ -62,7 +62,7 @@ return [
     'download-file' => 'Download file',
 
     'history.changes' => 'History of Changes',
-    'history.who' => 'Changes done',
+    'history.who' => 'By',
     'history.count' => 'Number of Changes',
     'history.date' => 'Change date',
     'history.system' => 'System',

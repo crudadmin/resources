@@ -74,7 +74,6 @@ export default {
 
     data(){
         return {
-            hidden: ['language_id', '_order', 'slug', 'published_at', 'updated_at', 'created_at'],
             autoSize : false,
         };
     },
@@ -227,6 +226,19 @@ export default {
         },
         hasIndicatorInTable(){
             return (this.sortedRows[0]||{}).$indicator ? true : false;
+        },
+        hidden(){
+            return ['language_id', '_order', 'slug', 'published_at', 'updated_at', 'created_at'].filter(column => {
+                if ( this.model.fields[column]?.column_visible === true ){
+                    return false;
+                }
+
+                if ( this.model.getSettings('columns.'+column+'.hidden') == true ){
+                    return false;
+                }
+
+                return true;
+            });
         }
     },
 
