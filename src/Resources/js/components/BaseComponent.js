@@ -1,7 +1,7 @@
 import config from '../config';
 import RequestHelper from './Helpers/RequestHelper';
 
-import RightNavbar from './Partials/RightNavbar.vue';
+import AppHeader from './Partials/AppHeader.vue';
 import Sidebar from './Sidebar/Sidebar.vue';
 import ModalRenderer from '@components/Modal/ModalRenderer.vue';
 
@@ -42,7 +42,7 @@ const BaseComponent = (router, store) => {
             }
         },
 
-        components: { Sidebar, RightNavbar, ModalRenderer },
+        components: { AppHeader, Sidebar, ModalRenderer },
 
         created(){
             this.reloadCSRFToken($('meta[name="csrf-token"]')[0].content);
@@ -65,9 +65,6 @@ const BaseComponent = (router, store) => {
         },
 
         methods : {
-            ...mapMutations('header', [
-                'toggleMobileMenu',
-            ]),
             setDefaultRoute(){
                 if ( router.currentRoute.name == 'dashboard' ) {
                     let defaultModel;
