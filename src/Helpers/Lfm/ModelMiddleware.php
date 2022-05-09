@@ -71,6 +71,10 @@ class ModelMiddleware
         $data = config('lfm.folder_categories.model');
         $data['folder_name'] .= $this->model->getStorageFilePath($field).'/'.(Str::isUuid($rowId) ? 'temp/'.$rowId : $rowId);
 
+        if ( method_exists($this->model, 'setFieldUploader') ){
+            $data = $this->model->setFieldUploader($data, $field, $rowId);
+        }
+
         $config = array_merge(config('lfm'), [
             'disk' => $this->model->getFieldDiskName($field),
             'allow_private_folder' => false,

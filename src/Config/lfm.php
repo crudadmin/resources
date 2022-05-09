@@ -84,6 +84,8 @@ return [
                 'image/png',
                 'image/gif',
                 'image/svg+xml',
+                'application/pdf',
+                'text/plain',
             ],
         ],
     ],

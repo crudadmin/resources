@@ -9,7 +9,7 @@
         <input type="hidden" :name="field_key" :value="uuid">
 
         <div class="file-manager" @click="openManager">
-            <span>{{ __('Otvoriť manažéra súborov') }}</span>
+            <span>{{ __('Otvoriť správcu súborov') }}</span>
         </div>
     </div>
 </template>
