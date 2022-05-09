@@ -32,6 +32,7 @@ export default {
             model.setSettings('table.disabled', true);
             model.setSettings('pagination.enabled', false);
             model.setSettings('pagination.limit', 0);
+            model.setData('buttonRows', this.rows);
 
             model.setAdditionalFormData(this.getFormData(model));
 
