@@ -9,7 +9,11 @@
 
             <!-- Logo -->
             <a href="#/dashboard" class="logo">
-                <slot name="logo"></slot>
+                <AppLogo v-if="isGlobalComponent('AppLogo')" :user="user">
+                    <slot name="logo"></slot>
+                </AppLogo>
+
+                <slot name="logo" v-else></slot>
             </a>
         </nav>
 

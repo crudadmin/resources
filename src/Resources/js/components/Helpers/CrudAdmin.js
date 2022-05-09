@@ -4,8 +4,9 @@ import fontAwesomeMigrator from '../Helpers/FontAwesomeMigrator';
 const CrudAdmin = {
     computed : {
         getAvatar(){
-            if ( this.user && this.user.avatar )
-                return this.user.avatar;
+            if ( this.user && this.user.avatarThumbnail ) {
+                return this.user.avatarThumbnail;
+            }
 
             return this.$http.options.root + '/../'+window.crudadmin.path+'/dist/img/avatar5.png';
         }
