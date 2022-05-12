@@ -523,20 +523,19 @@ var Pencils = {
 
         return hidden;
     },
-    setPencilZindex(element, pencil){
-        var maxZindex = 'auto';
+    setPencilZindex(origElement, pencil){
+        var element = origElement,
+            maxZindex = 'auto';
 
-        while(element.parentElement) {
+        do {
             var zIndex = element.nodeType == 1 ? parseInt(window.document.defaultView.getComputedStyle(element).zIndex) : NaN;
-
-            element = element.parentElement;
 
             if ( isNaN(zIndex) || zIndex < 0 ) {
                 continue;
             }
 
             maxZindex = zIndex;
-        }
+        } while(element = element.parentElement)
 
         pencil.style.zIndex = maxZindex;
     },
