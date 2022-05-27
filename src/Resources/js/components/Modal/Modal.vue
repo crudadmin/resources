@@ -64,7 +64,6 @@ import { mapState, mapActions, mapGetters } from 'vuex';
 
 export default {
     name : 'Modal',
-
     props : {
         modal : {
             type : Object,

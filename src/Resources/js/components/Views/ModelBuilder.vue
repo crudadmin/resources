@@ -88,7 +88,7 @@
             <div class="admin-model__body">
                 <div class="row grid-table" :class="{ 'grid-fullsize' : model.activeGridSize() == 0 }">
                     <!-- left column -->
-                    <div class="col--rows col-12" :class="['col-lg-'+(12-(12-model.activeGridSize())), { '--noMargin' : !model.canShowForm() }]" v-show="model.canShowRows()">
+                    <div class="col--rows col-12" :class="['col-lg-'+(12-(12-model.activeGridSize())), { '--noMargin' : !model.canShowForm() }]" v-show="canDisplayRowsLayout">
                         <custom-components :model="model" type="table-before" />
 
                         <model-rows-builder
@@ -499,6 +499,18 @@
             languages(){
                 return this.$root.languages;
             },
+            canDisplayRowsLayout(){
+                if ( this.model.canShowRows() ){
+                    if ( this.model.isSettingEnabled('table', true) ) {
+                        return true;
+                    }
+
+                    //Check if layouts does exists
+                    return this.model.layouts.filter(layout => ['table-before', 'table-after'].includes(layout.position)).length > 0;
+                }
+
+                return false;
+            }
         },
     }
 </script>

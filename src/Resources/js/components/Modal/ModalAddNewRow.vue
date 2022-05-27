@@ -1,11 +1,13 @@
 <template>
-    <Modal :modal="modal" :options="{ class : '--wide --modelAddRow', actions : [], escClose : true }">
+<div class="crudadmin-wrapper">
+    <Modal :modal="modal" :options="{ class : '--wide --modelAddRow', actions : [], escClose : true }" :style="{ '--form' : relationModel.table }">
         <model-builder :model_builder="relationModel"></model-builder>
 
         <template v-slot:footer>
             <SubmitButton :model="relationModel" />
         </template>
     </Modal>
+</div>
 </template>
 
 <script type="text/javascript">
@@ -61,9 +63,16 @@ export default {
 </script>
 
 <style lang="scss">
-[data-modal].--modelAddRow .modal-dialog {
-    [data-form='contracts_states'] .box {
-        box-shadow: none !important;
+[data-modal].--modelAddRow .modal-dialog .modal-body {
+    > div > .admin-model > .admin-model__body > div > .col--form > [data-form] {
+        > .box {
+            box-shadow: none !important;
+
+            > .box-body--form {
+                padding: 0;
+                border-bottom: 0;
+            }
+        }
     }
 }
 </style>
