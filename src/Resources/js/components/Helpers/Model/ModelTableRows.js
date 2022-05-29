@@ -73,6 +73,7 @@ const getQuerySearch = (model) => {
         let obj = {
             query : item.query,
             column : item.column,
+            interval : item.interval,
         };
 
         if ( item.interval === true ) {
