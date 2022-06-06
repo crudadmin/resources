@@ -573,6 +573,9 @@ var FormActions = (Model) => {
                             this.scrollToForm();
                         }
                     }
+
+                    //Reset saved rows
+                    this.getData('rows').save_children = [];
                 }
             }
 

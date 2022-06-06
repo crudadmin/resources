@@ -224,6 +224,8 @@ export default {
 
             this.model.loadRows();
         });
+
+        this.refreshOnParentStore();
     },
 
     destroyed() {
@@ -308,7 +310,7 @@ export default {
         parentRowId(rowId, oldRowId){
             if ( rowId != oldRowId ) {
                 //We need reload all rows, because parent has been changed
-                this.reloadRows();
+                this.model.cleanRows();
 
                 //Set allowed columns
                 this.model.resetAllowedColumns();
@@ -420,17 +422,6 @@ export default {
 
             return true;
         },
-        reloadRows(){
-            this.model.resetForm();
-
-            this.rows.data = [];
-            this.rows.count = 0;
-            this.rows.save_children = [];
-
-            this.model.loadRows();
-
-            return true;
-        },
         /*
          * Sets default order after loading compoennt
          */
@@ -496,6 +487,17 @@ export default {
                 }
             });
         },
+        refreshOnParentStore(){
+            let parentModel = this.model.getParentModel();
+
+            if ( parentModel ) {
+                parentModel.on('create', row => {
+                    if ( this.model.isWithoutExistingParentRow() && parentModel.isWithoutExistingParentRow() === false ) {
+                        this.model.cleanRows();
+                    }
+                });
+            }
+        }
     },
 }
 </script>

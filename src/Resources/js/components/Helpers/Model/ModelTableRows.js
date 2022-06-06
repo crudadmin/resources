@@ -695,6 +695,20 @@ var ModelTableRows = (Model) => {
         };
     }
 
+    Model.prototype.cleanRows = function(){
+        this.resetForm();
+
+        let rows = this.getData('rows');
+
+        rows.data = [];
+        rows.count = 0;
+        rows.save_children = [];
+
+        this.loadRows();
+
+        return true;
+    }
+
     Model.prototype.getRows = function(options){
         var { withAllRows = false } = options||{},
             orderBy = this.getData('orderBy'),
