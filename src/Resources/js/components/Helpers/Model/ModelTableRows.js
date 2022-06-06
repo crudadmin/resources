@@ -640,6 +640,8 @@ var ModelTableRows = (Model) => {
             if ( isInitialRequest ){
                 //Update field options
                 updateFieldOptions(this, requestModel.fields, requestModel);
+
+                this.fire('fetched', this);
             }
 
             //Set single model row
