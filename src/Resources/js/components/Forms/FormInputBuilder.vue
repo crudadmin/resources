@@ -152,6 +152,7 @@
             :model="model"
             :field_name="getName"
             :field_key="getFieldName"
+            :field_key_original="field_key"
             :field="field"
             :value="getValueOrDefault"
             :inputlang="inputlang"

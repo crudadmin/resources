@@ -63,7 +63,7 @@
     import ModelBuilder from '../Views/ModelBuilder.vue';
 
     export default {
-        props: ['id', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'inputlang', 'langid', 'depth_level'],
+        props: ['id', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'readonly', 'inputlang', 'langid', 'depth_level'],
 
         data(){
             return {
@@ -215,14 +215,14 @@
 
                 return [{
                     key : 'filterByParentField',
-                    params : [this.model.table, this.field_key, this.row.id].join(';')
+                    params : [this.model.table, this.field_key_original, this.row.id].join(';')
                 }];
             },
             getFilterBy(){
-                return this.model.getFilterBy(this.field_key);
+                return this.model.getFilterBy(this.field_key_original);
             },
             isMultiple(){
-                return this.model.isFieldMultiple(this.field_key);
+                return this.model.isFieldMultiple(this.field_key_original);
             },
             fieldOptions(){
                 if ( typeof this.field.options != 'object' )
@@ -374,18 +374,18 @@
                 this.relationModel = model;
 
                 this.relationModel.on('onCreate', this.onRelationCreated = (row) => {
-                    this.model.pushOption(this.field_key, row, 'store');
+                    this.model.pushOption(this.field_key_original, row, 'store');
 
                     this.reloadSetters(row.id);
                 });
 
                 this.relationModel.on('onUpdate', this.onRelationUpdate = (row) => {
-                    this.model.pushOption(this.field_key, row, 'update');
+                    this.model.pushOption(this.field_key_original, row, 'update');
                 });
 
                 this.relationModel.on('onDelete', this.onRelationDeleted = (ids) => {
                     ids.forEach(id => {
-                        this.model.pushOption(this.field_key, id, 'delete');
+                        this.model.pushOption(this.field_key_original, id, 'delete');
                     });
                 });
             },
@@ -536,7 +536,7 @@
                     var field = this.model.fields[key],
                         fillBy = this.getFillBy(field);
 
-                    if ( ! fillBy || ! fillBy[0] || (fillBy[0] != this.field_key && fillBy[0] + '_id' != this.field_key) )
+                    if ( ! fillBy || ! fillBy[0] || (fillBy[0] != this.field_key_original && fillBy[0] + '_id' != this.field_key_original) )
                         continue;
 
                     var options = this.field.options||[];
