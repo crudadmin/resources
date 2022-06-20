@@ -206,6 +206,8 @@
 
         <component
             v-if="hasSubComponent"
+            v-for="subComponent in subComponents"
+            :key="subComponent"
             :model="model"
             :field="field"
             :value="getValueOrDefault"
@@ -217,7 +219,7 @@
             :required="isRequired"
             :disabled="isDisabled"
             :readonly="isReadonly"
-            :is="componentName(model, field.sub_component)">
+            :is="componentName(model, subComponent)">
         </component>
     </div>
 </template>
@@ -247,9 +249,10 @@
                 this.registerModelComponents(this.model, this.field.component);
             }
 
-            if ( this.field.sub_component ) {
-                this.registerModelComponents(this.model, this.field.sub_component);
-            }
+            //Register subcomponents
+            this.subComponents.forEach(subComponent => {
+                this.registerModelComponents(this.model, subComponent);
+            });
         },
 
         mounted(){
@@ -620,6 +623,9 @@
                     return false;
 
                 return this.history.fields.indexOf(this.field_key) > -1;
+            },
+            subComponents(){
+                return _.castArray(this.field.sub_component);
             },
         },
     }
