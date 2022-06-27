@@ -17,7 +17,7 @@
             </thead>
             <tbody>
                 <tr v-for="(values, key) in filtratedTranslates" :key="translateId(key)" :class="{ missing : isMissing(key) }">
-                    <td>{{ key }}</td>
+                    <td>{{ translatedSource(key) }}</td>
                     <td class="input" :class="{ edited : hasChange(key), plural : isPlural(key) }">
                         <gettext-field
                             v-for="i in  getPluralLength(key)"
@@ -59,6 +59,7 @@ export default {
     data(){
         return {
             translates : {},
+            sourceTranslates : {},
             showMissing : false,
             missing : [],
             raw : [],
@@ -95,10 +96,12 @@ export default {
 
             for ( var key in this.availableTranslated )
             {
+                let finalKey = this.translatedSource(key);
+
                 //If is under limit, and if has query match
                 if (
                     (this.limit == false || i < this.limit)
-                    && (!this.query || this.hasChange(key) || this.availableTranslated[key].join('').toLowerCase().indexOf(query) > -1 || key.toLowerCase().indexOf(query) > -1 )
+                    && (!this.query || this.hasChange(key) || this.availableTranslated[key].join('').toLowerCase().indexOf(query) > -1 || finalKey.toLowerCase().indexOf(query) > -1 )
                 ){
                     obj[key] = this.availableTranslated[key];
 
@@ -129,6 +132,9 @@ export default {
                     }
                 }
             ];
+        },
+        sourceTranslator(){
+            return new CATranslator(this.sourceTranslates);
         }
     },
 
@@ -136,21 +142,27 @@ export default {
         translateId(key){
             return 'id-'+Object.keys(this.availableTranslated).indexOf(key);
         },
-        loadTranslations(){
+        async loadTranslations(){
             var url = this.$root.requests.translations
                           .replace(':id', this.row.id)
                           .replace(':table', this.model.table);
-            this.$http.get(url).then(function(response){
-                var messages = response.data.messages;
 
-                this.missing = response.data.missing;
-                this.raw = response.data.raw;
-                this.plurals = response.data.plurals;
-                this.plural_forms = response.data['plural-forms'];
-                this.translates = response.data.messages[Object.keys(messages)[0]]||{};
+            try {
+                let response = await this.$http.get(url).then(res => res.data),
+                    translation = response.translations,
+                    messages = translation.messages;
+
+                this.missing = response.missing;
+                this.raw = response.raw;
+                this.plurals = response.plurals;
+                this.sourceTranslates = response.source;
+                this.plural_forms = translation['plural-forms'];
+                this.translates = translation.messages[Object.keys(messages)[0]]||{};
 
                 this.loaded = true;
-            });
+            } catch (e){
+                this.errorResponseLayer(e);
+            }
         },
         isPlural(text){
             return this.plurals.indexOf(text) > -1;
@@ -178,6 +190,9 @@ export default {
         //Check if value has been changed
         hasChange(key){
             return key in this.changes;
+        },
+        translatedSource(key){
+            return this.sourceTranslator.__(key);
         }
     },
 }

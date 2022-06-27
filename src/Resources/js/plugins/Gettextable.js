@@ -56,6 +56,7 @@
         window[selector] = f;
     });
 
+    window.CATranslator = Translator;
     window.GettextTranslates = a;
 
     return a;
