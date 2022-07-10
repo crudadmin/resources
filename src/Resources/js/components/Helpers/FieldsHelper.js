@@ -331,7 +331,7 @@ var Fields = (Model) => {
             return;
         }
 
-        if ( ['date', 'datetime', 'time'].includes(field.type) ){
+        if ( ['date', 'datetime', 'time', 'timestamp'].includes(field.type) ){
             return new DateCast(this, field, key);
         }
     }

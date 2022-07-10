@@ -381,7 +381,7 @@
                 return field.multiple && field.multiple === true || ('belongsToMany' in field);
             },
             isDatepickerField(field){
-                return ['date', 'datetime', 'time'].indexOf(field.type) > -1;
+                return ['date', 'datetime', 'time', 'timestamp'].indexOf(field.type) > -1;
             },
             //Change bools to string values
             fixBoolValue(value){

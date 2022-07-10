@@ -90,7 +90,7 @@ export default {
         },
         canBeInterval(){
             var column = this.search.column,
-                intervalColumns = ['integer', 'decimal', 'date', 'datetime', 'time'];
+                intervalColumns = ['integer', 'decimal', 'date', 'datetime', 'time', 'timestamp'];
 
             if ( ['created_at', 'id'].indexOf(column) > -1 )
                 return true;
@@ -148,7 +148,7 @@ export default {
             }
 
             if ( this.getColumnField ) {
-                return (['date', 'datetime', 'time'].indexOf(this.getColumnField.type) > -1) ? true : false;
+                return (['date', 'datetime', 'time', 'timestamp'].indexOf(this.getColumnField.type) > -1) ? true : false;
             }
 
             return false;

@@ -126,7 +126,7 @@ export default {
                 }
 
                 //Multi date format values
-                else if ( ['date', 'datetime', 'time'].indexOf(field.type) > -1 ) {
+                else if ( ['date', 'datetime', 'time', 'timestamp'].indexOf(field.type) > -1 ) {
                     rowValue = this.returnDateFormat(rowValue, this.field);
                 }
             } else if ( ['created_at', 'updated_at'].indexOf(this.field) > -1 ) {
