@@ -73,6 +73,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         admin()->logHistoryAction('logout');
+        admin()->setLoginVerified(false);
 
         $this->guard()->logout();
 

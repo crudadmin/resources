@@ -22,10 +22,13 @@ Route::post('/admin/password/email', 'Auth\ForgotPasswordController@sendResetLin
 Route::get('/admin/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset');
 
-/*
- * Admin routes
- */
-Route::group(['middleware' => 'admin'], function () {
+//Verification
+Route::group(['middleware' => ['admin.autologout', 'admin']], function () {
+    Route::get('/admin/verificator', 'Auth\VerificatorController@showVerificationForm');
+    Route::post('/admin/verificator', 'Auth\VerificatorController@processVerification');
+});
+
+Route::group(['middleware' => ['admin.autologout', 'admin.verification', 'admin']], function () {
     // Dashboard
     Route::get('/admin', 'DashboardController@index');
 });
