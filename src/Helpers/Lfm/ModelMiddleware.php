@@ -24,7 +24,7 @@ class ModelMiddleware
         $parts = explode('/', $type);
 
         if ( !(count($parts) === 4 && $parts[0] == 'models') ){
-            return;
+            return $next($request);
         }
 
         $table = $parts[1];
