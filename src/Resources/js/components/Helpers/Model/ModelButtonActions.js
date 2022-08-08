@@ -68,6 +68,10 @@ const displayButtonModal = (model, button, response, ids) => {
 const updateActionData = (model, button, ids, response) => {
     //Update received rows by button action
     if ( response.data && 'rows' in response.data ) {
+        model.fire(['buttonActionFire'], {
+            rows : response.data.rows.rows,
+        });
+
         eventHub.$emit(
             'buttonAction',
             model.buildEventData({
