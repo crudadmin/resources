@@ -263,9 +263,12 @@ export default {
                 this.updateModelOptions();
             }
         },
-        'model.scopes' : {
+        'scopes' : {
             handler(a, b){
-                this.model.setPage(1);
+                //If scopes has been changed
+                if ( _.isEqual(a,b) === false ){
+                    this.model.setPage(1);
+                }
             },
         },
         'search.queries' : {
@@ -320,7 +323,8 @@ export default {
 
     computed: {
         scopes(){
-            return this.model.getData('scopes');
+            //We need clone scopes, otherwise watcher data for refreshing rows will be always same value.
+            return _.cloneDeep(this.model.getData('scopes'));
         },
         paginationEnabled(){
             return this.model.isPaginationEnabled();

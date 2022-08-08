@@ -38,8 +38,6 @@ export default {
             }
 
             this.model.setScope('filterProperty', this.filterId.join(','));
-
-            this.model.loadRows();
         },
     },
 };
