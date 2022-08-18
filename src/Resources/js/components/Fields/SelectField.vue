@@ -234,8 +234,9 @@
                 return this.$root.languageOptions(this.field.options, this.field, this.getFilter(this.field.options));
             },
             missingValueInSelectOptions(){
-                if ( !this.row )
+                if ( !this.model.isOpenedRow() ){
                     return [];
+                }
 
                 var options = this.fieldOptions,
                     missing = [],
@@ -265,13 +266,14 @@
                 //For single select
                 else {
                     //Check if is value in options
-                    for ( var i = 0; i < options.length; i++ )
+                    for ( let option of options )
                     {
-                        if ( options[i][0] == originalValue )
+                        if ( option[0] == originalValue ){
                             return [];
+                        }
                     }
 
-                    return this.filterBy || [null, undefined].indexOf(originalValue) > -1 ? [] : [originalValue];
+                    return this.filterBy || _.isNil(originalValue) ? [] : [originalValue];
                 }
 
                 return missing;

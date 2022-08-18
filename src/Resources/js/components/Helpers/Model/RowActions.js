@@ -73,7 +73,7 @@ var RowActions = (Model) => {
     Model.prototype.isOpenedRow = function(){
         let row = this.getData('row');
 
-        return row && 'id' in row && row.id;
+        return row && 'id' in row && row.id ? true : false;
     }
 
     Model.prototype.resetForm = function(){
