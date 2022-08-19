@@ -683,6 +683,11 @@ var ModelTableRows = (Model) => {
             let aValue = a[field],
                 bValue = b[field];
 
+            //Null values fix
+            if (aValue === null || bValue === null) {
+                return aValue === null ? 1 : -1;
+            }
+
             //Added support to sort localized values
             if ( is_locale ) {
                 aValue = $app.getLocaleFieldValue(aValue, defaultSlug);
