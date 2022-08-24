@@ -48,7 +48,7 @@
                             <i class="--icon-right fa fa-angle-down"></i>
                         </button>
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
-                            <li v-for="button in availableButtons" @click="model.buttonAction(button.key)"><i class="fa" :class="button.icon"></i> {{ button.name }}</li>
+                            <li v-for="button in availableActionButtons" @click="model.buttonAction(button.key)"><i class="fa" :class="button.icon"></i> {{ button.name }}</li>
                         </ul>
                     </div>
 
@@ -350,11 +350,12 @@ export default {
         search(){
             return this.model.getData('search');
         },
-        availableButtons(){
-            return this.model.getAllButtons();
+        availableActionButtons(){
+
+            return this.model.getAllButtons(['multiple', 'action']);
         },
         hasButtons(){
-            return Object.keys(this.availableButtons).length > 0;
+            return Object.keys(this.availableActionButtons).length > 0;
         },
         title(){
             var title;

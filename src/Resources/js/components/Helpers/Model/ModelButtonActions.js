@@ -109,7 +109,7 @@ const updateActionData = (model, button, ids, response) => {
 }
 
 var ModelButtonActions = (Model) => {
-    Model.prototype.getAllButtons = function(){
+    Model.prototype.getAllButtons = function(types = []){
         var buttons = {},
             buttonRows = this.getData('rows').buttons;
 
@@ -118,6 +118,10 @@ var ModelButtonActions = (Model) => {
 
             for ( var buttonIndex in rowButtons ) {
                 let button = rowButtons[buttonIndex];
+
+                if ( types && types.length && types.includes(button.type) === false ){
+                    continue;
+                }
 
                 buttons[button.key] = button;
             }
