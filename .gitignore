@@ -1,8 +1,5 @@
 /vendor
 /node_modules
-/ckfinder
-/src/Resources/lang/gettext
-.phpunit.result.cache
-config.js
+/config.js
 mix-manifest.json
-.phpunit.result.cache
+/.phpunit.result.cache

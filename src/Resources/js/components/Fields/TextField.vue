@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled }">
+    <div class="form-group" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i> {{ field_name }}
             <span v-if="required" class="required">*</span>
@@ -8,7 +8,9 @@
             rows="5"
             @keyup="changeValue"
             :id="id"
+            :data-height="field.editor_height"
             :disabled="disabled"
+            :readonly="readonly"
             :name="field_key"
             :maxlength="field.max"
             :class="{ 'form-control' : isText, 'js_editor' : isEditor }"
@@ -21,7 +23,7 @@
 
 <script>
     export default {
-        props: ['id', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'depth_level'],
+        props: ['id', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
 
         mounted(){
             var editor = $('#'+this.id).ckEditors();
@@ -43,6 +45,7 @@
                     return;
 
                 var editor = CKEDITOR.instances[this.id];
+
                 if ( ! editor )
                     return;
 
@@ -54,9 +57,17 @@
                 // We need set data also on instance ready, because of bug in single admin model when switching pages...
                 // Somethimes data wont be loaded properly.
                 editor.on('instanceReady', () => {
-                    if ( _.trim(editor.getData()) != _.trim(value) ) {
-                        editor.setData(value);
+                    //If multiple ready events will be triggered, bing only last valid value from event.
+                    //If all events will be binded into ckeditor at same time. It may have buggy value.
+                    if ( this.onReadyInstance ){
+                        clearTimeout(this.onReadyInstance);
                     }
+
+                    this.onReadyInstance = setTimeout(() => {
+                        if ( _.trim(editor.getData()) != _.trim(value) ) {
+                            editor.setData(value);
+                        }
+                    }, 20);
                 });
             });
         },

@@ -28,7 +28,7 @@
       @endif
     </div>
     <div class="row">
-      <div class="col-xs-8">
+      <div class="col-6">
         <div class="checkbox icheck">
           <label>
             <input type="checkbox" name="remember"> {{ trans('admin::admin.remember-password') }}
@@ -36,7 +36,7 @@
         </div>
       </div>
       <!-- /.col -->
-      <div class="col-xs-4">
+      <div class="col-6">
         <button type="submit" class="btn btn-primary btn-block btn-flat">{{ trans('admin::admin.login') }}</button>
       </div>
       <!-- /.col -->

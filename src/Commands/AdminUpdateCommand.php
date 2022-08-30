@@ -2,10 +2,11 @@
 
 namespace Admin\Resources\Commands;
 
-use Illuminate\Console\Command;
-use Artisan;
 use Admin;
+use Admin\Resources\Events\OnAdminUpdate;
+use Artisan;
 use File;
+use Illuminate\Console\Command;
 
 class AdminUpdateCommand extends Command
 {
@@ -45,6 +46,8 @@ class AdminUpdateCommand extends Command
         $this->publishVendor();
 
         Admin::publishAssetsVersion();
+
+        $this->prepareStorage();
 
         $this->line('Updating completed!');
 
@@ -97,6 +100,56 @@ class AdminUpdateCommand extends Command
     {
         Artisan::call('vendor:publish', [ '--tag' => 'admin.resources' ]);
 
+        event(new OnAdminUpdate($this));
+
+        //Publish filemanager vendor
+        if ( config('admin.filemanager', false) === true ) {
+            Admin::addGitignoreFiles([
+                public_path('vendor/laravel-filemanager')
+            ]);
+
+            Artisan::call('vendor:publish', [ '--tag' => 'lfm_public' ]);
+        }
+
         $this->line('<comment>+ Vendor directories has been successfully published</comment>');
+    }
+
+    public function prepareStorage()
+    {
+        Admin::addGitignoreFiles([
+            storage_path('/crudadmin')
+        ]);
+
+        $this->moveStorageFromCrudadminv3();
+    }
+
+    private function moveStorageFromCrudadminv3()
+    {
+        $oldUploadsPath = public_path('uploads');
+        $storage = Admin::getUploadsStorage();
+
+        try {
+            //Laravel 9 support
+            $newUploadsFolder = $storage->getConfig()['root'];
+        }
+
+        //Laravel 8 and lower
+        catch (\Throwable $e){
+            $newUploadsFolder = $storage->getAdapter()->getPathPrefix();
+        }
+
+        //Move uploads directory into crudadmin storage
+        if ( file_exists($oldUploadsPath) && !is_link($oldUploadsPath) ){
+            if ( count(Admin::getUploadsStorage()->allFiles()) > 0 ){
+                $this->error('+ Transfer of old uploads directory could not be completed. Ensure uploads directory in storage folder is empty.');
+                return;
+            }
+
+            $this->line('<comment>+ Moving uploads directory into storage.</comment>');
+
+            rename($oldUploadsPath, $newUploadsFolder);
+
+            Artisan::call('storage:link');
+        }
     }
 }

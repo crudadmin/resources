@@ -2,7 +2,6 @@
  * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
-
 CKEDITOR.editorConfig = function( config ) {
     var lang = $('html').attr('lang')||'sk';
 
@@ -10,20 +9,24 @@ CKEDITOR.editorConfig = function( config ) {
     config.language = lang;
     config.defaultLanguage = lang;
 
-    var basedir = window.crudadmin.baseURL + '/api/ckfinder/browser';
+    var fileManagerPath;
+    if ( window.crudadmin.ckfinder ) {
+        fileManagerPath = window.crudadmin.baseURL + '/api/ckfinder/browser';
+    } else {
+        fileManagerPath = window.crudadmin.baseURL + '/filemanager';
+    }
 
     config.skin = 'moono-lisa';
 
     //CKFinder
-    config.filebrowserBrowseUrl = basedir;
-    config.filebrowserImageBrowseUrl = basedir + '?type=Images';
-    config.filebrowserFlashBrowseUrl = basedir + '?type=Flash';
-    // config.filebrowserUploadUrl = basedir + '?command=QuickUpload&type=Files';
-    // config.filebrowserImageUploadUrl = basedir + '?command=QuickUpload&type=Images';
-    // config.filebrowserFlashUploadUrl = basedir + '?command=QuickUpload&type=Flash';
+    config.filebrowserBrowseUrl = fileManagerPath;
+    config.filebrowserImageBrowseUrl = fileManagerPath + '?type=Images';
+    config.filebrowserFlashBrowseUrl = fileManagerPath + '?type=Flash';
+    // config.filebrowserUploadUrl = fileManagerPath + '?command=QuickUpload&type=Files';
+    // config.filebrowserImageUploadUrl = fileManagerPath + '?command=QuickUpload&type=Images';
+    // config.filebrowserFlashUploadUrl = fileManagerPath + '?command=QuickUpload&type=Flash';
     config.filebrowserWindowWidth = '50%';
     config.filebrowserWindowHeight = '50%';
-
 
     config.toolbar = [
         { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Save', '-', 'Source', '-', 'Undo', 'Redo' ] },
@@ -70,5 +73,10 @@ CKEDITOR.editorConfig = function( config ) {
 
     config.format_tags = 'p;h1;h2;h3;pre';
     config.entities = false;
-    config.extraPlugins = 'oembed,font';
+    config.basicEntities = true;
+    config.extraPlugins = 'save,oembed,widget,justify,font,lineutils';
+
+    if ( crudadmin.ckeditorConfig ) {
+        crudadmin.ckeditorConfig(config);
+    }
 };

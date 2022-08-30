@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group radio-group">
+    <div class="form-group radio-group" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
             {{ field_name }}

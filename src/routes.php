@@ -22,14 +22,20 @@ Route::post('/admin/password/email', 'Auth\ForgotPasswordController@sendResetLin
 Route::get('/admin/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset');
 
-/*
- * Admin routes
- */
-Route::group(['middleware' => 'admin'], function () {
+//Verification
+Route::group(['middleware' => ['admin.autologout', 'admin']], function () {
+    Route::get('/admin/verificator', 'Auth\VerificatorController@showVerificationForm');
+    Route::post('/admin/verificator', 'Auth\VerificatorController@processVerification');
+});
+
+Route::group(['middleware' => ['admin.autologout', 'admin.verification', 'admin']], function () {
     // Dashboard
     Route::get('/admin', 'DashboardController@index');
+});
 
+Route::group(['middleware' => 'ckfinder'], function () {
     //CKFinder
     Route::any('/admin/api/ckfinder/browser', 'CKFinderController@browserAction')->name('ckfinder_browser');
+    Route::any('/admin/api/ckfinder/download', 'CKFinderController@downloader')->name('ckfinder_downloader');
     Route::any('/admin/api/ckfinder/connector', 'CKFinderController@requestAction')->name('ckfinder_connector');
 });

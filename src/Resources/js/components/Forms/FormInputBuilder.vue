@@ -1,5 +1,12 @@
 <template>
-    <div :data-field="field_key" :data-model="model.slug" :data-lang="langslug" :data-history-changed="isChangedFromHistory" class="field-wrapper" :class="{ 'is-changed-from-history' : isChangedFromHistory }">
+    <div
+        :data-field="field_key"
+        :data-model="model.slug"
+        :data-lang="langslug"
+        :data-history-changed="isChangedFromHistory"
+        class="field-wrapper"
+        :class="{ 'is-changed-from-history' : isChangedFromHistory && !hasComponent }">
+
         <string-field
             v-if="!hasComponent && (isString || isPassword)"
             :model="model"
@@ -9,8 +16,35 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </string-field>
+
+        <color-field
+            v-if="!hasComponent && isColor"
+            :model="model"
+            :field_name="getName"
+            :field_key="getFieldName"
+            :field="field"
+            :value="getValueOrDefault"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :depth_level="depth_level">
+        </color-field>
+
+        <phone-field
+            v-if="!hasComponent && isPhone"
+            :model="model"
+            :field_name="getName"
+            :field_key="getFieldName"
+            :field="field"
+            :value="getValueOrDefault"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :depth_level="depth_level">
+        </phone-field>
 
         <number-field
             v-if="!hasComponent && isNumber"
@@ -21,6 +55,7 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </number-field>
 
@@ -29,10 +64,12 @@
             :model="model"
             :field_name="getName"
             :field_key="getFieldName"
+            :field_key_original="field_key"
             :field="field"
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </date-time-field>
 
@@ -45,6 +82,7 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </checkbox-field>
 
@@ -58,13 +96,27 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </text-field>
+
+        <gutenberg-field
+            v-if="!hasComponent && isGutenberg"
+            :id="getId"
+            :model="model"
+            :field_name="getName"
+            :field_key="getFieldName"
+            :field="field"
+            :value="getValueOrDefault"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :depth_level="depth_level">
+        </gutenberg-field>
 
         <file-field
             v-if="!hasComponent && isFile"
             :id="getId"
-            :row="row"
             :model="model"
             :field_name="getName"
             :field_key="getFieldName"
@@ -73,22 +125,41 @@
             :value="getValueOrDefault"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
+            :langslug="langslug"
             :depth_level="depth_level">
         </file-field>
+
+        <uploader-field
+            v-if="!hasComponent && isUploader"
+            :id="getId"
+            :model="model"
+            :field_name="getName"
+            :field_key="getFieldName"
+            :field_key_original="field_key"
+            :field="field"
+            :value="getValueOrDefault"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :langslug="langslug"
+            :depth_level="depth_level">
+        </uploader-field>
 
         <select-field
             v-if="!hasComponent && isSelect"
             :id="getId"
-            :row="row"
             :model="model"
             :field_name="getName"
             :field_key="getFieldName"
+            :field_key_original="field_key"
             :field="field"
             :value="getValueOrDefault"
             :inputlang="inputlang"
             :langid="langid"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </select-field>
 
@@ -104,6 +175,7 @@
             :langid="langid"
             :required="isRequired"
             :disabled="isDisabled"
+            :readonly="isReadonly"
             :depth_level="depth_level">
         </radio-field>
 
@@ -111,23 +183,44 @@
         <form-input-builder
             v-if="field.confirmed == true && !isConfirmation"
             :model="model"
-            :history="history"
             :field="field"
             :index="index"
             :field_key="field_key + '_confirmation'"
-            :row="row"
             :depth_level="depth_level"
             :confirmation="true"></form-input-builder>
 
         <component
-            v-if="hasComponent"
+            v-if="hasComponent || hasEmptyComponent"
             :model="model"
             :field="field"
+            :value="getValueOrDefault"
             :history_changed="isChangedFromHistory"
+            :history="history"
             :row="row"
             :field_key="getFieldName"
             :field_key_original="field_key"
-            :is="componentName">
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :is="componentName(model, field.component)">
+        </component>
+
+        <component
+            v-if="hasSubComponent"
+            v-for="subComponent in subComponents"
+            :key="subComponent"
+            :model="model"
+            :field="field"
+            :value="getValueOrDefault"
+            :history_changed="isChangedFromHistory"
+            :history="history"
+            :row="row"
+            :field_key="getFieldName"
+            :field_key_original="field_key"
+            :required="isRequired"
+            :disabled="isDisabled"
+            :readonly="isReadonly"
+            :is="componentName(model, subComponent)">
         </component>
     </div>
 </template>
@@ -138,25 +231,36 @@
     import DateTimeField from '../Fields/DateTimeField';
     import CheckboxField from '../Fields/CheckboxField';
     import TextField from '../Fields/TextField';
+    import GutenbergField from '../Fields/GutenbergField';
     import FileField from '../Fields/FileField';
     import SelectField from '../Fields/SelectField';
     import RadioField from '../Fields/RadioField';
+    import ColorField from '../Fields/ColorField';
+    import PhoneField from '../Fields/PhoneField';
+    import UploaderField from '../Fields/UploaderField';
 
     export default {
         name: 'form-input-builder',
-        props: ['model', 'field', 'field_key', 'index', 'row', 'confirmation', 'history', 'langid', 'inputlang', 'hasparentmodel', 'langslug', 'depth_level'],
+        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'inputlang', 'langslug'],
 
-        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, FileField, SelectField, RadioField },
+        components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField, ColorField, PhoneField, UploaderField },
 
         created(){
-            this.registerComponents();
+            if ( this.field.component ) {
+                this.registerModelComponents(this.model, this.field.component);
+            }
+
+            //Register subcomponents
+            this.subComponents.forEach(subComponent => {
+                this.registerModelComponents(this.model, subComponent);
+            });
         },
 
-        mounted()
-        {
+        mounted(){
             //If this field has own component
             this.syncFieldsValueWithRow();
         },
+
         methods : {
             parseArrayValue(value){
                 if ( $.isArray(value) )
@@ -171,11 +275,13 @@
                 return value;
             },
             getLocalizedValue(value, defaultValue){
-                if ( ! this.hasLocale )
+                if ( ! this.hasLocale ) {
                     return value||null;
+                }
 
-                if ( value && this.langslug in value )
+                if ( value && this.langslug in value ) {
                     return value[this.langslug];
+                }
 
                 return defaultValue||null;
             },
@@ -196,142 +302,116 @@
                     this.row[this.field_key] = this.resetEmptyValue(value);
                 });
             },
-            registerComponents(){
-                if ( !('component' in this.field) )
-                    return;
-
-                var components = this.field.component.split(','),
-                    component = null;
-
-                for ( var i = 0; i < components.length; i++ )
-                {
-                    var name = components[i].toLowerCase(),
-                        data = this.model.components[name],
-                        obj;
-
-                    try {
-                        obj = this.$root.getComponentObject(data);
-                    } catch(error){
-                        console.error('Syntax error in component ' + component[i] + '.Vue' + "\n", error);
-                        continue;
-                    }
-
-                    if ( ! component )
-                        component = obj;
-                    else {
-                        if ( !('components' in component) )
-                            component.components = {};
-
-                        component.components[components[i]] = obj;
-                    }
-                }
-
-                if ( component )
-                    Vue.component(this.componentName, component);
+            isEmptyValue(value){
+                return _.isNil(value) || value === '';
             },
             defaultFieldValue(field){
-                var default_value = (field.value || field.value === 0 || field.value === false) ? field.value : field.default;
+                var defaultValue = field ? (
+                    this.isEmptyValue(field.value) ? (field.defaultByOption||field.default) : field.value
+                ) : null;
 
                 if (
-                    (!default_value && default_value !== false) //false is valid value, so we do not want to return empty string
-                    || (['number', 'string', 'boolean'].indexOf(typeof default_value) === -1 && !this.isMultipleField(field))
+                    this.isEmptyValue(defaultValue)
+                    || (['number', 'string', 'boolean'].indexOf(typeof defaultValue) === -1
+                    && !this.isMultipleField(field))
                 ) {
                     return '';
                 }
 
                 //If is current date value in datepicker
-                if ( field.default && this.isDatepickerField(field) && default_value.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
-                    default_value = moment().format(this.$root.fromPHPFormatToMoment(field.date_format));
+                if ( field.default && this.isDatepickerField(field) && defaultValue.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
+                    defaultValue = moment().format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key)));
                 }
 
                 //Get value by other table
-                if ( field.default )
-                {
-                    var default_parts = field.default.split('.');
+                if ( field.default && this.isEmptyValue(field.value) ) {
+                    var defaultParts = (field.default+'').split('.');
 
-                    if ( default_parts.length == 2 )
-                    {
-                        var model = this.getModelBuilder(default_parts[0]);
+                    if ( defaultParts.length == 2 ) {
+                        var model = this.model.getParentModel(defaultParts[0]);
 
-                        if ( model && (default_parts[1] in model.row) )
-                            return model.row[default_parts[1]];
+                        if ( model && (defaultParts[1] in model.getRow()) ) {
+                            defaultValue = model.getRow()[defaultParts[1]];
+                        } else {
+                            defaultValue = null;
+                        }
                     }
                 }
 
-                if ( this.isCheckbox )
-                    return default_value == true ? true : false;
+                //Get value by select option key
+                if ( field.defaultByOption && this.isSelect && this.isEmptyValue(field.value) ) {
+                    var option = (field.defaultByOption+'').split(','),
+                        defaultOption;
 
-                return default_value||'';
+                    defaultOption = field.options.filter(item => {
+                        if ( option.length == 1 ) {
+                            return item[0] == option[0];
+                        } else if ( option.length > 1 ) {
+                            return item[1][option[0]] == option[1];
+                        }
+                    })[0];
+
+                    defaultValue = defaultOption ? defaultOption[0] : '';
+                }
+
+                //Cast checkbox value
+                if ( this.isCheckbox ) {
+                    defaultValue = defaultValue == true ? true : false;
+                }
+
+                //Returns empty value
+                if ( this.isEmptyValue(defaultValue) ) {
+                    return '';
+                }
+
+                //If is not empty default value, and field value is empty, set this field value to this default value
+                else if ( _.isNil(this.field.value) ) {
+                    this.changeValue(null, defaultValue);
+                }
+
+                return defaultValue;
             },
             /*
              * Apply event on changed value
              */
             changeValue(e, value, no_field){
-                //Do not update value when confirmation field has been changed
-                if ( this.isConfirmation )
-                    return;
-
-                var value = e ? e.target.value : value;
-
-                if ( this.field.type == 'checkbox' )
-                    value = e ? e.target.checked : value;
-
-                //Update specific language field
-                if ( this.hasLocale ){
-                    var obj_value = typeof this.field.value === 'object' ? this.field.value||{} : {};
-                        obj_value[this.langslug] = value;
-
-                    value = obj_value;
-                }
-
-                //Update field values
-                if ( no_field != true )
-                    this.field.value = value;
-
-                var data = {};
-                    data[this.field_key] = value;
-
-                this.$set(this.row, this.field_key, value);
-            },
-            //Get parent model builder
-            getModelBuilder(slug, except){
-                var modelBuilder = this.$parent,
-                    except = slug === '$parent' ? this.model.slug : null,
-                    slug = slug === '$parent' ? null : slug;
-
-                while(modelBuilder && (
-                    modelBuilder.$options.name != 'model-builder'
-                    || (slug && modelBuilder.model.slug != slug)
-                    || (except && modelBuilder.model.slug === except)
-                ))
-                    modelBuilder = modelBuilder.$parent;
-
-                if ( slug && (!modelBuilder || modelBuilder.model.slug != slug) ){
-                    console.error('Model with table name "' + slug + '" does not exists in parents tree of models');
-
-                    return null;
-                }
-
-                return modelBuilder;
+                return this.model.changeValueFromInput(this.field_key, e, value, no_field, this.langslug);
             },
             isMultipleField(field){
                 return field.multiple && field.multiple === true || ('belongsToMany' in field);
             },
             isDatepickerField(field){
-                return ['date', 'datetime', 'time'].indexOf(field.type) > -1;
-            }
+                return ['date', 'datetime', 'time', 'timestamp'].indexOf(field.type) > -1;
+            },
+            //Change bools to string values
+            fixBoolValue(value){
+                if ( value === true ) {
+                    return '1';
+                }
+
+                if ( value === false ) {
+                    return '0';
+                }
+
+                return value;
+            },
         },
 
         computed : {
-            isOpenedRow(){
-                return this.row && 'id' in this.row;
+            langid(){
+                return this.model.getSelectedLanguageId();
             },
-            getId()
-            {
-                //Get parent model builder
-                var modelBuilder = this.getModelBuilder();
-
-                parent = modelBuilder.getParentTableName(this.model.withoutParent == true);
+            depth_level(){
+                return this.model.getData('depth_level');
+            },
+            history(){
+                return this.model.getData('history');
+            },
+            row(){
+                return this.model.getRow();
+            },
+            getId() {
+                let parent = (this.model.getParentTableName(this.model.without_parent == true))||0;
 
                 return 'id-' + this.model.slug + this.field_key + '-' + this.depth_level + '-' + parent + '-' + this.index + '-' + this.langslug;
             },
@@ -370,6 +450,10 @@
             {
                 return this.field.type == 'text' || this.field.type == 'longtext';
             },
+            isGutenberg()
+            {
+                return this.field.type == 'gutenberg';
+            },
             isEditor()
             {
                 return this.field.type == 'editor'  || this.field.type == 'longeditor';
@@ -378,9 +462,21 @@
             {
                 return this.field.type == 'file';
             },
+            isUploader()
+            {
+                return this.field.type == 'uploader';
+            },
             isPassword()
             {
                 return this.field.type == 'password';
+            },
+            isColor()
+            {
+                return this.field.type == 'color';
+            },
+            isPhone()
+            {
+                return this.field.type == 'phone';
             },
             isSelect()
             {
@@ -404,23 +500,44 @@
             },
             isDisabled()
             {
-                return this.field.disabled == true;
+                if ( this.model.isOpenedRow() == true && (this.model.hasAccess('update') == false || this.model.editable == false) ){
+                    return true;
+                }
+
+                return this.model.tryAttribute(this.field, 'disabled');
+            },
+            isReadonly()
+            {
+                return this.model.tryAttribute(this.field, 'readonly');
             },
             isMultiple()
             {
                 return this.isMultipleField(this.field);
             },
             hasComponent(){
-                return 'component' in this.field && this.field.component;
+                return 'component' in this.field && this.field.component && this.hasEmptyComponent == false;
             },
-            componentName(){
-                if ( ! this.hasComponent )
-                    return;
+            hasSubComponent(){
+                return 'sub_component' in this.field && this.field.sub_component;
+            },
+            hasEmptyComponent(){
+                let componentName = this.componentName(this.model, this.field.component);
 
-                return this.field.component.split(',')[0].toLowerCase();
+                if ( !componentName || !this.model.components[componentName]){
+                    return false;
+                }
+
+                try {
+                    var data = this.model.components[componentName],
+                        obj = (new Function('return '+data))();
+
+                    return obj.template == '';
+                } catch(e){
+                }
+
+                return false
             },
-            getValueOrDefault()
-            {
+            getValueOrDefault() {
                 //If is confirmation, then return null value every time
                 if ( this.isConfirmation ){
                     return '';
@@ -428,23 +545,26 @@
 
                 var value = this.parseArrayValue(this.field.value);
 
-                if ( this.isMultipleDatepicker )
+                if ( this.isMultipleDatepicker ) {
                     return JSON.stringify(value||[]);
+                }
 
                 //Localization field
-                if ( this.hasLocale )
+                if ( this.hasLocale ) {
                     return this.getLocalizedValue(value, this.defaultFieldValue(this.field));
+                }
 
                 //If row is not opened, then return default field value
-                if ( ! this.isOpenedRow ){
+                if ( ! this.model.isOpenedRow() ){
                     return this.defaultFieldValue(this.field);
                 }
 
                 return value;
             },
             isRequired(){
-                if ( this.isOpenedRow && this.field.type == 'password' )
+                if ( this.model.isOpenedRow() && this.field.type == 'password' ) {
                     return false;
+                }
 
                 //Basic required attribute
                 if ( 'required' in this.field && this.field.required == true )
@@ -454,10 +574,22 @@
                 if ( this.field.required_if )
                 {
                     var parts = this.field.required_if.split(','),
-                        value = this.row[parts[0]];
+                        value = this.fixBoolValue(this.row[parts[0]]);
 
-                    if (value && parts.slice(1).indexOf(value) > -1)
+                    if (value && parts.slice(1).indexOf(value) > -1) {
                         return true;
+                    }
+                }
+
+                //Required unless attribute
+                if ( this.field.required_unless )
+                {
+                    var parts = this.field.required_unless.split(','),
+                        value = this.fixBoolValue(this.row[parts[0]]);
+
+                    if (value && parts.slice(1).indexOf(value) == -1){
+                        return true;
+                    }
                 }
 
                 //Required without attribute
@@ -465,8 +597,7 @@
                 {
                     var parts = this.field.required_without.split(',');
 
-                    for ( var i = 0; i < parts.length; i++ )
-                    {
+                    for ( var i = 0; i < parts.length; i++ ) {
                         if ( ! this.row[parts[i]] )
                             return true;
                     }
@@ -477,8 +608,7 @@
                 {
                     var parts = this.field.required_with.split(',');
 
-                    for ( var i = 0; i < parts.length; i++ )
-                    {
+                    for ( var i = 0; i < parts.length; i++ ) {
                         if ( this.row[parts[i]] )
                             return true;
                     }
@@ -494,6 +624,9 @@
                     return false;
 
                 return this.history.fields.indexOf(this.field_key) > -1;
+            },
+            subComponents(){
+                return _.castArray(this.field.sub_component);
             },
         },
     }

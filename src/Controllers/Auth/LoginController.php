@@ -58,8 +58,23 @@ class LoginController extends Controller
         return view('admin::auth.login', compact('username'));
     }
 
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        $user->logHistoryAction('login');
+    }
+
     public function logout(Request $request)
     {
+        admin()->logHistoryAction('logout');
+        admin()->setLoginVerified(false);
+
         $this->guard()->logout();
 
         //Custom logout path

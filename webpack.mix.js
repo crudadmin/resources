@@ -1,17 +1,12 @@
-const mix = require('laravel-mix');
+let mix = require('laravel-mix'),
+    section = process.env.npm_config_section||'admin';
 
-//Where sould be compiled assets
-var config = require('./config.js');
-
-mix.js('src/Resources/js/app.js', 'src/Resources/admin/js')
-   .extract([
-        'vue', 'jquery', 'lodash', 'js-md5', 'moment', 'vue-router', 'vue-fragment',
-        'vue-resource', 'vuedraggable', 'jquery-datetimepicker', 'bootstrap-sass'
-    ])
-
-for ( key in config.paths )
-{
-    mix.copy('src/Resources/admin/js/manifest.js', config.paths[key] + '/js/manifest.js')
-       .copy('src/Resources/admin/js/vendor.js', config.paths[key] + '/js/vendor.js')
-       .copy('src/Resources/admin/js/app.js', config.paths[key] + '/js/app.js');
+if (['admin', 'web'].includes(section)) {
+  require(`${__dirname}/webpack.${section}.mix.js`)
+} else {
+  console.log(
+    '\x1b[41m%s\x1b[0m',
+    'Provide correct --section argument to build command: admin, web'
+  )
+  throw new Error('Provide correct --section argument to build command!')
 }

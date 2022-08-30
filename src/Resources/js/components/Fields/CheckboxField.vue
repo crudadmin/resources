@@ -1,6 +1,6 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled }">
-        <label class="checkbox">
+        <label class="checkbox" data-toggle="tooltip" :title="field.tooltip">
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
             {{ field_name }} <span v-if="field.placeholder">{{ field.placeholder }}</span>
             <input

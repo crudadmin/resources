@@ -23,7 +23,7 @@ export default {
                 return false;
         },
         isImage(path){
-            return this.isExtension(path, ['jpg', 'jpeg', 'png', 'bmp', 'gif']);
+            return this.isExtension(path, ['jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg']);
         },
         isPdf(path){
             return this.isExtension(path, ['pdf']);
@@ -43,10 +43,15 @@ export default {
             return this.$root.requests.download + '?model=' + encodeURIComponent(this.model.slug) + '&field=' + encodeURIComponent(this.field) + '&file=' + encodeURIComponent(this.file);
         },
         imagePath(){
-            return this.$root.$http.options.root + '/../uploads/cache/' + this.model.slug + '/' + this.field + '/admin-thumbnails/' + this.file;
+            //Svg does not have thumbnails
+            if ( this.isExtension(this.file, ['svg']) ){
+                return this.path;
+            }
+
+            return window.crudadmin.root + '/uploads/cache/' + this.model.slug + '/' + this.field + '/admin-thumbnails/' + this.file;
         },
         path(){
-            return this.$root.$http.options.root + '/../uploads/' + this.model.slug + '/' + this.field + '/' + this.file;
+            return window.crudadmin.root + '/uploads/' + this.model.slug + '/' + this.field + '/' + this.file;
         }
     }
 }

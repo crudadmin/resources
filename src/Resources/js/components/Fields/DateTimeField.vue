@@ -1,8 +1,8 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled, 'multiple-date' : isMultipleDatepicker }">
+    <div class="form-group" :class="{ disabled : disabled || readonly, 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
-            {{ field_name }} <span v-if="required" class="required">*</span>
+            {{ field_name }}<span v-if="required" class="required">*</span>
         </label>
 
         <input
@@ -10,9 +10,11 @@
             type="text"
             class="form-control"
             :disabled="disabled"
+            :readonly="readonly"
             :name="isMultipleDatepicker ? '' : field_key"
-            :value="value"
+            :value="model.getCastedValue(field_key_original)"
             :placeholder="field.placeholder || field_name"
+            autocomplete="off"
             @keyup="changeValue">
 
         <input type="hidden" :name="field_key+'[]'" v-if="isMultipleDatepicker && getMultiDates.length == 0" value="">
@@ -23,7 +25,11 @@
 
 <script>
     export default {
-        props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'depth_level'],
+        props: ['model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
+
+        created(){
+            $.datetimepicker.setLocale(this.$root.locale);
+        },
 
         mounted(){
             this.bindDatepickers();
@@ -38,6 +44,13 @@
 
         destroyed(){
             eventHub.$off('updateField', this.onUpdateEvent);
+        },
+
+        watch : {
+            //On step changed we need update steps
+            'field.date_step'(step){
+                this.bindDatepickers();
+            },
         },
 
         computed : {
@@ -55,23 +68,18 @@
                     return item.length == (this.field.type == 'time' ? 5 : 10);
                 });
             },
-        },
-
-        methods : {
-            getInput(){
-                return $(this.$refs.input);
-            },
-            bindDatepickers(){
+            datePickerConfig(){
                 var _this = this;
 
-                this.getInput().datetimepicker({
+                let config = {
                     lang: this.$root.locale,
-                    format: this.field.date_format,
+                    format: this.model.getFieldFormat(this.field_key_original),
                     timepicker: this.field.type != 'date',
                     datepicker: this.field.type != 'time',
                     scrollInput: false,
                     timepickerScrollbar: false,
-                    step : this.field.date_step||30,
+                    dayOfWeekStart : 1,
+                    step : this.field.date_step ? parseInt(this.field.date_step) : 30,
                     scrollMonth: false,
                     scrollYear: false,
                     inline : this.isMultipleDatepicker,
@@ -79,7 +87,24 @@
                         _this.onGenerate(this, ct);
                     },
                     onChangeDateTime: this.onChangeDateTime,
-                });
+                }
+
+                this.model.fireField(this.field_key_original, 'datepicker.config', config, this.getInput());
+
+                return config;
+            }
+        },
+
+        methods : {
+            getInput(){
+                return $(this.$refs.input);
+            },
+            bindDatepickers(){
+                if ( this.readonly === true ){
+                    return;
+                }
+
+                this.getInput().datetimepicker(this.datePickerConfig);
             },
             onGenerate(el, ct){
                 if ( ! this.isMultipleDatepicker )
@@ -121,7 +146,7 @@
 
                 //Update single date value
                 else {
-                    var pickedDate = moment(current_date_time).format(this.$root.fromPHPFormatToMoment(this.field.date_format));
+                    var pickedDate = moment(current_date_time).format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key_original)));
 
                     this.changeValue(null, pickedDate);
                 }

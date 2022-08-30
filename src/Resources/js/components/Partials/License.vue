@@ -1,11 +1,8 @@
 <template>
-    <section class="content" style="min-height: auto" v-if="message.type">
-        <div class="callout callout-danger">
-            <h4><i class="icon fa fa-warning"></i> {{ message.title }}</h4>
-
-            <p v-html="message.message"></p>
-        </div>
-    </section>
+    <div class="alert alert-danger --mb" v-if="message.type">
+        <p><i class="icon fa" :class="faMigrator('fa-warning')"></i> {{ message.title }}</p>
+        <p v-html="message.message"></p>
+    </div>
 </template>
 
 <script>

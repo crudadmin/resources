@@ -1,29 +1,31 @@
 <template>
     <div>
-        <ul class="sidebar-menu">
-            <li class="header">
-                {{ hasLanguages && isActive ? trans('language-mutation') : trans('navigation') }}
-                <div v-if="hasLanguages && isActive" class="form-group language_select" data-toggle="tooltip" title="" :data-original-title="trans('change-language')">
-                    <select @change="changeLanguage" class="form-control" data-global-language-switch>
-                        <option v-for="language in languages" :selected="langid == language.id" :value="language.id">{{ getLangName(language) }}</option>
-                    </select>
-                </div>
-            </li>
-        </ul>
+        <section class="sidebar">
+            <ul class="sidebar-menu">
+                <sidebar-row v-for="(row, key) in groups" :key="key" :row="row"></sidebar-row>
+            </ul>
+        </section>
 
-        <!-- Sidebar Menu -->
-        <ul class="sidebar-menu">
-            <sidebar-row v-for="(row, key) in groups" :key="key" :row="row"></sidebar-row>
-        </ul>
-        <!-- /.sidebar-menu -->
+        <div class="footer-sidebar">
+            <div class="footer-content">
+                <p v-if="author !== false">Developed by <a href="https://www.marekgogol.sk" target="_blank">Marek Gogoľ</a></p>
+                <p>&copy; 2016 - {{ year }} <a href="https://www.crudadmin.com" target="_blank">CrudAdmin</a></p>
+                <br v-if="author !== false">
+                <p>Version <a target="_blank" :href="'https://packagist.org/packages/crudadmin/crudadmin#'+version">{{ version }}</a></p>
+            </div>
+            <div class="toggle-menu-size" @click="toggleSidebarMenu">
+                <i class="fa" :class="{ 'fa-angle-left' : sidebarMenuVisible, 'fa-angle-right' : !sidebarMenuVisible }"></i>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 import SidebarRow from './SidebarRow.vue';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
-    props: ['rows', 'languages', 'langid'],
+    props: ['rows', 'languages', 'langid', 'user', 'version', 'author'],
 
     components: { SidebarRow },
 
@@ -36,6 +38,12 @@ export default {
     },
 
     computed : {
+        ...mapState('header', [
+            'sidebarMenuVisible'
+        ]),
+        year(){
+            return moment().format('Y');
+        },
         groups(){
             var groups = this.rows;
 
@@ -50,19 +58,13 @@ export default {
             }
 
             return groups;
-        },
-        hasLanguages(){
-            return this.languages.length > 0;
-        },
-        isActive(){
-            return this.$root.languages_active == true ? 1 : 0;
         }
     },
 
     methods: {
-        changeLanguage(e){
-            this.$parent.language_id = e.target.value;
-        },
+        ...mapMutations('header', [
+            'toggleSidebarMenu',
+        ]),
         addActiveTreeClasses(){
             var owner = $('.sidebar li[data-slug="'+this.$router.currentRoute.params.model+'"]');
 
@@ -71,9 +73,6 @@ export default {
             $('.sidebar .treeview-menu a').click(function(){
                 $(this).parent().siblings('.active').removeClass('active').find('.menu-open').slideUp();
             });
-        },
-        getLangName(lang){
-            return this.$root.getLangName(lang);
         },
         hasActiveModule(modules){
             for ( var key in modules )

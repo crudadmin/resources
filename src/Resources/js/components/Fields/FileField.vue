@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled }">
+    <div class="form-group" :class="{ disabled : disabled }" data-toggle="tooltip" :title="field.tooltip">
         <label>
             <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
             {{ field_name }}
@@ -7,10 +7,21 @@
         </label>
 
         <div class="file-group">
-            <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? field_key + '[]' : field_key" @change="addFile" class="form-control" :placeholder="field.placeholder || field_name">
-            <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+field_key" :value="1">
+            <div class="upload-file-wrapper">
+                <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? field_key + '[]' : field_key" @change="addFile" class="form-control" :placeholder="field.placeholder || field_name">
+                <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+field_key" :value="1">
 
-            <button v-if="value && !isMultipleUpload || !file_from_server" @click.prevent="removeFile" type="button" class="btn btn-danger btn-md" data-toggle="tooltip" title="" :data-original-title="trans('delete-file')"><i class="fa fa-remove"></i></button>
+                <button
+                    v-if="canFileBeDeleted"
+                    @click.prevent="removeFile"
+                    type="button"
+                    class="btn btn-danger remove-file"
+                    data-toggle="tooltip"
+                    title=""
+                    :data-original-title="trans('delete-file')">
+                    <i class="far fa-trash-alt"></i>
+                </button>
+            </div>
 
             <div v-show="(isMultiple && !isMultirows) && getFiles.length > 0">
                 <select ref="multipleFiles" :name="(hasLocale || (isMultiple && !isMultirows) && getFiles.length > 0) ? '$uploaded_'+field_key+'[]' : ''" data-placeholder=" " multiple>
@@ -20,7 +31,7 @@
 
             <small>{{ field.title }}</small>
 
-            <span v-if="value && !hasMultipleFilesValue && file_from_server && !isMultiple">
+            <span v-if="canFileBeDownloaded">
                 <file :file="value" :field="field_key_original" :model="model"></file>
             </span>
 
@@ -32,7 +43,7 @@
     import File from '../Partials/File.vue';
 
     export default {
-        props: ['id', 'row', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level'],
+        props: ['id', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level', 'langslug'],
 
         components : { File },
 
@@ -79,8 +90,14 @@
         },
 
         computed: {
-            isOpenedRow(){
-                return this.row && 'id' in this.row;
+            canFileBeDeleted(){
+                return !this.disabled
+                    && (this.value && !this.isMultipleUpload || !this.file_from_server)
+                    && this.model.getSettings('fields.'+this.field_key+'.canDelete', true);
+            },
+            canFileBeDownloaded(){
+                return (this.value && !this.hasMultipleFilesValue && this.file_from_server && !this.isMultiple)
+                    && this.model.getSettings('fields.'+this.field_key+'.canDownload', true);
             },
             isMultiple(){
                 return this.field.multiple === true;
@@ -89,7 +106,7 @@
                 return this.field.multirows && this.field.multirows === true;
             },
             isMultipleUpload(){
-                return (this.isMultirows && !this.isOpenedRow) || this.isMultiple;
+                return (this.isMultirows && !this.model.isOpenedRow()) || this.isMultiple;
             },
             hasMultipleFilesValue(){
                 return $.isArray(this.field.value);
@@ -135,10 +152,11 @@
             },
             removeFile(){
                 if ( ! this.isMultiple ){
-                    if ( this.hasLocale )
+                    if ( this.hasLocale ) {
                         this.field.value[this.langslug] = null;
-                    else
+                    } else {
                         this.field.value = null;
+                    }
                 }
 
                 this.file_will_remove = true;

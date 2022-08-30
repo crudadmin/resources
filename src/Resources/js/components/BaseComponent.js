@@ -1,19 +1,23 @@
 import config from '../config';
 import RequestHelper from './Helpers/RequestHelper';
 
+import AppHeader from './Partials/AppHeader.vue';
 import Sidebar from './Sidebar/Sidebar.vue';
-import License from './Partials/License.vue';
-import CheckAssetsVersion from './Partials/CheckAssetsVersion.vue';
-import ModelHelper from './Helpers/ModelHelper.js';
+import ModalRenderer from '@components/Modal/ModalRenderer.vue';
 
-const BaseComponent = (router) => {
+import { mapState, mapMutations } from 'vuex';
+
+const BaseComponent = (router, store) => {
     return {
         el: '#app',
         router,
+        store,
         data : function(){
             return {
+                mobile_menu : false,
                 csrf_token: null,
                 version : null,
+                version_resources : null,
                 version_assets : null,
                 gettext : null,
                 locale : null,
@@ -22,20 +26,13 @@ const BaseComponent = (router) => {
                 requests: {},
                 user : null,
                 tree: [],
+                originalModels : {},
                 models: {},
                 localization: {},
                 languages: [],
+                admin_languages: [],
                 language_id : null,
                 languages_active : false,
-                alert: {
-                    type : null, // success,danger,warning...
-                    title : null,
-                    message : null,
-                    success: null,
-                    close: null,
-                    component: null,
-                    opened : null,
-                }
             }
         },
 
@@ -45,52 +42,69 @@ const BaseComponent = (router) => {
             }
         },
 
-        components: { Sidebar, License, CheckAssetsVersion },
+        components: { AppHeader, Sidebar, ModalRenderer },
 
         created(){
             this.reloadCSRFToken($('meta[name="csrf-token"]')[0].content);
 
             this.bootApp();
+        },
 
-            //Set datepickers language
-            jQuery.datetimepicker.setLocale(this.locale);
-
-            this.checkAlertEvents();
+        mounted(){
+            this.bootTooltips();
         },
 
         computed : {
+            ...mapState('header', [
+                'isActiveMobileMenu',
+                'sidebarMenuVisible',
+            ]),
             isTest(){
                 return this.version.indexOf('test') > -1;
             },
-            canShowAlert(){
-                return this.alert.title != null && this.alert.message != null || this.alert.component;
-            },
-            getAvatar()
-            {
-                if ( this.user && this.user.avatar )
-                    return this.user.avatar;
-
-                return this.$http.options.root + '/../'+window.crudadmin.path+'/dist/img/avatar5.png';
-            },
-            getPermissions()
-            {
-                if ( 'admins_groups' in this.user )
-                {
-                    var permissions = [];
-
-                    for (var i = 0; i < this.user.admins_groups.length; i++){
-                        permissions.push( this.user.admins_groups[i].name );
-                    }
-
-                    if ( permissions.length > 0 )
-                        return permissions.join(', ');
-                }
-
-                return this.trans('admin-user');
-            }
         },
 
         methods : {
+            setDefaultRoute(){
+                if ( router.currentRoute.name == 'dashboard' ) {
+                    let defaultModel;
+
+                    let hasModelPermission = table => {
+                        return this.getFreshModel(table).hasAccess('read');
+                    };
+
+                    for ( var table in this.models ) {
+                        let model = this.getFreshModel(table);
+
+                        if ( hasModelPermission(table) && model.getSettings('default', false) === true ) {
+                            defaultModel = model.table;
+                            break;
+                        }
+                    }
+
+                    //Run default permission model, or default model set in properties
+                    let defaultPermissionModel = (this.user.roles||[]).filter(role => {
+                        return role.default_model && hasModelPermission(role.default_model)
+                    }).map(role => role.default_model);
+
+                    if ( defaultPermissionModel.length > 0 || defaultModel ) {
+                        router.push({ name : 'admin-model', params : {
+                            model : defaultPermissionModel[0]||defaultModel
+                        } });
+                    }
+                }
+            },
+            bootTooltips(){
+                $('body').tooltip({
+                  selector: "[data-toggle='tooltip']",
+                });
+
+                //Destroy tooltips on click
+                $('body').on('click', () => {
+                    $('[data-toggle="tooltip"]').tooltip('dispose');
+                    $('.tooltip.show').remove();
+                });
+            },
             reloadCSRFToken(token){
                 this.csrf_token = token;
 
@@ -108,10 +122,15 @@ const BaseComponent = (router) => {
              * Boot whole app with data from API
              */
             bootApp(){
+                //If user is not logged in
+                if ( ! window.crudadmin.logged )
+                    return;
+
                 this.$http.get(window.crudadmin.baseURL+'/api/layout').then(response => {
                     var layout = response.data;
 
                     this.version = layout.version;
+                    this.version_resources = layout.version_resources;
                     this.version_assets = layout.version_assets;
                     this.gettext = layout.gettext;
                     this.locale = layout.locale;
@@ -121,10 +140,14 @@ const BaseComponent = (router) => {
                     this.user = layout.user;
                     this.tree = layout.models;
                     this.models = this.flattenModelsWithChilds(layout.models);
+                    this.originalModels = this.flattenModelsWithChilds(layout.models);
                     this.localization = layout.localization||{};
                     this.languages = layout.languages||[];
+                    this.admin_language = layout.admin_language||{};
+                    this.admin_languages = layout.admin_languages||[];
 
                     this.bootLanguages();
+                    this.setDefaultRoute();
                 }).catch(error => {
                     this.errorResponseLayer(error);
                 });
@@ -170,90 +193,14 @@ const BaseComponent = (router) => {
                     if ( typeof tree[key] != 'object' )
                         continue;
 
-                    models[tree[key].slug] = ModelHelper(tree[key]);
+                    models[tree[key].slug] = _.cloneDeep(tree[key]);
 
-                    if ( Object.keys(tree[key].childs).length > 0 )
+                    if ( Object.keys(tree[key].childs).length > 0 ) {
                         models = _.merge(models, this.flattenModelsWithChilds(tree[key].childs));
+                    }
                 }
 
                 return models;
-            },
-            openAlert(title, message, type, success, close, component){
-
-                if ( !type )
-                    type = 'success';
-
-                if ( type == 'error' )
-                    type = 'danger';
-
-                this.alert.type = type;
-                this.alert.title = title;
-                this.alert.message = message;
-                this.alert.success = success;
-                this.alert.close = close;
-                this.alert.opened = new Date().getTime();
-
-                this.bindAlertComponent(component);
-
-                //After opening alert unfocus focused input
-                //for prevent sending of new form ajax instance...
-                if ("activeElement" in document)
-                    document.activeElement.blur();
-
-                return this.alert;
-            },
-            getComponentName(name){
-                return name + 'Alert';
-            },
-            bindAlertComponent(component){
-                this.alert.component = component;
-
-                if ( component ){
-                    var obj;
-
-                    try {
-                        obj = this.getComponentObject(component.component);
-                        obj.name = this.getComponentName(component.name);
-
-                        this.$options.components[obj.name] = obj;
-
-                        console.log('component registred', this.getComponentName(component.name), component);
-                    } catch(error){
-                        console.error('Syntax error in component button component.' + "\n", error);
-
-                        this.alert.component = null;
-                    }
-                }
-            },
-            closeAlert(callback){
-                if ( typeof callback == 'function' )
-                    callback.call(this);
-
-                for ( var key in this.alert )
-                    this.alert[key] = null;
-            },
-            arrorAlert(callback){
-                this.openAlert(this.trans('warning'), this.trans('unknown-error'), 'danger', null, callback ? callback : function(){});
-            },
-            checkAlertEvents(){
-                $(window).keyup(e => {
-
-                    //If is opened alert
-                    if ( this.canShowAlert !== true )
-                        return;
-
-                    //If enter/esc has been pressed 300ms after alert has been opened
-                    //does not close this alert and ignore enter
-                    if ( this.alert.opened && new Date().getTime() - this.alert.opened < 300 )
-                        return;
-
-                    if ( e.keyCode == 13 )
-                        this.closeAlert( this.alert.success || this.alert.close );
-
-                    if ( e.keyCode == 27 )
-                        this.closeAlert( this.alert.close );
-
-                });
             },
             bootLanguages(){
                 if ( this.languages.length == 0 )
@@ -264,70 +211,13 @@ const BaseComponent = (router) => {
 
                 this.language_id = localStorage.language_id;
             },
-            //Check for all error response in all requests
-            errorResponseLayer(response, code, callback)
-            {
-                //Fix for jquery response
-                if ( 'responseJSON' in response )
-                    response.data = response.responseJSON;
-
-                //Set response data
-                if ( ! response.data && response.body )
-                    response.data = response.body;
-
-                //If error response comes with some message information, then display it
-                if ( response.data && response.data.message && response.data.title && response.data.type )
-                {
-                    return this.$root.openAlert(response.data.title, response.data.message, response.data.type, null, () => {
-                        if ( response.status == 401 )
-                        {
-                            window.location.reload();
-                        }
-                    });
-                }
-
-                if ( response.status == 404 )
-                {
-                    return this.$root.openAlert(this.trans('warning'), this.trans('row-error'), 'warning');
-                }
-
-                //If has been client logged off
-                if ( response.status == 401 )
-                {
-                    return this.$root.openAlert(this.trans('warning'), this.trans('auto-logout'), 'warning', null, function(){
-                        window.location.reload();
-                    });
-                }
-
-                //Callback on code
-                if ( callback && (code === response.status || code === null) )
-                    return callback(response);
-
-                //Unknown HTTP error
-                if ( response.data.message )
-                    return this.$root.openAlert('Error ' + response.status, response.data.message, 'error');
-
-                //Unknown error
-                this.$root.arrorAlert();
-            },
             //Check specifics property in model
             getModelProperty(model, key, value){
-                var path = key.split('.');
-
-                if ( ! model )
+                if ( ! model ) {
                     return null;
-
-                for ( var i = 0; i < path.length; i++ )
-                {
-                    if ( ! ( path[i] in model ) )
-                    {
-                        return value ? value : null;
-                    }
-
-                    model = model[path[i]];
                 }
 
-                return model;
+                return model.getModelProperty(key, value);
             },
             /*
             * Returns correct values into multilangual select
@@ -335,47 +225,82 @@ const BaseComponent = (router) => {
             languageOptions(array, field, filter, with_hidden){
                 var key,
                     relation,
-                    field_key,
-                    related_field,
-                    matched_keys,
+                    fieldKey,
+                    relatedField,
+                    matchedKeys,
                     items = [],
                     hasFilter = filter && Object.keys(filter).length > 0;
 
-                if ( field && (relation = field['belongsTo']||field['belongsToMany']) && (field_key = relation.split(',')[1]) ){
-                    matched_keys = field_key.replace(/\\:/g, '').match(new RegExp(/[\:^]([0-9,a-z,A-Z$_]+)+/, 'g'));
+                //Relation belongsTo/belongsToMany
+                if ( field && (relation = field['belongsTo']||field['belongsToMany']) && (fieldKey = relation.split(',')[1]) ){
+                    matchedKeys = fieldKey.replace(/\\:/g, '').match(new RegExp(/[\:^]([0-9,a-z,A-Z$_]+)+/, 'g'));
+                }
+
+                //Fixed options from option attribute
+                if ( field && field.option ){
+                    fieldKey = field.option;
+
+                    matchedKeys = fieldKey.replace(/\\:/g, '').match(new RegExp(/[\:^]([0-9,a-z,A-Z$_]+)+/, 'g'));
                 }
 
                 loop1:
-                for ( var key in array )
-                {
+                for ( var key in array ) {
                     //If select has filters
-                    if ( hasFilter )
-                        for ( var k in filter ){
-                            if ( array[key][1][k] != filter[k] || array[key][1][k] == null )
+                    if ( hasFilter ) {
+                        for ( var k in filter ) {
+                            if ( array[key][1][k] == null ){
                                 continue loop1;
+                            }
+
+                            //Support for inArray values for belongsToMany
+                            if ( filter[k] && typeof filter[k] == 'object' ) {
+                                if ( filter[k].indexOf(array[key][1][k]) == -1 ) {
+                                    continue loop1;
+                                }
+                            }
+
+                            //Compare single values key
+                            else {
+                                //Suport that row has multiple values which we need filter in
+                                if ( array[key][1][k] && typeof array[key][1][k] == 'object' ) {
+                                    if ( array[key][1][k].indexOf(filter[k]) == -1 ){
+                                        continue loop1;
+                                    }
+                                }
+
+                                else if ( array[key][1][k] != filter[k] ) {
+                                    continue loop1;
+                                }
+                            }
+                        }
                     }
 
-                    //Build value from multiple columns
-                    if ( matched_keys )
-                    {
-                        var value = field_key.replace(/\\:/g, ':');
+                    //Build value from multiple columns (multiple fields keys)
+                    if ( matchedKeys ) {
+                        var value = fieldKey.replace(/\\:/g, ':');
 
-                        for ( var i = 0; i < matched_keys.length; i++ )
+                        for ( var i = 0; i < matchedKeys.length; i++ )
                         {
-                            var related_field = this.models[relation.split(',')[0]].fields[matched_keys[i].substr(1)],
-                                option_value = this.getLangValue(array[key][1][matched_keys[i].substr(1)], related_field);
+                            let keyName = matchedKeys[i].substr(1),
+                                relatedField = relation ? this.models[relation.split(',')[0]].fields[keyName] : field,
+                                optionValue = keyName == 'id' ? array[key][0] : this.getLangValue(array[key][1][keyName], relatedField);
 
-                            value = value.replace(new RegExp(matched_keys[i], 'g'), !option_value && option_value !== 0 ? '' : option_value);
+                            value = value.replace(new RegExp(matchedKeys[i], 'g'), !optionValue && optionValue !== 0 ? '' : optionValue);
                         }
                     }
 
                     //Simple value by one column
                     else {
-                        if ( field_key )
-                            related_field = this.models[relation.split(',')[0]].fields[field_key];
+                        if ( fieldKey ) {
+                            relatedField = relation ? this.models[relation.split(',')[0]].fields[fieldKey] : field;
+                        }
 
                         //Get value of multiarray or simple array
-                        var value = typeof array[key][1] == 'object' && array[key][1]!==null ? this.getLangValue(array[key][1][field_key], related_field) : array[key][1];
+                        var value = (
+                            typeof array[key][1] == 'object' && array[key][1]!==null ?
+                                this.getLangValue(array[key][1][fieldKey], relatedField)
+                                : array[key][1]
+                        );
                     }
 
                     //Change undefined values on null values
@@ -385,11 +310,13 @@ const BaseComponent = (router) => {
 
                     //Skip hidden options
                     if ( hiddenOptions && with_hidden !== false ){
-                        if ( typeof hiddenOptions == 'object' && hiddenOptions.indexOf(array[key][0]) > -1 )
+                        if ( typeof hiddenOptions == 'object' && hiddenOptions.indexOf(array[key][0]) > -1 ) {
                             continue;
+                        }
 
-                        if ( typeof hiddenOptions == 'function' && hiddenOptions(array[key][0], value, array[key][1]) === false )
+                        if ( typeof hiddenOptions == 'function' && hiddenOptions(array[key][0], value, array[key][1]) === false ) {
                             continue;
+                        }
                     }
 
                     items.push([array[key][0], value]);
@@ -414,23 +341,7 @@ const BaseComponent = (router) => {
 
                 return value;
             },
-            /*
-             * Replace datetime format from PHP to momentjs
-             */
-            fromPHPFormatToMoment(format){
-                var mapObj = { 'd' : 'DD', 'D' : 'ddd', 'j' : 'D', 'l' : 'dddd', 'N' : 'E', 'S' : 'o', 'w' : 'e', 'z' : 'DDD', 'W' : 'W', 'F' : 'MMMM', 'm' : 'MM', 'M' : 'MMM', 'n' : 'M', 't' : '', 'L' : '', 'o' : 'YYYY', 'Y' : 'YYYY', 'y' : 'YY', 'a' : 'a', 'A' : 'A', 'B' : '', 'g' : 'h', 'G' : 'H', 'h' : 'hh', 'H' : 'HH', 'i' : 'mm', 's' : 'ss', 'u' : 'SSS', 'e' : 'zz', 'I' : '', 'O' : '', 'P' : '', 'T' : '', 'Z' : '', 'c' : '', 'r' : '', 'U' : 'X' };
-
-                var re = new RegExp(Object.keys(mapObj).join("|"),"gi");
-
-                return format.replace(re, function(match){
-                    if ( match in mapObj )
-                        return mapObj[match];
-
-                    return match;
-                });
-            },
-            runInlineScripts(layout)
-            {
+            runInlineScripts(layout){
                 $('<div>'+layout+'</div>').find('script').each(function(){
                     //Run external js
                     if ( $(this).attr('src') ){
@@ -457,91 +368,6 @@ const BaseComponent = (router) => {
                     $('body').append($(this)[0].outerHTML);
                 });
             },
-            getLangName(lang){
-                //If language table is also translatable
-                if ( typeof lang.name == 'object' ){
-                    return lang.name[Object.keys(lang.name)[0]];
-                }
-
-                return lang.name;
-            },
-            eventDataModifier(event, data, component){
-                if ( event == 'sendParentRow' ){
-                    data = { depth_level : component.$parent.depth_level };
-                }
-
-                return data;
-            },
-            canPassEventThrough(event, data, component){
-                if ( ['getParentRow'].indexOf(event) > -1 ) {
-                    var componentDepthLevel = component.$parent.depth_level||component.$parent.$parent.depth_level;
-
-                    //Does not receive events into component which are not from parent rows.
-                    if ( data.depth_level !== undefined && data.depth_level > componentDepthLevel ) {
-                        return false;
-                    }
-                }
-
-                return true;
-            },
-            getComponentObject(data){
-                var obj = (new Function('return '+data))(),
-                    _this = this;
-
-                //Fixed backwards compacitibility for vuejs1 components
-                if ( obj.ready && !obj.mounted )
-                  obj.mounted = obj.ready;
-
-                var originalCreated = obj.created||(() => {}),
-                    originalMounted = obj.mounted||(() => {}),
-                    originalDestroyed = obj.destroyed||(() => {}),
-                    proxyEventsResend = ['sendRow', 'sendParentRow', 'reloadRows'],
-                    proxyEventsReceive = ['getRow', 'getParentRow', 'onCreate', 'onUpdate', 'onSubmit', 'changeFormSaveState', 'selectHistoryRow'],
-                    events = {};
-
-                //Extend created method
-                obj.created = function() {
-                    //This events should be resend from component to eventHub
-                    for ( var key in proxyEventsResend ) {
-                        ((event) => {
-                            this.$on(event, events[event] = (data) => {
-                                eventHub.$emit(event, _this.eventDataModifier(event, data, this));
-                            });
-                        })(proxyEventsResend[key]);
-                    }
-
-                    //This events should be received from evnentHub and send to component
-                    for ( var key in proxyEventsReceive ) {
-                        ((event) => {
-                            eventHub.$on(event, events[event] = (data) => {
-                                if ( _this.canPassEventThrough(event, data, this) ) {
-                                    this.$emit(event, data);
-                                }
-                            });
-                        })(proxyEventsReceive[key]);
-                    }
-
-                    originalCreated.call(this);
-                }
-
-                //Extend mounted method
-                obj.mounted = function() {
-                    originalMounted.call(this);
-                }
-
-                obj.destroyed = function(){
-                    //Unmount eventhub proxy
-                    for ( var key in proxyEventsReceive ) {
-                        ((event) => {
-                            eventHub.$off(event, events[event]);
-                        })(proxyEventsReceive[key]);
-                    }
-
-                    originalDestroyed.call(this);
-                }
-
-                return obj;
-            }
         }
     }
 };

@@ -1,171 +1,182 @@
 <template>
-    <div>
-        <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="depth_level" :class="['table', 'data-table', 'table-bordered', 'table-striped', { 'sortable' : model.sortable && orderby[0] == '_order' }]">
-            <thead data-table-head>
-                <tr>
-                    <th @click="toggleAllCheckboxes" v-if="multipleCheckbox">
-                        <i data-toggle="tooltip" :data-original-title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')" :class="isCheckedAll ? 'fa-check-square-o' : 'fa-square-o'" class="fa"></i>
-                    </th>
-                    <th v-for="(name, field) in columns" :class="'th-'+field" @click="toggleSorting(field)">
-                        <i class="arrow-sorting fa fa-arrow-up" v-if="orderby[0] == field && orderby[1] == 0"></i>
-                        <i class="arrow-sorting fa fa-arrow-down" v-if="orderby[0] == field && orderby[1] == 1"></i>
-                        {{ name }}
-                    </th>
-                    <th class="th-options-buttons"></th>
-                </tr>
-            </thead>
-            <draggable tag="tbody" @start="beforeUpdateOrder" @end="updateOrder">
-                <tr v-for="(item, key) in rowsdata" :key="item.id" :data-id="item.id">
-                    <td class="checkbox-td" v-if="multipleCheckbox">
-                        <div class="checkbox-box" @click="checkRow(item.id)">
-                            <input type="checkbox" :checked="checked.indexOf(item.id) > -1">
-                            <span class="checkmark"></span>
-                        </div>
-                    </td>
+    <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="model.getData('depth_level')" class="table" :class="{ 'sortable' : model.sortable && orderBy[0] == '_order', 'table-sm' : isSmallTable }">
+        <thead data-table-head>
+            <tr>
+                <th class="row-draggable" v-if="model.isDragEnabled()"></th>
+                <th class="select-row-checkbox" @click="toggleAllCheckboxes" v-if="hasCheckingEnabled">
+                    <div class="checkbox-box" data-toggle="tooltip" :title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')">
+                        <input type="checkbox" :checked="isCheckedAll">
+                        <span class="checkmark"></span>
+                    </div>
+                </th>
+                <th v-if="hasIndicatorInTable"></th>
+                <th v-for="(name, field) in columns" :class="'th-'+field" @click="toggleSorting(field)">
+                    <i class="arrow-sorting fa fa-angle-up" v-if="orderBy[0] == field && orderBy[1] == 0"></i>
+                    <i class="arrow-sorting fa fa-angle-down" v-if="orderBy[0] == field && orderBy[1] == 1"></i>
+                    {{ name }}
+                </th>
+                <th class="th-options-buttons"></th>
+            </tr>
+        </thead>
+        <component
+            v-bind="model.isDragEnabled() ? model.getDragOptions() : {}"
+            :is="model.isDragEnabled() ? 'draggable' : 'tbody'"
+            tag="tbody"
+            :list="sortedRows"
+            @start="model.onDragStart($event)"
+            @change="model.onDragChange($event)">
+            <tr v-for="(item, key) in sortedRows" :key="item.id" :data-id="item.id" :class="getRowClass(item)">
+                <td class="row-draggable" v-if="model.isDragEnabled()" @click="checkRow(item.id)">
+                    <i class="fa fa-grip-vertical"></i>
+                </td>
 
-                    <td v-for="(name, field) in columns" @click="checkRow(item.id, field)" :class="['td-'+field, { image_field : isImageField(field) } ]" :data-field="field">
-                        <table-row-value :field="field" :name="name" :item="item" :model="model" :image="isImageField(field)"></table-row-value>
-                    </td>
+                <td class="select-row-checkbox" v-if="hasCheckingEnabled" @click="checkRow(item.id)">
+                    <span v-if="item['$checkbox.slot']" v-html="item['$checkbox.slot']" class="checkbox-box-slot"></span>
+                    <div class="checkbox-box">
+                        <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
+                        <span class="checkmark"></span>
+                    </div>
+                </td>
 
-                    <td class="buttons-options" :data-model="model.slug" :class="[ 'additional-' + buttonsCount(item) ]">
-                        <div v-if="isEditable"><button data-button="edit" :data-id="item.id" type="button" v-on:click="selectRow(item)" :class="['btn', 'btn-sm', {'btn-success' : isActiveRow(item), 'btn-default' : !isActiveRow(item) }]" data-toggle="tooltip" title="" :data-original-title="trans('edit')"><i class="fa fa-pencil"></i></button></div>
-                        <div v-if="isEnabledHistory"><button data-button="history" type="button" v-on:click="showHistory(item)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : isActiveRow(item) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')"><i class="fa fa-history"></i></button></div>
-                        <div v-if="canShowGettext"><button data-button="gettext" type="button" v-on:click="openGettextEditor(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')"><i class="fa fa-globe"></i></button></div>
-                        <div><button type="button" data-button="show" v-on:click="showInfo(item)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')"><i class="fa fa-info"></i></button></div>
-                        <div v-for="(button, button_key) in getButtonsForRow(item)">
-                            <button type="button" :data-button="'action-'+button.key" v-on:click="buttonAction(button_key, button, item)" :class="['btn', 'btn-sm', button.class]" data-toggle="tooltip" title="" :data-original-title="button.name"><i :class="['fa', button_loading == getButtonKey(item.id, button_key) ? 'fa-refresh' : button.icon, { 'fa-spin' : button_loading == getButtonKey(item.id, button_key) }]"></i></button>
-                        </div>
-                        <div v-if="model.publishable"><button data-button="publishable" type="button" v-on:click="togglePublishedAt(item)" :class="['btn', 'btn-sm', { 'btn-info' : !item.published_at, 'btn-warning' : item.published_at}]" :data-published="item.published_at ? 'true' : 'false'" data-toggle="tooltip" title="" :data-original-title="item.published_at ? trans('hide') : trans('show')"><i :class="{ 'fa' : true, 'fa-eye' : item.published_at, 'fa-eye-slash' : !item.published_at }"></i></button></div>
-                        <div v-if="model.deletable && count > model.minimum"><button data-button="delete" type="button" v-on:click="removeRow( item, key )" class="btn btn-danger btn-sm" :class="{ disabled : isReservedRow(item) }" data-toggle="tooltip" title="" :data-original-title="trans('delete')"><i class="fa fa-remove"></i></button></div>
-                    </td>
-                </tr>
-            </draggable>
-        </table>
-    </div>
+                <td class="row-indicator" v-if="hasIndicatorInTable" data-toggle="tooltip" :title="item.$indicator ? (item.$indicator.name||item.$indicator.title) : ''">
+                    <i v-if="item.$indicator" :class="item.$indicator.class" :style="{ background : item.$indicator.color }"></i>
+                </td>
+
+                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { image_field : isImageField(field), '--clickable' : isTableClickable } ]" :data-field="field">
+                    <table-row-value
+                        :settings="getCachableColumnsSettings(field)"
+                        :columns="columns"
+                        :field="field"
+                        :name="name"
+                        :item="item"
+                        :model="model"
+                        :image="isImageField(field)">
+                    </table-row-value>
+                </td>
+
+                <td class="buttons-options" :data-model="model.slug">
+                    <Actions :model="model" :row="item" />
+                </td>
+            </tr>
+        </component>
+    </table>
 </template>
 
 <script>
 import TableRowValue from './TableRowValue.vue';
+import Actions from '@components/Partials/Actions/Actions.vue';
 import draggable from 'vuedraggable'
 
 export default {
-    props : ['row', 'rows', 'rowsdata', 'buttons', 'count', 'field', 'gettext_editor', 'model', 'orderby', 'history', 'checked', 'button_loading', 'depth_level'],
+    props : ['rows', 'buttons', 'count', 'field', 'model'],
 
-    components: { TableRowValue, draggable },
+    components: { TableRowValue, Actions, draggable },
 
     data(){
         return {
-            enabled_columns : {},
-            hidden: ['language_id', '_order', 'slug', 'published_at', 'updated_at', 'created_at'],
             autoSize : false,
         };
     },
 
     created() {
         //If table has foreign column, will be hidden
-        if ( this.model.foreign_column != null )
+        if ( this.model.foreign_column != null ) {
             this.hidden.push( this.model.foreign_column );
+        }
 
         //Set allowed columns
-        this.resetAllowedColumns();
+        this.model.resetAllowedColumns(this.defaultColumns);
 
         //Automaticaly choose size of tables
-        if ( this.autoSize == false )
-            this.$parent.$parent.checkActiveSize( this.columns );
-
-        //On history change
-        eventHub.$on('selectHistoryRow', this.selectHistoryRowEvent = data => {
-            if ( this.model.slug != data.table )
-                return;
-
-            this.selectRow({ id : data.row_id }, null, null, data.history_id, data.row);
-        })
+        if ( this.autoSize == false ) {
+            this.model.checkActiveGridSize(this.columns);
+        }
     },
 
-    destroyed() {
-        eventHub.$off('selectHistoryRow', this.selectHistoryRowEvent);
+    watch: {
+        columns(){
+            this._cacheColumnSettings = {};
+        },
     },
 
     computed: {
+        button_loading(){
+            return this.model.getData('button_loading');
+        },
+        loadingRow(){
+            return this.model.getData('loadingRow');
+        },
+        enabled_columns(){
+            return this.model.getData('enabled_columns');
+        },
+        sortedRows(){
+            return this.model.getRows();
+        },
+        row(){
+            return this.model.getRow();
+        },
+        orderBy(){
+            return this.model.getData('orderBy');
+        },
+        hasCheckingEnabled(){
+            if ( this.model.getSettings('checking', true) === false ){
+                return false;
+            }
+
+            return true;
+        },
+        isSmallTable(){
+            if ( this.model.getSettings('table.small', false) == true ){
+                return true;
+            }
+
+            var limit = 30,
+                columnsCount = Object.keys(this.columns).length;
+
+            return this.rows.limit >= limit && this.rows.count >= limit || columnsCount > 10;
+        },
         multipleCheckbox(){
-            return this.checked.length > 0;
+            return this.model.getChecked().length > 0;
         },
         defaultColumns(){
             var data = {},
                 key;
 
             //Get columns from row
-            for ( var i = 0; i < this.model.columns.length; i++ )
-            {
-                key = this.model.columns[i];
-
-                //If is column hidden
-                if (this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.hidden'))
-                    continue;
-
+            for ( var key in this.model.fields ) {
+                //We want skip inacessible fields
                 if (
-                    this.hidden.indexOf( key ) == -1
-                    && this.avaliableColumns.indexOf( key ) > -1
+                    this.model.tryAttribute(this.model.fields[key], 'inaccessible')
+                    || this.model.tryAttribute(this.model.fields[key], 'inaccessible_column')
+                ){
+                    continue;
+                }
+
+                let enabled =
+                    (this.model.columns.includes(key) === true || this.model.fields[key].column_visible === true)
+                    && this.model.getSettings('columns.'+key+'.hidden') !== true
+                    && this.hidden.includes(key) === false
+                    && this.avaliableColumns.includes(key) === true
                     && (
+                            //Is virtual column
                             !(key in this.model.fields)
                             || (
+                                //Is not hidden field
                                 this.model.fields[key].hidden != true
-                                && this.model.fields[key].invisible != true
+                                && !this.model.tryAttribute(this.model.fields[key], 'invisible')
                             )
-                    )
-                )
-                {
-                    data[ this.model.columns[i] ] = this.fieldName( this.model.columns[i] );
-                }
+                            || this.model.fields[key].column_visible == true
+                    );
+
+                data[ key ] = {
+                    name : this.fieldName(key),
+                    enabled,
+                };
             }
 
-            var columns = this.$root.getModelProperty(this.model, 'settings.columns');
+            data = this.addVirtualColumns(data);
 
-
-            /*
-             * Check if can be added column after other column
-             */
-            var except = [];
-
-            //Add before and after column values
-            if ( columns )
-            {
-                for ( var i in columns )
-                {
-                    var modifiedData = {};
-
-                    for ( var key in data )
-                    {
-                        //Add custom column before actual column
-                        for ( var k in columns )
-                            modifiedData = this.addColumn(modifiedData, k, key, 'before', columns, except);
-
-                        modifiedData[key] = data[key];
-
-                        //Add custom column after actual column
-                        for ( var k in columns )
-                            modifiedData = this.addColumn(modifiedData, k, key, 'after', columns, except);
-                    }
-
-                    data = modifiedData;
-                }
-
-                for ( var key in columns )
-                {
-                    if ( !(key in data) && (columns[key].hidden != true && columns[key].invisible != true) )
-                    {
-                        var field_key = this.getColumnRightKey(key);
-
-                        data[key] = columns[key].name||columns[key].title||this.model.fields[field_key].column_name||this.model.fields[field_key].name;
-                    }
-                }
-            }
-
-            //Remove increments
-            if ( this.$root.getModelProperty(this.model, 'settings.increments') === false && 'id' in data )
-                delete data['id'];
-
-            this.$parent.default_columns = Object.keys(data);
+            this.model.setData('default_columns', data);
 
             return data;
         },
@@ -173,45 +184,187 @@ export default {
             var columns = {}
 
             //Disable changed fields
-            for ( var key in this.enabled_columns )
-                if ( this.enabled_columns[key].enabled == true )
+            for ( var key in this.enabled_columns ) {
+                if ( this.enabled_columns[key].enabled == true ) {
                     columns[key] = this.enabled_columns[key].name;
+                }
+            }
 
             return columns;
         },
         avaliableColumns(){
             return ['id'].concat( Object.keys( this.model.fields ) );
         },
-        isEditable(){
-            return this.model.editable || this.$parent.$parent.hasChilds() > 0;
-        },
-        isEnabledHistory(){
-            return this.model.history == true;
-        },
-        canShowGettext(){
-            if ( this.model.slug == 'languages' && this.$root.gettext == true )
-                return true;
-
-            return false;
-        },
-        formID(){
-            return 'form-' + this.depth_level + '-' + this.model.slug;
-        },
         availableButtons(){
             return this.$parent.availableButtons;
         },
         isCheckedAll(){
-            var ids = this.rows.data.map(item => item.id);
+            var ids = this.rows.data.map(item => item.id),
+                checked = this.model.getChecked();
 
-            if ( this.checked.length == 0 )
+            if ( checked.length == 0 ) {
                 return false;
+            }
 
-            return _.isEqual(ids, this.checked);
+            return _.isEqual(_.sortBy(ids), _.sortBy(checked));
         },
+        canOpenRowOnClick(){
+            return this.model.getSettings('table.onclickopen', false) == true;
+        },
+        isTableClickable(){
+            //if table cannot be opened
+            if ( !(this.model.isEditable() || this.model.isDisplayable()) ){
+                return false;
+            }
+
+            //If table has disabled clicks for opening rows
+            if ( this.model.getSettings('table.clickable', true) === false ){
+                return false;
+            }
+
+            return true;
+        },
+        hasIndicatorInTable(){
+            return (this.sortedRows[0]||{}).$indicator ? true : false;
+        },
+        hidden(){
+            return ['language_id', '_order', 'slug', 'published_at', 'updated_at', 'created_at'].filter(column => {
+                if ( this.model.fields[column]?.column_visible === true ){
+                    return false;
+                }
+
+                if ( this.model.getSettings('columns.'+column+'.hidden') == true ){
+                    return false;
+                }
+
+                return true;
+            });
+        }
     },
 
     methods: {
-        addColumn(modifiedData, k, key, where, columns, except){
+        addVirtualColumns(data){
+            //Remove increments
+            if ( this.$root.getModelProperty(this.model, 'settings.increments', true) !== false && !('id' in data) ) {
+                data = {
+                    id : {
+                        name : this.model.fieldName('id'),
+                        enabled : true,
+                    },
+                    ...data,
+                };
+            }
+
+            /*
+             * Check if can be added column after other column
+             */
+            var except = [],
+                columns = this.model.getSettings('columns');
+
+            //Add before and after column values
+            if ( columns ) {
+                for ( var vKey in columns ) {
+                    var modifiedData = {};
+
+                    for ( var parentKey in data ) {
+                        let parentColumnEnabled = this.model.getSettings('columns.'+parentKey+'.hidden') !== true;
+
+                        //Add custom column before actual column
+                        for ( var k in columns ) {
+                            let enabled = parentColumnEnabled === false ? false : this.model.getSettings('columns.'+k+'.hidden') != true;
+
+                            modifiedData = this.addColumn(modifiedData, k, parentKey, 'before', columns, except, enabled);
+                        }
+
+                        modifiedData[parentKey] = data[parentKey];
+
+                        //Add custom column after actual column
+                        for ( var k in columns ) {
+                            let enabled = parentColumnEnabled === false ? false : this.model.getSettings('columns.'+k+'.hidden') != true;
+
+                            modifiedData = this.addColumn(modifiedData, k, parentKey, 'after', columns, except, enabled);
+                        }
+                    }
+
+                    data = modifiedData;
+                }
+
+                for ( var key in columns ) {
+                    if ( !(key in data) ) {
+                        var field_key = this.getColumnRightKey(key),
+                            enabled = (
+                                (
+                                    columns[key].hidden != true
+                                    && columns[key].invisible != true
+                                )
+                                || columns[key].column_visible == true
+                            );
+
+                        data[key] = {
+                            name : this.model.fieldName(field_key),
+                            enabled
+                        };
+                    }
+                }
+            }
+
+            return data;
+        },
+        /*
+         * We need cache all settings for columns, for better performance
+         */
+        getCachableColumnsSettings(field){
+            if ( ! this._cacheColumnSettings ) {
+                this._cacheColumnSettings = {};
+            }
+
+            if ( field in this._cacheColumnSettings ){
+                return this._cacheColumnSettings[field];
+            }
+
+            let isRealField = field in this.model.fields,
+                realField = isRealField ? this.model.fields[field] : null;
+
+            var settings = {
+                isRealField: isRealField,
+                field : realField,
+                string_limit : this.getFieldLimit(field),
+                default_slug : this.$root.languages.length ? this.$root.languages[0].slug : null,
+                add_before : this.model.getSettings('columns.'+field+'.add_before'),
+                add_after : this.model.getSettings('columns.'+field+'.add_after'),
+                encode : this.model.getSettings('columns.'+field+'.encode', true),
+                limit : this.model.getSettings('columns.'+field+'.limit'),
+                component : this.model.getSettings('columns.'+field+'.component', realField ? realField.column_component : null),
+            };
+
+            return this._cacheColumnSettings[field] = settings;
+        },
+        getFieldLimit(fieldKey){
+            let defaultLimit = Object.keys(this.columns).length < 5 ? 40 : 20,
+                settingsLimit = this.model.getSettings('columns.'+fieldKey+'.limit');
+
+            if ( this.model.getSettings('columns.'+fieldKey+'.encode', true) === false ) {
+                return 0;
+            }
+
+            if ( fieldKey in this.model.fields ) {
+                let field = this.model.fields[fieldKey],
+                    limit;
+
+                if ( 'limit' in field ) {
+                    limit = field.limit;
+                }
+
+                else {
+                    limit = settingsLimit||defaultLimit;
+                }
+
+                return limit || limit === 0 ? limit : defaultLimit;
+            }
+
+            return settingsLimit||defaultLimit;
+        },
+        addColumn(modifiedData, k, key, where, columns, except, enabled){
             if ( where in columns[k] && (columns[k][where] == key || columns[k][where] + '_id' == key) )
             {
                 var field_key = this.getColumnRightKey(k);
@@ -228,7 +381,10 @@ export default {
                 if ( field_key in modifiedData )
                     delete modifiedData[field_key];
 
-                modifiedData[field_key] = columns[k].name||columns[k].title||this.model.fields[field_key].column_name||this.model.fields[field_key].name;
+                modifiedData[field_key] = {
+                    name : this.model.fieldName(field_key),
+                    enabled,
+                };
             }
 
             return modifiedData;
@@ -236,304 +392,80 @@ export default {
         toggleAllCheckboxes(){
             var ids = this.rows.data.map(item => item.id);
 
-            this.$parent.checked = this.isCheckedAll ? [] : ids;
+            this.model.setChecked(this.isCheckedAll ? [] : ids);
         },
-        checkRow(id, field){
-            var checked = this.$parent.checked.indexOf(id);
+        checkRow(id, field, row){
+            if ( row && this.canOpenRowOnClick && (this.model.isEditable() || this.model.isDisplayable()) ) {
+                this.model.selectRow(row);
+
+                return;
+            }
+
+            if ( this.hasCheckingEnabled === false ){
+                return;
+            }
 
             //Disable checking on type of fields
-            if ( field in this.model.fields && ['file'].indexOf(this.model.fields[field].type) > -1 )
+            if ( field in this.model.fields && ['file'].indexOf(this.model.fields[field].type) > -1 ) {
                 return;
-
-            if ( checked == -1 )
-                this.$parent.checked.push(id);
-            else
-                this.$parent.checked.splice(checked, 1);
-        },
-        resetAllowedColumns(){
-            var columns = _.cloneDeep(this.defaultColumns),
-                enabled = {},
-                order = Object.keys(columns),
-                model_keys = Object.keys(this.model.fields);
-
-            //Add allowed keys
-            for ( var key in columns )
-                enabled[key] = {
-                    name : columns[key],
-                    enabled : true,
-                };
-
-            //After allowed keys, add all hidden
-            for ( var key in this.model.fields )
-            {
-                //Skip existing columns
-                if ( key in enabled )
-                    continue;
-
-                var add_index = null,
-                    after = true,
-                    before_columns = model_keys.slice(0, model_keys.indexOf(key)),
-                    after_columns = model_keys.slice(model_keys.indexOf(key) + 1);
-
-                //Add column after first visible column before this field
-                for ( var i = before_columns.length - 1; i >= 0; i-- )
-                {
-                    if ( order.indexOf(before_columns[i]) > -1 ){
-                        add_index = order.indexOf(before_columns[i]);
-                        break;
-                    }
-                }
-
-                //Add column before first visible column after this field
-                if ( ! add_index )
-                {
-                    for ( var i = 0; i < after_columns.length; i++ )
-                    {
-                        if ( order.indexOf(after_columns[i]) > -1 ){
-                            add_index = order.indexOf(after_columns[i]);
-                            after = false;
-                            break;
-                        }
-                    }
-                }
-
-                if ( add_index === null )
-                    order.push(key);
-                else
-                    order.splice(add_index + (after ? 1 : 0), 0, key);
-
-                enabled[key] = {
-                    name : this.fieldName(key),
-                    enabled : false,
-                };
             }
 
-            var correctOrder = {};
-            for ( var i = 0; i < order.length; i++ )
-                correctOrder[order[i]] = enabled[order[i]];
-
-            this.$parent.enabled_columns = this.enabled_columns = correctOrder;
-        },
-        isReservedRow(row){
-            return this.$parent.isReservedRow(row.id);
-        },
-        buttonsCount(item){
-            var buttons = this.getButtonsForRow(item),
-                    additional = 0;
-
-            additional += this.isEnabledHistory ? 1 : 0;
-            additional += this.canShowGettext ? 1 : 0;
-            additional -= !this.model.publishable ? 1 : 0;
-
-            return Object.keys(buttons||{}).length + additional;
-        },
-        getButtonsForRow(item){
-            if ( ! this.rows.buttons || !(item.id in this.rows.buttons) )
-                return {};
-
-            var data = {},
-                    buttons = this.rows.buttons[item.id];
-
-            for ( var key in buttons )
-            {
-                if ( ['button', 'both', 'multiple'].indexOf(buttons[key].type) > -1 )
-                    data[key] = buttons[key];
-            }
-
-            return data;
-        },
-        getButtonKey(id, key){
-            return this.$parent.getButtonKey(id, key);
-        },
-        buttonAction(key, button, row){
-            return this.$parent.buttonAction(key, button, row);
+            this.model.toggleChecked(id);
         },
         toggleSorting(key){
             var sortable = this.$root.getModelProperty(this.model, 'settings.sortable');
 
             //Disable sorting by columns
-            if ( sortable === false )
+            if ( sortable === false ) {
                 return;
+            }
 
-            var order = this.orderby[0] == key ? (1 - this.orderby[1]) : 0;
+            var orderBy = this.model.getData('orderBy'),
+                order = orderBy[0] == key ? (1 - orderBy[1]) : 0;
 
-            this.$parent.orderBy = [key, order];
+            this.model.setData('orderBy', [key, order]);
         },
         fieldName(key){
-            if ( key in this.model.fields )
-                return this.model.fields[key].column_name||this.$root.getModelProperty(this.model, 'settings.columns.'+key+'.name')||this.model.fields[key].name;
-            else {
-                switch( key )
-                {
-                    case 'id':
-                        return this.trans('number');
-                        break;
-                    case 'created_at':
-                        return this.trans('created');
-                        break;
-                    case 'updated_at':
-                        return this.trans('updated');
-                        break;
-                    default:
-                        return key;
-                        break;
-                }
+            return this.model.fieldName(key);
+        },
+        clickTree(target){
+            var path = [];
+            var currentElem = target;
+            while (currentElem) {
+              path.push(currentElem);
+              currentElem = currentElem.parentElement;
             }
+            if (path.indexOf(window) === -1 && path.indexOf(document) === -1)
+              path.push(document);
+            if (path.indexOf(window) === -1)
+              path.push(window);
+            return path;
         },
-        isActiveRow(row){
-            if ( !this.row )
-                return false;
-
-            if ( row.id == this.row.id )
-                return true;
-
-            return false;
-        },
-        enableDragging(){
-            this.$parent.initTimeout(false);
-            this.$parent.dragging = false;
-
-            //Enable all tooltips
-            $('[data-toggle="tooltip"]').tooltip('enable');
-        },
-        beforeUpdateOrder(dragged){
-            //Destroy table reload rows timeout
-            this.$parent.destroyTimeout();
-
-            //Set drag&drop state as true, because if we drag, we do not want reload rows
-            //from ajax request. We want stop syncing rows. Also ajax request which
-            //has been sent already.
-            this.$parent.dragging = true;
-
-            //Disable all tooltips
-            $('[data-toggle="tooltip"]').tooltip('disable');
-        },
-        updateOrder(dragged){
-            //Disable sorting when is used sorting columns
-            if ( this.orderby[0] != '_order' )
-            {
-                this.enableDragging();
+        selectRowFromTable(e, row, fieldKey){
+            if ( this.isTableClickable === false ){
                 return;
             }
 
-            var dragged_row = this.rowsdata[dragged.oldIndex],
-                dropped_row = this.rowsdata[dragged.newIndex],
-                dragged_order = dragged_row._order,
-                dropped_order = dropped_row._order,
-                rows = {},
-                changed_ids = [];
+            let field = this.model.fields[fieldKey];
 
-            //Sort all rows between sorted rows
-            for ( var i = this.$parent.$parent.rows.data.length - 1; i >= 0; i-- )
-            {
-                var row = this.$parent.$parent.rows.data[i];
+            let tree = this.clickTree(e.target);
 
-                //From top to bottom
-                if ( row.id == dragged_row.id ){
-                    row._order = dropped_order;
-                    rows[ row.id ] = row._order;
-                } else if ( dragged_order > dropped_order && row._order >= dropped_order && row._order <= dragged_order ){
-                    row._order += 1;
-                    rows[ row.id ] = row._order;
-                //From bottom to top
-                } else if ( dragged_order < dropped_order && row._order <= dropped_order && row._order > dragged_order) {
-                    row._order -= 1;
-                    rows[ row.id ] = row._order;
+            //If user click on link or button, we does not want to open row
+            for ( var i = 0; i < tree.length; i++ ){
+                if ( ['A', 'BUTTON'].indexOf(tree[i].tagName) > -1 ){
+                    return;
                 }
             }
 
-            this.$http.post(this.$root.requests.updateOrder, { model : this.model.slug, rows : rows })
-            .then(response => {
-                var data = response.data;
-
-                if ( data && 'type' in data )
-                    return this.$root.openAlert(data.title, data.message, 'danger');
-
-                this.enableDragging();
-            })
-            .catch(function(response){
-                this.$root.errorResponseLayer(response);
-
-                this.enableDragging();
-            });
-        },
-        getDateByField(row, key){
-            if ( key in this.model.fields )
-                return row[key];
-
-            return moment(row[key]).format('DD.MM.Y HH:mm');
-        },
-        showInfo(row){
-            var data = '';
-
-            if ( row.created_at != null )
-                data += this.trans('created-at') + ': <strong>' + this.getDateByField(row, 'created_at') + '</strong><br>';
-
-            if ( row.updated_at != null && this.model.editable != false )
-                data += this.trans('last-change') + ': <strong>' + this.getDateByField(row, 'updated_at') + '</strong><br>';
-
-            if ( row.published_at != null )
-                data += this.trans('published-at') + ': <strong>' + this.getDateByField(row, 'published_at') + '</strong>';
-
-            this.$root.openAlert(this.trans('row-info-n') + ' ' + row.id, data, 'primary', null, function(){});
-        },
-        openGettextEditor(item){
-            this.$parent.$parent.gettext_editor = item;
-        },
-        showHistory(row){
-            this.$parent.$parent.showHistory(row);
-        },
-        selectRow(row, data, model, history_id, model_row){
-            //If is selected same row
-            if ( this.row && this.row.id == row.id && !history_id )
+            //If column has disabled opening row on click
+            if ( this.model.getSettings('columns.'+fieldKey+'.clickable', true) == false ){
                 return;
-
-            //Recieve just messages between form and rows in one model component
-            if (model && this.model.slug != model)
-                return;
-
-            //Resets form
-            if ( row === true && data === null )
-                return this.$parent.row = null;
-
-            var render = response => {
-                for ( var key in response ){
-                    row[key] = response[key];
-                }
-
-                //Bind model data
-                this.$set(this.$parent.$parent, 'row', _.cloneDeep(row, true));
-
-                //Fix for single model with history support
-                if ( model_row ){
-                    for ( var key in model_row )
-                    {
-                        this.$set(model_row, key, row[key]);
-                    }
-                }
-
-                this.$parent.$parent.closeHistory(history_id ? true : false);
-
-                this.scrollToForm();
-            };
-
-            if ( data ) {
-                render(data);
-            } else {
-                this.$http.get(this.$root.requests.get('show', { model : this.model.slug, id : row.id, subid : history_id }))
-                .then(function(response){
-                    render(response.data);
-                })
-                .catch(function(response){
-                    this.$root.errorResponseLayer(response);
-                });
             }
+
+            this.model.selectRow(row);
         },
         removeRow(row){
             this.$parent.removeRow(row);
-        },
-        togglePublishedAt(row){
-            this.$parent.togglePublishedAt(row);
         },
         isImageField(field){
             if ( field in this.model.fields )
@@ -555,17 +487,19 @@ export default {
 
             return k;
         },
-        scrollToForm(){
+        //Add custom tr classes
+        getRowClass(row){
+            let classes = {
+                    '--active' : this.model.getChecked().indexOf(row.id) > -1,
+                    '--loading' : this.loadingRow == row.id
+                },
+                customClass = (row['$class']||'').split(' ');
 
-            //Allow scroll form only on full width table
-            if ( this.$parent.$parent.activeSize != 0 )
-                return;
+            customClass.forEach(name => {
+                classes[name] = true;
+            });
 
-            setTimeout(() => {
-                $('html, body').animate({
-                        scrollTop: $('#' + this.formID).offset().top - 10
-                }, this.$root.isTest ? 0 : 500);
-            }, 25);
+            return classes;
         }
     },
 }

@@ -1,61 +1,53 @@
 <template>
-    <div class="fields-group" :group-id="group.id" :class="getGroupClass(group)" :data-fields="visibleFields.length">
-        <div :class="{ 'nav-tabs-custom' : canShowGroupName(group) }">
-            <h4 v-if="canShowGroupName(group)">
-                <i v-if="group.icon" :class="['fa', group.icon]"></i>
+    <div v-show="isGroupVisible(group)" class="fields-group fields-group__item" :group-id="group.id" :class="getGroupClass(group)" :data-fields="visibleFields.length">
+        <div :class="{ card : canShowGroupName(group), 'fields-group__wrapper' : visibleFields.length > 0 || hasTabs(group.fields) === false, 'fields-tabs__wrapper' : hasTabs(group.fields) }">
+            <h4 class="card-header" v-if="canShowGroupName(group)">
+                <i v-if="group.icon" class="card-header--icon-left" :class="['fa', faMigrator(group.icon)]"></i>
                 <span v-html="group.name"></span>
             </h4>
 
-            <div class="tab-content">
+            <div :class="{ 'card-body' : canShowGroupName(group) }">
                 <div class="row">
-                    <div v-if="hasTabs(group.fields)" class="col-lg-12">
+                    <div v-if="hasTabs(group.fields)" class="col-lg-12 tab--parent">
                         <form-tabs-builder
+                            :level="level"
                             :tabs="tabsFields"
-                            :model="model"
-                            :row="row"
-                            :hasparentmodel="hasparentmodel"
-                            :history="history"
-                            :depth_level="depth_level">
+                            :model="model">
                         </form-tabs-builder>
                     </div>
+
                     <div v-else-if="canShowGroupName(group) && visibleFields.length == 0">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <p class="empty-group-separator">...</p>
                         </div>
                     </div>
 
-                    <div v-for="(item, index) in group.fields">
+                    <fragment :key="index" v-for="(item, index) in group.fields">
                         <div
                             v-if="isField(item) && canRenderField(model.fields[item])"
-                            v-for="langslug in getFieldLangs(model.fields[item])"
-                            v-show="canShowField(model.fields[item]) && canShowLanguageField(model.fields[item], langslug, inputlang)"
-                            class="col-lg-12">
+                            v-show="canShowField(model.fields[item])"
+                            class="fields-group__item col-12">
                             <form-input-builder
-                                :key="item"
-                                :history="history"
+                                v-for="langslug in getFieldLangs(model.fields[item])"
+                                v-show="canShowLanguageField(model.fields[item], langslug, inputlang)"
+                                :key="item+'-'+langslug"
                                 :model="model"
-                                :langid="langid"
                                 :inputlang="inputlang"
                                 :langslug="langslug"
-                                :row="row"
                                 :index="index"
-                                :hasparentmodel="hasparentmodel"
                                 :field_key="item"
-                                :field="model.fields[item]"
-                                :depth_level="depth_level">
+                                :field="model.fields[item]">
                             </form-input-builder>
                         </div>
 
                         <form-group
                             v-if="isGroup(item) && !isTab(item)"
+                            :level="level+1"
                             :group="item"
                             :model="model"
-                            :row="row"
-                            :hasparentmodel="hasparentmodel"
-                            :history="history"
-                            :depth_level="depth_level">
+                            :inputlang="inputlang">
                         </form-group>
-                    </div>
+                    </fragment>
                 </div>
             </div>
         </div>
@@ -63,60 +55,77 @@
 </template>
 
 <script>
-import FormTabsBuilder from './FormTabsBuilder.vue';
 import FormInputBuilder from './FormInputBuilder.vue';
 
 export default {
     name : 'form-group',
 
-    props : ['model', 'row', 'history', 'group', 'langid', 'inputlang', 'hasparentmodel', 'depth_level'],
+    props : ['model', 'group', 'inputlang', 'level'],
 
-    components : { FormInputBuilder, FormTabsBuilder },
-
-    created(){
-        /*
-         * Fir for double recursion in VueJS
-         */
-        this.$options.components['form-tabs-builder'] = Vue.extend(FormTabsBuilder);
+    components : {
+        FormInputBuilder,
+        FormTabsBuilder : () => import('./FormTabsBuilder.vue'),
     },
 
     computed: {
+        row(){
+            return this.model.getRow();
+        },
         tabsFields(){
             return this.group.fields.filter(item => {
                 return this.isTab(item);
             });
         },
         visibleFields(){
-            var fields = this.group.fields.filter(item => {
-                var field = this.model.fields[item];
-
-                return typeof item !== 'string' || !(
-                    field.invisible && field.invisible == true
-                    || field.removeFromForm && field.removeFromForm == true
-                    || ! this.canShowField(field)
-                );
-            });
-
-            return fields;
-        },
-        isOpenedRow(){
-            return this.row && 'id' in this.row;
+            return this.getVisibleFields(this.group.fields);
         },
     },
 
     methods: {
+        getVisibleFields(fields){
+            return (fields||[]).filter(item => {
+                if ( typeof item == 'string' ) {
+                    var field = this.model.fields[item];
+
+                    return !(
+                        this.model.tryAttribute(field, 'invisible')
+                        || this.canRemoveAttribute(field)
+                        || ! this.canShowField(field)
+                    );
+                }
+
+                //Check if subgroup has visible fields as well
+                else if ( item && typeof item == 'object' && item.fields && typeof item.fields == 'object' ) {
+                    return this.getVisibleFields(item.fields).length > 0;
+                }
+
+                return false;
+            });
+        },
+        canRemoveAttribute(field){
+            return this.model.tryAttribute(field, 'removeField')
+                   || this.model.tryAttribute(field, 'removeFromForm')
+                   || this.model.tryAttribute(field, 'inaccessible');
+        },
+        canHideAttribute(field){
+            let visibleField = this.model.tryAttribute(field, 'visibleField');
+
+            return this.model.tryAttribute(field, 'hideField')
+                   || this.model.tryAttribute(field, 'hideFromForm')
+                   || visibleField === false;
+        },
         canRenderField(field){
-            return !('removeFromForm' in field && field.removeFromForm == true)
-                    && !('invisible' in field && field.invisible == true);
+            return !this.model.tryAttribute(field, 'invisible')
+                   && !this.canRemoveAttribute(field);
         },
         canShowField(field){
-            if ( 'hideFromForm' in field && field.hideFromForm === true )
+            if ( this.canHideAttribute(field) )
                 return false;
 
-            if ( (field.ifExists === true || field.hideOnCreate === true) && ! this.isOpenedRow )
+            if ( (field.ifExists === true || field.hideOnCreate === true) && ! this.model.isOpenedRow() )
                 return false;
 
-            if ( (field.ifDoesntExists === true || field.hideOnUpdate === true) && this.isOpenedRow )
+            if ( (field.ifDoesntExists === true || field.hideOnUpdate === true) && this.model.isOpenedRow() )
                 return false;
 
             return true;
@@ -132,13 +141,15 @@ export default {
             else if ( width[0] == 'third' )
                 width[0] = 4;
 
-            if ( width.length == 2 && width[1] == 'inline' )
-                return 'col-md-'+width[0]+' inline-col';
+            if ( width.length == 2 && width[1] == 'inline' ) {
+                return 'col-12 col-lg-'+width[0]+' fields-group--inline';
+            }
 
-            if ( $.isNumeric(width[0]) )
-                return 'col-md-' + width[0];
+            if ( $.isNumeric(width[0]) ) {
+                return 'col-12 col-lg-' + width[0];
+            }
 
-            return 'col-md-12';
+            return 'col-12';
         },
         canShowGroupName(group){
             return group.name;
@@ -167,6 +178,28 @@ export default {
 
             return inputlang.slug == slug;
         },
+        isGroupVisible(group){
+            if ( group.attributes && Object.keys(group.attributes).length > 0 ){
+                if (
+                    this.model.tryAttribute(group.attributes, 'hideField')
+                    || this.model.tryAttribute(group.attributes, 'hideFromForm')
+                ){
+                    return false;
+                }
+
+                //Check if tab/group can be visible
+                let visible = this.model.tryAttribute(group.attributes, 'visible');
+                if ( _.isBoolean(visible) ){
+                    return visible;
+                }
+            }
+
+            if ( ! group.id ) {
+                return true;
+            }
+
+            return (this.model.hidden_groups||[]).indexOf(group.id) === -1;
+        }
     },
 }
 </script>

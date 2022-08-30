@@ -1,0 +1,42 @@
+@function calculateRem($size) {
+  $remSize: $size / 10px;
+  @return #{$remSize}rem;
+}
+
+@function minZero($size) {
+  @if $size < 0 {
+    @return 0px;
+  }
+
+  @return $size;
+}
+
+@mixin fontSize($size) {
+  font-size: $size; //Fallback in px
+  font-size: calculateRem($size);
+}
+
+/* GRID BASE */
+$grid-gutter-width:     30px;
+$grid-media-shift:      0.1px;
+
+$grid-breakpoints: (
+    xxs: 0,
+    xs: 400,
+    sm: 768px,
+    md: 1024px,
+    lg: 1200px,
+    xl: 1400px
+);
+
+@mixin less-than($breakPoint) {
+    @media (max-width: map-get($grid-breakpoints, $breakPoint) - $grid-media-shift) {
+        @content;
+    }
+}
+
+@mixin more-than($breakPoint) {
+    @media (min-width: map-get($grid-breakpoints, $breakPoint) + $grid-media-shift) {
+        @content;
+    }
+}

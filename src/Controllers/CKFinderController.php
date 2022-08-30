@@ -2,13 +2,14 @@
 
 namespace Admin\Resources\Controllers;
 
+use Admin\Resources\Commands\CKFinderDownloadCommand;
+use Admin\Resources\Helpers\CKFinderHelper;
+use Artisan;
 use CKSource\CKFinder\CKFinder;
-use \Illuminate\Routing\Controller;
-use Psr\Container\ContainerInterface;
 use Illuminate\Http\Request;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\HttpKernel;
-use Symfony\Component\HttpKernel\Kernel;
+use \Illuminate\Routing\Controller;
 
 /**
  * Controller for handling requests to CKFinder connector.
@@ -20,40 +21,7 @@ class CKFinderController extends Controller
      */
     public function __construct()
     {
-        app()->bind('ckfinder.connector', function () {
-            $ckfinder = new \CKSource\CKFinder\CKFinder(require __DIR__.'/../Plugins/CKFinder/config.php');
-
-            if (Kernel::MAJOR_VERSION >= 4) {
-                $this->setupForV4PlusKernel($ckfinder);
-            }
-
-            return $ckfinder;
-        });
-    }
-
-    /**
-     * Prepares CKFinder DI container to use version version 4+ of HttpKernel.
-     *
-     * @param \CKSource\CKFinder\CKFinder $ckfinder
-     */
-    private function setupForV4PlusKernel($ckfinder)
-    {
-        $ckfinder['resolver'] = function () use ($ckfinder) {
-            $commandResolver = new \Admin\Resources\Plugins\CKFinder\Polyfill\CommandResolver($ckfinder);
-            $commandResolver->setCommandsNamespace(\CKSource\CKFinder\CKFinder::COMMANDS_NAMESPACE);
-            $commandResolver->setPluginsNamespace(\CKSource\CKFinder\CKFinder::PLUGINS_NAMESPACE);
-
-            return $commandResolver;
-        };
-
-        $ckfinder['kernel'] = function () use ($ckfinder) {
-            return new HttpKernel(
-                $ckfinder['dispatcher'],
-                $ckfinder['resolver'],
-                $ckfinder['request_stack'],
-                $ckfinder['resolver']
-            );
-        };
+        CKFinderHelper::bootConnector();
     }
 
     /**
@@ -79,6 +47,21 @@ class CKFinderController extends Controller
      */
     public function browserAction(ContainerInterface $container, Request $request)
     {
+        //We need download ckfinder
+        if ( CKFinderDownloadCommand::ckfinderExists() === false ) {
+            return view('admin::partials.ckfinder_download');
+        }
+
         return view('admin::partials.ckfinder_browser');
+    }
+
+    public function downloader()
+    {
+        //If is newest ckfinder version installed
+        if ( CKFinderDownloadCommand::ckfinderExists() === true ) {
+            return;
+        }
+
+        Artisan::call('ckfinder:download');
     }
 }
