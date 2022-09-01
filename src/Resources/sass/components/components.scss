@@ -64,8 +64,8 @@
             }
 
             i {
-                &.--icon-left { margin-right: 3px; }
-                &.--icon-right { margin-left: 3px; }
+                &.--icon-left { margin-right: 10px; }
+                &.--icon-right { margin-left: 10px; }
 
                 @include fontSize(11px);
             }
