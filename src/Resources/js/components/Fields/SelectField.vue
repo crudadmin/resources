@@ -67,7 +67,6 @@
 
         data(){
             return {
-                filterBy : null,
                 allowRelation : false,
                 relationAction : null,
             };
@@ -107,8 +106,6 @@
             this.$options.components['model-builder'] = Vue.extend(ModelBuilder);
 
             this.onChangeSelect();
-
-            this.bindFilters();
 
             eventHub.$on('updateField', this.onUpdateEvent = data => {
                 if ( data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.$parent.field_key )
@@ -188,7 +185,7 @@
                 var temporaryRelationModel = this.getFreshModel(this.relationTable);
                 return (temporaryRelationModel && temporaryRelationModel.hasAccess('insert'))
                         && (this.field.canAdd === true || this.isCanAddInParentMode)
-                        && (!this.getFilterBy || this.filterBy);
+                        && (!this.getFilterBy || this.filterByValue);
             },
             canViewRow(){
                 if ( !(this.field.canView && this.field.value) ){
@@ -197,7 +194,7 @@
 
                 var temporaryRelationModel = this.getFreshModel(this.relationTable);
                 return (temporaryRelationModel && temporaryRelationModel.hasAccess('read'))
-                        && (!this.getFilterBy || this.filterBy);
+                        && (!this.getFilterBy || this.filterByValue);
             },
             canEditRow(){
                 if ( !(this.field.canEdit && this.field.value) ){
@@ -206,7 +203,7 @@
 
                 var temporaryRelationModel = this.getFreshModel(this.relationTable);
                 return (temporaryRelationModel && temporaryRelationModel.hasAccess('update'))
-                        && (!this.getFilterBy || this.filterBy);
+                        && (!this.getFilterBy || this.filterByValue);
             },
             canAddScopes(){
                 if ( this.isCanAddInParentMode == false ){
@@ -256,7 +253,7 @@
                             }.bind(this));
 
                             //Add missing values, when is filter off
-                            if (searched.length == 0 && !this.filterBy){
+                            if (searched.length == 0 && !this.filterByValue){
                                 missing.push(originalValue[i]);
                             }
                         }
@@ -273,7 +270,7 @@
                         }
                     }
 
-                    return this.filterBy || _.isNil(originalValue) ? [] : [originalValue];
+                    return this.filterByValue || _.isNil(originalValue) ? [] : [originalValue];
                 }
 
                 return missing;
@@ -286,23 +283,55 @@
                 if ( this.isStaticFilterColumn )
                     return false;
 
-                return this.getFilterBy && (!this.filterBy || this.fieldOptions.length == 0);
+                return this.getFilterBy && (!this.filterByValue || this.fieldOptions.length == 0);
             },
             isStaticFilterColumn(){
-                return this.getFilterBy && !(this.getFilterBy[0] in this.model.fields);
+                return this.getFilterBy && !(this.filterByColumn in this.model.fields);
             },
             isParentFilterColumn(){
-                return this.getFilterBy && this.getFilterBy[0].split('.').length > 1;
+                return this.getFilterBy && this.filterByColumn.split('.').length > 1;
             },
             /*
              * Return value of relation column from actual model or parent model by slug
              */
             getStaticFilterBy()
             {
-                var column = this.getFilterBy[0].split('.'),
+                var column = this.filterByColumn.split('.'),
                     model = column.length == 2 ? this.getModelBuilder(column[0]) : this;
 
                 return model.row[column[column.length - 1]];
+            },
+            filterByColumn(){
+                return this.getFilterBy[0];
+            },
+            filterByColumnOption(){
+                return this.getFilterBy[2];
+            },
+            //If field has filters, then check of other fields values for filtrating
+            filterByValue(){
+                //If is filterer key is not from parent model
+                if ( !this.getFilterBy || this.isParentFilterColumn ){
+                    return;
+                }
+
+                let relatedField = this.model.fields[this.filterByColumn],
+                    value = relatedField.value;
+
+                if ( this.filterByColumnOption ){
+                    let option = (this.model.getOptionValue(this.filterByColumn, value)||{});
+
+                    return option[this.filterByColumnOption];
+                }
+
+                //If is empty value setted after reseting form, then set null or default field value
+                if ( value === null ) {
+                    return this.$parent.defaultFieldValue(relatedField);
+                }
+
+                //If is empty value type '', or value, then set given input
+                else {
+                    return value;
+                }
             },
         },
 
@@ -390,28 +419,6 @@
                         this.model.pushOption(this.field_key_original, id, 'delete');
                     });
                 });
-            },
-            /*
-             * If field has filters, then check of other fields values for filtrating
-             */
-            bindFilters(){
-                //If is filterer key is not from parent model
-                if ( !this.getFilterBy || this.isParentFilterColumn )
-                    return;
-
-                this.$watch('model.fields.'+this.getFilterBy[0]+'.value', function(value){
-                    //If is empty value setted after reseting form, then set null or default field value
-                    if ( value === null ) {
-                        this.filterBy = this.$parent.defaultFieldValue(this.model.fields[this.getFilterBy[0]]);
-                    }
-
-                    //If is empty value type '', or value, then set given input
-                    else {
-                        this.filterBy = value;
-                    }
-                });
-
-                this.filterBy = this.$parent.defaultFieldValue(this.model.fields[this.getFilterBy[0]]);
             },
             changeValue(e, value, no_field){
                 this.$parent.changeValue(e, value, no_field);
@@ -525,7 +532,7 @@
                 }
 
                 if ( this.getFilterBy )
-                    filter[this.getFilterBy[1]] = this.isStaticFilterColumn ? this.getStaticFilterBy : this.filterBy;
+                    filter[this.getFilterBy[1]] = this.isStaticFilterColumn ? this.getStaticFilterBy : this.filterByValue;
 
                 return filter;
             },
