@@ -347,6 +347,10 @@ var Fields = (Model) => {
 
         return value;
     }
+
+    Model.prototype.getDownloadUrl = function(field, file){
+        return $app.requests.download + '?model=' + encodeURIComponent(this.table) + '&field=' + encodeURIComponent(field) + '&file=' + encodeURIComponent(file);
+    }
 };
 
 export default Fields;

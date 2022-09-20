@@ -2,9 +2,9 @@
     <div>
         <a v-if="isImage(file)" :href="path" data-lightbox="gallery" title=""><img v-bind:src="imagePath" alt=""></a>
         <a v-if="isPdf(file)" :href="path" target="_blank" title="">{{ trans('show') }} PDF</a>
-        <a v-if="isZip(file)" :href="downloadPath" target="_blank" title="">{{ trans('download') }} ZIP</a>
-        <a v-if="isDoc(file)" :href="downloadPath" target="_blank" title="">{{ trans('download-document') }}</a>
-        <a v-if="isOther(file)" :href="downloadPath" target="_blank" title="">{{ trans('download-file') }}</a>
+        <a v-if="isZip(file)" :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download') }} ZIP</a>
+        <a v-if="isDoc(file)" :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download-document') }}</a>
+        <a v-if="isOther(file)" :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download-file') }}</a>
     </div>
 </template>
 
@@ -32,9 +32,6 @@ export default {
         }
     },
     computed : {
-        downloadPath(){
-            return this.$root.requests.download + '?model=' + encodeURIComponent(this.model.slug) + '&field=' + encodeURIComponent(this.field) + '&file=' + encodeURIComponent(this.file);
-        },
         imagePath(){
             //Svg does not have thumbnails
             if ( isExtension(this.file, ['svg']) ){
