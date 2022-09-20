@@ -109,6 +109,7 @@ export default {
                         ! field.name
                         || (!('belongsToMany' in field) && 'multiple' in field)
                         || ( 'removeFromForm' in field && 'hidden' in field )
+                        || ( 'encrypted' in field )
                         || field.type == 'password'
                 ) {
                     continue;
