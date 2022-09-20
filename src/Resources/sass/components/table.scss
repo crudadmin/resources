@@ -69,6 +69,21 @@
                         &.--clickable {
                             cursor: pointer;
                         }
+
+                        &[data-type="file"] {
+                            padding-top: 0px;
+                            padding-bottom: 0px;
+
+                            img {
+                                height: 46px;
+                                transition: 0.2s all ease-in-out;
+
+                                &:hover {
+                                    height: 46px;opacity: 0.8
+                                }
+                            }
+
+                        }
                     }
 
                     tr {

@@ -16,6 +16,7 @@
         <div v-else-if="isFile" class="filesList">
             <div v-for="(file, index) in getFiles">
                 <file :file="file" :field="field" :model="model" :image="image"></file>
+
                 <span v-if="index != getFiles.length - 1">, </span>
             </div>
         </div>

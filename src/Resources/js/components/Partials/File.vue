@@ -1,7 +1,6 @@
 <template>
     <div>
-        <a v-if="isImage(file) && image != true" :href="path" data-lightbox="gallery" title="">{{ trans('show-image') }}</a>
-        <a v-if="isImage(file) && image == true" :href="path" data-lightbox="gallery" title=""><img v-bind:src="imagePath" alt=""></a>
+        <a v-if="isImage(file)" :href="path" data-lightbox="gallery" title=""><img v-bind:src="imagePath" alt=""></a>
         <a v-if="isPdf(file)" :href="path" target="_blank" title="">{{ trans('show') }} PDF</a>
         <a v-if="isZip(file)" :href="downloadPath" target="_blank" title="">{{ trans('download') }} ZIP</a>
         <a v-if="isDoc(file)" :href="downloadPath" target="_blank" title="">{{ trans('download-document') }}</a>
@@ -10,29 +9,23 @@
 </template>
 
 <script>
+import { isExtension } from '@/js/utils/helpers.js';
+
 export default {
-    props: ['file', 'field', 'model', 'image'],
+    props: ['file', 'field', 'model'],
 
     methods : {
-        isExtension(path, types){
-            var type = path.split('.').pop().toLowerCase();
-
-            if (types.indexOf( type ) > -1)
-                return true;
-            else
-                return false;
-        },
         isImage(path){
-            return this.isExtension(path, ['jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg']);
+            return isExtension(path, ['jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg']);
         },
         isPdf(path){
-            return this.isExtension(path, ['pdf']);
+            return isExtension(path, ['pdf']);
         },
         isZip(path){
-            return this.isExtension(path, ['zip', 'rar', '7zip', 'gzip', '7z']);
+            return isExtension(path, ['zip', 'rar', '7zip', 'gzip', '7z']);
         },
         isDoc(path){
-            return this.isExtension(path, ['doc', 'docx', 'ppt', 'pptx', 'xls', 'txt']);
+            return isExtension(path, ['doc', 'docx', 'ppt', 'pptx', 'xls', 'txt']);
         },
         isOther(path){
             return !(this.isImage(path) || this.isPdf(path) || this.isZip(path) || this.isDoc(path));
@@ -44,7 +37,7 @@ export default {
         },
         imagePath(){
             //Svg does not have thumbnails
-            if ( this.isExtension(this.file, ['svg']) ){
+            if ( isExtension(this.file, ['svg']) ){
                 return this.path;
             }
 

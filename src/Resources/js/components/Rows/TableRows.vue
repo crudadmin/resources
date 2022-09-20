@@ -42,15 +42,14 @@
                     <i v-if="item.$indicator" :class="item.$indicator.class" :style="{ background : item.$indicator.color }"></i>
                 </td>
 
-                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { image_field : isImageField(field), '--clickable' : isTableClickable } ]" :data-field="field">
+                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { '--clickable' : isTableClickable } ]" :data-field="field" :data-type="fieldType(field)">
                     <table-row-value
                         :settings="getCachableColumnsSettings(field)"
                         :columns="columns"
                         :field="field"
                         :name="name"
                         :item="item"
-                        :model="model"
-                        :image="isImageField(field)">
+                        :model="model">
                     </table-row-value>
                 </td>
 
@@ -239,10 +238,13 @@ export default {
 
                 return true;
             });
-        }
+        },
     },
 
     methods: {
+        fieldType(field){
+            return (this.model.fields[field]?.type)||'static';
+        },
         addVirtualColumns(data){
             //Remove increments
             if ( this.$root.getModelProperty(this.model, 'settings.increments', true) !== false && !('id' in data) ) {
