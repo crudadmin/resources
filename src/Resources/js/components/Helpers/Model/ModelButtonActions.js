@@ -149,13 +149,10 @@ var ModelButtonActions = (Model) => {
             let query = {
                 ...(requestData||{}),
                 _button : {
-                    model : this.slug,
+                    ...this.getRowsRequestData(),
                     parentTable : this.getParentTableName(true),
-                    parentId : this.getParentRowId(),
+                    model : this.table,
                     id : ids,
-                    limit : this.getData('rows').limit,
-                    page : this.getData('rows').page,
-                    language_id : this.localization === true ? this.getData('langid') : 0,
                     button_key : button.key,
                     action : previousStep && 'action' in previousStep ? action : button.action,
                 },

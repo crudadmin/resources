@@ -562,6 +562,22 @@ var ModelTableRows = (Model) => {
         });
     };
 
+    Model.prototype.getRowsRequestData = function(options){
+        let rows = this.getData('rows'),
+            { page, limit } = options||{};
+
+        return {
+            parentTable : this.getParentTableName(this.without_parent),
+            parentId : this.getParentRowId(),
+            language_id : this.localization === true ? this.getData('langid') : 0,
+            count : this.getData('refresh').count,
+            page : !_.isNil(page) ? page : rows.page,
+            limit : getRowsLimit(this, limit),
+            scopes : getQueryScopes(this),
+            search : getQuerySearch(this),
+        };
+    }
+
     Model.prototype.loadRows = async function(options = {}){
         const {
             indicator = true,
@@ -590,16 +606,9 @@ var ModelTableRows = (Model) => {
 
         let queryParams = {
             ...(query||{}),
-            parentTable : this.getParentTableName(this.without_parent),
-            parentId : this.getParentRowId(),
-            language_id : this.localization === true ? this.getData('langid') : 0,
-            limit : getRowsLimit(this, limit),
-            page : !_.isNil(page) ? page : rows.page,
-            count : refresh.count,
+            ...this.getRowsRequestData(options),
             initial : isInitialRequest,
             download : download == true ? true : false,
-            scopes : getQueryScopes(this),
-            search : getQuerySearch(this),
         };
 
         //Add additional columns which are not in default rows state
