@@ -95,8 +95,19 @@ export default {
             if ( ['created_at', 'id'].indexOf(column) > -1 )
                 return true;
 
-            return column in this.model.fields
-                    && (intervalColumns.indexOf(this.model.fields[column].type) > -1) ? true : false;
+            let field = this.model.fields[column];
+
+            if ( field ){
+                if ( field.encrypted ){
+                    return false;
+                }
+
+                if ( intervalColumns.includes(field.type) ){
+                    return true;
+                }
+            }
+
+            return false;
         },
         getSearchableFields(){
             var keys = [];
@@ -109,7 +120,6 @@ export default {
                         ! field.name
                         || (!('belongsToMany' in field) && 'multiple' in field)
                         || ( 'removeFromForm' in field && 'hidden' in field )
-                        || ( 'encrypted' in field )
                         || field.type == 'password'
                 ) {
                     continue;
