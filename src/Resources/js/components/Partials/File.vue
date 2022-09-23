@@ -1,18 +1,26 @@
 <template>
     <div>
-        <a v-if="isImage(file)" :href="path" data-lightbox="gallery" title=""><img v-bind:src="imagePath" alt=""></a>
-        <a v-if="isPdf(file)" :href="path" target="_blank" title="">{{ trans('show') }} PDF</a>
-        <a v-if="isZip(file)" :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download') }} ZIP</a>
-        <a v-if="isDoc(file)" :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download-document') }}</a>
-        <a v-if="isOther(file)" :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download-file') }}</a>
+        <a v-if="isImage(file) && thumbnail == true" :href="path" data-lightbox="gallery" title=""><img v-bind:src="imagePath" alt=""></a>
+        <a v-else-if="isImage(file)" :href="path" data-lightbox="gallery" title="">{{ trans('show-image') }}</a>
+        <a v-else-if="isPdf(file)" :href="path" target="_blank" title="">{{ trans('show') }} PDF</a>
+        <a v-else-if="isZip(file)" :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download') }} ZIP</a>
+        <a v-else-if="isDoc(file)" :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download-document') }}</a>
+        <a v-else :href="model.getDownloadUrl(field, file)" target="_blank" title="">{{ trans('download-file') }}</a>
     </div>
 </template>
 
 <script>
-import { isExtension } from '@/js/utils/helpers.js';
+import { isExtension, isEncrypted } from '@/js/utils/helpers.js';
 
 export default {
-    props: ['file', 'field', 'model'],
+    props: {
+        file : {},
+        field : {},
+        model : {},
+        thumbnail : {
+            default : true
+        },
+    },
 
     methods : {
         isImage(path){
@@ -26,9 +34,6 @@ export default {
         },
         isDoc(path){
             return isExtension(path, ['doc', 'docx', 'ppt', 'pptx', 'xls', 'txt']);
-        },
-        isOther(path){
-            return !(this.isImage(path) || this.isPdf(path) || this.isZip(path) || this.isDoc(path));
         }
     },
     computed : {
@@ -41,7 +46,12 @@ export default {
             return window.crudadmin.root + '/uploads/cache/' + this.model.slug + '/' + this.field + '/admin-thumbnails/' + this.file;
         },
         path(){
-            return window.crudadmin.root + '/uploads/' + this.model.slug + '/' + this.field + '/' + this.file;
+            //Encrypted files return as laravel download route.
+            if ( isEncrypted(this.file) ) {
+                return this.model.getDownloadUrl(this.field, this.file);
+            } else {
+                return window.crudadmin.root + '/uploads/' + this.model.slug + '/' + this.field + '/' + this.file;
+            }
         }
     }
 }

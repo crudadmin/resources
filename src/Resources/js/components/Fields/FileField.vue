@@ -32,7 +32,7 @@
             <small>{{ field.title }}</small>
 
             <span v-if="canFileBeDownloaded">
-                <file :file="value" :field="field_key_original" :model="model"></file>
+                <file :file="value" :field="field_key_original" :model="model" :thumbnail="false"></file>
             </span>
 
         </div>
