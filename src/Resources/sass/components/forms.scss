@@ -346,6 +346,14 @@
 
         &.chosen-choices {
             min-height: $input-height;
+
+            .search-choice {
+                cursor: pointer;
+
+                &:hover {
+                    background: #cecece;
+                }
+            }
         }
     }
 

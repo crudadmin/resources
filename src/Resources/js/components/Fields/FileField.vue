@@ -131,22 +131,29 @@
             changeValue(e){
                 this.$parent.changeValue(e);
             },
-            addMultipleFilesSupport(with_watcher){
+            addMultipleFilesSupport(onInitialize){
                 //Update multiple files upload
                 if ( this.field.type == 'file' && this.isMultiple && !this.isMultirows ){
-                    $(this.$refs.multipleFiles).chosen({
+                    let chosen = $(this.$refs.multipleFiles).chosen({
                         disable_search_threshold: 10,
                         search_contains : true
                     }).trigger('chosen:updated');
                 }
 
                 //On update value
-                if ( with_watcher == true )
+                if ( onInitialize == true )
                 {
                     this.$watch('field.value', () => {
                         this.$nextTick(() => {
                             $(this.$refs.multipleFiles).trigger('chosen:updated');
                         });
+                    });
+
+                    //We want add ability to open uploaded files.
+                    $(this.$refs.multipleFiles).parent().on('click', 'li.search-choice span', e => {
+                        let downloadPath = this.model.getDownloadUrl(this.field_key_original, e.target.innerText);
+
+                        window.open(downloadPath);
                     });
                 }
             },
