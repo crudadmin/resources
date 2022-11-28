@@ -47,11 +47,7 @@ export default {
         },
         path(){
             //Encrypted files return as laravel download route.
-            if ( isEncrypted(this.file) ) {
-                return this.model.getDownloadUrl(this.field, this.file);
-            } else {
-                return window.crudadmin.root + '/uploads/' + this.model.slug + '/' + this.field + '/' + this.file;
-            }
+            return this.model.getUploadsUrl(this.field, this.file);
         }
     }
 }

@@ -346,14 +346,13 @@
 
         &.chosen-choices {
             min-height: $input-height;
+        }
+    }
 
-            .search-choice {
-                cursor: pointer;
-
-                &:hover {
-                    background: #cecece;
-                }
-            }
+    .file-group & {
+        .chosen-choices .search-choice:hover {
+            cursor: pointer;
+            background: #cecece;
         }
     }
 

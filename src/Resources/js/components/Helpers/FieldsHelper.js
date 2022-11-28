@@ -351,6 +351,10 @@ var Fields = (Model) => {
     Model.prototype.getDownloadUrl = function(field, file){
         return $app.requests.download + '?model=' + encodeURIComponent(this.table) + '&field=' + encodeURIComponent(field) + '&file=' + encodeURIComponent(file);
     }
+
+    Model.prototype.getUploadsUrl = function(field, file){
+        return window.crudadmin.root + '/uploads/' + this.slug + '/' + field + '/' + file;
+    }
 };
 
 export default Fields;

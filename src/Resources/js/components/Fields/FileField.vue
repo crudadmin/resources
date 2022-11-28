@@ -151,7 +151,7 @@
 
                     //We want add ability to open uploaded files.
                     $(this.$refs.multipleFiles).parent().on('click', 'li.search-choice span', e => {
-                        let downloadPath = this.model.getDownloadUrl(this.field_key_original, e.target.innerText);
+                        let downloadPath = this.model.getUploadsUrl(this.field_key_original, e.target.innerText);
 
                         window.open(downloadPath);
                     });
