@@ -1,7 +1,9 @@
 <template>
 <div class="navbar-custom-menu" v-if="user">
-    <div class="dropdown fields-list mr-4" fields-list>
-        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" v-if="languages.length > 1">
+    <RightNavbarSlot v-if="isGlobalComponent('RightNavbarSlot')" :user="user"></RightNavbarSlot>
+
+    <div class="dropdown fields-list mr-4" fields-list v-if="languages.length > 1">
+        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <i class="--icon-left fa fa-globe"></i>
             {{ language ? language.name : '' }}
             <i class="--icon-right fa fa-angle-down"></i>
