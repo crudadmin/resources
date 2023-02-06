@@ -32,7 +32,7 @@ if ( !function_exists('ckfinder_config_mutator') ){
 $config = array();
 
 $config['authentication'] = function () {
-    return auth()->guard('web')->check();
+    return \Admin::getAdminGuard()->check();
 };
 
 /*============================ License Key ============================================*/

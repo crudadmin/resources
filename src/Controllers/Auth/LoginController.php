@@ -5,6 +5,7 @@ namespace Admin\Resources\Controllers\Auth;
 use Admin\Resources\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Admin;
 
 class LoginController extends Controller
 {
@@ -40,7 +41,7 @@ class LoginController extends Controller
 
     protected function guard()
     {
-        return auth()->guard('web');
+        return Admin::getAdminGuard();
     }
 
     /*

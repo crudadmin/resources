@@ -1,5 +1,5 @@
 window.crudadmin = {
-    logged : <?php echo auth()->guard('web')->check() ? 'true' : 'false' ?>,
+    logged : <?php echo Admin::getAdminGuard()->check() ? 'true' : 'false' ?>,
     root : '<?php echo url('/') ?>',
     admin_assets : '<?php echo admin_asset('/') ?>',
     baseURL : '<?php echo url('/admin') ?>',
