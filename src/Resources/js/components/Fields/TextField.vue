@@ -49,7 +49,7 @@
                 if ( ! editor )
                     return;
 
-                var value = this.$parent.getLocalizedValue(this.field.value) || '';
+                var value = this.$parent.getValueOrDefault;
 
                 editor.setData(value);
 
