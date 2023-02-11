@@ -24,6 +24,8 @@
                 </div>
 
                 <div class="right" v-if="!model.isSingle()">
+                    <custom-components :model="model" type="actions-grid-before" />
+
                     <div class="searchbar__wrapper" :class="{ '--hasMoreButton' : model.getData('searching') }" v-show="canShowSearchBar">
                         <div class="searchbar__wrapper__queries">
                             <search

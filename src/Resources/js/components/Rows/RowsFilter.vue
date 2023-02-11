@@ -1,6 +1,6 @@
 <template>
     <div class="buttons-wrapper">
-        <div v-if="filters.length <= 5">
+        <div v-if="filtersValues.length <= model.getSettings('filter.max_buttons', 5)">
             <button
                 v-for="(filter, key) in filters"
                 @click="setFilter(key)"
@@ -28,7 +28,7 @@
                 <ul class="dropdown-menu menu-left dropdown-menu-right">
                     <li @click="$event.stopPropagation()" v-for="(filter, key) in filters" :class="{ active : filterId.includes(key) }" class="--no-item-padding">
                         <label class="--dropdown-item-padding --dropdown-item-vertical" @click="setFilter(key)">
-                            <div if="hasAnyIconOrColor" class="icon-wrapper --icon-left">
+                            <div v-if="hasAnyIconOrColor" class="icon-wrapper --icon-left">
                                 <i class="fa" :class="filter.icon" v-if="filter.icon"></i>
                                 <i v-else-if="filter.color" class="--dot" :style="{ backgroundColor : filter.color }"></i>
                             </div>
@@ -59,8 +59,11 @@ export default {
         filters(){
             return (this.model.getSettings('rows.filter.items')||[]);
         },
+        filtersValues(){
+            return Object.values(this.filters);
+        },
         hasAnyIconOrColor(){
-            return filter.filter(item => item.color||item.icon).length > 0;
+            return this.filtersValues.filter(item => item.color||item.icon).length > 0;
         }
     },
     methods: {

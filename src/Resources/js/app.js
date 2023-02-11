@@ -31,6 +31,7 @@ import VueChosen from '@components/Partials/VueChosen.vue';
 import ButtonsAction from '@components/Partials/ButtonsAction.vue';
 import Modal from '@components/Modal/Modal.vue';
 import ModalAddNewRow from '@components/Modal/ModalAddNewRow.vue';
+import RowsFilter from '@components/Rows/RowsFilter.vue';
 
 //Router
 import Router from './router.js';
@@ -44,6 +45,7 @@ Vue.component('model-builder', ModelBuilder);
 Vue.component('buttons-action', ButtonsAction);
 Vue.component('Modal', Modal);
 Vue.component('ModalAddNewRow', ModalAddNewRow);
+Vue.component('RowsFilter', RowsFilter);
 
 //Global methods
 Vue.mixin(globalVueMixins);

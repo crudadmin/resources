@@ -545,7 +545,7 @@ var ModelTableRows = (Model) => {
         let rows = this.getData('rows');
 
         //We need allow reload position 1 also when max pages are 0 (when zero rows)
-        if ( page == 0 || (rows.count > 0 && (page - 1) > Math.ceil(rows.count/rows.limit)) ) {
+        if ( (page == 0 || (rows.count > 0 && (page - 1) > Math.ceil(rows.count/rows.limit))) && options.force !== true ) {
             return;
         }
 
