@@ -32,6 +32,7 @@ import ButtonsAction from '@components/Partials/ButtonsAction.vue';
 import Modal from '@components/Modal/Modal.vue';
 import ModalAddNewRow from '@components/Modal/ModalAddNewRow.vue';
 import RowsFilter from '@components/Rows/RowsFilter.vue';
+import Refreshing from '@components/Partials/Refreshing.vue';
 
 //Router
 import Router from './router.js';
@@ -46,6 +47,7 @@ Vue.component('buttons-action', ButtonsAction);
 Vue.component('Modal', Modal);
 Vue.component('ModalAddNewRow', ModalAddNewRow);
 Vue.component('RowsFilter', RowsFilter);
+Vue.component('Refreshing', Refreshing);
 
 //Global methods
 Vue.mixin(globalVueMixins);

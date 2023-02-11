@@ -100,7 +100,6 @@
 </template>
 
 <script>
-import Refreshing from '../Partials/Refreshing.vue';
 import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
@@ -108,7 +107,7 @@ import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents
 export default {
     props : ['model', 'rows'],
 
-    components : { Refreshing, TableRows, Pagination, CustomComponents },
+    components : { TableRows, Pagination, CustomComponents },
 
     data : function(){
         return {

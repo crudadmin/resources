@@ -5,6 +5,10 @@ var ModelProperties = (Model) => {
         return this.getData('scopes');
     }
 
+    Model.prototype.getScope = function(key){
+        return _.find(this.getScopes(), { key });
+    }
+
     Model.prototype.addScope = function(key, params){
         this.removeScope(key);
 
