@@ -28,6 +28,15 @@
                     td:last-child, th:last-child { padding-right: 1.05rem; }
                 }
 
+                &.--box-padding-left {
+                    td:first-child, th:first-child { padding-left: 3rem; }
+                }
+
+                &.--box-padding {
+                    td:first-child, th:first-child { padding-left: 3rem; }
+                    td:last-child, th:last-child { padding-right: 3rem; }
+                }
+
                 th, td {
                     border-color: $inputBorderColor;
                 }

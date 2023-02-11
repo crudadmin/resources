@@ -1,5 +1,5 @@
 <template>
-    <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="model.getData('depth_level')" class="table" :class="{ 'sortable' : model.sortable && orderBy[0] == '_order', 'table-sm' : isSmallTable }">
+    <table :id="'table-'+model.slug" :data-table-rows="model.slug" :data-depth="model.getData('depth_level')" class="table" :class="{ 'sortable' : model.sortable && orderBy[0] == '_order', 'table-sm' : isSmallTable, '--box-padding-left' : hasTablePadding }">
         <thead data-table-head>
             <tr>
                 <th class="row-draggable" v-if="model.isDragEnabled()"></th>
@@ -239,13 +239,20 @@ export default {
 
                 return true;
             });
+        },
+        hasTablePadding(){
+            if ( this.model.isDragEnabled() || this.hasCheckingEnabled ||  this.hasIndicatorInTable || this.model.getModelProperty('settings.increments', true) == true ){
+                return false;
+            }
+
+            return true;
         }
     },
 
     methods: {
         addVirtualColumns(data){
             //Remove increments
-            if ( this.$root.getModelProperty(this.model, 'settings.increments', true) !== false && !('id' in data) ) {
+            if ( this.model.getModelProperty('settings.increments', true) !== false && !('id' in data) ) {
                 data = {
                     id : {
                         name : this.model.fieldName('id'),
@@ -413,7 +420,7 @@ export default {
             this.model.toggleChecked(id);
         },
         toggleSorting(key){
-            var sortable = this.$root.getModelProperty(this.model, 'settings.sortable');
+            var sortable = this.model.getModelProperty('settings.sortable');
 
             //Disable sorting by columns
             if ( sortable === false ) {
