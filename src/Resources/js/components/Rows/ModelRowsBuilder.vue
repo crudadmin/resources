@@ -11,7 +11,7 @@
 
                 <div class="box-header__right">
                     <custom-components :model="model" type="table-header-actions" />
-                    <RowsFilter :model="model" />
+                    <RowsFilter :model="model" v-if="model.isSettingEnabled('filter', true) == true" />
 
                     <!-- Sheet download -->
                     <button
