@@ -1,5 +1,5 @@
 <template>
-<div v-if="model.getComponents(type, postfix).length">
+<fragment v-if="model.getComponents(type, postfix).length">
     <component
         v-for="name in model.getComponents(type, postfix)"
         :key="name"
@@ -8,7 +8,7 @@
         :rows="rows.data"
         :is="name">
     </component>
-</div>
+</fragment>
 </template>
 
 <script type="text/javascript">
