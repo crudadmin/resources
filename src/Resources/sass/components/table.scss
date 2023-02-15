@@ -26,6 +26,10 @@
                 &.table-sm {
                     td:first-child, th:first-child { padding-left: 1.05rem; padding-right: 0.42rem; }
                     td:last-child, th:last-child { padding-right: 1.05rem; }
+
+                    td[data-type="file"] img {
+                        height: 36px;
+                    }
                 }
 
                 &.--box-padding-left {
