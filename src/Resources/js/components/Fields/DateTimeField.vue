@@ -9,8 +9,8 @@
             :disabled="disabled"
             :readonly="readonly"
             :name="isMultipleDatepicker ? '' : name"
-            :value="model.getCastedValue(field_key)"
-            :placeholder="model.getFieldPlaceholder(name)"
+            :value="model.getCastedValue(field_key, value)"
+            :placeholder="model.getFieldPlaceholder(field)"
             autocomplete="off"
             @keyup="changeValue">
 

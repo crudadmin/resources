@@ -5,7 +5,7 @@
         <div class="file-group">
             <div class="upload-file-wrapper">
                 <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? name + '[]' : name" @change="addFile" class="form-control" :placeholder="model.getFieldPlaceholder(field)">
-                <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+field_key" :value="1">
+                <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+name" :value="1">
 
                 <button
                     v-if="canFileBeDeleted"
@@ -20,7 +20,7 @@
             </div>
 
             <div v-show="(isMultiple && !isMultirows) && getFiles.length > 0">
-                <select ref="multipleFiles" :name="(hasLocale || (isMultiple && !isMultirows) && getFiles.length > 0) ? '$uploaded_'+field_key+'[]' : ''" data-placeholder=" " multiple>
+                <select ref="multipleFiles" :name="(hasLocale || (isMultiple && !isMultirows) && getFiles.length > 0) ? '$uploaded_'+name+'[]' : ''" data-placeholder=" " multiple>
                     <option :key="file" selected v-for="file in getFiles">{{ file }}</option>
                 </select>
             </div>

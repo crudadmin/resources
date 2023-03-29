@@ -419,8 +419,6 @@ var Fields = (Model) => {
     Model.prototype.getCastedValue = function(key, value){
         let cast = this.getFieldCast(key, value);
 
-        value = !_.isNil(value) ? value : this.getValue(key);
-
         if ( cast ){
             return cast.get(value);
         }

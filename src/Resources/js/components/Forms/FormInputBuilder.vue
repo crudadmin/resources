@@ -10,6 +10,7 @@
         <component
             v-for="(component, increment) in fieldComponents"
             :is="component.name"
+            :id="getId"
             :key="component.name+'-'+increment"
             :model="model"
             :field="field"
@@ -22,6 +23,7 @@
             :disabled="isDisabled"
             :readonly="isReadonly"
             :langslug="langslug"
+            :depth_level="depth_level"
 
             :required="isRequired"
             :field_key_original="field_key">
