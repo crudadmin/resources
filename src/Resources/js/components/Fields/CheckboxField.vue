@@ -1,8 +1,8 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled }">
-        <label class="checkbox" data-toggle="tooltip" :title="field.tooltip">
-            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
-            {{ field_name }} <span v-if="field.placeholder">{{ field.placeholder }}</span>
+        <FieldLabel class="checkbox" data-toggle="tooltip" :title="field.tooltip" :model="model" :field="field" :field_key="field_key">
+            <span class="checkbox__name" v-if="field.placeholder">{{ field.placeholder }}</span>
+
             <input
                 type="checkbox"
                 class="ios-switch green"
@@ -10,9 +10,10 @@
                 @change="changeValue"
                 :disabled="disabled"
                 :checked="value == 1"
-                :name="field_key">
+                :name="name">
             <div><div></div></div>
-        </label>
+        </FieldLabel>
+
         <small>{{ field.title }}</small>
     </div>
 
@@ -20,7 +21,7 @@
 
 <script>
     export default {
-        props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled'],
+        props: ['model', 'name', 'field_key', 'field', 'value', 'disabled'],
 
         methods : {
             changeValue(e){

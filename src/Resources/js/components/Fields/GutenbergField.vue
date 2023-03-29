@@ -1,9 +1,7 @@
 <template>
     <div class="form-group" :key="elementKeyRender" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
-        <label>
-            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i> {{ field_name }}
-            <span v-if="required" class="required">*</span>
-        </label>
+        <FieldLabel :model="model" :field="field" :field_key="field_key" />
+
         <!--
             We want send form value from first textarea element,
             because second may be modifier from editor in some unexpected behaviours, when vue value is not changed at all
@@ -11,7 +9,7 @@
         <textarea
             rows="3"
             class="form-control d-none"
-            :name="field_key"
+            :name="name"
             :value="value">
         </textarea>
 
@@ -32,7 +30,7 @@
 
 <script>
     export default {
-        props: ['id', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'depth_level'],
 
         data(){
             return {

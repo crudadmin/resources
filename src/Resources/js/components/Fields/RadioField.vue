@@ -1,20 +1,17 @@
 <template>
     <div class="form-group radio-group" data-toggle="tooltip" :title="field.tooltip">
-        <label>
-            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
-            {{ field_name }}
-            <span v-if="required" class="required">*</span>
-        </label>
-        <div class="radio" v-if="!required">
+        <FieldLabel :model="model" :field="field" :field_key="field_key" />
+
+        <div class="radio" v-if="!model.isFieldRequired(field_key)">
             <label>
-                <input type="radio" :name="field_key" value="">
+                <input type="radio" :name="name" value="">
                 {{ trans('no-option') }}
             </label>
         </div>
 
         <div class="radio" v-for="data in field.options">
             <label>
-                <input type="radio" @change="changeValue" :name="field_key" :checked="hasValue(data[0], value)" :value="data[0]">
+                <input type="radio" @change="changeValue" :name="name" :checked="hasValue(data[0], value)" :value="data[0]">
 
                 {{ data[1] }}
             </label>
@@ -25,7 +22,7 @@
 
 <script>
     export default {
-        props: ['model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled'],
+        props: ['model', 'name', 'field_key', 'field', 'value', 'disabled'],
 
         computed : {
             isPassword(){

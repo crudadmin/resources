@@ -1,4 +1,6 @@
 import DateCast from './Casts/DateCast.js';
+import { fixBoolValue } from '../../utils/helpers.js';
+
 import _ from 'lodash';
 
 var Fields = (Model) => {
@@ -168,6 +170,84 @@ var Fields = (Model) => {
         }
 
         return undefined;
+    }
+
+    Model.prototype.getFieldName = function(fieldKey){
+        let field = typeof fieldKey == 'object' ? fieldKey : this.fields[fieldKey];
+
+        if ( !field ){
+            return $app.trans('Neznáme pole');
+        }
+
+        return field.name;
+    }
+
+    Model.prototype.getFieldPlaceholder = function(fieldKey){
+        let field = typeof fieldKey == 'object' ? fieldKey : this.fields[fieldKey];
+
+        return field.placeholder || this.getFieldName(field);
+    }
+
+    Model.prototype.isFieldRequired = function(fieldKey){
+        let row = this.getRow(),
+            field = this.fields[fieldKey];
+
+        if ( !field ){
+            return false;
+        }
+
+        if ( this.isOpenedRow() && field.type == 'password' ) {
+            return false;
+        }
+
+        //Basic required attribute
+        if ( 'required' in field && field.required == true ){
+            return true;
+        }
+
+        //Required if attribute
+        if ( field.required_if ) {
+            var parts = field.required_if.split(','),
+                value = fixBoolValue(row[parts[0]]);
+
+            if (value && parts.slice(1).indexOf(value) > -1) {
+                return true;
+            }
+        }
+
+        //Required unless attribute
+        if ( field.required_unless ) {
+            var parts = field.required_unless.split(','),
+                value = fixBoolValue(row[parts[0]]);
+
+            if (value && parts.slice(1).indexOf(value) == -1){
+                return true;
+            }
+        }
+
+        //Required without attribute
+        if ( field.required_without ) {
+            var parts = field.required_without.split(',');
+
+            for ( var i = 0; i < parts.length; i++ ) {
+                if ( ! row[parts[i]] ) {
+                    return true;
+                }
+            }
+        }
+
+        //Required without attribute
+        if ( field.required_with ) {
+            var parts = field.required_with.split(',');
+
+            for ( var i = 0; i < parts.length; i++ ) {
+                if ( row[parts[i]] ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     Model.prototype.getFilterBy = function(key){

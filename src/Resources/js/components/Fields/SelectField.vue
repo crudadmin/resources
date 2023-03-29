@@ -1,12 +1,9 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled || readonly || hasNoFilterValues }" v-show="required || !hasNoFilterValues" data-toggle="tooltip" :title="field.tooltip">
-        <label>
-            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
-            {{ field.name }}
-            <span v-if="required || isRequiredIfHasValues" class="required">*</span>
-        </label>
+        <FieldLabel :model="model" :field="field" :field_key="field_key" :required="required" />
+
         <div class="form-group__chosen-container" :class="{ canPerformActions : hasRelationModal }">
-            <select ref="select" :disabled="disabled" :name="!isMultiple ? field_key : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
+            <select ref="select" :disabled="disabled" :name="!isMultiple ? name : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
                 <option v-if="!isMultiple" value="">{{ trans('select-option') }}</option>
                 <option
                     v-for="mvalue in missingValueInSelectOptions"
@@ -30,7 +27,7 @@
             </button>
         </div>
         <small>{{ field.title }}</small>
-        <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+field_key" value="1">
+        <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+name" value="1">
 
         <!-- Modal for adding relation -->
         <div class="modal fade" select-field :class="{ '--inModal' : isModalInModal }" v-if="hasRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
@@ -63,7 +60,7 @@
     import ModelBuilder from '../Views/ModelBuilder.vue';
 
     export default {
-        props: ['id', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'readonly', 'inputlang', 'langid', 'depth_level'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'inputlang', 'langid', 'depth_level'],
 
         data(){
             return {
@@ -120,6 +117,9 @@
         },
 
         computed: {
+            required(){
+                return this.model.isFieldRequired(this.field_key) || this.isRequiredIfHasValues;
+            },
             row(){
                 return this.model.getRow();
             },
@@ -212,14 +212,14 @@
 
                 return [{
                     key : 'filterByParentField',
-                    params : [this.model.table, this.field_key_original, this.row.id].join(';')
+                    params : [this.model.table, this.field_key, this.row.id].join(';')
                 }];
             },
             getFilterBy(){
-                return this.model.getFilterBy(this.field_key_original);
+                return this.model.getFilterBy(this.field_key);
             },
             isMultiple(){
-                return this.model.isFieldMultiple(this.field_key_original);
+                return this.model.isFieldMultiple(this.field_key);
             },
             fieldOptions(){
                 if ( typeof this.field.options != 'object' )
@@ -405,18 +405,18 @@
                 this.relationModel = model;
 
                 this.relationModel.on('onCreate', this.onRelationCreated = (row) => {
-                    this.model.pushOption(this.field_key_original, row, 'store');
+                    this.model.pushOption(this.field_key, row, 'store');
 
                     this.reloadSetters(row.id);
                 });
 
                 this.relationModel.on('onUpdate', this.onRelationUpdate = (row) => {
-                    this.model.pushOption(this.field_key_original, row, 'update');
+                    this.model.pushOption(this.field_key, row, 'update');
                 });
 
                 this.relationModel.on('onDelete', this.onRelationDeleted = (ids) => {
                     ids.forEach(id => {
-                        this.model.pushOption(this.field_key_original, id, 'delete');
+                        this.model.pushOption(this.field_key, id, 'delete');
                     });
                 });
             },
@@ -545,7 +545,7 @@
                     var field = this.model.fields[key],
                         fillBy = this.getFillBy(field);
 
-                    if ( ! fillBy || ! fillBy[0] || (fillBy[0] != this.field_key_original && fillBy[0] + '_id' != this.field_key_original) )
+                    if ( ! fillBy || ! fillBy[0] || (fillBy[0] != this.field_key && fillBy[0] + '_id' != this.field_key) )
                         continue;
 
                     var options = this.field.options||[];

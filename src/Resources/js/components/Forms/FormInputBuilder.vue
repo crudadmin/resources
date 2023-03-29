@@ -7,221 +7,35 @@
         class="field-wrapper"
         :class="{ 'is-changed-from-history' : isChangedFromHistory && !hasComponent }">
 
-        <string-field
-            v-if="!hasComponent && (isString || isPassword)"
+        <component
+            v-for="(component, increment) in fieldComponents"
+            :is="component.name"
+            :key="component.name+'-'+increment"
             :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
             :field="field"
+            :name="getInputName"
+            :field_key="field_key"
             :value="getValueOrDefault"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </string-field>
-
-        <color-field
-            v-if="!hasComponent && isColor"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field="field"
-            :value="getValueOrDefault"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </color-field>
-
-        <phone-field
-            v-if="!hasComponent && isPhone"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field="field"
-            :value="getValueOrDefault"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </phone-field>
-
-        <number-field
-            v-if="!hasComponent && isNumber"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field="field"
-            :value="getValueOrDefault"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </number-field>
-
-        <date-time-field
-            v-if="!hasComponent && isDatepicker"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field_key_original="field_key"
-            :field="field"
-            :value="getValueOrDefault"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </date-time-field>
-
-        <checkbox-field
-            v-if="!hasComponent && isCheckbox"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field="field"
-            :value="getValueOrDefault"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </checkbox-field>
-
-        <text-field
-            v-if="!hasComponent && (isText || isEditor)"
-            :id="getId"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field="field"
-            :value="getValueOrDefault"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </text-field>
-
-        <gutenberg-field
-            v-if="!hasComponent && isGutenberg"
-            :id="getId"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field="field"
-            :value="getValueOrDefault"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </gutenberg-field>
-
-        <file-field
-            v-if="!hasComponent && isFile"
-            :id="getId"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field_key_original="field_key"
-            :field="field"
-            :value="getValueOrDefault"
-            :required="isRequired"
+            :history_changed="isChangedFromHistory"
+            :history="history"
+            :row="row"
             :disabled="isDisabled"
             :readonly="isReadonly"
             :langslug="langslug"
-            :depth_level="depth_level">
-        </file-field>
 
-        <uploader-field
-            v-if="!hasComponent && isUploader"
-            :id="getId"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field_key_original="field_key"
-            :field="field"
-            :value="getValueOrDefault"
             :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :langslug="langslug"
-            :depth_level="depth_level">
-        </uploader-field>
-
-        <select-field
-            v-if="!hasComponent && isSelect"
-            :id="getId"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field_key_original="field_key"
-            :field="field"
-            :value="getValueOrDefault"
-            :inputlang="inputlang"
-            :langid="langid"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </select-field>
-
-        <radio-field
-            v-if="!hasComponent && isRadio"
-            :id="getId"
-            :model="model"
-            :field_name="getName"
-            :field_key="getFieldName"
-            :field="field"
-            :value="getValueOrDefault"
-            :inputlang="inputlang"
-            :langid="langid"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :depth_level="depth_level">
-        </radio-field>
+            :field_key_original="field_key">
+        </component>
 
         <!-- Row Confirmation -->
         <form-input-builder
             v-if="field.confirmed == true && !isConfirmation"
             :model="model"
-            :field="field"
+            :field="fieldConfirmed"
             :index="index"
-            :field_key="field_key + '_confirmation'"
+            :field_key="field_key"
             :depth_level="depth_level"
             :confirmation="true"></form-input-builder>
-
-        <component
-            v-if="hasComponent || hasEmptyComponent"
-            :model="model"
-            :field="field"
-            :value="getValueOrDefault"
-            :history_changed="isChangedFromHistory"
-            :history="history"
-            :row="row"
-            :field_key="getFieldName"
-            :field_key_original="field_key"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :is="componentName(model, field.component)">
-        </component>
-
-        <component
-            v-if="hasSubComponent"
-            v-for="subComponent in subComponents"
-            :key="subComponent"
-            :model="model"
-            :field="field"
-            :value="getValueOrDefault"
-            :history_changed="isChangedFromHistory"
-            :history="history"
-            :row="row"
-            :field_key="getFieldName"
-            :field_key_original="field_key"
-            :required="isRequired"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
-            :is="componentName(model, subComponent)">
-        </component>
     </div>
 </template>
 
@@ -375,6 +189,10 @@
              * Apply event on changed value
              */
             changeValue(e, value, no_field){
+                if ( this.isConfirmation ){
+                    return;
+                }
+
                 return this.model.changeValueFromInput(this.field_key, e, value, no_field, this.langslug);
             },
             isMultipleField(field){
@@ -383,21 +201,55 @@
             isDatepickerField(field){
                 return ['date', 'datetime', 'time', 'timestamp'].indexOf(field.type) > -1;
             },
-            //Change bools to string values
-            fixBoolValue(value){
-                if ( value === true ) {
-                    return '1';
-                }
-
-                if ( value === false ) {
-                    return '0';
-                }
-
-                return value;
-            },
         },
 
         computed : {
+            nativeFieldComponent(){
+                let components = {
+                    'string-field' : this.isString || this.isPassword,
+                    'color-field' : this.isColor,
+                    'phone-field' : this.isPhone,
+                    'number-field' : this.isNumber,
+                    'date-time-field' : this.isDatepicker,
+                    'checkbox-field' : this.isCheckbox,
+                    'text-field' : this.isText || this.isEditor,
+                    'gutenberg-field' : this.isGutenberg,
+                    'file-field' : this.isFile,
+                    'uploader-field' : this.isUploader,
+                    'select-field' : this.isSelect,
+                    'radio-field' : this.isRadio,
+                };
+
+                for ( var key in components ){
+                    if ( components[key] == true ){
+                        return key;
+                    }
+                }
+            },
+            fieldComponents(){
+                let components = [];
+
+                if ( this.nativeFieldComponent ){
+                    components.push({ name : this.nativeFieldComponent });
+                }
+
+                if ( this.hasComponent || this.hasEmptyComponent ){
+                    components.push({ name : this.componentName(this.model, this.field.component) });
+                }
+
+                for ( var subComponent of this.subComponents ) {
+                    components.push({ name : this.componentName(this.model, subComponent) });
+                }
+
+                return components;
+            },
+            fieldConfirmed(){
+                let field = _.cloneDeep(this.field);
+
+                field.name = field.name+' ('+this.trans('confirmation')+')';
+
+                return field;
+            },
             langid(){
                 return this.model.getSelectedLanguageId();
             },
@@ -419,7 +271,7 @@
             {
                 return this.model.slug + '-' + this.field_key;
             },
-            getFieldName()
+            getInputName()
             {
                 var key = this.field_key;
 
@@ -428,15 +280,15 @@
                     key = this.field_key+'['+this.langslug+']';
                 }
 
+                if ( this.isConfirmation ){
+                    key += '_confirmation';
+                }
+
                 return this.model.formPrefix()+key;
             },
-            getName()
+            getFieldName()
             {
-                //Return confirmation name
-                if ( this.isConfirmation )
-                    return this.field.name + ' ('+this.trans('confirmation')+')';
-
-                return this.field.name;
+                return this.model.getFieldName(this.field_key);
             },
             isString()
             {
@@ -562,59 +414,7 @@
                 return value;
             },
             isRequired(){
-                if ( this.model.isOpenedRow() && this.field.type == 'password' ) {
-                    return false;
-                }
-
-                //Basic required attribute
-                if ( 'required' in this.field && this.field.required == true )
-                    return true;
-
-                //Required if attribute
-                if ( this.field.required_if )
-                {
-                    var parts = this.field.required_if.split(','),
-                        value = this.fixBoolValue(this.row[parts[0]]);
-
-                    if (value && parts.slice(1).indexOf(value) > -1) {
-                        return true;
-                    }
-                }
-
-                //Required unless attribute
-                if ( this.field.required_unless )
-                {
-                    var parts = this.field.required_unless.split(','),
-                        value = this.fixBoolValue(this.row[parts[0]]);
-
-                    if (value && parts.slice(1).indexOf(value) == -1){
-                        return true;
-                    }
-                }
-
-                //Required without attribute
-                if ( this.field.required_without )
-                {
-                    var parts = this.field.required_without.split(',');
-
-                    for ( var i = 0; i < parts.length; i++ ) {
-                        if ( ! this.row[parts[i]] )
-                            return true;
-                    }
-                }
-
-                //Required without attribute
-                if ( this.field.required_with )
-                {
-                    var parts = this.field.required_with.split(',');
-
-                    for ( var i = 0; i < parts.length; i++ ) {
-                        if ( this.row[parts[i]] )
-                            return true;
-                    }
-                }
-
-                return false;
+                return this.model.isFieldRequired(this.field_key);
             },
             hasLocale(){
                 return 'locale' in this.field;
@@ -626,7 +426,7 @@
                 return this.history.fields.indexOf(this.field_key) > -1;
             },
             subComponents(){
-                return _.castArray(this.field.sub_component);
+                return _.castArray(this.field.sub_component).filter(item => item);
             },
         },
     }

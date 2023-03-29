@@ -1,12 +1,8 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled }" data-toggle="tooltip" :title="field.tooltip" @dragenter="onFileDrop">
-        <label>
-            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
-            {{ field_name }}
-            <span v-if="required" class="required">*</span>
-        </label>
+        <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
-        <input type="hidden" :name="field_key" :value="uuid">
+        <input type="hidden" :name="name" :value="uuid">
 
         <div class="file-manager" @click="openManager">
             <span>{{ __('Otvoriť správcu súborov') }}</span>
@@ -18,7 +14,7 @@
 import FileManagerModal from '@components/Modal/FileManagerModal';
 
 export default {
-    props: ['id', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level', 'langslug'],
+    props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'depth_level'],
 
     data(){
         return {
@@ -33,7 +29,7 @@ export default {
         openManager(){
             let parts = [
                 this.model.table,
-                this.field_key_original,
+                this.field_key,
                 (this.model.getRow()?.id||this.uuid)
             ];
 

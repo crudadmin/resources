@@ -1,9 +1,6 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled || readonly, 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
-        <label>
-            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
-            {{ field_name }}<span v-if="required" class="required">*</span>
-        </label>
+        <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <input
             ref="input"
@@ -11,21 +8,21 @@
             class="form-control"
             :disabled="disabled"
             :readonly="readonly"
-            :name="isMultipleDatepicker ? '' : field_key"
-            :value="model.getCastedValue(field_key_original)"
-            :placeholder="field.placeholder || field_name"
+            :name="isMultipleDatepicker ? '' : name"
+            :value="model.getCastedValue(field_key)"
+            :placeholder="model.getFieldPlaceholder(name)"
             autocomplete="off"
             @keyup="changeValue">
 
-        <input type="hidden" :name="field_key+'[]'" v-if="isMultipleDatepicker && getMultiDates.length == 0" value="">
-        <input type="hidden" :name="field_key+'[]'" :value="getMultiDateValue(date)" v-if="isMultipleDatepicker" v-for="date in getMultiDates">
+        <input type="hidden" :name="name+'[]'" v-if="isMultipleDatepicker && getMultiDates.length == 0" value="">
+        <input type="hidden" :name="name+'[]'" :value="getMultiDateValue(date)" v-if="isMultipleDatepicker" v-for="date in getMultiDates">
         <small>{{ field.title }}</small>
     </div>
 </template>
 
 <script>
     export default {
-        props: ['model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
+        props: ['model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'depth_level'],
 
         created(){
             $.datetimepicker.setLocale(this.$root.locale);
@@ -73,7 +70,7 @@
 
                 let config = {
                     lang: this.$root.locale,
-                    format: this.model.getFieldFormat(this.field_key_original),
+                    format: this.model.getFieldFormat(this.field_key),
                     timepicker: this.field.type != 'date',
                     datepicker: this.field.type != 'time',
                     scrollInput: false,
@@ -89,7 +86,7 @@
                     onChangeDateTime: this.onChangeDateTime,
                 }
 
-                this.model.fireField(this.field_key_original, 'datepicker.config', config, this.getInput());
+                this.model.fireField(this.field_key, 'datepicker.config', config, this.getInput());
 
                 return config;
             }
@@ -146,7 +143,7 @@
 
                 //Update single date value
                 else {
-                    var pickedDate = moment(current_date_time).format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key_original)));
+                    var pickedDate = moment(current_date_time).format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key)));
 
                     this.changeValue(null, pickedDate);
                 }

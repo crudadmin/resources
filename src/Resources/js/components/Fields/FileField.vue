@@ -1,14 +1,10 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled }" data-toggle="tooltip" :title="field.tooltip">
-        <label>
-            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
-            {{ field_name }}
-            <span v-if="required" class="required">*</span>
-        </label>
+        <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <div class="file-group">
             <div class="upload-file-wrapper">
-                <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? field_key + '[]' : field_key" @change="addFile" class="form-control" :placeholder="field.placeholder || field_name">
+                <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? name + '[]' : name" @change="addFile" class="form-control" :placeholder="model.getFieldPlaceholder(field)">
                 <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+field_key" :value="1">
 
                 <button
@@ -32,7 +28,7 @@
             <small>{{ field.title }}</small>
 
             <span v-if="canFileBeDownloaded">
-                <file :file="value" :field="field_key_original" :model="model" :thumbnail="false"></file>
+                <file :file="value" :field="field_key" :model="model" :thumbnail="false"></file>
             </span>
 
         </div>
@@ -43,7 +39,7 @@
     import File from '../Partials/File.vue';
 
     export default {
-        props: ['id', 'model', 'field_name', 'field_key', 'field_key_original', 'field', 'value', 'required', 'disabled', 'depth_level', 'langslug'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'depth_level', 'langslug'],
 
         components : { File },
 
@@ -151,7 +147,7 @@
 
                     //We want add ability to open uploaded files.
                     $(this.$refs.multipleFiles).parent().on('click', 'li.search-choice span', e => {
-                        let downloadPath = this.model.getUploadsUrl(this.field_key_original, e.target.innerText);
+                        let downloadPath = this.model.getUploadsUrl(this.field_key, e.target.innerText);
 
                         window.open(downloadPath);
                     });
@@ -169,7 +165,7 @@
                 this.file_will_remove = true;
                 this.file_from_server = true;
 
-                $('#'+this.getId).val('');
+                this.$refs.fileInput.value = null;
             },
             addFile(e){
                 this.file_will_remove = false;

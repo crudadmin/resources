@@ -9,3 +9,16 @@ export const isExtension = (path, types) => {
 export const isEncrypted = (path) => {
     return _.endsWith(path, '.encrypted');
 }
+
+//Change bools to string values
+export const fixBoolValue = (value) => {
+    if ( value === true ) {
+        return '1';
+    }
+
+    if ( value === false ) {
+        return '0';
+    }
+
+    return value;
+}

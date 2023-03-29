@@ -1,9 +1,7 @@
 <template>
     <div class="form-group" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
-        <label>
-            <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i> {{ field_name }}
-            <span v-if="required" class="required">*</span>
-        </label>
+        <FieldLabel :model="model" :field="field" :field_key="field_key" />
+
         <textarea
             rows="5"
             @keyup="changeValue"
@@ -11,10 +9,10 @@
             :data-height="field.editor_height"
             :disabled="disabled"
             :readonly="readonly"
-            :name="field_key"
+            :name="name"
             :maxlength="field.max"
             :class="{ 'form-control' : isText, 'js_editor' : isEditor }"
-            :placeholder="field.placeholder || field_name"
+            :placeholder="model.getFieldPlaceholder(field)"
             :value="value">
         </textarea>
         <small>{{ field.title }}</small>
@@ -23,7 +21,7 @@
 
 <script>
     export default {
-        props: ['id', 'model', 'field_name', 'field_key', 'field', 'value', 'required', 'disabled', 'readonly', 'depth_level'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'depth_level'],
 
         mounted(){
             var editor = $('#'+this.id).ckEditors();
