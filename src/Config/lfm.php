@@ -182,4 +182,9 @@ return [
     'php_ini_overrides'        => [
         'memory_limit' => '256M',
     ],
+
+    /*
+     * Storage fix: removed time column
+     */
+    'item_columns' => ['name', 'url', 'icon', 'is_file', 'is_image', 'thumb_url'],
 ];
