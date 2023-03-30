@@ -33,7 +33,7 @@
                     <div v-if="hasTabs(tab.fields) || isModel(tab)" :class="{ model : isModel(tab) }" class="col-lg-12">
                         <form-tabs-builder
                             v-if="hasTabs(tab.fields)"
-                            :level="level + 1"
+                            :level="addGroupLevel(level)"
                             :tabs="tabsFields(tab.fields)"
                             :model="model"
                             :inputlang="inputlang">
@@ -56,7 +56,7 @@
                     <form-group
                         v-for="(item, $index) in chunkGroups(tab.fields)"
                         :key="$index"
-                        :level="level + 1"
+                        :level="addGroupLevel(level)"
                         v-if="isGroup(item) && !isTab(item)"
                         :group="item"
                         :model="model"
@@ -72,7 +72,7 @@
 import FormGroup from './FormGroup.vue';
 import ModelBuilder from '../Views/ModelBuilder.vue';
 import ModelHelper from '../Helpers/ModelHelper.js';
-import { isTab, isGroup } from '../Helpers/TabsHelper.js';
+import { isTab, isGroup, addGroupLevel } from '../Helpers/TabsHelper.js';
 
 export default {
     name : 'form-tabs-builder',
@@ -145,6 +145,7 @@ export default {
     },
 
     methods: {
+        addGroupLevel,
         checkRecursivityModelTab(tab){
             if ( this.model.table == tab.model ){
                 return this.model.checkMaxRecursivity();
@@ -276,9 +277,13 @@ export default {
                 }
             }
 
-            var items = data.map(function(item){
-                if ( this.isGroup(item) )
+            var items = data.map(function(item, index){
+                if ( this.isGroup(item) ){
+                    //We need generate group id, to be able switch tabs in groups
+                    item.id = item.id||('group-'+index);
+
                     return item;
+                }
 
                 return {
                     type : 'default',

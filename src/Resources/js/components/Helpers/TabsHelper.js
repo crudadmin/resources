@@ -39,6 +39,14 @@ export const isTab = function(group){
     return isGroup(group) && group.type == 'tab';
 };
 
+export const addGroupLevel = function(level){
+    level = level+'';
+
+    level = level.split('-');
+
+    return (parseInt(level[0]) + 1)+'-'+(level.slice(1).join('-'));
+}
+
 var Tabs = (Model) => {
     /*
      * Hide tab
@@ -127,12 +135,12 @@ var Tabs = (Model) => {
     }
 
     Model.prototype.setActiveTab = function(index, level = 0){
-        let tabsLength = this.getTabs().length,
+        let tabsLength = level === true ? this.getTabs().length : 0,
             tabs = this.getData('activeTab');
 
         if ( index == -1 ){
             index = tabsLength - 1;
-        } else if ( index > tabsLength -1 ){
+        } else if ( tabsLength > 0 && index > tabsLength -1 ){
             index = 0;
         }
 

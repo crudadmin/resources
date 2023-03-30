@@ -10,7 +10,7 @@
                 <div class="row">
                     <div v-if="hasTabs(group.fields)" class="col-lg-12 tab--parent">
                         <form-tabs-builder
-                            :level="level"
+                            :level="level+'-'+group.id"
                             :tabs="tabsFields"
                             :model="model">
                         </form-tabs-builder>
@@ -42,7 +42,7 @@
 
                         <form-group
                             v-if="isGroup(item) && !isTab(item)"
-                            :level="level+1"
+                            :level="addGroupLevel(level)"
                             :group="item"
                             :model="model"
                             :inputlang="inputlang">
@@ -56,6 +56,7 @@
 
 <script>
 import FormInputBuilder from './FormInputBuilder.vue';
+import { addGroupLevel } from '../Helpers/TabsHelper.js';
 
 export default {
     name : 'form-group',
@@ -82,6 +83,7 @@ export default {
     },
 
     methods: {
+        addGroupLevel,
         getVisibleFields(fields){
             return (fields||[]).filter(item => {
                 if ( typeof item == 'string' ) {
