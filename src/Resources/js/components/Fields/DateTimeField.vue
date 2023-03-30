@@ -1,7 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : field.isReadonly(), 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
-        <FieldLabel :model="model" :field="field" :field_key="field_key" />
-
+    <Field :field="field" :class="{ disabled : field.isReadonly(), 'multiple-date' : isMultipleDatepicker }" >
         <input
             ref="input"
             type="text"
@@ -16,8 +14,7 @@
 
         <input type="hidden" :name="name+'[]'" v-if="isMultipleDatepicker && getMultiDates.length == 0" value="">
         <input type="hidden" :name="name+'[]'" :value="getMultiDateValue(date)" v-if="isMultipleDatepicker" v-for="date in getMultiDates">
-        <small>{{ field.title }}</small>
-    </div>
+    </Field>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : field.isDisabled() }">
+    <Field :field="field" :label="false">
         <FieldLabel class="checkbox" data-toggle="tooltip" :title="field.tooltip" :model="model" :field="field" :field_key="field_key">
             <span class="checkbox__name" v-if="field.placeholder">{{ field.placeholder }}</span>
 
@@ -13,9 +13,7 @@
                 :name="name">
             <div><div></div></div>
         </FieldLabel>
-
-        <small>{{ field.title }}</small>
-    </div>
+    </Field>
 
 </template>
 

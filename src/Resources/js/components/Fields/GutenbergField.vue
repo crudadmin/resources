@@ -1,7 +1,5 @@
 <template>
-    <div class="form-group" :key="elementKeyRender" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
-        <FieldLabel :model="model" :field="field" :field_key="field_key" />
-
+    <Field :field="field" :key="elementKeyRender">
         <!--
             We want send form value from first textarea element,
             because second may be modifier from editor in some unexpected behaviours, when vue value is not changed at all
@@ -20,12 +18,12 @@
             :id="id"
             :value="value">
         </textarea>
+
         <div v-if="initialized == false" class="alert alert-warning" :class="{ '--loading' : initializing && !initialized }">
             <p>{{ _('Inštanciu editora je možné spustiť len raz. Pre prepnutie inštancie editora kliknite na nasledujúce tlačidlo.') }}</p>
             <button type="button" @click="toggleEditorInstance" class="btn btn-warning mt-3">{{ _('Zapnúť editor') }}</button>
         </div>
-        <small>{{ field.title }}</small>
-    </div>
+    </Field>
 </template>
 
 <script>

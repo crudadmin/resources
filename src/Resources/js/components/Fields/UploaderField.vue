@@ -1,13 +1,13 @@
 <template>
-    <div class="form-group" :class="{ disabled : field.isDisabled() }" data-toggle="tooltip" :title="field.tooltip" @dragenter="onFileDrop">
+    <Field :field="field">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <input type="hidden" :name="name" :value="uuid">
 
-        <div class="file-manager" @click="openManager">
+        <div class="file-manager" @click="openManager" @dragenter="onFileDrop">
             <span>{{ __('Otvoriť správcu súborov') }}</span>
         </div>
-    </div>
+    </Field>
 </template>
 
 <script>

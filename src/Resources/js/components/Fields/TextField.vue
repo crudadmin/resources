@@ -1,10 +1,9 @@
 <template>
-    <div class="form-group" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
-        <FieldLabel :model="model" :field="field" :field_key="field_key" />
-
+    <Field :field="field">
         <textarea
             rows="5"
             @keyup="changeValue"
+            ref="editor"
             :id="id"
             :data-height="field.editor_height"
             :disabled="field.isDisabled()"
@@ -15,9 +14,7 @@
             :placeholder="field.getPlaceholder()"
             :value="value">
         </textarea>
-
-        <small>{{ field.title }}</small>
-    </div>
+    </Field>
 </template>
 
 <script>
@@ -25,14 +22,15 @@
         props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level'],
 
         mounted(){
-            var editor = $('#'+this.id).ckEditors();
-
             //On update ckeditor
-            if ( this.field.isEditor() )
-            {
-                CKEDITOR.instances[this.id].on('change', e => {
-                    this.$parent.changeValue(null, e.editor.getData())
-                });
+            if ( this.field.isEditor() ) {
+                var editor = $(this.$refs.editor).ckEditors();
+
+                if ( CKEDITOR.instances[this.id] ) {
+                    CKEDITOR.instances[this.id].on('change', e => {
+                        this.$parent.changeValue(null, e.editor.getData())
+                    });
+                }
             }
 
             eventHub.$on('updateField', this.onUpdateEvent = data => {

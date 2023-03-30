@@ -1,7 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
-        <FieldLabel :model="model" :field="field" :field_key="field_key" />
-
+    <Field :field="field">
         <vue-tel-input
             :value="field.value || ''"
             :disabled="field.isDisabled()"
@@ -23,7 +21,7 @@
                 placeholder: __('Vložte tel. číslo'),
             }"
         ></vue-tel-input>
-    </div>
+    </Field>
 </template>
 <script type="text/javascript">
 import { VueTelInput } from 'vue-tel-input';

@@ -5,7 +5,7 @@
 
         <i
             v-if="model.history && model.isOpenedRow() && isEditedField"
-            @click="model.showFieldHistory(model.getRow(), field_key)"
+            @click="model.showFieldHistory(model.getRow(), field.getKey())"
             class="fa --label--icon --pointer fa-history"
             data-toggle="tooltip"
             :title="__('Zobraziť zmeny v histórii')">
@@ -22,13 +22,16 @@
 
 <script type="text/javascript">
 export default {
-    props : ['model', 'field', 'field_key', 'required'],
+    props : ['field', 'required'],
 
     computed : {
+        model(){
+            return this.field.getModel();
+        },
         isEditedField(){
             let editedFields = Object.keys(this.model.getRow().$historyChanges||{});
 
-            return editedFields.includes(this.field_key);
+            return editedFields.includes(this.field.getKey());
         },
         requiredOptional(){
             if ( _.isBoolean(this.required) ){

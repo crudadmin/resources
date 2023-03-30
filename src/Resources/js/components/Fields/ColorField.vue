@@ -1,7 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
-        <FieldLabel :model="model" :field="field" :field_key="field_key" />
-
+    <Field :field="field" :title="false">
         <div class="colors-wrapper" :key="rowId">
             <verte
                 ref="verte"
@@ -31,10 +29,11 @@
                     :placeholder="field.getPlaceholder()"
                     :disabled="field.isDisabled()"
                     :readonly="true">
+
                 <small>{{ field.title }}</small>
             </div>
         </div>
-    </div>
+    </Field>
 </template>
 
 <script>
@@ -42,7 +41,7 @@ import Verte from 'verte';
 import 'verte/dist/verte.css';
 
 export default {
-    props: ['model', 'field_key', 'name', 'field', 'value'],
+    props: ['model', 'name', 'field', 'value'],
 
     components: { Verte },
 

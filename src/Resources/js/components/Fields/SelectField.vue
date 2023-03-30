@@ -1,7 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled || readonly || hasNoFilterValues }" v-show="required || !hasNoFilterValues" data-toggle="tooltip" :title="field.tooltip">
-        <FieldLabel :model="model" :field="field" :field_key="field_key" :required="required" />
-
+    <Field :field="field" :class="{ disabled : disabled || readonly || hasNoFilterValues }" v-show="required || !hasNoFilterValues">
         <div class="form-group__chosen-container" :class="{ canPerformActions : hasRelationModal }">
             <select ref="select" :disabled="disabled" :name="!isMultiple ? name : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
                 <option v-if="!isMultiple" value="">{{ trans('select-option') }}</option>
@@ -26,7 +24,7 @@
                 <i class="fa fa-edit"></i>
             </button>
         </div>
-        <small>{{ field.title }}</small>
+
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+name" value="1">
 
         <!-- Modal for adding relation -->
@@ -50,10 +48,10 @@
                             :model_builder="relationModel">
                         </model-builder>
                     </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-    </div>
+                </div>
+            </div>
+        </div>
+    </Field>
 </template>
 
 <script>

@@ -1,7 +1,5 @@
 <template>
-    <div class="form-group radio-group" data-toggle="tooltip" :title="field.tooltip">
-        <FieldLabel :model="model" :field="field" :field_key="field_key" />
-
+    <Field :field="field">
         <div class="radio" v-if="!field.isRequired()">
             <label>
                 <input
@@ -28,13 +26,12 @@
                 {{ data[1] }}
             </label>
         </div>
-        <small>{{ field.title }}</small>
-    </div>
+    </Field>
 </template>
 
 <script>
     export default {
-        props: ['model', 'name', 'field_key', 'field', 'value'],
+        props: ['name', 'field', 'value'],
 
         methods : {
             isChecked(key){

@@ -1,7 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : field.isDisabled() }" data-toggle="tooltip" :title="field.tooltip">
-        <FieldLabel :model="model" :field="field" :field_key="field_key" />
-
+    <Field :field="field">
         <div class="file-group">
             <div class="upload-file-wrapper">
                 <input ref="fileInput" :disabled="field.isDisabled()" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? name + '[]' : name" @change="addFile" class="form-control" :placeholder="field.getPlaceholder()">
@@ -24,15 +22,14 @@
                     <option :key="file" selected v-for="file in getFiles">{{ file }}</option>
                 </select>
             </div>
+        </div>
 
-            <small>{{ field.title }}</small>
-
+        <template v-slot:end>
             <span v-if="canFileBeDownloaded">
                 <file :file="value" :field="field_key" :model="model" :thumbnail="false"></file>
             </span>
-
-        </div>
-    </div>
+        </template>
+    </Field>
 </template>
 
 <script>

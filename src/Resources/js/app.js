@@ -34,6 +34,7 @@ import Modal from '@components/Modal/Modal.vue';
 import ModalAddNewRow from '@components/Modal/ModalAddNewRow.vue';
 import RowsFilter from '@components/Rows/RowsFilter.vue';
 import Refreshing from '@components/Partials/Refreshing.vue';
+import Field from '@components/Partials/Field.vue';
 import FieldLabel from '@components/Partials/FieldLabel.vue';
 
 //Router
@@ -50,6 +51,7 @@ Vue.component('Modal', Modal);
 Vue.component('ModalAddNewRow', ModalAddNewRow);
 Vue.component('RowsFilter', RowsFilter);
 Vue.component('Refreshing', Refreshing);
+Vue.component('Field', Field);
 Vue.component('FieldLabel', FieldLabel);
 Vue.component('FormInputBuilder', FormInputBuilder);
 
