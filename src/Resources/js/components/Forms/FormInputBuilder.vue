@@ -231,12 +231,12 @@
             fieldComponents(){
                 let components = [];
 
-                if ( this.nativeFieldComponent ){
-                    components.push({ name : this.nativeFieldComponent });
-                }
-
                 if ( this.hasComponent || this.hasEmptyComponent ){
                     components.push({ name : this.componentName(this.model, this.field.component) });
+                }
+
+                if ( !this.hasComponent && this.nativeFieldComponent ){
+                    components.push({ name : this.nativeFieldComponent });
                 }
 
                 for ( var subComponent of this.subComponents ) {
