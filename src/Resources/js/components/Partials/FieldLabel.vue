@@ -28,7 +28,7 @@ export default {
                 return this.required;
             }
 
-            return this.model.isFieldRequired(this.field_key);
+            return this.field.isRequired();
         }
     }
 }

@@ -28,7 +28,7 @@
                     :name="name"
                     :value="value"
                     :maxlength="field.max"
-                    :placeholder="model.getFieldPlaceholder(field)"
+                    :placeholder="field.getPlaceholder()"
                     :disabled="disabled"
                     :readonly="true">
                 <small>{{ field.title }}</small>

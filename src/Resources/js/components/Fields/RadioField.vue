@@ -2,7 +2,7 @@
     <div class="form-group radio-group" data-toggle="tooltip" :title="field.tooltip">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
-        <div class="radio" v-if="!model.isFieldRequired(field_key)">
+        <div class="radio" v-if="!field.isRequired()">
             <label>
                 <input type="radio" :name="name" value="">
                 {{ trans('no-option') }}

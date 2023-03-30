@@ -4,7 +4,7 @@
 
         <div class="file-group">
             <div class="upload-file-wrapper">
-                <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? name + '[]' : name" @change="addFile" class="form-control" :placeholder="model.getFieldPlaceholder(field)">
+                <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? name + '[]' : name" @change="addFile" class="form-control" :placeholder="field.getPlaceholder()">
                 <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+name" :value="1">
 
                 <button

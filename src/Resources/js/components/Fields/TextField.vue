@@ -12,7 +12,7 @@
             :name="name"
             :maxlength="field.max"
             :class="{ 'form-control' : isText, 'js_editor' : isEditor }"
-            :placeholder="model.getFieldPlaceholder(field)"
+            :placeholder="field.getPlaceholder()"
             :value="value">
         </textarea>
         <small>{{ field.title }}</small>

@@ -118,7 +118,7 @@
 
         computed: {
             required(){
-                return this.model.isFieldRequired(this.field_key) || this.isRequiredIfHasValues;
+                return this.field.isRequired() || this.isRequiredIfHasValues;
             },
             langid(){
                 return this.model.getSelectedLanguageId();

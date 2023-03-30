@@ -24,7 +24,7 @@
             :readonly="isReadonly"
             :langslug="langslug"
             :depth_level="depth_level"
-            :required="isRequired"
+            :required="field.isRequired()"
             :field_key_original="field_key">
         </component>
 
@@ -406,9 +406,6 @@
                 }
 
                 return value;
-            },
-            isRequired(){
-                return this.model.isFieldRequired(this.field_key);
             },
             hasLocale(){
                 return 'locale' in this.field;

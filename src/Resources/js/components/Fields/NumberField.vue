@@ -8,7 +8,7 @@
             :name="name"
             :value="value"
             :step="isDecimal ? getDecimalStep : ''"
-            :placeholder="model.getFieldPlaceholder(field)"
+            :placeholder="field.getPlaceholder()"
             :disabled="disabled"
             :readonly="readonly"
             @keyup="changeValue">
