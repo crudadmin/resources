@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { addGroupLevel } from '../Helpers/TabsHelper.js';
+import { addGroupLevel } from '@components/Helpers/Model/ModelTabs.js';
 
 export default {
     name : 'form-group',

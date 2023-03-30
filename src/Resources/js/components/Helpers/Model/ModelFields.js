@@ -1,5 +1,5 @@
-import DateCast from './Casts/DateCast.js';
-import { fixBoolValue } from '../../utils/helpers.js';
+import DateCast from '@components/Helpers/Casts/DateCast.js';
+import { fixBoolValue } from '@/js/utils/helpers.js';
 
 import _ from 'lodash';
 

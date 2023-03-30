@@ -1,11 +1,11 @@
-import Tabs from './TabsHelper.js';
-import Groups from './GroupsHelper.js';
-import Fields from './FieldsHelper';
-import ModelProperties from './ModelProperties';
+import ModelTabs from './Model/ModelTabs';
+import ModelGroups from './Model/ModelGroups';
+import ModelFields from './Model/ModelFields';
+import ModelProperties from './Model/ModelProperties';
 import ModelData from './Model/ModelData';
 import ModelCoreHelpers from './Model/ModelCoreHelpers';
-import RowActions from './Model/RowActions';
-import FormActions from './Model/FormActions';
+import ModelRowActions from './Model/ModelRowActions';
+import ModelFormActions from './Model/ModelFormActions';
 import ModelBus from './Model/ModelBus';
 import ModelTableRows from './Model/ModelTableRows';
 import ModelButtonActions from './Model/ModelButtonActions';
@@ -16,17 +16,17 @@ import ModelEvents from './Model/ModelEvents';
 const Model = () => {};
 
 var extensions = [
-    Tabs,
-    Groups,
-    Fields,
+    ModelTabs,
+    ModelGroups,
+    ModelFields,
     ModelProperties,
     ModelData,
     ModelCoreHelpers,
     ModelTableRows,
     ModelButtonActions,
     ModelDragAndDrop,
-    RowActions,
-    FormActions,
+    ModelRowActions,
+    ModelFormActions,
     ModelComponents,
     ModelEvents,
     ModelBus,

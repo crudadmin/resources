@@ -70,7 +70,7 @@
 import FormGroup from './FormGroup.vue';
 import ModelBuilder from '../Views/ModelBuilder.vue';
 import ModelHelper from '../Helpers/ModelHelper.js';
-import { isTab, isGroup, addGroupLevel } from '../Helpers/TabsHelper.js';
+import { isTab, isGroup, addGroupLevel } from '@components/Helpers/Model/ModelTabs.js';
 
 export default {
     name : 'form-tabs-builder',
