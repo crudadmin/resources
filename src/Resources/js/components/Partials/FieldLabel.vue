@@ -1,18 +1,20 @@
 <template>
-<label v-if="field" v-show="field.label.visible">
-    <i v-if="field.locale" class="fa --label--icon fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
+<label :class="{ '--hidden' : field.label.visible == false }">
+    <div v-show="field.label.visible">
+        <i v-if="field.locale" class="fa --label--icon fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
 
-    <i
-        v-if="model.history && model.isOpenedRow()"
-        @click="model.showFieldHistory(model.getRow(), field_key)"
-        class="fa --label--icon --pointer fa-history"
-        data-toggle="tooltip"
-        :title="__('Zobraziť zmeny v histórii')">
-    </i>
+        <i
+            v-if="model.history && model.isOpenedRow()"
+            @click="model.showFieldHistory(model.getRow(), field_key)"
+            class="fa --label--icon --pointer fa-history"
+            data-toggle="tooltip"
+            :title="__('Zobraziť zmeny v histórii')">
+        </i>
 
-    {{ field.getName() }}
+        {{ field.getName() }}
 
-    <span v-if="requiredOptional" class="required">*</span>
+        <span v-if="requiredOptional" class="required">*</span>
+    </div>
 
     <slot/>
 </label>
@@ -35,6 +37,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.--hidden { display: inline; }
 i.--label--icon { font-size: 12px; margin-right: 3px; }
 i.--pointer { cursor: pointer; }
 </style>

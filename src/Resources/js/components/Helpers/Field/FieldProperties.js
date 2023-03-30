@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import { fixBoolValue } from '@/js/utils/helpers.js';
+
 export default (Field, rawField) => {
     rawField.label = {
         visible : true,

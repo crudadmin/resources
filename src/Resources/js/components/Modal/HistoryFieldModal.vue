@@ -15,15 +15,19 @@
                     <td class="td-id">{{ history.rows.length - $index }}</td>
                     <td>{{ row.user ? row.user.username : trans('history.system') }}</td>
                     <td>
-                        <form-input-builder
-                            v-for="langslug in model.getFieldLangs(field_key)"
-                            :key="langslug"
-                            :model="historyModel(row)"
-                            :langslug="langslug"
-                            :index="$index"
-                            :field_key="field_key"
-                            :field="historyModel(row).fields[field_key]">
-                        </form-input-builder>
+                        <!-- We need use form, to fix multiple radio names -->
+                        <form>
+                            {{ historyModel(row).fields[field_key].value }}
+                            <form-input-builder
+                                v-for="langslug in model.getFieldLangs(field_key)"
+                                :key="langslug"
+                                :model="historyModel(row)"
+                                :langslug="langslug"
+                                :index="$index"
+                                :field_key="field_key"
+                                :field="historyModel(row).fields[field_key]">
+                            </form-input-builder>
+                        </form>
                     </td>
                     <td>{{ date(row.created_at) }}</td>
                     <td>
@@ -73,8 +77,12 @@ export default {
 
             model.setRow(row.fieldRow);
 
-            model.fields[this.field_key].value = row.fieldRow[this.field_key];
-            model.fields[this.field_key].label.visible = false;
+            let field = model.fields[this.field_key];
+
+            field.value = row.fieldRow[this.field_key];
+            field.disabled = true;
+            field.readonly = true;
+            field.label.visible = false;
 
             return model;
         },

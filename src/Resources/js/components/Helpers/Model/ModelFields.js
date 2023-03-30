@@ -1,6 +1,5 @@
 import Field from '@components/Helpers/Field/Field';
 import DateCast from '@components/Helpers/Casts/DateCast.js';
-import { fixBoolValue } from '@/js/utils/helpers.js';
 
 import _ from 'lodash';
 
