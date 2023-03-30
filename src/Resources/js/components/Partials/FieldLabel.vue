@@ -4,7 +4,7 @@
         <i v-if="field.locale" class="fa --label--icon fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
 
         <i
-            v-if="model.history && model.isOpenedRow()"
+            v-if="model.history && model.isOpenedRow() && isEditedField"
             @click="model.showFieldHistory(model.getRow(), field_key)"
             class="fa --label--icon --pointer fa-history"
             data-toggle="tooltip"
@@ -25,6 +25,11 @@ export default {
     props : ['model', 'field', 'field_key', 'required'],
 
     computed : {
+        isEditedField(){
+            let editedFields = Object.keys(this.model.getData('history').changed_fields||[]);
+
+            return editedFields.includes(this.field_key);
+        },
         requiredOptional(){
             if ( _.isBoolean(this.required) ){
                 return this.required;

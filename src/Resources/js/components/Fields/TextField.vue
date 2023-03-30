@@ -15,6 +15,7 @@
             :placeholder="field.getPlaceholder()"
             :value="value">
         </textarea>
+
         <small>{{ field.title }}</small>
     </div>
 </template>

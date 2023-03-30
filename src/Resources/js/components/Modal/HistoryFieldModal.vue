@@ -17,7 +17,6 @@
                     <td>
                         <!-- We need use form, to fix multiple radio names -->
                         <form>
-                            {{ historyModel(row).fields[field_key].value }}
                             <form-input-builder
                                 v-for="langslug in model.getFieldLangs(field_key)"
                                 :key="langslug"
@@ -70,7 +69,7 @@ export default {
             }
 
             if ( !this._historyModel[row.id] ){
-                this._historyModel[row.id] = this.getFreshModel(this.model.table);
+                this._historyModel[row.id] = _.cloneDeep(this.model);
             }
 
             let model = this._historyModel[row.id];

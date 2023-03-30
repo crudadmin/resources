@@ -228,9 +228,9 @@ var RowActions = (Model) => {
         }
     };
 
-    Model.prototype.selectRow = async function(row, data, model, history_id, model_row){
+    Model.prototype.selectRow = async function(row, data, model, historyId, modelRow){
         //If is selected same row
-        if ( this.isOpenedRow() && this.getRow().id == row.id && !history_id ) {
+        if ( this.isOpenedRow() && this.getRow().id == row.id && !historyId ) {
             return;
         }
 
@@ -253,13 +253,13 @@ var RowActions = (Model) => {
             this.setRow(_.cloneDeep(row, true));
 
             //Fix for single model with history support
-            if ( model_row ){
-                for ( var key in model_row ) {
-                    $app.$set(model_row, key, row[key]);
+            if ( modelRow ){
+                for ( var key in modelRow ) {
+                    $app.$set(modelRow, key, row[key]);
                 }
             }
 
-            this.closeHistory(history_id ? true : false);
+            this.closeHistory(historyId ? true : false);
 
             //When form will be fully loaded, we want turn off loader and scroll into this form.
             //This is better for heavy and big forms, which may be laggy in scrolling... So first we need wait
@@ -282,20 +282,20 @@ var RowActions = (Model) => {
                 let response = await $app.$http.get($app.requests.get('show', {
                     model : this.slug,
                     id : row.id,
-                    subid : history_id
+                    subid : historyId
                 }));
 
-                var data = response.data;
-
+                var data = response.data,
+                    row = data.row;
 
                 //Select history row
-                if ( history_id ){
-                    this.getData('history').data = response.data;
-
-                    data = data.row;
+                if ( historyId ){
+                    this.getData('history').data = data;
+                } else {
+                    this.getData('history').changed_fields = data.changed_fields;
                 }
 
-                await render(data);
+                await render(row);
             } catch (response){
                 $app.errorResponseLayer(response);
             }

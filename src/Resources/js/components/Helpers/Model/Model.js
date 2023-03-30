@@ -130,6 +130,7 @@ const FreshBuilderData = () => {
             id : null,
             rows : [],
             fields : [],
+            changed_fields : [],
         },
 
         //Checked rows
