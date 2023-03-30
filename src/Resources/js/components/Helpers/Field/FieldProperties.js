@@ -5,7 +5,15 @@ export default (Field, rawField) => {
         visible : true,
     };
 
-    Field.prototype.getName = function(fieldKey){
+    Field.prototype.getKey = function(){
+        return this.getData('key');
+    }
+
+    Field.prototype.getModel = function(){
+        return this.getData('model');
+    }
+
+    Field.prototype.getName = function(){
         return this.name;
     }
 
@@ -13,10 +21,10 @@ export default (Field, rawField) => {
         return this.placeholder || this.getName();
     }
 
-    Field.prototype.isRequired = function(fieldKey){
-        let row = this.model.getRow();
+    Field.prototype.isRequired = function(){
+        let row = this.getModel().getRow();
 
-        if ( this.model.isOpenedRow() && this.type == 'password' ) {
+        if ( this.getModel().isOpenedRow() && this.type == 'password' ) {
             return false;
         }
 

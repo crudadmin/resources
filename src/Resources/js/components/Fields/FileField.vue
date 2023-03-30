@@ -20,7 +20,7 @@
             </div>
 
             <div v-show="(isMultiple && !isMultirows) && getFiles.length > 0">
-                <select ref="multipleFiles" :name="(hasLocale || (isMultiple && !isMultirows) && getFiles.length > 0) ? '$uploaded_'+name+'[]' : ''" data-placeholder=" " multiple>
+                <select ref="multipleFiles" :name="(field.hasLocale() || (isMultiple && !isMultirows) && getFiles.length > 0) ? '$uploaded_'+name+'[]' : ''" data-placeholder=" " multiple>
                     <option :key="file" selected v-for="file in getFiles">{{ file }}</option>
                 </select>
             </div>
@@ -107,9 +107,6 @@
             hasMultipleFilesValue(){
                 return $.isArray(this.field.value);
             },
-            hasLocale(){
-                return 'locale' in this.field;
-            },
             getFiles(){
                 var value = this.value;
 
@@ -155,7 +152,7 @@
             },
             removeFile(){
                 if ( ! this.isMultiple ){
-                    if ( this.hasLocale ) {
+                    if ( this.field.hasLocale() ) {
                         this.field.value[this.langslug] = null;
                     } else {
                         this.field.value = null;

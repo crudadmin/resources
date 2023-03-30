@@ -3,9 +3,9 @@
         :data-field="field_key"
         :data-model="model.slug"
         :data-lang="langslug"
-        :data-history-changed="isChangedFromHistory"
+        :data-history-changed="field.hasHistoryChange()"
         class="field-wrapper"
-        :class="{ 'is-changed-from-history' : isChangedFromHistory && !hasComponent }">
+        :class="{ 'is-changed-from-history' : field.hasHistoryChange() && !hasComponent }">
 
         <component
             v-for="(component, increment) in fieldComponents"
@@ -17,8 +17,7 @@
             :name="getInputName"
             :field_key="field_key"
             :value="getValueOrDefault"
-            :history_changed="isChangedFromHistory"
-            :history="history"
+            :history_changed="field.hasHistoryChange()"
             :row="row"
             :disabled="isDisabled"
             :readonly="isReadonly"
@@ -90,7 +89,7 @@
                 return value;
             },
             getLocalizedValue(value, defaultValue){
-                if ( ! this.hasLocale ) {
+                if ( ! this.field.hasLocale() ) {
                     return value||null;
                 }
 
@@ -254,9 +253,6 @@
             depth_level(){
                 return this.model.getData('depth_level');
             },
-            history(){
-                return this.model.getData('history');
-            },
             row(){
                 return this.model.getRow();
             },
@@ -274,7 +270,7 @@
                 var key = this.field_key;
 
                 //If is localized key, add field locale key
-                if ( this.hasLocale ) {
+                if ( this.field.hasLocale() ) {
                     key = this.field_key+'['+this.langslug+']';
                 }
 
@@ -396,7 +392,7 @@
                 }
 
                 //Localization field
-                if ( this.hasLocale ) {
+                if ( this.field.hasLocale() ) {
                     return this.getLocalizedValue(value, this.defaultFieldValue(this.field));
                 }
 
@@ -406,15 +402,6 @@
                 }
 
                 return value;
-            },
-            hasLocale(){
-                return 'locale' in this.field;
-            },
-            isChangedFromHistory(){
-                if ( ! this.history )
-                    return false;
-
-                return this.history.fields.indexOf(this.field_key) > -1;
             },
             subComponents(){
                 return _.castArray(this.field.sub_component).filter(item => item);

@@ -6,9 +6,10 @@ import _ from 'lodash';
 
 const InitializeFields = (rawModel) => {
     for ( var key in rawModel.fields ){
-        rawModel.fields[key] = new Field(rawModel.fields[key]);
+        let _field = rawModel.fields[key] = new Field(rawModel.fields[key]);
 
-        rawModel.fields[key].model = rawModel;
+        _field.data.model = rawModel;
+        _field.data.key = key;
     }
 }
 
