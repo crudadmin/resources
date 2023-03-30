@@ -57,7 +57,7 @@
 
     export default {
         name: 'form-input-builder',
-        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'inputlang', 'langslug'],
+        props: ['model', 'field', 'field_key', 'index', 'confirmation', 'langslug'],
 
         components: { StringField, NumberField, DateTimeField, CheckboxField, TextField, GutenbergField, FileField, SelectField, RadioField, ColorField, PhoneField, UploaderField },
 

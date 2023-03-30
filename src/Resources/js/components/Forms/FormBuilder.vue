@@ -62,7 +62,6 @@
                         :level="0"
                         :model="model"
                         :withChilds="true"
-                        :inputlang="model.selectedLanguage()"
                         :cansave="cansave">
                     </form-tabs-builder>
                 </div>

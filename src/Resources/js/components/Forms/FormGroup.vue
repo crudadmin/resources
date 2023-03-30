@@ -29,10 +29,9 @@
                             class="fields-group__item col-12">
                             <form-input-builder
                                 v-for="langslug in getFieldLangs(model.fields[item])"
-                                v-show="canShowLanguageField(model.fields[item], langslug, inputlang)"
+                                v-show="canShowLanguageField(model.fields[item], langslug)"
                                 :key="item+'-'+langslug"
                                 :model="model"
-                                :inputlang="inputlang"
                                 :langslug="langslug"
                                 :index="index"
                                 :field_key="item"
@@ -44,8 +43,7 @@
                             v-if="isGroup(item) && !isTab(item)"
                             :level="addGroupLevel(level)"
                             :group="item"
-                            :model="model"
-                            :inputlang="inputlang">
+                            :model="model">
                         </form-group>
                     </fragment>
                 </div>
@@ -61,7 +59,7 @@ import { addGroupLevel } from '../Helpers/TabsHelper.js';
 export default {
     name : 'form-group',
 
-    props : ['model', 'group', 'inputlang', 'level'],
+    props : ['model', 'group', 'level'],
 
     components : {
         FormInputBuilder,
@@ -174,11 +172,11 @@ export default {
 
             return _.map(this.$root.languages, 'slug');
         },
-        canShowLanguageField(field, slug, inputlang){
+        canShowLanguageField(field, slug){
             if ( !('locale' in field) )
                 return true;
 
-            return inputlang.slug == slug;
+            return model.selectedLanguage().slug == slug;
         },
         isGroupVisible(group){
             if ( group.attributes && Object.keys(group.attributes).length > 0 ){

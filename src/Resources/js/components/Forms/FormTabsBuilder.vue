@@ -35,8 +35,7 @@
                             v-if="hasTabs(tab.fields)"
                             :level="addGroupLevel(level)"
                             :tabs="tabsFields(tab.fields)"
-                            :model="model"
-                            :inputlang="inputlang">
+                            :model="model">
                         </form-tabs-builder>
 
                         <model-builder
@@ -59,8 +58,7 @@
                         :level="addGroupLevel(level)"
                         v-if="isGroup(item) && !isTab(item)"
                         :group="item"
-                        :model="model"
-                        :inputlang="inputlang">
+                        :model="model">
                     </form-group>
                 </div>
             </div>
@@ -77,7 +75,7 @@ import { isTab, isGroup, addGroupLevel } from '../Helpers/TabsHelper.js';
 export default {
     name : 'form-tabs-builder',
 
-    props : ['model', 'group', 'tabs', 'withChilds', 'inputlang', 'cansave', 'level'],
+    props : ['model', 'group', 'tabs', 'withChilds', 'cansave', 'level'],
 
     components : { FormGroup },
 

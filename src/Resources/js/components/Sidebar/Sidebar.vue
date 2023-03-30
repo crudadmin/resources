@@ -25,7 +25,7 @@ import SidebarRow from './SidebarRow.vue';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
-    props: ['rows', 'languages', 'langid', 'user', 'version', 'author'],
+    props: ['rows', 'languages', 'user', 'version', 'author'],
 
     components: { SidebarRow },
 
