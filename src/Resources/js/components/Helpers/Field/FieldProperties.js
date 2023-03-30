@@ -77,4 +77,18 @@ export default (Field, rawField) => {
 
         return false;
     }
+
+    Field.prototype.isDisabled = function() {
+        let model = this.getModel();
+
+        if ( model.isOpenedRow() == true && (model.hasAccess('update') == false || model.editable == false) ){
+            return true;
+        }
+
+        return model.tryAttribute(this, 'disabled');
+    }
+
+    Field.prototype.isReadonly = function() {
+        return this.getModel().tryAttribute(this, 'readonly') || this.isDisabled();
+    }
 };

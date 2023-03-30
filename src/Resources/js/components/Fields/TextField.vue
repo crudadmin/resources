@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <textarea
@@ -7,8 +7,8 @@
             @keyup="changeValue"
             :id="id"
             :data-height="field.editor_height"
-            :disabled="disabled"
-            :readonly="readonly"
+            :disabled="field.isDisabled()"
+            :readonly="field.isReadonly()"
             :name="name"
             :maxlength="field.max"
             :class="{ 'form-control' : field.isText(), 'js_editor' : field.isEditor() }"
@@ -21,7 +21,7 @@
 
 <script>
     export default {
-        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'depth_level'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level'],
 
         mounted(){
             var editor = $('#'+this.id).ckEditors();

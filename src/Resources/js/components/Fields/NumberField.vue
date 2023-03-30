@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <input
@@ -9,8 +9,8 @@
             :value="value"
             :step="isDecimal ? getDecimalStep : ''"
             :placeholder="field.getPlaceholder()"
-            :disabled="disabled"
-            :readonly="readonly"
+            :disabled="field.isDisabled()"
+            :readonly="field.isReadonly()"
             @keyup="changeValue">
         <small>{{ field.title }}</small>
     </div>
@@ -18,7 +18,7 @@
 
 <script>
     export default {
-        props: ['model', 'field_key', 'name', 'field', 'value', 'disabled', 'readonly'],
+        props: ['model', 'field_key', 'name', 'field', 'value'],
 
         computed : {
             isDecimal(){

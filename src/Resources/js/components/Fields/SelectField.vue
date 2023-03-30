@@ -60,7 +60,7 @@
     import ModelBuilder from '../Views/ModelBuilder.vue';
 
     export default {
-        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'depth_level'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level'],
 
         data(){
             return {
@@ -117,6 +117,12 @@
         },
 
         computed: {
+            disabled(){
+                return this.field.isDisabled();
+            },
+            readonly(){
+                return this.field.isReadonly();
+            },
             required(){
                 return this.field.isRequired() || this.isRequiredIfHasValues;
             },

@@ -22,7 +22,7 @@
 
 <script>
     export default {
-        props: ['model', 'name', 'field_key', 'field', 'value', 'disabled'],
+        props: ['model', 'name', 'field_key', 'field', 'value'],
 
         methods : {
             hasValue(key, value, multiple)

@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled }" data-toggle="tooltip" :title="field.tooltip" @dragenter="onFileDrop">
+    <div class="form-group" :class="{ disabled : field.isDisabled() }" data-toggle="tooltip" :title="field.tooltip" @dragenter="onFileDrop">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <input type="hidden" :name="name" :value="uuid">
@@ -14,7 +14,7 @@
 import FileManagerModal from '@components/Modal/FileManagerModal';
 
 export default {
-    props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'depth_level'],
+    props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level'],
 
     data(){
         return {

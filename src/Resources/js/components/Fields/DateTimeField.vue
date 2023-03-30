@@ -1,13 +1,13 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled || readonly, 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :class="{ disabled : field.isReadonly(), 'multiple-date' : isMultipleDatepicker }" data-toggle="tooltip" :title="field.tooltip">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <input
             ref="input"
             type="text"
             class="form-control"
-            :disabled="disabled"
-            :readonly="readonly"
+            :disabled="field.isDisabled()"
+            :readonly="field.isReadonly()"
             :name="isMultipleDatepicker ? '' : name"
             :value="model.getCastedValue(field_key, value)"
             :placeholder="field.getPlaceholder()"
@@ -22,7 +22,7 @@
 
 <script>
     export default {
-        props: ['model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'depth_level'],
+        props: ['model', 'name', 'field_key', 'field', 'value', 'depth_level'],
 
         created(){
             $.datetimepicker.setLocale(this.$root.locale);
@@ -97,7 +97,7 @@
                 return $(this.$refs.input);
             },
             bindDatepickers(){
-                if ( this.readonly === true ){
+                if ( this.field.isReadonly() === true ){
                     return;
                 }
 

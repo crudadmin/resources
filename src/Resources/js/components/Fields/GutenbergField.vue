@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :key="elementKeyRender" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :key="elementKeyRender" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <!--
@@ -30,7 +30,7 @@
 
 <script>
     export default {
-        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'depth_level'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level'],
 
         data(){
             return {

@@ -1,10 +1,10 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <vue-tel-input
             :value="field.value || ''"
-            :disabled="disabled"
+            :disabled="field.isDisabled()"
             placeholder="Pridajte nové..."
             @input="changeValue"
             :preferredCountries="['sk', 'cz', 'hu', 'pl', 'au', 'at', 'ch', 'fr', 'de']"
@@ -29,7 +29,7 @@
 import { VueTelInput } from 'vue-tel-input';
 
 export default {
-    props: ['model', 'field_key', 'name', 'field', 'value', 'disabled', 'readonly'],
+    props: ['model', 'field_key', 'name', 'field', 'value'],
 
     data() {
         return {};

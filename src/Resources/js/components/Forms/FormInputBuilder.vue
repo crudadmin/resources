@@ -18,11 +18,12 @@
             :field_key="field_key"
             :value="getValueOrDefault"
             :row="row"
-            :disabled="isDisabled"
-            :readonly="isReadonly"
             :langslug="langslug"
             :depth_level="depth_level"
+
+            :readonly="field.isReadonly()"
             :required="field.isRequired()"
+            :disabled="field.isDisabled()"
             :field_key_original="field_key">
         </component>
 
@@ -65,6 +66,15 @@
         return value;
     };
 
+    //We need reset empty values because of infinity loop in setter
+    //when is NaN setted
+    const resetEmptyValue = (value) => {
+        if ( value === undefined || _.isNaN(value) )
+            return null;
+
+        return value;
+    }
+
     export default {
         name: 'form-input-builder',
         props: ['model', 'field', 'field_key', 'index', 'confirmation', 'langslug'],
@@ -99,21 +109,13 @@
 
                 return defaultValue||null;
             },
-            //We need reset empty values because of infinity loop in setter
-            //when is NaN setted
-            resetEmptyValue(value){
-                if ( value === undefined || _.isNaN(value) )
-                    return null;
-
-                return value;
-            },
             syncFieldsValueWithRow(){
                 this.$watch('row.'+this.field_key, value => {
-                    this.field.value = this.resetEmptyValue(value);
+                    this.field.value = resetEmptyValue(value);
                 });
 
                 this.$watch('field.value', value => {
-                    this.row[this.field_key] = this.resetEmptyValue(value);
+                    this.row[this.field_key] = resetEmptyValue(value);
                 });
             },
             isEmptyValue(value){
@@ -280,18 +282,6 @@
             isConfirmation()
             {
                 return this.confirmation == true;
-            },
-            isDisabled()
-            {
-                if ( this.model.isOpenedRow() == true && (this.model.hasAccess('update') == false || this.model.editable == false) ){
-                    return true;
-                }
-
-                return this.model.tryAttribute(this.field, 'disabled');
-            },
-            isReadonly()
-            {
-                return this.model.tryAttribute(this.field, 'readonly');
             },
             isMultiple()
             {

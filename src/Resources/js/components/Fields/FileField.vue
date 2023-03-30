@@ -1,10 +1,10 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :class="{ disabled : field.isDisabled() }" data-toggle="tooltip" :title="field.tooltip">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <div class="file-group">
             <div class="upload-file-wrapper">
-                <input ref="fileInput" :disabled="disabled" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? name + '[]' : name" @change="addFile" class="form-control" :placeholder="field.getPlaceholder()">
+                <input ref="fileInput" :disabled="field.isDisabled()" type="file" :multiple="isMultipleUpload" :name="isMultipleUpload ? name + '[]' : name" @change="addFile" class="form-control" :placeholder="field.getPlaceholder()">
                 <input v-if="!value && file_will_remove == true" type="hidden" :name="'$remove_'+name" :value="1">
 
                 <button
@@ -39,7 +39,7 @@
     import File from '../Partials/File.vue';
 
     export default {
-        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'depth_level', 'langslug'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level', 'langslug'],
 
         components : { File },
 
@@ -87,7 +87,7 @@
 
         computed: {
             canFileBeDeleted(){
-                return !this.disabled
+                return !this.field.isDisabled()
                     && (this.value && !this.isMultipleUpload || !this.file_from_server)
                     && this.model.getSettings('fields.'+this.field_key+'.canDelete', true);
             },

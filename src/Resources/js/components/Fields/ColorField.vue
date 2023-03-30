@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{ disabled : disabled || readonly }" data-toggle="tooltip" :title="field.tooltip">
+    <div class="form-group" :class="{ disabled : field.isReadonly() }" data-toggle="tooltip" :title="field.tooltip">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
         <div class="colors-wrapper" :key="rowId">
@@ -29,7 +29,7 @@
                     :value="value"
                     :maxlength="field.max"
                     :placeholder="field.getPlaceholder()"
-                    :disabled="disabled"
+                    :disabled="field.isDisabled()"
                     :readonly="true">
                 <small>{{ field.title }}</small>
             </div>
@@ -42,7 +42,7 @@ import Verte from 'verte';
 import 'verte/dist/verte.css';
 
 export default {
-    props: ['model', 'field_key', 'name', 'field', 'value', 'disabled', 'readonly'],
+    props: ['model', 'field_key', 'name', 'field', 'value'],
 
     components: { Verte },
 
