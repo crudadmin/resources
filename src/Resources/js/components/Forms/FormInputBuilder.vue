@@ -284,10 +284,6 @@
 
                 return this.model.formPrefix()+key;
             },
-            getFieldName()
-            {
-                return this.model.getFieldName(this.field_key);
-            },
             isString()
             {
                 return this.field.type == 'string';

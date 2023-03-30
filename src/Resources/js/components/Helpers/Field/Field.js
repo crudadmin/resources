@@ -1,6 +1,6 @@
 import Builder from '@components/Helpers/Builder/Builder';
 
-// import ModelTabs from './ModelTabs';
+import FieldProperties from './FieldProperties';
 
 const FreshBuilderData = () => {
     return {
@@ -9,7 +9,7 @@ const FreshBuilderData = () => {
 }
 
 const extensions = [
-    // ModelTabs,
+    FieldProperties,
 ];
 
 const Field = () => {};

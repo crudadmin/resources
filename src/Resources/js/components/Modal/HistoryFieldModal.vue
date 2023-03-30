@@ -74,6 +74,7 @@ export default {
             model.setRow(row.fieldRow);
 
             model.fields[this.field_key].value = row.fieldRow[this.field_key];
+            model.fields[this.field_key].label.visible = false;
 
             return model;
         },
@@ -99,7 +100,7 @@ export default {
 
 <style lang="scss">
 .message-modal {
-    &[data-modal].--history {
+    &[data-modal].--history-field {
         .modal-dialog {
             table {
                 background: white;
@@ -111,6 +112,10 @@ export default {
             .modal-body {
                 max-height: 380px;
                 overflow-y: auto;
+
+                .form-group {
+                    margin-bottom: 0;
+                }
             }
 
             .history-actions {

@@ -182,20 +182,10 @@ var Fields = (Model, rawModel) => {
         return undefined;
     }
 
-    Model.prototype.getFieldName = function(fieldKey){
-        let field = typeof fieldKey == 'object' ? fieldKey : this.fields[fieldKey];
-
-        if ( !field ){
-            return $app.trans('Neznáme pole');
-        }
-
-        return field.name;
-    }
-
     Model.prototype.getFieldPlaceholder = function(fieldKey){
         let field = typeof fieldKey == 'object' ? fieldKey : this.fields[fieldKey];
 
-        return field.placeholder || this.getFieldName(field);
+        return field.placeholder || field.getName();
     }
 
     Model.prototype.isFieldRequired = function(fieldKey){

@@ -1,5 +1,5 @@
 <template>
-<label v-if="field">
+<label v-if="field" v-show="field.label.visible">
     <i v-if="field.locale" class="fa --label--icon fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
 
     <i
@@ -10,7 +10,7 @@
         :title="__('Zobraziť zmeny v histórii')">
     </i>
 
-    {{ model.getFieldName(field) }}
+    {{ field.getName() }}
 
     <span v-if="requiredOptional" class="required">*</span>
 

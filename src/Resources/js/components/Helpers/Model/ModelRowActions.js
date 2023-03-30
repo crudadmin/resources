@@ -183,7 +183,7 @@ var RowActions = (Model) => {
 
             $app.openModal({
                 title : $app.trans('history.changes'),
-                class : '--wide --history',
+                class : '--wide --history-field',
                 component : {
                     name : 'HistoryField',
                     component : HistoryFieldModal,
