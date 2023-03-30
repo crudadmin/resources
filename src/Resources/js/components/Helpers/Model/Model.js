@@ -1,3 +1,19 @@
+import Builder from '@components/Helpers/Builder/Builder';
+import BuilderData from '@components/Helpers/Builder/BuilderData';
+import ModelTabs from './ModelTabs';
+import ModelGroups from './ModelGroups';
+import ModelFields from './ModelFields';
+import ModelProperties from './ModelProperties';
+import ModelCoreHelpers from './ModelCoreHelpers';
+import ModelRowActions from './ModelRowActions';
+import ModelFormActions from './ModelFormActions';
+import ModelBus from './ModelBus';
+import ModelTableRows from './ModelTableRows';
+import ModelButtonActions from './ModelButtonActions';
+import ModelDragAndDrop from './ModelDragAndDrop';
+import ModelComponents from './ModelComponents';
+import ModelEvents from './ModelEvents';
+
 export const defaultSearchQuery = {
     column : null,
     query : null,
@@ -5,7 +21,7 @@ export const defaultSearchQuery = {
     interval : false,
 };
 
-const freshModelData = (rawModel) => {
+const FreshBuilderData = () => {
     return {
         //Each model need to have generated uuid
         uuid : $app.generateUuid(),
@@ -136,58 +152,28 @@ const freshModelData = (rawModel) => {
     }
 }
 
-var ModelData = (Model, rawModel) => {
-    if ( rawModel.data === undefined ) {
-        rawModel.data = freshModelData(rawModel);
-    }
+const extensions = [
+    [BuilderData, {
+        data : FreshBuilderData
+    }],
+    ModelTabs,
+    ModelGroups,
+    ModelFields,
+    ModelProperties,
+    ModelCoreHelpers,
+    ModelTableRows,
+    ModelButtonActions,
+    ModelDragAndDrop,
+    ModelRowActions,
+    ModelFormActions,
+    ModelComponents,
+    ModelEvents,
+    ModelBus,
+];
 
-    /**
-     * Refresh instance of given model
-     */
-    Model.prototype.refreshInstance = function(){
-        this.data = _.cloneDeep(freshModelData());
-    }
+/*
+ * Bind given model properties
+ */
+const Model = () => {};
 
-    /**
-     * Set model data
-     *
-     * @param  string  key
-     * @param  key  value
-     */
-    Model.prototype.setData = function(key, value){
-        $app.$set(this.data, key, value);
-
-        let mapValues = this.data.mapValues;
-
-        for ( var i = 0; i < mapValues.length;i++ ){
-            if ( mapValues[i].key === key ){
-                mapValues[i].callback(value);
-            }
-        }
-
-        return this;
-    }
-
-    /**
-     * Get model data
-     *
-     * @param  string  key
-     */
-    Model.prototype.getData = function(key){
-        return this.data[key];
-    }
-
-    Model.prototype.mapData = function(keys, callbackOrComponent){
-        _.castArray(keys).forEach(key => {
-            let callback = typeof callbackOrComponent == 'function' ? callbackOrComponent : (value) => {
-                callbackOrComponent[key] = value;
-            };
-
-            this.data.mapValues.push({ key, callback });
-        });
-
-        return this;
-    }
-};
-
-export default ModelData;
+export default new Builder(Model, extensions);

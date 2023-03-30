@@ -69,7 +69,7 @@
 <script>
 import FormGroup from './FormGroup.vue';
 import ModelBuilder from '../Views/ModelBuilder.vue';
-import ModelHelper from '../Helpers/ModelHelper.js';
+import Model from '@components/Helpers/Model/Model.js';
 import { isTab, isGroup, addGroupLevel } from '@components/Helpers/Model/ModelTabs.js';
 
 export default {
@@ -177,7 +177,7 @@ export default {
                 }
 
                 if ( this.model.childs[model] ) {
-                    return ModelHelper(this.model.childs[model]);
+                    return Model(this.model.childs[model]);
                 } else {
                     return this.getFreshModel(model);
                 }

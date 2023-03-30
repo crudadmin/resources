@@ -129,7 +129,7 @@
     import ModelRowsBuilder from '../Rows/ModelRowsBuilder.vue';
     import Search from '../Partials/Search.vue';
     import { mapMutations } from 'vuex';
-    import { defaultSearchQuery } from '../Helpers/Model/ModelData';
+    import { defaultSearchQuery } from '@components/Helpers/Model/Model';
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
     export default {

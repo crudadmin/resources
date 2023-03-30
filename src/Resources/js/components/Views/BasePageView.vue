@@ -29,7 +29,6 @@
 
 <script>
 import ModelBuilder from './ModelBuilder.vue';
-import ModelHelper from '../Helpers/ModelHelper.js';
 import License from '../Partials/License.vue';
 import CheckAssetsVersion from '../Partials/CheckAssetsVersion.vue';
 
