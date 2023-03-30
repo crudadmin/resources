@@ -1,9 +1,19 @@
+import Field from '@components/Helpers/Field/Field';
 import DateCast from '@components/Helpers/Casts/DateCast.js';
 import { fixBoolValue } from '@/js/utils/helpers.js';
 
 import _ from 'lodash';
 
-var Fields = (Model) => {
+const InitializeFields = (rawModel) => {
+    for ( var key in rawModel.fields ){
+        rawModel.fields[key] = new Field(rawModel.fields[key]);
+    }
+}
+
+var Fields = (Model, rawModel) => {
+    //Initialize fields builder
+    InitializeFields(rawModel);
+
     /*
      * Hide input
      */

@@ -1,13 +1,22 @@
-export default (Builder, extensions) => {
+import BuilderData from './BuilderData';
+
+export default (Builder, extensions, FreshBuilderData) => {
+    const defaultExtensions = [
+        [BuilderData, {
+            data : FreshBuilderData
+        }]
+    ];
+
+    //Add default extensions
+    extensions = [].concat(defaultExtensions).concat(extensions);
+
     return function(rawBuilder){
         //Does not initialize already initialized model
-        if ( rawBuilder._initialized === true ){
+        if ( rawBuilder?.data?._initialized === true ){
             return rawBuilder;
         }
 
         rawBuilder = _.cloneDeep(rawBuilder);
-
-        rawBuilder._initialized = true;
 
         var core = new Builder;
 
@@ -29,6 +38,8 @@ export default (Builder, extensions) => {
 
             extension(Builder, core, options);
         }
+
+        core.data._initialized = true;
 
         return core;
     };

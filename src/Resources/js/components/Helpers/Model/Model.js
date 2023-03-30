@@ -1,5 +1,4 @@
 import Builder from '@components/Helpers/Builder/Builder';
-import BuilderData from '@components/Helpers/Builder/BuilderData';
 import ModelTabs from './ModelTabs';
 import ModelGroups from './ModelGroups';
 import ModelFields from './ModelFields';
@@ -153,9 +152,6 @@ const FreshBuilderData = () => {
 }
 
 const extensions = [
-    [BuilderData, {
-        data : FreshBuilderData
-    }],
     ModelTabs,
     ModelGroups,
     ModelFields,
@@ -171,9 +167,6 @@ const extensions = [
     ModelBus,
 ];
 
-/*
- * Bind given model properties
- */
 const Model = () => {};
 
-export default new Builder(Model, extensions);
+export default new Builder(Model, extensions, FreshBuilderData);
