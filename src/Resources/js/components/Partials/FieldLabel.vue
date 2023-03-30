@@ -1,6 +1,6 @@
 <template>
 <label :class="{ '--hidden' : field.label.visible == false }">
-    <div v-show="field.label.visible" class="d-inline-block">
+    <div v-show="field.label.visible" :class="{ 'd-inline-block' : field.label.visible }">
         <i v-if="field.locale" class="fa --label--icon fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
 
         <i
