@@ -4,8 +4,8 @@
 
         <input
             class="form-control"
-            :autocomplete="isPassword ? 'new-password' : model.getSettings('form.autocomplete', 'off')"
-            :type="isPassword ? 'password' : 'text'"
+            :autocomplete="field.isPassword() ? 'new-password' : model.getSettings('form.autocomplete', 'off')"
+            :type="field.isPassword() ? 'password' : 'text'"
             :name="name"
             :value="value"
             :maxlength="field.max"
@@ -22,12 +22,6 @@
 <script>
     export default {
         props: ['model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly'],
-
-        computed : {
-            isPassword(){
-                return this.field.type == 'password';
-            },
-        },
 
         methods : {
             changeValue(e){

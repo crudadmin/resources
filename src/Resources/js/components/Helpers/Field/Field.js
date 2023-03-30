@@ -1,6 +1,7 @@
 import Builder from '@components/Helpers/Builder/Builder';
 
 import FieldProperties from './FieldProperties';
+import FieldTypes from './FieldTypes';
 import FieldLocale from './FieldLocale';
 import FieldHistory from './FieldHistory';
 
@@ -12,6 +13,7 @@ const FreshBuilderData = () => {
 
 const extensions = [
     FieldProperties,
+    FieldTypes,
     FieldLocale,
     FieldHistory,
 ];

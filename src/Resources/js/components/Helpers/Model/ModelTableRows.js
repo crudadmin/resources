@@ -127,7 +127,9 @@ const isNumericValue = (model, key) => {
     if ( ['id', '_order'].indexOf( key ) > -1)
         return true;
 
-    if ( key in model.fields && ['integer', 'decimal', 'checkbox'].indexOf(model.fields[key].type) > -1 ) {
+    let field = model.fields[key];
+
+    if ( field && (field.isNumber() || field.isCheckbox()) ) {
         return true;
     }
 
@@ -143,7 +145,7 @@ const isDateValue = (model, key) => {
         return true;
     }
 
-    if ( key in model.fields && ['date', 'datetime'].indexOf( model.fields[key].type ) > -1 ) {
+    if ( key in model.fields && model.fields[key].isDatepicker() ) {
         return true;
     }
 

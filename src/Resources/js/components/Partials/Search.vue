@@ -89,8 +89,7 @@ export default {
             return this.search.query || this.search.query_to;
         },
         canBeInterval(){
-            var column = this.search.column,
-                intervalColumns = ['integer', 'decimal', 'date', 'datetime', 'time', 'timestamp'];
+            var column = this.search.column;
 
             if ( ['created_at', 'id'].indexOf(column) > -1 )
                 return true;
@@ -102,7 +101,7 @@ export default {
                     return false;
                 }
 
-                if ( intervalColumns.includes(field.type) ){
+                if ( field.isNumber() || field.isDatepicker() ){
                     return true;
                 }
             }
@@ -120,7 +119,7 @@ export default {
                         ! field.name
                         || (!('belongsToMany' in field) && 'multiple' in field)
                         || ( 'removeFromForm' in field && 'hidden' in field )
-                        || field.type == 'password'
+                        || field.isPassword()
                 ) {
                     continue;
                 }
@@ -149,7 +148,7 @@ export default {
                 return false;
             }
 
-            return this.getColumnField.type == 'checkbox' ? true : false;
+            return this.getColumnField.isCheckbox() ? true : false;
         },
         isDate(){
             var column = this.search.column;
@@ -159,14 +158,14 @@ export default {
             }
 
             if ( this.getColumnField ) {
-                return (['date', 'datetime', 'time', 'timestamp'].indexOf(this.getColumnField.type) > -1) ? true : false;
+                return this.getColumnField.isDatepicker();
             }
 
             return false;
         },
         isSelect(){
             if ( this.getColumnField ) {
-                return (['select', 'radio'].indexOf(this.getColumnField.type) > -1) ? true : false;
+                return this.getColumnField.isSelect() || this.getColumnField.isRadio();
             }
 
             return false;

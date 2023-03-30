@@ -346,7 +346,7 @@ var Fields = (Model, rawModel) => {
             return;
         }
 
-        if ( ['date', 'datetime', 'time', 'timestamp'].includes(field.type) ){
+        if ( field.isDatepicker() ){
             return new DateCast(this, field, key);
         }
     }

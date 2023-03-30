@@ -11,7 +11,7 @@
             :readonly="readonly"
             :name="name"
             :maxlength="field.max"
-            :class="{ 'form-control' : isText, 'js_editor' : isEditor }"
+            :class="{ 'form-control' : field.isText(), 'js_editor' : field.isEditor() }"
             :placeholder="field.getPlaceholder()"
             :value="value">
         </textarea>
@@ -27,7 +27,7 @@
             var editor = $('#'+this.id).ckEditors();
 
             //On update ckeditor
-            if ( this.isEditor )
+            if ( this.field.isEditor() )
             {
                 CKEDITOR.instances[this.id].on('change', e => {
                     this.$parent.changeValue(null, e.editor.getData())
@@ -39,7 +39,7 @@
                     return;
 
                 //After change value, update same value in ckeditor
-                if ( ! this.isEditor )
+                if ( ! this.field.isEditor() )
                     return;
 
                 var editor = CKEDITOR.instances[this.id];
@@ -72,15 +72,6 @@
 
         destroyed(){
             eventHub.$off('updateField', this.onUpdateEvent);
-        },
-
-        computed: {
-            isText(){
-                return ['text', 'longtext'].indexOf(this.field.type) > -1;
-            },
-            isEditor(){
-                return ['editor', 'longeditor'].indexOf(this.field.type) > -1;
-            },
         },
 
         methods : {

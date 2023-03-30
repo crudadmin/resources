@@ -17,7 +17,6 @@
             :name="getInputName"
             :field_key="field_key"
             :value="getValueOrDefault"
-            :history_changed="field.hasHistoryChange()"
             :row="row"
             :disabled="isDisabled"
             :readonly="isReadonly"
@@ -53,6 +52,19 @@
     import PhoneField from '../Fields/PhoneField';
     import UploaderField from '../Fields/UploaderField';
 
+    const parseArrayValue = (value) => {
+        if ( $.isArray(value) )
+        {
+            for ( var key in value )
+            {
+                if ( $.isNumeric( value[key] ) )
+                    value[key] = parseInt( value[key] );
+            }
+        }
+
+        return value;
+    };
+
     export default {
         name: 'form-input-builder',
         props: ['model', 'field', 'field_key', 'index', 'confirmation', 'langslug'],
@@ -76,18 +88,6 @@
         },
 
         methods : {
-            parseArrayValue(value){
-                if ( $.isArray(value) )
-                {
-                    for ( var key in value )
-                    {
-                        if ( $.isNumeric( value[key] ) )
-                            value[key] = parseInt( value[key] );
-                    }
-                }
-
-                return value;
-            },
             getLocalizedValue(value, defaultValue){
                 if ( ! this.field.hasLocale() ) {
                     return value||null;
@@ -133,7 +133,7 @@
                 }
 
                 //If is current date value in datepicker
-                if ( field.default && this.isDatepickerField(field) && defaultValue.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
+                if ( field.default && field.isDatepicker() && defaultValue.toUpperCase() == 'CURRENT_TIMESTAMP' ) {
                     defaultValue = moment().format(this.fromPHPFormatToMoment(this.model.getFieldFormat(this.field_key)));
                 }
 
@@ -153,7 +153,7 @@
                 }
 
                 //Get value by select option key
-                if ( field.defaultByOption && this.isSelect && this.isEmptyValue(field.value) ) {
+                if ( field.defaultByOption && this.field.isSelect() && this.isEmptyValue(field.value) ) {
                     var option = (field.defaultByOption+'').split(','),
                         defaultOption;
 
@@ -169,7 +169,7 @@
                 }
 
                 //Cast checkbox value
-                if ( this.isCheckbox ) {
+                if ( this.field.isCheckbox() ) {
                     defaultValue = defaultValue == true ? true : false;
                 }
 
@@ -198,26 +198,23 @@
             isMultipleField(field){
                 return field.multiple && field.multiple === true || ('belongsToMany' in field);
             },
-            isDatepickerField(field){
-                return ['date', 'datetime', 'time', 'timestamp'].indexOf(field.type) > -1;
-            },
         },
 
         computed : {
             nativeFieldComponent(){
                 let components = {
-                    'string-field' : this.isString || this.isPassword,
-                    'color-field' : this.isColor,
-                    'phone-field' : this.isPhone,
-                    'number-field' : this.isNumber,
-                    'date-time-field' : this.isDatepicker,
-                    'checkbox-field' : this.isCheckbox,
-                    'text-field' : this.isText || this.isEditor,
-                    'gutenberg-field' : this.isGutenberg,
-                    'file-field' : this.isFile,
-                    'uploader-field' : this.isUploader,
-                    'select-field' : this.isSelect,
-                    'radio-field' : this.isRadio,
+                    'string-field' : this.field.isString() || this.field.isPassword(),
+                    'color-field' : this.field.isColor(),
+                    'phone-field' : this.field.isPhone(),
+                    'number-field' : this.field.isNumber(),
+                    'date-time-field' : this.field.isDatepicker(),
+                    'checkbox-field' : this.field.isCheckbox(),
+                    'text-field' : this.field.isText() || this.field.isEditor(),
+                    'gutenberg-field' : this.field.isGutenberg(),
+                    'file-field' : this.field.isFile(),
+                    'uploader-field' : this.field.isUploader(),
+                    'select-field' : this.field.isSelect(),
+                    'radio-field' : this.field.isRadio(),
                 };
 
                 for ( var key in components ){
@@ -280,65 +277,9 @@
 
                 return this.model.formPrefix()+key;
             },
-            isString()
-            {
-                return this.field.type == 'string';
-            },
-            isNumber()
-            {
-                return ['integer', 'decimal'].indexOf(this.field.type) > -1;
-            },
-            isText()
-            {
-                return this.field.type == 'text' || this.field.type == 'longtext';
-            },
-            isGutenberg()
-            {
-                return this.field.type == 'gutenberg';
-            },
-            isEditor()
-            {
-                return this.field.type == 'editor'  || this.field.type == 'longeditor';
-            },
-            isFile()
-            {
-                return this.field.type == 'file';
-            },
-            isUploader()
-            {
-                return this.field.type == 'uploader';
-            },
-            isPassword()
-            {
-                return this.field.type == 'password';
-            },
-            isColor()
-            {
-                return this.field.type == 'color';
-            },
-            isPhone()
-            {
-                return this.field.type == 'phone';
-            },
-            isSelect()
-            {
-                return this && this.field.type == 'select';
-            },
-            isRadio()
-            {
-                return this.field.type == 'radio';
-            },
             isConfirmation()
             {
                 return this.confirmation == true;
-            },
-            isDatepicker()
-            {
-                return this.isDatepickerField(this.field);
-            },
-            isCheckbox()
-            {
-                return this.field.type == 'checkbox';
             },
             isDisabled()
             {
@@ -385,7 +326,7 @@
                     return '';
                 }
 
-                var value = this.parseArrayValue(this.field.value);
+                var value = parseArrayValue(this.field.value);
 
                 if ( this.isMultipleDatepicker ) {
                     return JSON.stringify(value||[]);

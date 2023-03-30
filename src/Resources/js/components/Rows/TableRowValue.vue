@@ -51,7 +51,7 @@ export default {
         isFile(){
             if (
                 this.settings.isRealField
-                && this.settings.field.type == 'file'
+                && this.settings.field.isFile()
                 && this.settings.encode
             ) {
                 return true;
@@ -60,7 +60,7 @@ export default {
             return false;
         },
         isColor(){
-            return this.settings.isRealField && this.settings.field.type == 'color';
+            return this.settings.isRealField && this.settings.field.isColor();
         },
         getFiles(){
             var value = this.fieldValue||[];
@@ -81,9 +81,9 @@ export default {
 
             //Get select original value
             if ( field ) {
-                var isRadio = field.type == 'radio';
+                var isRadio = field.isRadio();
 
-                if ( field.type == 'select' || isRadio ) {
+                if ( field.isSelect() || isRadio ) {
                     if ( 'multiple' in field && field.multiple == true && $.isArray(rowValue) && !isRadio ) {
                         var values = [],
                             rows = rowValue,
@@ -118,7 +118,7 @@ export default {
                     }
                 }
 
-                else if ( field.type == 'checkbox' ) {
+                else if ( field.isCheckbox() ) {
                     if ( rowValue === null ){
                         return;
                     }
@@ -127,7 +127,7 @@ export default {
                 }
 
                 //Multi date format values
-                else if ( ['date', 'datetime', 'time', 'timestamp'].indexOf(field.type) > -1 ) {
+                else if ( field.isDatepicker() ) {
                     rowValue = this.returnDateFormat(rowValue, this.field);
                 }
             } else if ( ['created_at', 'updated_at'].indexOf(this.field) > -1 ) {
@@ -186,12 +186,12 @@ export default {
                     string = $(document.createElement('div')).text(string).html();
                 }
 
-                if ( field.type == 'text' && parseInt(field.limit) === 0) {
+                if ( field.isText() && parseInt(field.limit) === 0) {
                     return string.replace(/\n/g, '<br>');
                 }
 
                 //Is phone number
-                if ( field.type == 'string' && ('phone' in field || 'phone_link' in field) ) {
+                if ( (field.isText() && ('phone' in field || 'phone_link' in field)) || field.isPhone() ) {
                     return '<a href="tel:'+string+'">'+string+'</a>';
                 }
             }

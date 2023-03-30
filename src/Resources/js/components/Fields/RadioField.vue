@@ -24,12 +24,6 @@
     export default {
         props: ['model', 'name', 'field_key', 'field', 'value', 'disabled'],
 
-        computed : {
-            isPassword(){
-                return this.field.type == 'password';
-            },
-        },
-
         methods : {
             hasValue(key, value, multiple)
             {
