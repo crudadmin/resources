@@ -60,7 +60,7 @@
     import ModelBuilder from '../Views/ModelBuilder.vue';
 
     export default {
-        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'inputlang', 'langid', 'depth_level'],
+        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'disabled', 'readonly', 'depth_level'],
 
         data(){
             return {
@@ -119,6 +119,9 @@
         computed: {
             required(){
                 return this.model.isFieldRequired(this.field_key) || this.isRequiredIfHasValues;
+            },
+            langid(){
+                return this.model.getSelectedLanguageId();
             },
             row(){
                 return this.model.getRow();

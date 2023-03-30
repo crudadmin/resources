@@ -252,9 +252,6 @@
 
                 return field;
             },
-            langid(){
-                return this.model.getSelectedLanguageId();
-            },
             depth_level(){
                 return this.model.getData('depth_level');
             },
