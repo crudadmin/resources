@@ -24,6 +24,7 @@ if ( window.Gettext ) {
 
 // Components
 import BaseComponent from '@components/BaseComponent.js';
+import FormInputBuilder from '@components/Forms//FormInputBuilder.vue';
 import CrudAdmin from '@components/Helpers/CrudAdmin.js';
 import SiteTreeBuilder from '@components/Extensions/SiteTreeBuilder/SiteTreeBuilder.vue';
 import ModelBuilder from '@components/Views/ModelBuilder.vue';
@@ -50,6 +51,7 @@ Vue.component('ModalAddNewRow', ModalAddNewRow);
 Vue.component('RowsFilter', RowsFilter);
 Vue.component('Refreshing', Refreshing);
 Vue.component('FieldLabel', FieldLabel);
+Vue.component('FormInputBuilder', FormInputBuilder);
 
 //Global methods
 Vue.mixin(globalVueMixins);

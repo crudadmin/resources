@@ -1,4 +1,5 @@
 import HistoryModal from '@components/Modal/HistoryModal.vue';
+import HistoryFieldModal from '@components/Modal/HistoryFieldModal.vue';
 import ModalGettext from '@components/Modal/ModalGettext.vue';
 
 var RowActions = (Model) => {
@@ -151,6 +152,44 @@ var RowActions = (Model) => {
                     component : HistoryModal,
                     props : {
                         model : this,
+                    },
+                }
+            });
+        } catch (response){
+            $app.errorResponseLayer(response);
+        }
+    };
+
+    Model.prototype.showFieldHistory = async function(row, field_key){
+        try {
+            let response = await $app.$http.get($app.requests.get('getFieldHistory', {
+                model : this.slug,
+                id : row.id,
+                field : field_key,
+            }))
+
+            var data = response.data;
+
+            if ( data.length <= 1 ) {
+                return $app.warningModal({
+                    title : $app.trans('info'),
+                    message : $app.trans('no-changes'),
+                });
+            }
+
+
+            this.getData('history').id = row.id;
+            this.getData('history').rows = data;
+
+            $app.openModal({
+                title : $app.trans('history.changes'),
+                class : '--wide --history',
+                component : {
+                    name : 'HistoryField',
+                    component : HistoryFieldModal,
+                    props : {
+                        model : this,
+                        field_key : field_key,
                     },
                 }
             });

@@ -28,7 +28,7 @@
                             v-show="canShowField(model.fields[item])"
                             class="fields-group__item col-12">
                             <form-input-builder
-                                v-for="langslug in getFieldLangs(model.fields[item])"
+                                v-for="langslug in model.getFieldLangs(item)"
                                 v-show="canShowLanguageField(model.fields[item], langslug)"
                                 :key="item+'-'+langslug"
                                 :model="model"
@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import FormInputBuilder from './FormInputBuilder.vue';
 import { addGroupLevel } from '../Helpers/TabsHelper.js';
 
 export default {
@@ -62,7 +61,6 @@ export default {
     props : ['model', 'group', 'level'],
 
     components : {
-        FormInputBuilder,
         FormTabsBuilder : () => import('./FormTabsBuilder.vue'),
     },
 
@@ -165,12 +163,6 @@ export default {
         },
         hasTabs(fields){
             return this.$parent.hasTabs(fields);
-        },
-        getFieldLangs(field){
-            if ( ! field || !('locale' in field) )
-                return 1;
-
-            return _.map(this.$root.languages, 'slug');
         },
         canShowLanguageField(field, slug){
             if ( !('locale' in field) ) {

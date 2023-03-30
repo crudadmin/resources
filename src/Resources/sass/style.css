@@ -51,7 +51,6 @@
 
 .sidebar-menu, .main-sidebar .user-panel, .sidebar-menu > li.header { overflow: visible; }
 
-.form-group label i.localized { font-size: 12px; margin-right: 3px; }
 .form-group input.js_date, .search-bar input.js_date { background: white }
 .form-group textarea.js_editor { display: block;min-height: 321px;width: 100%;opacity: 0.2;padding: 10px; }
 

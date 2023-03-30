@@ -24,7 +24,6 @@
             :readonly="isReadonly"
             :langslug="langslug"
             :depth_level="depth_level"
-
             :required="isRequired"
             :field_key_original="field_key">
         </component>

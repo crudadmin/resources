@@ -433,6 +433,16 @@ var Fields = (Model) => {
     Model.prototype.getUploadsUrl = function(field, file){
         return window.crudadmin.root + '/uploads/' + this.slug + '/' + field + '/' + file;
     }
+
+    Model.prototype.getFieldLangs = function(fieldKey){
+        let field = this.fields[fieldKey];
+
+        if ( ! field || !('locale' in field) ) {
+            return 1;
+        }
+
+        return _.map($app.languages, 'slug');
+    }
 };
 
 export default Fields;

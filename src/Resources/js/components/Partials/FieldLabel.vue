@@ -1,6 +1,14 @@
 <template>
 <label v-if="field">
-    <i v-if="field.locale" class="fa localized fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
+    <i v-if="field.locale" class="fa --label--icon fa-globe" data-toggle="tooltip" :title="trans('languages-field')"></i>
+
+    <i
+        v-if="model.history && model.isOpenedRow()"
+        @click="model.showFieldHistory(model.getRow(), field_key)"
+        class="fa --label--icon --pointer fa-history"
+        data-toggle="tooltip"
+        :title="__('Zobraziť zmeny v histórii')">
+    </i>
 
     {{ model.getFieldName(field) }}
 
@@ -25,3 +33,8 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+i.--label--icon { font-size: 12px; margin-right: 3px; }
+i.--pointer { cursor: pointer; }
+</style>
