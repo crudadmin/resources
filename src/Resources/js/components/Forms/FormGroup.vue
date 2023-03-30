@@ -173,10 +173,11 @@ export default {
             return _.map(this.$root.languages, 'slug');
         },
         canShowLanguageField(field, slug){
-            if ( !('locale' in field) )
+            if ( !('locale' in field) ) {
                 return true;
+            }
 
-            return model.selectedLanguage().slug == slug;
+            return this.model.selectedLanguage()?.slug == slug;
         },
         isGroupVisible(group){
             if ( group.attributes && Object.keys(group.attributes).length > 0 ){

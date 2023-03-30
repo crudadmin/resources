@@ -2565,8 +2565,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
       return _.map(this.$root.languages, 'slug');
     },
     canShowLanguageField: function canShowLanguageField(field, slug) {
-      if (!('locale' in field)) return true;
-      return model.selectedLanguage().slug == slug;
+      var _this$model$selectedL;
+
+      if (!('locale' in field)) {
+        return true;
+      }
+
+      return ((_this$model$selectedL = this.model.selectedLanguage()) === null || _this$model$selectedL === void 0 ? void 0 : _this$model$selectedL.slug) == slug;
     },
     isGroupVisible: function isGroupVisible(group) {
       if (group.attributes && Object.keys(group.attributes).length > 0) {
