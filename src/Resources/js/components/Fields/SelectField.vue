@@ -498,7 +498,7 @@
                 var values = select.getSelectionOrder();
 
                 if ( !fake_select.is('select') )
-                    fake_select = select.before('<select name="'+this.field_key+'[]" multiple="multiple" style="display: none"></select>').prev();
+                    fake_select = select.before('<select name="'+this.name+'[]" multiple="multiple" style="display: none"></select>').prev();
 
                 //Remove inserted options
                 fake_select.find('option').remove();

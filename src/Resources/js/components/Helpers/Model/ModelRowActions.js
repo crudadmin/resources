@@ -244,9 +244,9 @@ var RowActions = (Model) => {
             return this.setRow(null);
         }
 
-        var render = async response => {
-            for ( var key in response ){
-                row[key] = response[key];
+        var render = async (responseRow) => {
+            for ( var key in responseRow ){
+                row[key] = responseRow[key];
             }
 
             //Bind model data
@@ -291,8 +291,6 @@ var RowActions = (Model) => {
                 //Select history row
                 if ( historyId ){
                     this.getData('history').data = data;
-                } else {
-                    this.getData('history').changed_fields = data.changed_fields;
                 }
 
                 await render(row);

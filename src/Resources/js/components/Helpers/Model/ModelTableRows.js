@@ -170,6 +170,10 @@ const getRowsLimit = (model, limit) => {
         return limit;
     }
 
+    if ( model.isSingle() || model.isInParent() ){
+        return 1;
+    }
+
     //We need have ability to disable fetching rows
     if ( model.getSettings('pagination.limit') === 0 ){
         return 0;
@@ -658,6 +662,7 @@ var ModelTableRows = (Model) => {
             //Set single model row
             if ( this.isSingle() && response.data.rows.length > 0 ) {
                 this.setRow(response.data.rows[0]||this.emptyRowInstance());
+
                 this.sendRowData();
             }
 

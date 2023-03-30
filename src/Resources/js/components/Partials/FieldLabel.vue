@@ -26,7 +26,7 @@ export default {
 
     computed : {
         isEditedField(){
-            let editedFields = Object.keys(this.model.getData('history').changed_fields||[]);
+            let editedFields = Object.keys(this.model.getRow().$historyChanges||{});
 
             return editedFields.includes(this.field_key);
         },
