@@ -60,8 +60,13 @@ class FileManagerServiceProvider extends ServiceProvider
         $crudadminDisk = config('filesystems.disks.'.config('admin.disk'));
 
         $this->app['config']->set('filesystems.disks.crudadmin_filemanager', array_merge($crudadminDisk, [
-            'root' => ltrim(($crudadminDisk['root'] ?? $crudadminDisk['path_prefix'] ?? '').'/editor', '/'),
-            'url' => ltrim(($crudadminDisk['url'] ?? '').'/editor', '/'),
+            'root' => $this->fixPath(($crudadminDisk['root'] ?? $crudadminDisk['path_prefix'] ?? '').'/editor'),
+            'url' => rtrim(($crudadminDisk['url'] ?? ''), '/').'/editor',
         ]));
+    }
+
+    private function fixPath($path)
+    {
+        return str_replace('//', '/', $path);
     }
 }
