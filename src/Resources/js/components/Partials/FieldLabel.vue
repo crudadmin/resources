@@ -29,7 +29,7 @@ export default {
             return this.field.getModel();
         },
         isEditedField(){
-            let editedFields = Object.keys(this.model.getRow().$historyChanges||{});
+            let editedFields = Object.keys(this.field.getModel().getRow().$historyChanges||{});
 
             return editedFields.includes(this.field.getKey());
         },

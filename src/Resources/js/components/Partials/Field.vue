@@ -26,11 +26,6 @@ export default {
     },
 
     computed : {
-        isEditedField(){
-            let editedFields = Object.keys(this.model.getRow().$historyChanges||{});
-
-            return editedFields.includes(this.field_key);
-        },
         requiredOptional(){
             if ( _.isBoolean(this.required) ){
                 return this.required;
