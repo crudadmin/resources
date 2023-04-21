@@ -190,20 +190,6 @@ export default {
             if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') )
                 return;
 
-            //Update row in table rows
-            var row = data.row;
-
-            for ( var key in this.rows.data )
-            {
-                if ( this.rows.data[key].id != row.id ) {
-                    continue;
-                }
-
-                for ( var k in row ) {
-                    this.model.getData('rows').data[key][k] = row[k];
-                }
-            }
-
             //Reset history on update row
             this.model.closeHistory();
 

@@ -188,6 +188,27 @@ const getRowsLimit = (model, limit) => {
 }
 
 var ModelTableRows = (Model) => {
+    Model.prototype.setTableRow = function(row){
+        let rows = this.getData('rows');
+
+        if ( row ){
+            return this;
+        }
+
+        //Clone all received data into table rows
+        for ( var key in rows.data ) {
+            if ( rows.data[key].id == row.id ) {
+                for ( var k in row ) {
+                    rows.data[key][k] = row[k];
+                }
+
+                break;
+            }
+        }
+
+        return this;
+    }
+
     /*
      * Change updated rows in db
      */
@@ -736,7 +757,9 @@ var ModelTableRows = (Model) => {
             is_locale = isLocaleValue(this, field),
             is_decoded = this.getSettings('columns.'+field+'.encode', true) !== true,
             defaultSlug = $app.languages.length ? $app.languages[0].slug : null,
-            rows = this.getData('rows').data.slice(0);
+            rows = this.getData('rows').data.slice(0).map(row => {
+                return Object.assign({}, row, row.$table);
+            });
 
         //If all rows has been given, and recursive rows are present. We need filter out that rows.
         if ( withAllRows !== true && this.isRecursive() && this.getData('depth_level') === 0 ) {

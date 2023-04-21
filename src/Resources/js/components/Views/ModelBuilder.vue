@@ -244,7 +244,7 @@
             },
             parentRow(row, oldrow){
                 //When parent row has been changed, then load children rows
-                if ( ! _.isEqual(row, oldrow) && (row.id != oldrow.id || this.model.isInParent()) ){
+                if ( ! _.isEqual(row, oldrow) && (row.id != oldrow.id) ){
                     //We need rewrite parent model if has been changed
                     this.model.setData('parentRow', this.parentRow);
 

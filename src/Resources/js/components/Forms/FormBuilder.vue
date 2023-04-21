@@ -116,24 +116,6 @@ export default {
             this.cansave = data.state;
         });
 
-        /*
-         * When row is updated, then bind data from incoming request/database into model row and his values
-         */
-        eventHub.$on('onUpdate', this.onUpdateEvent = data => {
-            if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') )
-                return;
-
-            //Update model data of existing model on row update
-            for ( var key in data.row ) {
-                this.model.setValue(key, data.row[key]);
-
-                //Update values in fields cause updating files in form
-                if ( key in this.model.fields ) {
-                    this.model.fields[key].value = data.row[key];
-                }
-            }
-        });
-
         //On create form instance, we need initialize given row.
         //For example if single model is loaded from database as relation, but FormBuilder is not loaded yet
         //Then we need insert row data after FormBuilder initialization.
@@ -146,26 +128,9 @@ export default {
 
     destroyed(){
         eventHub.$off('changeFormSaveState', this.changeFormSaveStateEvent);
-        eventHub.$off('onUpdate', this.onUpdateEvent);
     },
 
     watch: {
-        //After click on edit button, push data into form values
-        row : {
-            handler : function (row, oldRow) {
-                //Form cannot be resetted if data has been synced from db
-                var canResetForm = !this.model.isOpenedRow() || ! oldRow || row.id != oldRow.id;
-
-                //Init new form after change row
-                if ( !row || !oldRow || row.id != oldRow.id || this.model.getData('history').history_id )
-                {
-                    this.model.initForm(row, canResetForm);
-
-                    this.model.sendRowData();
-                }
-            },
-            deep: true,
-        },
         //On change language reset editing form
         // langid(langid){
         //   this.model.resetFormWithEvents();

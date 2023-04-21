@@ -8,6 +8,10 @@ var RowActions = (Model) => {
     }
 
     Model.prototype.setRow = function(row){
+        if ( row ){
+            this.setTableRow(row);
+        }
+
         return this.setData('row', row);
     }
 
@@ -78,7 +82,7 @@ var RowActions = (Model) => {
     }
 
     Model.prototype.resetForm = function(){
-        return this.setData('row', this.emptyRowInstance());
+        return this.setRow(this.emptyRowInstance());
     }
 
     Model.prototype.isReservedRow = function(id){
@@ -258,6 +262,9 @@ var RowActions = (Model) => {
                     $app.$set(modelRow, key, row[key]);
                 }
             }
+
+            //Deperaced
+            this.sendRowData();
 
             this.closeHistory(historyId ? true : false);
 

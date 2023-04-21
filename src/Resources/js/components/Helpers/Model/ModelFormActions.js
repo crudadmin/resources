@@ -552,7 +552,7 @@ var FormActions = (Model) => {
                     eventHub.$emit('onCreate', eventData);
 
                     //Model events
-                    this.fire(['create', 'submit', 'onCreate'], clonedRow);
+                    this.fire(['create', 'onCreate', 'submit', 'onSubmit'], clonedRow);
 
                     if ( isParentRow ) {
                         //If form has disabled autoreseting
@@ -587,9 +587,13 @@ var FormActions = (Model) => {
                 for ( var table in rows ) {
                     var clonedRow = _.cloneDeep(rows[table]),
                         isParentRow = table == this.table,
-                        model = $app.models[table];
+                        model = $app.getActiveModel(table, this.getData('depth_level') + (isParentRow ? 0 : 1));
 
-                    var eventData = this.buildEventData({
+                    if ( !model ){
+                        continue;
+                    }
+
+                    var eventData = model.buildEventData({
                         row : clonedRow,
                         request : rows[table]
                     }, model, !isParentRow);
@@ -600,8 +604,10 @@ var FormActions = (Model) => {
                     //Send notification about updated row
                     eventHub.$emit('onUpdate', eventData);
 
+                    model.setRow(clonedRow);
+
                     //Model events
-                    this.fire(['update', 'onUpdate'], this.getRow());
+                    model.fire(['update', 'onUpdate'], model.getRow());
                 }
             }
         });
