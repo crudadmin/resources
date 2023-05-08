@@ -232,16 +232,12 @@ var RowActions = (Model) => {
         }
     };
 
-    Model.prototype.selectRow = async function(row, data, model, historyId, modelRow){
+    Model.prototype.selectRow = async function(row, data, historyId){
         //If is selected same row
         if ( this.isOpenedRow() && this.getRow().id == row.id && !historyId ) {
             return;
         }
 
-        //Recieve just messages between form and rows in one model component
-        if (model && this.slug != model) {
-            return;
-        }
 
         //Resets form
         if ( row === true && data === null ) {
@@ -249,6 +245,8 @@ var RowActions = (Model) => {
         }
 
         var render = async (responseRow) => {
+            let modelRow = this.getRow();
+
             for ( var key in responseRow ){
                 row[key] = responseRow[key];
             }

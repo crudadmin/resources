@@ -76,8 +76,7 @@ export default {
             await this.model.selectRow(
                 { id : this.history.id },
                 null,
-                null,
-                item.id, this.model.getRow()
+                item.id
             );
 
             this.closeModal({ modal : this.modal });
