@@ -1,5 +1,5 @@
 <template>
-    <Modal :modal="modal">
+    <Modal :modal="modal" :options="{ class : '--wide --history' }">
         <table class="table data-table table-bordered table-striped">
             <thead>
                 <tr>
@@ -13,7 +13,7 @@
             </thead>
             <tbody>
                 <tr v-for="(row, $index) in sortedHistory" :key="row.id" :data-history-id="row.id">
-                    <td class="td-id">{{ history.rows.length - $index }}</td>
+                    <td class="td-id">{{ sortedHistory.length - $index }}</td>
                     <td>{{ row.user ? row.user.username : trans('history.system') }}</td>
                     <td>{{ row.actionName }}</td>
                     <td data-changes-length>
@@ -43,15 +43,26 @@
 import { mapActions } from 'vuex';
 
 export default {
-    props : ['modal', 'model'],
+    props : ['modal', 'model', 'data', 'row'],
+
+    data(){
+        return {
+            deleted : [],
+        };
+    },
 
     computed: {
         history(){
             return this.model.getData('history');
         },
         sortedHistory(){
-            return _.orderBy(this.history.rows, 'id', 'desc');
+            return _.orderBy(this.history.rows, 'id', 'desc').filter(item => this.deleted.includes(item.id) == false);
         }
+    },
+
+    created(){
+        this.model.getData('history').id = this.row.id;
+        this.model.getData('history').rows = this.data.rows;
     },
 
     destroyed(){
@@ -84,20 +95,17 @@ export default {
         deleteHistoryRow(row){
             this.warningModal({
                 message : this.trans('delete-warning'),
-                success: () => {
-                    this.$http.post(this.$root.requests.removeFromHistory, {
-                        model : this.model.table,
-                        id : row.id,
-                    })
-                    .then(response => {
-                        var data = response.data;
+                success: async () => {
+                    try {
+                        let response = this.$http.post(this.$root.requests.removeFromHistory, {
+                            model : this.model.table,
+                            id : row.id,
+                        });
 
-                        this.history.rows = data;
-                    })
-
-                    .catch(response => {
-                        $app.errorResponseLayer(response);
-                    });
+                        this.deleted.push(row.id);
+                    } catch (error) {
+                        $app.errorResponseLayer(error);
+                    }
                 },
                 close : true
             });

@@ -148,6 +148,18 @@
                             &:first-child { margin-left: 0 }
                             &:last-child { margin-right: 0 }
                         }
+
+                        .--history-active {
+                            button[data-button="action-HistoryButton"]{
+                                background: #b900e2;
+                                color: white !important;
+                                border: 1px solid #80009c !important;
+
+                                &:hover, &:focus, &:active, &:visited {
+                                    background: #80009c !important
+                                }
+                            }
+                        }
                     }
                 }
 

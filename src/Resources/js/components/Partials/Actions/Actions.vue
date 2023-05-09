@@ -1,16 +1,9 @@
 <template>
-<div>
+<div :class="{ '--active' : model.isActiveRow(row), '--history-active' : model.isActiveRow(row) && history.history_id }">
     <!-- display row -->
     <div class="buttons-options__item" v-if="model.isEditable() || model.isDisplayable()">
         <button data-button="edit" :data-id="row.id" type="button" @click="model.selectRow(row)" :class="['btn', 'btn-sm', {'btn-success' : model.isActiveRow(row), 'btn-default' : !model.isActiveRow(row) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && model.isEditable() ? trans('edit') : trans('show')">
             <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == row.id, 'far fa-edit' : loadingRow != row.id }"></i>
-        </button>
-    </div>
-
-    <!-- history -->
-    <div class="buttons-options__item" v-if="isEnabledHistory">
-        <button data-button="history" type="button" v-on:click="model.showHistory(row)" class="btn btn-sm btn-default" :class="{ 'enabled-history' : model.isActiveRow(row) && history.history_id }" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
-            <i class="fa fa-history"></i>
         </button>
     </div>
 
