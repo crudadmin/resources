@@ -191,7 +191,7 @@ var ModelTableRows = (Model) => {
     Model.prototype.setTableRow = function(row){
         let rows = this.getData('rows');
 
-        if ( row ){
+        if ( !row ){
             return this;
         }
 
