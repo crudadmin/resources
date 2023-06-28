@@ -163,9 +163,10 @@ export default {
     methods: {
         returnDateFormat(rowValue, field){
             return _.castArray(rowValue||[]).map(item => {
-                var date = moment(item);
+                var date = moment(item),
+                    format = this.fromPHPFormatToMoment(this.model.getFieldFormat(field)||'d.m.Y H:i');
 
-                return date.isValid() ? date.format(this.fromPHPFormatToMoment(this.model.getFieldFormat(field)||'DD.MM.YYYY')) : item;
+                return date.isValid() ? date.format(format) : item;
             }).join(', ');
         },
         stringLimit(string){

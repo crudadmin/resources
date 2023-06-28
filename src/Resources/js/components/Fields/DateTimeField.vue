@@ -52,15 +52,7 @@
                 return this.field.multiple == true;
             },
             getMultiDates(){
-                var value = this.field.value||[];
-
-                if ( ! $.isArray(value) )
-                    value = [];
-
-                //Check correct inputs values
-                return _.cloneDeep(value).filter(item => {
-                    return item.length == (this.field.type == 'time' ? 5 : 10);
-                });
+                return _.cloneDeep(this.model.getCastedValue(this.field_key, this.field.value||[]));
             },
             datePickerConfig(){
                 var _this = this;

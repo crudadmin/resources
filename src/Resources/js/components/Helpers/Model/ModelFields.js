@@ -327,7 +327,7 @@ var Fields = (Model, rawModel) => {
         let field = this.fields[fieldKey];
 
         if ( !field ){
-            return;
+            return this.getSettings('columns.'+fieldKey+'.format');
         }
 
         if ( field.date_format ) {
@@ -354,7 +354,15 @@ var Fields = (Model, rawModel) => {
         let cast = this.getFieldCast(key, value);
 
         if ( cast ){
-            return cast.get(value);
+            if ( this.fields[key].multiple ) {
+                if ( $.isArray(value) ) {
+                    return value.map(item => cast.get(item));
+                }
+
+                return [];
+            } else {
+                return cast.get(value);
+            }
         }
 
         return value;
