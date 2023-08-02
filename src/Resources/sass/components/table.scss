@@ -61,9 +61,12 @@
                             display: inline-block;
                         }
 
-                        &.th-id, &.th-increment {
+                        &.th-id {
                             text-align: center;
-                            width: 55px;
+                        }
+
+                        &.th-id, &.th-increment {
+                            min-width: 55px;
                         }
                     }
                 }
@@ -74,9 +77,13 @@
                     td {
                         vertical-align: middle;
 
-                        &.td-id, &.td-increment {
+                        &.td-id {
                             text-align: center;
-                            width: 55px;
+                        }
+
+                        &.td-id, &.td-increment {
+                            min-width: 55px;
+                            white-space: nowrap;
                         }
 
                         &.--clickable {
