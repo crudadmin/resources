@@ -61,7 +61,7 @@
                             display: inline-block;
                         }
 
-                        &.th-id {
+                        &.th-id, &.th-increment {
                             text-align: center;
                             width: 55px;
                         }
@@ -74,7 +74,7 @@
                     td {
                         vertical-align: middle;
 
-                        &.td-id {
+                        &.td-id, &.td-increment {
                             text-align: center;
                             width: 55px;
                         }

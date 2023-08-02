@@ -10,7 +10,7 @@
                     </div>
                 </th>
                 <th v-if="hasIndicatorInTable"></th>
-                <th v-for="(name, field) in columns" :class="'th-'+field" @click="toggleSorting(field)">
+                <th v-for="(name, field) in columns" :class="['th-'+field, { 'th-increment' : model.getKeyName() == field }]" @click="toggleSorting(field)">
                     <i class="arrow-sorting fa fa-angle-up" v-if="orderBy[0] == field && orderBy[1] == 0"></i>
                     <i class="arrow-sorting fa fa-angle-down" v-if="orderBy[0] == field && orderBy[1] == 1"></i>
                     {{ name }}
@@ -42,7 +42,7 @@
                     <i v-if="item.$indicator" :class="item.$indicator.class" :style="{ background : item.$indicator.color }"></i>
                 </td>
 
-                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { '--clickable' : isTableClickable } ]" :data-field="field" :data-type="fieldType(field)">
+                <td v-for="(name, field) in columns" :key="item.id+'-'+field" @click="selectRowFromTable($event, item, field)" :class="['td-'+field, { '--clickable' : isTableClickable, 'td-increment' : model.getKeyName() == field } ]" :data-field="field" :data-type="fieldType(field)">
                     <table-row-value
                         :settings="getCachableColumnsSettings(field)"
                         :columns="columns"
@@ -167,7 +167,7 @@ export default {
                             || this.model.fields[key].column_visible == true
                     );
 
-                data[ key ] = {
+                data[key] = {
                     name : this.fieldName(key),
                     enabled,
                 };
@@ -192,7 +192,7 @@ export default {
             return columns;
         },
         avaliableColumns(){
-            return ['id'].concat( Object.keys( this.model.fields ) );
+            return _.uniq([this.model.getKeyName()].concat( Object.keys( this.model.fields ) ));
         },
         availableButtons(){
             return this.$parent.availableButtons;
@@ -240,7 +240,7 @@ export default {
             });
         },
         hasTablePadding(){
-            if ( this.model.isDragEnabled() || this.hasCheckingEnabled ||  this.hasIndicatorInTable || this.model.getModelProperty('settings.increments', true) == true ){
+            if ( this.model.isDragEnabled() || this.hasCheckingEnabled ||  this.hasIndicatorInTable || this.model.getSettings('increments', true) == true ){
                 return false;
             }
 
@@ -253,13 +253,16 @@ export default {
             return (this.model.fields[field]?.type)||'static';
         },
         addVirtualColumns(data){
-            //Remove increments
-            if ( this.model.getModelProperty('settings.increments', true) !== false && !('id' in data) ) {
+            //Add increment on the first place
+            if ( this.model.getSettings('increments', true) == true ) {
+                let newData = {};
+                newData[this.model.getKeyName()] = {
+                    name : this.model.fieldName(this.model.getKeyName()),
+                    enabled : true,
+                };
+
                 data = {
-                    id : {
-                        name : this.model.fieldName('id'),
-                        enabled : true,
-                    },
+                    ...newData,
                     ...data,
                 };
             }
@@ -422,7 +425,7 @@ export default {
             this.model.toggleChecked(id);
         },
         toggleSorting(key){
-            var sortable = this.model.getModelProperty('settings.sortable');
+            var sortable = this.model.getSettings('sortable');
 
             //Disable sorting by columns
             if ( sortable === false ) {
@@ -481,8 +484,9 @@ export default {
             {
                 var field = this.model.fields[field];
 
-                if ( 'image' in field )
+                if ( 'image' in field ) {
                     return true;
+                }
             }
 
             return false;

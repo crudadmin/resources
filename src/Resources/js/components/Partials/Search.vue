@@ -89,7 +89,7 @@ export default {
         canBeInterval(){
             var column = this.search.column;
 
-            if ( ['created_at', 'id'].indexOf(column) > -1 )
+            if ( ['created_at', this.model.getKeyName()].indexOf(column) > -1 )
                 return true;
 
             let field = this.model.fields[column];
@@ -174,7 +174,7 @@ export default {
             columns.push({ name : this.getSearchingColumnName(null), value : null });
 
             if ( this.model.getSettings('increments', true) ){
-                columns.push({ name : this.getSearchingColumnName('id'), value : 'id' });
+                columns.push({ name : this.getSearchingColumnName(this.model.getKeyName()), value : this.model.getKeyName() });
             }
 
             for (var key of this.getSearchableFields) {
@@ -183,7 +183,7 @@ export default {
 
             columns.push({ name : this.getSearchingColumnName('created_at'), value : 'created_at' });
 
-            return columns;
+            return _.uniqBy(columns, 'value');
         }
     },
 

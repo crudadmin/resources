@@ -124,7 +124,7 @@ const fullSizeByColumns = () => {
 }
 
 const isNumericValue = (model, key) => {
-    if ( ['id', '_order'].indexOf( key ) > -1)
+    if ( [model.getKeyName(), '_order'].indexOf( key ) > -1)
         return true;
 
     let field = model.fields[key];
@@ -324,7 +324,7 @@ var ModelTableRows = (Model) => {
      * new rows will be added on the end
      */
     Model.prototype.isReversed = function(){
-        return ['id', '_order'].indexOf(this.orderBy[0]) > -1 && this.orderBy[1].toLowerCase() == 'asc';
+        return [this.getKeyName(), '_order'].indexOf(this.orderBy[0]) > -1 && this.orderBy[1].toLowerCase() == 'asc';
     }
 
     Model.prototype.activeGridSize = function(){

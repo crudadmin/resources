@@ -19,6 +19,19 @@ var Fields = (Model, rawModel) => {
     /*
      * Hide input
      */
+    Model.prototype.getKeyName = function(key, value){
+        let keyName = this.getSettings('keyName');
+
+        if ( keyName ){
+            return keyName;
+        }
+
+        return 'id';
+    }
+
+    /*
+     * Hide input
+     */
     Model.prototype.hideFromForm = function(key, value){
         Vue.set(this.fields[key], 'hideFromForm', value);
     }
