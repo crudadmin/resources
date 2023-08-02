@@ -2,52 +2,50 @@
 <!-- Search bar -->
 <div class="search-bar" data-search-bar :class="{ interval : search.interval, resetRightBorders : canBeInterval || canResetSearch, hasResetButton : canResetSearch  }">
     <div class="input-group">
-        <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                {{ getSearchingColumnName(search.column||false) }}
-                <i class="--icon-right fa fa-angle-down"></i>
-            </button>
-            <ul class="dropdown-menu">
-                <li data-field="" :class="{ active : !search.column }" @click="search.column = null">{{ trans('search-all') }}</li>
-                <li data-field="id" :class="{ active : search.column == 'id' }" @click="search.column = 'id'">{{ getSearchingColumnName('id') }}</li>
-                <li :data-field="key" v-for="key in getSearchableFields" :class="{ active : search.column == key }" @click="search.column = key">{{ getSearchingColumnName(key) }}</li>
-                <li data-field="created_at" :class="{ active : search.column == 'created_at' }" @click="search.column = 'created_at'">{{ getSearchingColumnName('created_at') }}</li>
-            </ul>
+        <div class="input-group__column">
+            <vue-chosen
+                :placeholder="_('Vyberte typ podstránky')"
+                :value="search.column"
+                label="name"
+                trackBy="value"
+                @input="onColumnChange"
+                :options="filterColumns"></vue-chosen>
         </div>
-        <!-- /btn-group -->
 
-        <!-- Search columns -->
-        <input type="text" v-show="isSearch" data-search-text :placeholder="trans('search')+'...'" :value="search.query" @input="updateSearchQuery('query', $event)" class="form-control">
+        <div class="input-group__value">
+            <!-- Search columns -->
+            <input type="text" v-show="isSearch" data-search-text :placeholder="trans('search')+'...'" :value="search.query" @input="updateSearchQuery('query', $event)" class="form-control">
 
-        <input type="text" v-show="isDate" :value="search.query" data-search-date readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker1">
+            <input type="text" v-show="isDate" :value="search.query" data-search-date readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker1">
 
-        <select type="text" v-show="isCheckbox" v-model="search.query" class="form-control">
-            <option :value="0">{{ trans('off') }}</option>
-            <option :value="1">{{ trans('on') }}</option>
-        </select>
-
-        <div class="select" v-show="isSelect">
-            <select v-model="search.query" data-search-select class="form-control js_chosen" ref="chosenSelect" :data-placeholder="trans('get-value')">
-                <option value="">{{ trans('show-all') }}</option>
-                <option v-for="data in languageOptionsSearchFilter(isSelect ? model.fields[search.column].options : [])" :value="data[0]">{{ data[1] }}</option>
+            <select type="text" v-show="isCheckbox" v-model="search.query" class="form-control">
+                <option :value="0">{{ trans('off') }}</option>
+                <option :value="1">{{ trans('on') }}</option>
             </select>
-        </div>
-        <!-- Search columns -->
 
-        <div class="interval-btn" data-interval v-if="canBeInterval" data-toggle="tooltip" data-original-title="Interval">
-            <button type="button" class="btn" :class="{ 'btn-default' : !search.interval, 'btn-primary' : search.interval }" @click="search.interval = !search.interval">
-                <i class="fa fa-arrows-alt-h"></i>
-            </button>
-        </div>
+            <div class="select" v-show="isSelect">
+                <select v-model="search.query" data-search-select class="form-control js_chosen" ref="chosenSelect" :data-placeholder="trans('get-value')">
+                    <option value="">{{ trans('show-all') }}</option>
+                    <option v-for="data in languageOptionsSearchFilter(isSelect ? model.fields[search.column].options : [])" :value="data[0]">{{ data[1] }}</option>
+                </select>
+            </div>
+            <!-- Search columns -->
 
-        <input type="text" data-inerval-input data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'" :value="search.query_to" @input="updateSearchQuery('query_to', $event)" class="form-control">
+            <div class="interval-btn" data-interval v-if="canBeInterval" data-toggle="tooltip" data-original-title="Interval">
+                <button type="button" class="btn" :class="{ 'btn-default' : !search.interval, 'btn-primary' : search.interval }" @click="search.interval = !search.interval">
+                    <i class="fa fa-arrows-alt-h"></i>
+                </button>
+            </div>
 
-        <input type="text" data-inerval-input data-search-interval-date v-show="search.interval && isDate" :value="search.query_to" readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker2">
+            <input type="text" data-inerval-input data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'" :value="search.query_to" @input="updateSearchQuery('query_to', $event)" class="form-control">
 
-        <div class="interval" data-reset-interval v-if="canResetSearch" data-toggle="tooltip" :data-original-title="trans('reset')">
-            <button type="button" class="btn btn-default" @click="resetIterval">
-                <i class="fa fa-times"></i>
-            </button>
+            <input type="text" data-inerval-input data-search-interval-date v-show="search.interval && isDate" :value="search.query_to" readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker2">
+
+            <div class="interval" data-reset-interval v-if="canResetSearch" data-toggle="tooltip" :data-original-title="trans('reset')">
+                <button type="button" class="btn btn-default" @click="resetIterval">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -170,6 +168,23 @@ export default {
 
             return false;
         },
+        filterColumns(){
+            let columns = [];
+
+            columns.push({ name : this.getSearchingColumnName(null), value : null });
+
+            if ( this.model.getSettings('increments', true) ){
+                columns.push({ name : this.getSearchingColumnName('id'), value : 'id' });
+            }
+
+            for (var key of this.getSearchableFields) {
+                columns.push({ name : this.getSearchingColumnName(key), value : key });
+            }
+
+            columns.push({ name : this.getSearchingColumnName('created_at'), value : 'created_at' });
+
+            return columns;
+        }
     },
 
     methods: {
@@ -183,7 +198,7 @@ export default {
             return this.$root.languageOptions(array, this.model.fields[this.search.column]);
         },
         getSearchingColumnName(key){
-            if ( key === false ) {
+            if ( !key ) {
                 return this.trans('search-all');
             }
 
@@ -255,12 +270,93 @@ export default {
             this.search.query_to = '';
             this.search.interval = false;
         },
+        onColumnChange(column){
+            this.search.column = column;
+        }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.select {
-    min-width: 175px;
+.search-bar {
+    display: block;
+
+    .input-group__column {
+        min-width: 17rem;
+
+        ::v-deep .chosen-single {
+            border-radius: $inputRadius 0 0 $inputRadius;
+            border-right: 0;
+        }
+    }
+
+   ::v-deep {
+        .chosen-container {
+            .chosen-single {
+                > span {
+                    color: $darkText;
+                }
+            }
+        }
+    }
+
+    .input-group__value {
+        display: flex;
+
+        input.form-control {
+            border-radius: 0;
+        }
+
+       ::v-deep {
+            .chosen-container {
+                height: 100%;
+
+                .chosen-single {
+                    border-radius: 0;
+                    height: 100%;
+                }
+            }
+        }
+
+        &.hasResetButton {
+            .form-control {
+                border-radius: 0;
+            }
+        }
+
+        &.resetRightBorders {
+            .form-control:not([data-inerval-input]) {
+                border-radius: 0;
+            }
+        }
+
+        .interval-btn {
+            display: flex;
+            width: 30px;
+            @include fontSize(14px);
+            max-width: 350px;
+
+            button {
+                padding: 4px;
+                border-radius: 0;
+                border-left: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+        }
+
+        [data-reset-interval] button {
+            border-radius: 0;
+            height: 100%;
+        }
+
+        .btn i {
+            @include fontSize(12px);
+        }
+
+        .select {
+            min-width: 175px;
+        }
+    }
 }
 </style>

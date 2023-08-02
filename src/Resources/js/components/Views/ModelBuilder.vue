@@ -26,25 +26,7 @@
                 <div class="right" v-if="!model.isSingle()">
                     <custom-components :model="model" type="actions-grid-before" />
 
-                    <div class="searchbar__wrapper" :class="{ '--hasMoreButton' : model.getData('searching') }" v-show="canShowSearchBar">
-                        <div class="searchbar__wrapper__queries">
-                            <search
-                                v-for="(query, $index) in search.queries"
-                                :key="$index"
-                                :search="query"
-                                :model="model"
-                            ></search>
-                        </div>
-                        <button
-                            data-toggle="tooltip"
-                            :data-original-title="_('Pridať ďalšie vyhľadávacie pravidlo')"
-                            v-if="model.getData('searching')"
-                            type="button"
-                            class="btn btn-primary --addQuery"
-                            @click="addSearchQuery">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
+                    <SearchWrapper :model="model"></SearchWrapper>
 
                     <!-- Grid size -->
                     <ul class="change-grid-size d-none d-lg-flex" v-if="isEnabledGrid">
@@ -127,9 +109,8 @@
     import _ from 'lodash';
     import FormBuilder from '../Forms/FormBuilder.vue';
     import ModelRowsBuilder from '../Rows/ModelRowsBuilder.vue';
-    import Search from '../Partials/Search.vue';
+    import SearchWrapper from '../Partials/SearchWrapper.vue';
     import { mapMutations } from 'vuex';
-    import { defaultSearchQuery } from '@components/Helpers/Model/Model';
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
     export default {
@@ -137,7 +118,7 @@
 
         name : 'model-builder',
 
-        components : { FormBuilder, ModelRowsBuilder, CustomComponents, Search },
+        components : { FormBuilder, ModelRowsBuilder, CustomComponents, SearchWrapper },
 
         data(){
             return {
@@ -177,14 +158,6 @@
             this.model.setData('langid', this.langid);
             this.model.setData('scopes', this.scopes||[]);
             this.model.setData('parentActiveGridSize', this.parentActiveGridSize);
-
-            //Set default search query
-            if ( this.model.getData('search').queries.length == 0 ) {
-                this.model.getData('search').queries.push({
-                    ..._.cloneDeep(defaultSearchQuery),
-                    column : this.model.getSettings('search.column', null),
-                });
-            }
 
             //Set deep level of given model
             this.setDeepLevel();
@@ -273,11 +246,6 @@
                         this.model.sendRowData();
                     }
                 });
-            },
-            addSearchQuery(){
-                this.model.getData('search').queries.push(
-                    _.cloneDeep(defaultSearchQuery),
-                );
             },
             checkParentGridSize(parentSize){
                 if ( [null, undefined].indexOf(parentSize) > -1 ) {
@@ -397,9 +365,6 @@
             row(){
                 return this.model.getData('row');
             },
-            search(){
-                return this.model.getData('search');
-            },
             canShowAdminHeader(){
                 if ( this.model.isSettingDisabled('header') ){
                     return false;
@@ -417,7 +382,7 @@
                         !this.model.isSingle()
                         && (
                             this.isEnabledGrid
-                            || this.canShowSearchBar
+                            || this.model.canShowSearchBar()
                             || this.canShowAddButton
                         )
                     )
@@ -464,26 +429,6 @@
             },
             canShowAddButton(){
                 return this.model.canAddRow() && !this.model.isSingle() && this.model.hasAccess('insert') && !this.model.isOnlyFormOpened() && this.model.isSettingEnabled('buttons.create', true);
-            },
-            /*
-             * Show search if has been at least one time used, or if is not single row, or if is more then 10 rows
-             */
-            canShowSearchBar(){
-                if ( this.model.isEnabledOnlyFormOrTableMode() === true && this.model.canShowForm() === true ){
-                    return false;
-                }
-
-                if ( this.model.isSettingDisabled('search') ){
-                    return false;
-                }
-
-                //If is forced showing searchbar
-                if ( this.model.isSettingEnabled('search') ) {
-                    return true;
-                }
-
-                var minimum = 2;
-                return this.model.getData('searching') === true || (this.model.maximum==0 || this.model.maximum >= minimum) && this.rows.count >= minimum;
             },
             isSearching(){
                 return this.model.getData('searching') == true;

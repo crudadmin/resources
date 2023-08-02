@@ -347,6 +347,27 @@ var ModelTableRows = (Model) => {
         return this.activeGridSize() === 0 && this.isInParent() !== true && this.getSettings('grid.splitmode') !== true;
     }
 
+    /*
+     * Show search if has been at least one time used, or if is not single row, or if is more then 10 rows
+     */
+    Model.prototype.canShowSearchBar = function(){
+        if ( this.isEnabledOnlyFormOrTableMode() === true && this.canShowForm() === true ){
+            return false;
+        }
+
+        if ( this.isSettingDisabled('search') ){
+            return false;
+        }
+
+        //If is forced showing searchbar
+        if ( this.isSettingEnabled('search') ) {
+            return true;
+        }
+
+        var minimum = 2;
+        return this.getData('searching') === true || (this.maximum==0 || this.maximum >= minimum) && this.getData('rows').count >= minimum;
+    }
+
     Model.prototype.isActiveRow = function(row){
         if ( !this.isOpenedRow() ) {
             return false;

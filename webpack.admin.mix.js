@@ -11,8 +11,13 @@ mixConfig.setMixConfig(mix, ({ paths, publicPath }) => {
     mix.js('src/Resources/js/app.js', publicPath+'/js')
         .vue({
             version : 2,
-            extractVueStyles: true,
-            globalVueStyles: 'src/Resources/sass/_variables.scss',
+            extractStyles: true,
+            globalStyles: {
+                scss : [
+                    'src/Resources/sass/_variables.scss',
+                    'src/Resources/sass/_mixins.scss',
+                ]
+            },
         })
         .sass('src/Resources/sass/app.scss', publicPath+'/css')
         .extract([
