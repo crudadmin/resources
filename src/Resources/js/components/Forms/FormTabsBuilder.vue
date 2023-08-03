@@ -221,7 +221,10 @@ export default {
                 return;
             }
 
-            return '('+((model.getData('rows')||{}).count||0)+')';
+            let rows = (model.getData('rows')||{}),
+                state = rows.refreshing ? '?' :  rows.count||0;
+
+            return '('+(state)+')';
         },
         /*
          * Return tab icon
