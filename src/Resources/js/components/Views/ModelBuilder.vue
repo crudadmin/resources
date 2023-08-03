@@ -215,9 +215,9 @@
                     this.sendRowsData();
                 }
             },
-            parentRow(row, oldrow){
+            'parentRow.id'(id, oldId){
                 //When parent row has been changed, then load children rows
-                if ( ! _.isEqual(row, oldrow) && (row.id != oldrow.id) ){
+                if ( ! _.isEqual(id, oldId) ){
                     //We need rewrite parent model if has been changed
                     this.model.setData('parentRow', this.parentRow);
 
