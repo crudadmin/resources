@@ -303,16 +303,20 @@
              */
             getStaticFilterBy()
             {
+                if ( !this.filterByColumn ){
+                    return;
+                }
+
                 var column = this.filterByColumn.split('.'),
                     model = column.length == 2 ? this.getModelBuilder(column[0]) : this;
 
                 return model.row[column[column.length - 1]];
             },
             filterByColumn(){
-                return this.getFilterBy[0];
+                return this.getFilterBy ? this.getFilterBy[0] : null;
             },
             filterByColumnOption(){
-                return this.getFilterBy[2];
+                return this.getFilterBy ? this.getFilterBy[2] : null;
             },
             //If field has filters, then check of other fields values for filtrating
             filterByValue(){

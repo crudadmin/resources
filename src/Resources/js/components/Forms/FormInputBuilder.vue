@@ -131,6 +131,12 @@
                     || (['number', 'string', 'boolean'].indexOf(typeof defaultValue) === -1
                     && !this.isMultipleField(field))
                 ) {
+                    //Set default parent relations
+                    let additionalFormData = this.model.getAdditionalFormData();
+                    if ( this.field_key in additionalFormData ){
+                        return additionalFormData[this.field_key]||'';
+                    }
+
                     return '';
                 }
 
