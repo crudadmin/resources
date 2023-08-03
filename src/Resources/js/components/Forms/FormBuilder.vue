@@ -132,15 +132,14 @@ export default {
 
     watch: {
         //After click on edit button, push data into form values
-        row : {
-            handler : function (row, oldRow) {
+        'row.id' : {
+            handler : function (id, oldId) {
                 //Form cannot be resetted if data has been synced from db
-                var canResetForm = !this.model.isOpenedRow() || ! oldRow || row.id != oldRow.id;
+                var canResetForm = !this.model.isOpenedRow() || ! oldId || id != oldId;
 
                 //Init new form after change row
-                if ( !row || !oldRow || row.id != oldRow.id || this.model.getData('history').history_id )
-                {
-                    this.model.initForm(row, canResetForm);
+                if ( (!id || !oldId) || id != oldId || this.model.getData('history').history_id ) {
+                    this.model.initForm(this.row, canResetForm);
 
                     this.model.sendRowData();
                 }
