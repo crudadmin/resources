@@ -40,4 +40,9 @@ class ForgotPasswordController extends Controller
     {
         return Password::broker('admin');
     }
+
+    protected function guard()
+    {
+        return Admin::getAdminGuard();
+    }
 }
