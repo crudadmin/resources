@@ -90,6 +90,7 @@
                         <custom-components :model="model" type="form-before" />
 
                         <form-builder
+                            v-if="model.isSettingEnabled('form', true)"
                             :rows="rows"
                             :model="model"
                         ></form-builder>
@@ -107,7 +108,6 @@
 
 <script>
     import _ from 'lodash';
-    import FormBuilder from '../Forms/FormBuilder.vue';
     import ModelRowsBuilder from '../Rows/ModelRowsBuilder.vue';
     import SearchWrapper from '../Partials/SearchWrapper.vue';
     import { mapMutations } from 'vuex';
@@ -118,7 +118,7 @@
 
         name : 'model-builder',
 
-        components : { FormBuilder, ModelRowsBuilder, CustomComponents, SearchWrapper },
+        components : { ModelRowsBuilder, CustomComponents, SearchWrapper },
 
         data(){
             return {

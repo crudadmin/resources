@@ -238,6 +238,8 @@ var RowActions = (Model) => {
             //and then scroll. Much more smoother animation...
             $app.$nextTick(() => {
                 setTimeout(() => {
+                    this.fire('form.open', row);
+
                     this.setData('loadingRow', false);
 
                     this.scrollToForm();

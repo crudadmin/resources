@@ -440,6 +440,8 @@ var FormActions = (Model) => {
 
         setTimeout(() => {
             this.resetFormWithEvents(true, true, true);
+
+            this.fire('form.open', null);
         }, 50);
     }
 
@@ -607,7 +609,7 @@ var FormActions = (Model) => {
                     model.setRow(clonedRow);
 
                     //Model events
-                    model.fire(['update', 'onUpdate'], model.getRow());
+                    model.fire(['update', 'onUpdate', 'submit', 'onSubmit'], model.getRow());
                 }
             }
         });

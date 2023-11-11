@@ -24,6 +24,7 @@ if ( window.Gettext ) {
 
 // Components
 import BaseComponent from '@components/BaseComponent.js';
+import FormBuilder from '@components/Forms/FormBuilder.vue';
 import FormInputBuilder from '@components/Forms//FormInputBuilder.vue';
 import CrudAdmin from '@components/Helpers/CrudAdmin.js';
 import SiteTreeBuilder from '@components/Extensions/SiteTreeBuilder/SiteTreeBuilder.vue';
@@ -46,6 +47,7 @@ Vue.component('vue-chosen', VueChosen);
 
 //Global model components
 Vue.component('SiteTreeBuilder', SiteTreeBuilder);
+Vue.component('form-builder', FormBuilder);
 Vue.component('model-builder', ModelBuilder);
 Vue.component('buttons-action', ButtonsAction);
 Vue.component('Modal', Modal);
