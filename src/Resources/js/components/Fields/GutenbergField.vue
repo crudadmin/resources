@@ -16,6 +16,7 @@
             rows="10"
             class="d-none"
             :id="id"
+            ref="gutenbergEditor"
             :value="value">
         </textarea>
 
@@ -159,6 +160,11 @@
                 });
             },
             removeEditor: function (callback) {
+                //Allow remove only instance currently booted.
+                if ( $(this.$refs.gutenbergEditor).prev()[0] != window.Gutenberg.editor ){
+                    return;
+                }
+
                 Gutenberg.initialized = false;
 
                 this.initializing = false;
