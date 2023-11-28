@@ -43,7 +43,9 @@ export default {
                 return this.path;
             }
 
-            return window.crudadmin.root + '/uploads/cache/' + this.model.slug + '/' + this.field + '/admin-thumbnails/' + this.file;
+            let c = window.crudadmin;
+
+            return c.root + '/'+c.cache_path+'/' + this.model.slug + '/' + this.field + '/admin-thumbnails/' + this.file;
         },
         path(){
             //Encrypted files return as laravel download route.
