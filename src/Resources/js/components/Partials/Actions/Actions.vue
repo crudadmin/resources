@@ -2,7 +2,7 @@
 <div :class="{ '--active' : model.isActiveRow(row), '--history-active' : model.isActiveRow(row) && history.history_id }">
     <!-- display row -->
     <div class="buttons-options__item" v-if="model.isEditable() || model.isDisplayable()">
-        <button data-button="edit" :data-id="row.id" type="button" @click="model.selectRow(row)" :class="['btn', 'btn-sm', {'btn-success' : model.isActiveRow(row), 'btn-light-default' : !model.isActiveRow(row) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && model.isEditable() ? trans('edit') : trans('show')">
+        <button data-button="edit" :data-id="row.id" type="button" @click="model.selectRow(row)" :class="['btn', 'btn-sm', {'btn-primary' : model.isActiveRow(row), 'btn-light-default' : !model.isActiveRow(row) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && model.isEditable() ? trans('edit') : trans('show')">
             <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == row.id, 'far fa-edit' : loadingRow != row.id }"></i>
         </button>
     </div>

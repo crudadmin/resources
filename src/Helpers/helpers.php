@@ -9,7 +9,7 @@ function hashAdminVersionName($version)
 }
 
 if (! function_exists('admin_asset')) {
-    function admin_asset($path, $root = false)
+    function admin_asset($path, $root = false, $dynamic = false)
     {
         if (substr($path, 0, 7) == 'http://' || substr($path, 0, 8) == 'https://') {
             return $path;
@@ -28,6 +28,10 @@ if (! function_exists('admin_asset')) {
             if ( file_exists($basepath = public_path($basepath)) ){
                 $path .= '&t='.filemtime($basepath);
             }
+        }
+
+        if ( $dynamic === true ){
+            $path = str_replace_last('.css', '.dynamic.css', $path);
         }
 
         return asset($path);

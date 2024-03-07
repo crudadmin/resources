@@ -40,6 +40,7 @@ export default {
             name = name.replace('info', 'light-info');
             name = name.replace('warning', 'light-warning');
             name = name.replace('danger', 'light-danger');
+            name = name.replace('default', 'light-default');
 
             return name;
         }

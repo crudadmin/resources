@@ -22,6 +22,8 @@ Route::post('/admin/password/email', 'Auth\ForgotPasswordController@sendResetLin
 Route::get('/admin/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset');
 
+Route::get('/vendor/crudadmin/css/app.dynamic.css', 'ResourcesController@index');
+
 //Verification
 Route::group(['middleware' => ['admin.autologout', 'admin']], function () {
     Route::get('/admin/verificator', 'Auth\VerificatorController@showVerificationForm');

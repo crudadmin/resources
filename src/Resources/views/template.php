@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datatables/dataTables.bootstrap.css') ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/chosen/chosen.css') ?>">
   <link rel="stylesheet" href="<?php echo admin_asset('/plugins/datetimepicker/jquery.datetimepicker.css')?>">
-  <link rel="stylesheet" href="<?php echo admin_asset('/css/app.css') ?>">
+  <link rel="stylesheet" href="<?php echo admin_asset('/css/app.css', false, true) ?>">
 
   <?php foreach (array_merge((array)config('admin.styles', []), ((($customCssPath = public_path('/assets/admin/css/custom.css')) && file_exists($customCssPath)) ? [ asset('/assets/admin/css/custom.css') ] : [])) as $css) { ?>
   <link rel="stylesheet" type="text/css" href="<?php echo admin_asset($css, true) ?>">
