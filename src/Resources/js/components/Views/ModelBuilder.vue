@@ -38,7 +38,7 @@
                             data-toggle="tooltip"
                             :data-original-title="size.name"
                             @click="changeSize(size)">
-                            <img :src="asset('images/grid/grid-'+size.key+''+(size.active ? '-active' : '')+'.svg')">
+                            <GridIcons :type="size.key" :active="size.active" />
                         </li>
                     </ul>
 
@@ -110,6 +110,7 @@
     import _ from 'lodash';
     import ModelRowsBuilder from '../Rows/ModelRowsBuilder.vue';
     import SearchWrapper from '../Partials/SearchWrapper.vue';
+    import GridIcons from '../Partials/GridIcons.vue';
     import { mapMutations } from 'vuex';
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
@@ -118,7 +119,7 @@
 
         name : 'model-builder',
 
-        components : { ModelRowsBuilder, CustomComponents, SearchWrapper },
+        components : { ModelRowsBuilder, CustomComponents, SearchWrapper, GridIcons },
 
         data(){
             return {
