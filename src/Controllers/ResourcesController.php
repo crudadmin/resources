@@ -35,8 +35,18 @@ class ResourcesController extends Controller
 
     private function replaceData($data)
     {
-        if ( $primaryColor = config('admin.primary_color') ){
-            $data = str_replace('#4A54E2', $primaryColor, $data);
+
+        $colors = [
+            '#4A54E2' => config('admin.primary_color'),
+        ];
+
+        foreach ($colors as $color => $toColor) {
+            if ( !$toColor ){
+                continue;
+            }
+
+            $data = str_replace(strtolower($color), $toColor, $data);
+            $data = str_replace(strtoupper($color), $toColor, $data);
         }
 
         return $data;
