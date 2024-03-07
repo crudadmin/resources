@@ -21,7 +21,7 @@
                 </a>
             </li>
         </ul>
-        <div class="tab-content tab-content--form">
+        <div class="tab-content tab-content--form" :data-active-index="activeTab">
             <div
                 v-for="(tab, $index) in getTabs"
                 v-if="canRenderTab(tab)"

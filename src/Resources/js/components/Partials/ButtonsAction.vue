@@ -3,7 +3,7 @@
     type="button"
     :data-button="'action-'+button.key"
     @click="model.buttonAction(button.key, row)"
-    :class="['btn', 'btn-sm', button.class]"
+    :class="['btn', 'btn-sm', buttonClass(button)]"
     data-toggle="tooltip"
     :data-html="button.tooltipEncode ? 'false' : 'true'"
     :data-original-title="button.name">
@@ -30,6 +30,18 @@ export default {
                     'fa-spin' : loading == this.model.getButtonKey(this.row.id, this.button)
                 }
             ];
+        }
+    },
+
+    methods : {
+        buttonClass(button){
+            let name = button.class;
+
+            name = name.replace('info', 'light-info');
+            name = name.replace('warning', 'light-warning');
+            name = name.replace('danger', 'light-danger');
+
+            return name;
         }
     }
 }

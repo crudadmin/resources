@@ -154,6 +154,11 @@
 
                             &:first-child { margin-left: 0 }
                             &:last-child { margin-right: 0 }
+
+                            .btn.btn-sm {
+                                border-radius: $btn-border-radius;
+                                padding: 0.55rem 0.9rem;
+                            }
                         }
 
                         .--history-active {

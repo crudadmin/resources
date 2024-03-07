@@ -5,6 +5,46 @@
 
     .--icon-left { margin-right: 7px; }
     .--icon-right { margin-left: 7px; }
+
+    &.btn-light-default {
+        background: $default-light;
+        color: $default;
+
+        &:hover {
+            background: $default;
+            color: $default-light;
+        }
+    }
+
+    &.btn-light-warning {
+        background: $warning-light;
+        color: $warning;
+
+        &:hover {
+            background: $warning;
+            color: $warning-light;
+        }
+    }
+
+    &.btn-light-danger {
+        background: $danger-light;
+        color: $danger;
+
+        &:hover {
+            background: $danger;
+            color: $danger-light;
+        }
+    }
+
+    &.btn-light-info {
+        background: $info-light;
+        color: $info;
+
+        &:hover {
+            background: $info;
+            color: $info-light;
+        }
+    }
 }
 
 .btn-default {

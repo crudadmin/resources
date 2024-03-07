@@ -20,6 +20,7 @@
         .modal-content {
             background: #00a65a;
             color: white;
+            border: none;
 
             .modal-header {
                 display: flex;
@@ -30,7 +31,7 @@
                 }
             }
 
-            .modal-header, .modal-footer { border-color: rgba(0, 0, 0, 0.2); }
+            .modal-header, .modal-footer { border-color: rgba(0, 0, 0, 0.1); }
 
             .btn-secondary, .btn-primary {
                 background: none;
@@ -39,12 +40,16 @@
         }
     }
 
-    &.modal-danger .modal-content { background: #d33724; }
+    &.modal-danger .modal-content { background: $danger; }
     &.modal-warning .modal-content { background: #f39c12; }
 
     .modal-title {
         font-weight: 400;
         @include fontSize(20px);
+    }
+
+    .modal-header, .modal-body, .modal-footer {
+        padding: $boxPadding / 1.5;
     }
 
     .modal-body {
@@ -63,6 +68,13 @@
         p > a:hover, > a:hover {
             color: white;
             text-decoration: none;
+        }
+    }
+
+    .modal-footer {
+        .btn:not(:last-child) {
+            margin-right: $navbarButtonsPadding / 2;
+            margin-left: 0;
         }
     }
 }

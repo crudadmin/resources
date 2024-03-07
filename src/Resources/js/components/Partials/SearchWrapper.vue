@@ -64,17 +64,13 @@ export default {
 
     &.--hasMoreButton {
         .searchbar__wrapper__queries {
-            margin-right: $navbarPadding / 2;
-            margin-bottom: -($navbarPadding / 2);
+            margin-right: $navbarButtonsPadding;
+            margin-bottom: -($navbarButtonsPadding);
         }
 
         .search-bar {
-            margin-bottom: $navbarPadding / 2;
+            margin-bottom: $navbarButtonsPadding;
         }
-    }
-
-    .--addQuery {
-        border-radius: 0;
     }
 }
 </style>

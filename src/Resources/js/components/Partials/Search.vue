@@ -281,11 +281,15 @@ export default {
 .search-bar {
     display: block;
 
+    & + .search-bar {
+        margin-left: $navbarButtonsPadding;
+    }
+
     .input-group__column {
         min-width: 17rem;
 
         ::v-deep .chosen-single {
-            border-radius: $inputRadius 0 0 $inputRadius;
+            border-radius: $btn-border-radius 0 0 $btn-border-radius;
             border-right: 0;
         }
     }
@@ -301,10 +305,16 @@ export default {
     }
 
     .input-group__value {
+        border-top-right-radius: $btn-border-radius;
+        border-bottom-right-radius: $btn-border-radius;
+        overflow: hidden;
         display: flex;
 
         input.form-control {
-            border-radius: 0;
+            border-top-right-radius: $btn-border-radius;
+            border-bottom-right-radius: $btn-border-radius;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
         }
 
        ::v-deep {
@@ -337,7 +347,7 @@ export default {
             max-width: 350px;
 
             button {
-                padding: 4px;
+                padding: 4px 8px;
                 border-radius: 0;
                 border-left: 0;
                 width: 100%;

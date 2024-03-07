@@ -14,7 +14,7 @@
                 <p>Version <a target="_blank" :href="'https://packagist.org/packages/crudadmin/crudadmin#'+version">{{ version }}</a></p>
             </div>
             <div class="toggle-menu-size" @click="toggleSidebarMenu">
-                <i class="fa" :class="{ 'fa-angle-left' : sidebarMenuVisible, 'fa-angle-right' : !sidebarMenuVisible }"></i>
+                <i class="fa" :class="{ 'fa-angles-left' : sidebarMenuVisible, 'fa-angles-right' : !sidebarMenuVisible }"></i>
             </div>
         </div>
     </div>

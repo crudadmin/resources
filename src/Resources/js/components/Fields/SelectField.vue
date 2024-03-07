@@ -14,7 +14,7 @@
                     :selected="hasValue(data[0], value, isMultiple) ? 'selected' : ''"
                     :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
             </select>
-            <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn-success">
+            <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-success">
                 <i class="fa fa-plus"></i>
             </button>
             <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn-default">

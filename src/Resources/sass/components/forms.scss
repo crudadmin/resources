@@ -333,6 +333,10 @@
             > button { width: 35px; border: 0; flex-shrink: 0; }
         }
     }
+
+    .cke, .cke_bottom, .cke_top {
+        border-color: $inputBorderColor;
+    }
 }
 
 .chosen-container {

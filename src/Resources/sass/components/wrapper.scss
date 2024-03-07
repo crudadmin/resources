@@ -54,7 +54,7 @@
 }
 
 .crudadmin-wrapper {
-    padding: $navbarPadding;
+    padding: $navbarPaddingTop $navbarPadding $navbarPadding $navbarPadding;
 
     @include less-than(md) {
         padding: $navbarPadding / 2;
@@ -62,19 +62,23 @@
 
     .box {
         background: white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.13);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        border-radius: $boxBorderRadius;
 
         .box-header {
             background: white;
-            padding: $navbarPadding;
+            padding: $boxPadding;
             border-bottom: 1px solid $navbarBorderColor;
+            border-top-left-radius: $boxBorderRadius;
+            border-top-right-radius: $boxBorderRadius;
 
             &.--opened {
-                background: #f3f8ff;
+                background: #eaedf02e;
             }
 
             @include less-than(md) {
-                padding: $navbarPadding / 2;
+                padding: $boxPadding / 2;
             }
 
             &.box-header--actions, .box-header__actions {
@@ -85,7 +89,7 @@
                     flex-direction: column;
 
                     .box-header__left {
-                        margin-bottom: $navbarPadding / 2;
+                        margin-bottom: $boxPadding / 2;
                     }
                 }
 
@@ -94,7 +98,7 @@
                     align-items: center;
 
                     > *:not(:last-child) {
-                        margin-right: $navbarPadding / 2;
+                        margin-right: $boxPadding / 2;
                     }
 
                     > .btn {
@@ -125,11 +129,6 @@
                 font-weight: 400;
             }
 
-            /*.dropdown.fields-list { margin-right: 5px; float: right; }
-            .dropdown.fields-list .dropdown-menu li label {cursor: pointer; padding: 0 10px; font-weight: 400; color: #777 }
-            .dropdown.fields-list .dropdown-menu li input { margin-right: 5px }
-            .search-bar .dropdown-menu, .dropdown.fields-list .dropdown-menu {max-height: 400px !important;overflow: auto;}*/
-
             .dropdown {
                 li.active {
                     background: #F3F6F6;
@@ -155,11 +154,11 @@
         }
 
         .box-body {
-            padding: $navbarPadding;
+            padding: $boxPadding;
             border-bottom: 1px solid $navbarBorderColor;
 
             @include less-than(md){
-                padding: $navbarPadding / 2;
+                padding: $boxPadding / 2;
 
                 &.box-body--table {
                     .table {
@@ -171,16 +170,18 @@
             }
 
             &.box-body--form {
-                padding-bottom: $navbarPadding - $form-group-margin-bottom;
+                padding-bottom: $boxPadding - $form-group-margin-bottom;
             }
         }
 
         .box-footer {
             background: white;
-            padding: $navbarPadding;
+            padding: $boxPadding;
+            border-bottom-left-radius: $boxBorderRadius;
+            border-bottom-right-radius: $boxBorderRadius;
 
             @include less-than(md){
-                padding: $navbarPadding / 2;
+                padding: $boxPadding / 2;
             }
 
             &.box-footer--actions, .box-footer__actions {
@@ -201,7 +202,7 @@
                     align-items: center;
 
                     > *:not(:last-child) {
-                        margin-right: $navbarPadding / 2;
+                        margin-right: $boxPadding / 2;
                     }
                 }
 
@@ -225,7 +226,7 @@
         .admin-model__header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: $navbarPadding;
+            margin-bottom: $navbarPaddingTop;
 
             @include less-than(md) {
                 flex-direction: column;
@@ -246,11 +247,11 @@
 
                 > *:not(:last-child) {
                     @include more-than(md) {
-                        margin-right: $navbarPadding / 2;
+                        margin-right: $navbarButtonsPadding;
                     }
 
                     @include less-than(md) {
-                        margin-bottom: $navbarPadding / 2;
+                        margin-bottom: $navbarButtonsPadding;
                     }
                 }
 
@@ -284,6 +285,7 @@
                 height: 38px;
                 border: 1px solid $inputBorderColor;
                 border-radius: $inputRadius;
+                overflow: hidden;
                 @include fontSize(14px);
                 color: $darkText;
                 cursor: pointer;

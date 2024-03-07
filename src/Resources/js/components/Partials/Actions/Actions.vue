@@ -2,21 +2,21 @@
 <div :class="{ '--active' : model.isActiveRow(row), '--history-active' : model.isActiveRow(row) && history.history_id }">
     <!-- display row -->
     <div class="buttons-options__item" v-if="model.isEditable() || model.isDisplayable()">
-        <button data-button="edit" :data-id="row.id" type="button" @click="model.selectRow(row)" :class="['btn', 'btn-sm', {'btn-success' : model.isActiveRow(row), 'btn-default' : !model.isActiveRow(row) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && model.isEditable() ? trans('edit') : trans('show')">
+        <button data-button="edit" :data-id="row.id" type="button" @click="model.selectRow(row)" :class="['btn', 'btn-sm', {'btn-success' : model.isActiveRow(row), 'btn-light-default' : !model.isActiveRow(row) }]" data-toggle="tooltip" title="" :data-original-title="model.hasAccess('update') && model.isEditable() ? trans('edit') : trans('show')">
             <i :class="{ 'fas fa-spinner fa-spin' : loadingRow == row.id, 'far fa-edit' : loadingRow != row.id }"></i>
         </button>
     </div>
 
     <!-- gettext -->
     <div class="buttons-options__item" v-if="canShowGettext">
-        <button data-button="gettext" type="button" v-on:click="model.openGettextEditor(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')">
+        <button data-button="gettext" type="button" v-on:click="model.openGettextEditor(row)" class="btn btn-sm btn-light-default" data-toggle="tooltip" title="" :data-original-title="trans('gettext-update')">
             <i class="fa fa-globe-americas"></i>
         </button>
     </div>
 
     <!-- info -->
     <div class="buttons-options__item" v-if="canShowInfo" >
-        <button type="button" data-button="show" v-on:click="showInfo(row)" class="btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')">
+        <button type="button" data-button="show" v-on:click="showInfo(row)" class="btn btn-sm btn-light-default" data-toggle="tooltip" title="" :data-original-title="trans('row-info')">
             <i class="far fa-question-circle"></i>
         </button>
     </div>
