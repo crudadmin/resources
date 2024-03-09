@@ -107,6 +107,19 @@
                 }
             }
 
+            .btn--icon {
+                width: $buttonHeight;
+                height: $buttonHeight;
+                font-size: 1.6rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &.--button-back {
+                    margin-right: $boxPadding / 1.5 !important;
+                }
+            }
+
             .box-header__title {
                 @include fontSize(20px);
                 font-weight: 400;
@@ -114,11 +127,6 @@
 
                 .--icon-left { margin-right: 5px; }
                 .--icon-right { margin-left: 5px; }
-
-                .goBackButton {
-                    margin-right: $form-group-margin-bottom;
-                    cursor: pointer;
-                }
             }
 
             .box-header__description {
@@ -282,7 +290,7 @@
                 display: flex;
                 padding-left: 0;
                 margin-bottom: 0;
-                height: 38px;
+                height: $buttonHeight;
                 border: 1px solid $inputBorderColor;
                 border-radius: $inputRadius;
                 overflow: hidden;
@@ -301,7 +309,7 @@
                     background: white;
                     display: flex;
                     align-items: center;
-                    padding: 7px 15px;
+                    padding: 0 1.5rem;
 
                     img {
                         max-width: 30px;

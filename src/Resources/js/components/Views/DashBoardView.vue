@@ -12,7 +12,7 @@
             <div class="box" v-if="!isCustomLayout">
                 <div class="box-body">
                     <div class="box-body-wrapper">
-                        <h2 v-if="user">{{ trans('welcome') }} {{ user.username }}</h2>
+                        <h2 v-if="user" class="mb-0">{{ trans('welcome') }} {{ user.username }}</h2>
                     </div>
                 </div>
             </div>

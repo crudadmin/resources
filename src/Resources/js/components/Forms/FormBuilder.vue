@@ -5,15 +5,12 @@
             <div data-header class="box-header" v-show="model.isSettingDisabled('form.header') === false" :class="{ '--opened' : model.isOpenedRow(), '--forceVisible' : isBoxHeaderPermantlyVisible }">
                 <div class="box-header__actions">
                     <div class="box-header__left">
-                        <h3 class="box-header__title">
-                            <i
-                                v-if="(model.isOpenedRow() || model.isOnlyFormOpened()) && model.isEnabledOnlyFormOrTableMode() && model.hasRows()"
-                                @click="model.closeForm()"
-                                class="goBackButton fa fa-chevron-left"
-                                data-toggle="tooltip"
-                                :title="__('Vrátiť sa bez uloženia')"
-                                >
+                        <button class="btn btn-secondary btn--icon --button-back" v-if="(model.isOpenedRow() || model.isOnlyFormOpened()) && model.isEnabledOnlyFormOrTableMode() && model.hasRows()" @click="model.closeForm()" data-toggle="tooltip" :title="__('Vrátiť sa bez uloženia')">
+                            <i class="fa fa-chevron-left">
                             </i>
+                        </button>
+
+                        <h3 class="box-header__title">
                             <span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="--icon-left fa fa-globe-americas"></span>
                             {{ title }}
                         </h3>
@@ -41,10 +38,9 @@
                             :title="__('Zavrieť bez uloženia')"
                             @click="model.closeForm()"
                             type="button"
-                            class="btn--icon btn btn-default btn-sm"
+                            class="btn--icon btn btn-secondary"
                         >
-                            <i class="fa fa-times-circle"></i>
-                            {{ __('Zavrieť') }}
+                            <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>

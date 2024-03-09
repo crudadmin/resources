@@ -162,11 +162,13 @@
         input {
             line-height: 120%;
         }
+
         .upload-file-wrapper {
             position: relative;
 
             button.remove-file {
                 height: 100%;
+                width: $buttonHeight;
                 position: absolute;
                 right: 0;
                 top: 0;
@@ -325,12 +327,24 @@
             max-width: auto;
 
             .search-field {
-                min-width: auto !important
+                min-height: calc($buttonHeight - ($input-padding-x / 2));
+                min-width: auto !important;
+                display: flex;
+                align-items: center;
             }
         }
 
         &.canPerformActions {
-            > button { width: 35px; border: 0; flex-shrink: 0; }
+            > button {
+                width: $buttonHeight;
+                border: 0;
+                flex-shrink: 0;
+                z-index: 2;
+            }
+
+            .chosen-choices {
+                width: calc(100% + 2px);
+            }
         }
     }
 
@@ -343,9 +357,21 @@
     .chosen-single, .chosen-choices {
         border-color: $inputBorderColor;
         @include border-radius($input-border-radius, 0);
+        padding: calc($input-padding-y / 2.5) $input-padding-x;
 
         &.chosen-single {
             height: $input-height;
+
+            > div {
+                position: absolute;
+                top: -5px;
+                bottom: 0;
+                margin: auto;
+                right: 4px;
+                display: block;
+                width: 18px;
+                height: 14px;
+            }
         }
 
         &.chosen-choices {
@@ -377,16 +403,21 @@
 
     &.chosen-container-multi .chosen-choices .search-choice {
         background-image: none !important;
-        padding: 3.5px 20px 3.5px 5px;
+        padding: calc($input-padding-y / 1.25) ($input-padding-x + 1.5rem) calc($input-padding-y / 1.25) $input-padding-x;
+        margin: calc($input-padding-y / 2) calc($input-padding-x / 2) calc($input-padding-y / 2) 0;
         line-height: 100%;
         border-color: #c7c7c7;
+        background: $navbarBorderColor;
 
         span {
             color: $blackText;
         }
 
-        a {
-            top: 5px;
+        .search-choice-close {
+            top: 2px;
+            bottom: 0;
+            margin: auto;
+            right: $input-padding-x / 2;
         }
     }
 

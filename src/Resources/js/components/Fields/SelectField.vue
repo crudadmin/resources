@@ -1,6 +1,6 @@
 <template>
     <Field :field="field" :class="{ disabled : disabled || readonly || hasNoFilterValues }" v-show="required || !hasNoFilterValues">
-        <div class="form-group__chosen-container" :class="{ canPerformActions : hasRelationModal }">
+        <div class="form-group__chosen-container" :class="{ canPerformActions : hasRelationModal && hasAnyAction }">
             <select ref="select" :disabled="disabled" :name="!isMultiple ? name : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
                 <option v-if="!isMultiple" value="">{{ trans('select-option') }}</option>
                 <option
@@ -91,7 +91,7 @@
                 if ( state == false ){
                     this.allowRelation = false;
                 }
-            }
+            },
         },
 
         mounted(){
@@ -587,6 +587,9 @@
 
                 return filterBy;
             },
+            hasAnyAction(){
+                return this.performRelationAction('add') || this.performRelationAction('view') || this.performRelationAction('edit');
+            }
         },
     }
 </script>

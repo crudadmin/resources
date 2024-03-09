@@ -1,5 +1,5 @@
 .btn {
-    &.btn--icon > i:first-child {
+    &.btn--icon > i:first-child:not(:last-child) {
         margin-right: 7px;
     }
 
@@ -45,12 +45,17 @@
             color: $info-light;
         }
     }
-}
 
-.btn-default {
-    background: #DEE3E8;
+    &.btn-default {
+        background: #DEE3E8;
 
-    &:hover {
-        background: darken(#DEE3E8, 10%);
+        &:hover {
+            background: darken(#DEE3E8, 10%);
+        }
+    }
+
+    &.btn-secondary {
+        color: $darkText;
+        border: 1px solid $inputBorderColor;
     }
 }
