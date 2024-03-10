@@ -11,7 +11,7 @@
                 :class="[filter.class, {
                     'btn--icon' : filter.icon || filter.color,
                     'btn-primary': filterId.includes(key),
-                    'btn-default': !filterId.includes(key),
+                    'btn-secondary': !filterId.includes(key),
                 }]"
             >
                 <i class="fa" :class="filter.icon" v-if="filter.icon"></i>

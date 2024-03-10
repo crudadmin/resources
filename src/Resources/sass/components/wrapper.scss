@@ -107,7 +107,7 @@
                 }
             }
 
-            .btn--icon {
+            .btn--icon.--button-back {
                 width: $buttonHeight;
                 height: $buttonHeight;
                 font-size: 1.6rem;
@@ -115,7 +115,7 @@
                 align-items: center;
                 justify-content: center;
 
-                &.--button-back {
+                &.--pr {
                     margin-right: $boxPadding / 1.5 !important;
                 }
             }

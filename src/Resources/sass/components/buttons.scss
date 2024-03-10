@@ -1,5 +1,5 @@
 .btn {
-    &.btn--icon > i:first-child:not(:last-child) {
+    &.btn--icon:not(.--no-margin) > i:first-child {
         margin-right: 0.7rem;
     }
 
