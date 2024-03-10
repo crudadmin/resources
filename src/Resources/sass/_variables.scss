@@ -19,7 +19,7 @@ $inputBorderColor: #DEE3E8;
 $inputRadius: .475rem;
 $sidebarPadding: 35px;
 $boxPadding: 30px;
-$cardPadding: $boxPadding / 2;
+$cardPadding: $boxPadding / 1.5 ;
 $navbarHeight: 70px;
 $navbarWidth: 250px;
 $navbarWidthHidden: 50px;
@@ -33,7 +33,7 @@ $validationErrorcolor: #dd4b39;
 
 
 //Forms settings
-$form-group-margin-bottom: 16px;
+$form-group-margin-bottom: $cardPadding;
 $btn-border-radius: 0.425rem;
 $btn-padding-y: 0.78rem;
 $input-padding-y: 0.78rem;

@@ -356,3 +356,7 @@
         }
     }
 }
+
+[data-tab-model] .admin-model .admin-model__header {
+    margin-bottom: calc($cardPadding + 0.1rem);
+}

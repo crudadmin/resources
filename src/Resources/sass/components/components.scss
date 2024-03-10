@@ -171,21 +171,24 @@
     }
 
     & + .tab-content {
-        padding: $boxPadding / 2;
+        padding: $cardPadding;
         border: 1px solid $navbarBorderColor;
 
         &.tab-content--form {
             border-radius: $boxBorderRadius;
             margin-bottom: $form-group-margin-bottom;
-            padding-bottom: 0;
 
             &[data-active-index="0"] {
                 border-top-left-radius: 0px;
             }
 
-            > [data-tab-model].tab-pane {
-                margin-bottom: $form-group-margin-bottom;
+            &.--model-active {
+                background: #eaedf02e;
             }
+
+            /*> [data-tab-model].tab-pane {
+                margin-bottom: $form-group-margin-bottom;
+            }*/
         }
     }
 }
