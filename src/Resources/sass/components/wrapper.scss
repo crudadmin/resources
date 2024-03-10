@@ -69,7 +69,7 @@
         .box-header {
             background: white;
             padding: $boxPadding;
-            border-bottom: 1px solid $navbarBorderColor;
+            border-bottom: 1px solid $inputBorderColor;
             border-top-left-radius: $boxBorderRadius;
             border-top-right-radius: $boxBorderRadius;
 
@@ -136,29 +136,6 @@
                 margin: 4px 0 0 0;
                 font-weight: 400;
             }
-
-            .dropdown {
-                li.active {
-                    background: #F3F6F6;
-                    color: $blackText;
-                }
-
-                label {
-                    margin-bottom: 0;
-                    width: 100%;
-
-                    input {
-                        margin-right: 8px;
-                    }
-                }
-
-                li.default-reset {
-                    text-align: center;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                    font-size: 12px;
-                }
-            }
         }
 
         .box-body {
@@ -195,7 +172,7 @@
             &.box-footer--actions, .box-footer__actions {
                 display: flex;
                 justify-content: space-between;
-                overflow-x: auto;
+                overflow: visible;
 
                 .box-footer__left {
                     margin-right: auto;
@@ -215,7 +192,7 @@
                 }
 
                 .pagination {
-                    height: 37px;
+                    height: $buttonHeight;
                     margin-bottom: 0;
 
                     li a {

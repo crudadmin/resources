@@ -6,7 +6,7 @@
                 <th class="select-row-checkbox" @click="toggleAllCheckboxes" v-if="hasCheckingEnabled">
                     <div class="checkbox-box" data-toggle="tooltip" :title="trans(isCheckedAll ? 'uncheck-all' : 'check-all')">
                         <input type="checkbox" :checked="isCheckedAll">
-                        <span class="checkmark"></span>
+                        <span class="checkmark fa"></span>
                     </div>
                 </th>
                 <th v-if="hasIndicatorInTable"></th>
@@ -34,7 +34,7 @@
                     <span v-if="item['$checkbox.slot']" v-html="item['$checkbox.slot']" class="checkbox-box-slot"></span>
                     <div class="checkbox-box">
                         <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
-                        <span class="checkmark"></span>
+                        <span class="checkmark fa"></span>
                     </div>
                 </td>
 

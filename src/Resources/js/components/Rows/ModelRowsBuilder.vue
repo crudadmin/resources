@@ -32,8 +32,12 @@
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
                             <li @click="$event.stopPropagation()" v-for="(column, key) in enabled_columns" v-if="canShowColumn(column, key)" :class="{ active : column.enabled }" class="--no-item-padding">
                                 <label class="--dropdown-item-padding --dropdown-item-vertical">
-                                    <input type="checkbox" :data-column="key" :checked="column.enabled" @click="toggleColumnEnabled(key)">
-                                    {{ model.fieldName(key) }}
+                                    <div class="checkbox-box mr-1">
+                                        <input type="checkbox" :data-column="key"  @click="toggleColumnEnabled(key)" :checked="column.enabled">
+                                        <span class="checkmark fa"></span>
+                                    </div>
+
+                                    <div>{{ model.fieldName(key) }}</div>
                                 </label>
                             </li>
                             <li class="default-reset">
@@ -52,12 +56,7 @@
                         </ul>
                     </div>
 
-                    <div class="pagination-limit" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled()" :title="trans('rows-count')">
-                        <select class="form-control" :value="rows.limit" @change="model.setLimit($event.target.value)" data-limit>
-                            <option :value="0">{{ _('Skryť') }}</option>
-                            <option :value="count" v-for="count in rows.limits">{{ count }}</option>
-                        </select>
-                    </div>
+                    <PaginationLimit :model="model" :rows="rows" />
                 </div>
             </div>
 
@@ -84,12 +83,7 @@
                         :model="model" />
                 </div>
                 <div class="box-footer__right">
-                    <div class="pagination-limit d-none d-lg-block" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled()" :title="trans('rows-count')">
-                        <select class="form-control" :value="rows.limit" @change="model.setLimit($event.target.value)" data-limit>
-                            <option :value="0">{{ _('Skryť') }}</option>
-                            <option :value="count" v-for="count in rows.limits">{{ count }}</option>
-                        </select>
-                    </div>
+                    <PaginationLimit :model="model" :rows="rows" />
                 </div>
             </div>
         </div>
@@ -102,12 +96,13 @@
 <script>
 import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
+import PaginationLimit from '../Partials/PaginationLimit.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
     props : ['model', 'rows'],
 
-    components : { TableRows, Pagination, CustomComponents },
+    components : { TableRows, Pagination, PaginationLimit, CustomComponents },
 
     data : function(){
         return {

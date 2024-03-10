@@ -4,7 +4,7 @@
     data-form-language-switch
     v-if="(model.hasLocaleFields() && model.localization != true) && model.selectedLanguage() && languages.length > 1"
 >
-    <button class="btn btn-default dropdown-toggle btn-sm" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         <i class="--icon-left fa fa-globe-americas"></i>
         <span class="text">{{ getLangName(model.selectedLanguage()) }}</span>
         <i class="--icon-right fa fa-angle-down"></i>

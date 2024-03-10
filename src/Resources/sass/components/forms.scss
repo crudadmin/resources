@@ -196,8 +196,8 @@
         /* Normal Track */
         input[type="checkbox"].ios-switch + div {
             vertical-align: middle;
-            width: 40px;
-            height: 20px;
+            width: 4.6rem;
+            height: 2.5rem;
             border: 1px solid #cecece;
             border-radius: 999px;
             background-color: lighten($inputBorderColor, 5%);
@@ -207,34 +207,19 @@
             margin: 5px 0;
         }
 
-        /* Checked Track (Blue) */
-        input[type="checkbox"].ios-switch:checked + div {
-            width: 40px;
-            background-position: 0 0;
-            background-color: #3b89ec;
-            border: 1px solid #0e62cd;
-            box-shadow: inset 0 0 0 10px rgba(59,137,259,1);
-        }
 
         /* Green Track */
         input[type="checkbox"].green.ios-switch:checked + div {
-            background-color: #00e359;
-            border: 1px solid rgba(0, 162, 63,1);
-            box-shadow: inset 0 0 0 10px rgba(0,227,89,1);
-        }
-
-        /* Green Track */
-        input[type="checkbox"].red.ios-switch:checked + div {
-            background-color: #ff5b5b;
-            border: 1px solid red;
-            box-shadow: inset 0 0 0 10px #ff5b5b;
+            background-color: $primary;
+            border: 1px solid $primary;
+            box-shadow: inset 0 0 0 10px $primary;
         }
 
         /* Normal Knob */
         input[type="checkbox"].ios-switch + div > div {
             float: left;
-            width: 18px;
-            height: 18px;
+            width: 2.3rem;
+            height: 2.3rem;
             border-radius: inherit;
             background: #ffffff;
             -webkit-transition-timing-function: cubic-bezier(.54,1.85,.5,1);
@@ -247,7 +232,6 @@
             pointer-events: none;
         }
 
-        /* Checked Knob (Blue Style) */
         input[type="checkbox"].ios-switch:checked + div > div {
             -webkit-transform: translate3d(20px, 0, 0);
             -moz-transform: translate3d(20px, 0, 0);
@@ -255,14 +239,8 @@
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0px 0px 0 1px rgba(8, 80, 172,1);
         }
 
-        /* Green Knob */
         input[type="checkbox"].green.ios-switch:checked + div > div {
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 162, 63,1);
-        }
-
-        /* Green Knob */
-        input[type="checkbox"].red.ios-switch:checked + div > div {
-            box-shadow: 0px 2px 5px red, 0 0 0 1px red;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0 0 0 1px $primary;
         }
     }
 
@@ -364,13 +342,33 @@
 
             > div {
                 position: absolute;
-                top: -5px;
-                bottom: 0;
-                margin: auto;
-                right: 4px;
-                display: block;
+                right: 7px;
                 width: 18px;
-                height: 14px;
+                height: 100%;
+                display: flex;
+                top: 0;
+                height: 100%;
+                align-items: center;
+                display: flex;
+                justify-content: center;
+
+                b {
+                  display: block;
+                  background: none;
+                  font-style: normal;
+                  font-variant: normal;
+                  line-height: 1;
+                  text-rendering: auto;
+                  display: var(--fa-display, inline-block);
+                  font-family: var(--fa-style-family, "Font Awesome 6 Free");
+                  font-weight: var(--fa-style, 900);
+                  color: $darkText;
+                  font-size: 11px;
+
+                  &:before {
+                    content: "\f107";
+                  }
+                }
             }
         }
 
@@ -397,7 +395,8 @@
         border-color: $inputBorderColor;
 
         .chosen-results {
-            padding-top: 3px;
+            padding: 0;
+            margin: 0;
         }
     }
 
@@ -423,9 +422,77 @@
 
     .chosen-search input {
         border-color: $inputBorderColor !important;
+        border-radius: $inputRadius;
     }
 
-    .chosen-results li.highlighted {
-        background: $primary !important;
+    .chosen-results li {
+        color: $blackText;
+        padding: 0.6rem 1.2rem;
+        line-height: 125%;
+
+        &:first-child {
+            border-top: 1px solid $inputBorderColor;
+        }
+
+        &:not(:last-child) {
+            border-bottom: 1px solid $inputBorderColor;
+        }
+
+        &.highlighted {
+            background: $primary !important;
+        }
+    }
+}
+
+.checkbox-box {
+    display: block;
+    cursor: pointer;
+    font-size: 22px;
+    height: 16px;
+    width: 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: relative;
+    flex-shrink: 0;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: transparent;
+        border: 1px solid $inputBorderColor;
+        border-radius: 4px;
+        align-items: center;
+        justify-content: center;
+
+        &:after {
+            content: "";
+            position: absolute;
+            border-color: white;
+            content: "\f00c";
+            color: white;
+            font-size: 1.1rem;
+        }
+    }
+
+    input:checked ~ .checkmark {
+        background: $primary;
+        border-color: $primary;
+        display: flex;
     }
 }

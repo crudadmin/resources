@@ -1,4 +1,28 @@
 .dropdown {
+    li.active {
+        background: #F3F6F6;
+        color: $blackText;
+    }
+
+    label {
+        margin-bottom: 0;
+        width: 100%;
+
+        input {
+            margin-right: 8px;
+        }
+    }
+
+    li.default-reset {
+        text-align: center;
+        font-weight: 600;
+        text-transform: uppercase;
+
+        a {
+            @include fontSize(12px);
+        }
+    }
+
     &, button {
         @include fontSize(14px);
 
@@ -23,8 +47,8 @@
         }
 
         i {
-            &.--icon-left { margin-right: 10px; }
-            &.--icon-right { margin-left: 10px; }
+            &.--icon-left { margin-right: 1.5rem; }
+            &.--icon-right { margin-left: 1.5rem; }
 
             @include fontSize(11px);
         }
@@ -54,8 +78,12 @@
             color: $darkText;
             cursor: pointer;
 
+            label {
+                cursor: pointer;
+            }
+
             &:not(.--no-item-padding), .--dropdown-item-padding {
-                padding: 10px 12px;
+                padding: 1rem 1.2rem;
             }
 
             .--dropdown-item-vertical {
@@ -64,8 +92,8 @@
             }
 
             i {
-                &.--icon-left { margin-right: 10px; }
-                &.--icon-right { margin-left: 10px; }
+                &.--icon-left { margin-right: 1.5rem; }
+                &.--icon-right { margin-left: 1.5rem; }
 
                 @include fontSize(11px);
             }
@@ -177,6 +205,7 @@
         font-weight: 600;
         @include fontSize(12px);
         user-select: none;
+        padding: 1rem 1.25rem;
 
         &:hover {
             background: #FCFCFC;
@@ -217,8 +246,6 @@
 .box-header__actions {
     .multi-languages {
         .dropdown-toggle {
-            padding: 4px 10px;
-
             &.has-error {
                 border: 1px solid $validationErrorcolor;
                 color: $validationErrorcolor;
