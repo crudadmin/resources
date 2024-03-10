@@ -10,7 +10,7 @@
                 class="btn mr-1"
                 :class="[filter.class, {
                     'btn--icon' : filter.icon || filter.color,
-                    'btn-primary': filterId.includes(key),
+                    'btn-default': filterId.includes(key),
                     'btn-secondary': !filterId.includes(key),
                 }]"
             >
