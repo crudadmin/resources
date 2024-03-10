@@ -63,7 +63,7 @@
                         @click.prevent="model.createNewEntry()"
                         type="button"
                         class="btn--icon btn btn-primary">
-                        <i class="fa fa-plus"></i>
+                        <i class="fa fa-plus --icon-left"></i>
                         {{ newRowTitle() }}
                     </button>
                 </div>
