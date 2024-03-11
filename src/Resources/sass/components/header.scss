@@ -297,6 +297,7 @@ aside.main-sidebar {
 
     .sidebar {
         padding: calc($sidebarPadding / 1.5) $sidebarPadding calc($sidebarPadding / 1.5) $sidebarPadding;
+        padding-left: calc($sidebarPadding - 0.3rem);
 
         @include less-than(md) {
             padding: $sidebarPadding / 2;
@@ -339,7 +340,7 @@ aside.main-sidebar {
                     i.icon {
                         @include fontSize(15px);
                         margin-right: 15px;
-                        width: 15px;
+                        width: 2rem;
                         text-align: center;
                         color: lighten($darkText, 10%);
                     }
