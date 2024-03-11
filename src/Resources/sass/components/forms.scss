@@ -67,13 +67,8 @@
         .fields-group__wrapper {
             margin-bottom: $form-group-margin-bottom;
 
-            & > div > .row {
-                > .fields-group__item:last-child > {
-                    /* last field in group */
-                    & .field-wrapper > .form-group:last-child {
-                        margin-bottom: 0;
-                    }
-                }
+            & > div > .row > .fields-group__item:last-child > .field-wrapper > .form-group:last-child {
+                margin-bottom: 0;
             }
 
             /* last Group in group */
@@ -88,6 +83,10 @@
         }
 
         /* last Tab in Group */
+        .fields-tabs__wrapper > .card-body > .row > .tab--parent > .nav-tabs-custom > .tab-content--form > .tab-pane > .row > .fields-group > .fields-group__wrapper {
+            margin-bottom: 0;
+        }
+
         .fields-tabs__wrapper > div > .row > .tab--parent:last-child > .nav-tabs-custom > .tab-content--form {
             margin-bottom: 0;
         }

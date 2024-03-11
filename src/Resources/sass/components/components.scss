@@ -92,6 +92,9 @@
             }
 
             i {
+                min-width: 1.3rem;
+                text-align: center;
+
                 &.--icon-left { margin-right: 1.5rem; }
                 &.--icon-right { margin-left: 1.5rem; }
 
@@ -172,6 +175,11 @@
 
     & + .tab-content {
         padding: $cardPadding;
+
+        &:not(.--model-active) {
+            padding-bottom: calc($cardPadding - $form-group-margin-bottom);
+        }
+
         border: 1px solid $navbarBorderColor;
 
         &.tab-content--form {

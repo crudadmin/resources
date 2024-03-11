@@ -337,6 +337,7 @@
         &.admin-model--single-mode {
             > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header:not(.--forceVisible) { display: none; }
             > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header h3 { display: none; }
+            > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header .--button-back { display: none; }
         }
 
         /*
