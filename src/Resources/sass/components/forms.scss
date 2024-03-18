@@ -424,21 +424,53 @@
         border-radius: $inputRadius;
     }
 
-    .chosen-results li {
+    .chosen-results {
+        max-height: 30rem;
+
+         li {
+            color: $darkText;
+            padding: 0.6rem 1.2rem;
+            line-height: 125%;
+            cursor: pointer;
+
+            &:first-child {
+                border-top: 1px solid $inputBorderColor;
+            }
+
+            &:not(:last-child) {
+                border-bottom: 1px solid $inputBorderColor;
+            }
+
+            &.highlighted {
+                background: #FCFCFC !important;
+                color: $darkText;
+            }
+
+            &.result-selected {
+                background: $primary !important;
+                color: white !important;
+            }
+        }
+    }
+}
+
+
+.--select-big .chosen-results {
+    & {
+        max-height: 40rem;
+    }
+
+    li {
+        padding: 1rem 1.2rem;
+    }
+}
+
+.form-group {
+    .chosen-container .chosen-results li {
         color: $blackText;
-        padding: 0.6rem 1.2rem;
-        line-height: 125%;
-
-        &:first-child {
-            border-top: 1px solid $inputBorderColor;
-        }
-
-        &:not(:last-child) {
-            border-bottom: 1px solid $inputBorderColor;
-        }
 
         &.highlighted {
-            background: $primary !important;
+            color: $blackText;
         }
     }
 }

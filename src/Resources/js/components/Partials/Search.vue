@@ -1,6 +1,6 @@
 <template>
 <!-- Search bar -->
-<div class="search-bar" data-search-bar :class="{ interval : search.interval, resetRightBorders : canBeInterval || canResetSearch, hasResetButton : canResetSearch  }">
+<div class="search-bar --select-big" data-search-bar :class="{ interval : search.interval, resetRightBorders : canBeInterval || canResetSearch, hasResetButton : canResetSearch  }">
     <div class="input-group">
         <div class="input-group__column">
             <vue-chosen
@@ -12,7 +12,7 @@
                 :options="filterColumns"></vue-chosen>
         </div>
 
-        <div class="input-group__value">
+        <div class="input-group__value" :key="search.column">
             <!-- Search columns -->
             <input type="text" v-show="isSearch" data-search-text :placeholder="trans('search')+'...'" :value="search.query" @input="updateSearchQuery('query', $event)" class="form-control">
 
