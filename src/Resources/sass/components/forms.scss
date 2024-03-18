@@ -335,6 +335,7 @@
         border-color: $inputBorderColor;
         @include border-radius($input-border-radius, 0);
         padding: calc($input-padding-y / 2.5) $input-padding-x;
+        color: $blackText;
 
         &.chosen-single {
             height: $input-height;
