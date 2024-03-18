@@ -18,16 +18,23 @@
 
             <input type="text" v-show="isDate" :value="search.query" data-search-date readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker1">
 
-            <select type="text" v-show="isCheckbox" v-model="search.query" class="form-control">
-                <option :value="0">{{ trans('off') }}</option>
-                <option :value="1">{{ trans('on') }}</option>
-            </select>
+            <div class="select" v-show="isCheckbox||isSelect">
+                <vue-chosen
+                    v-if="isCheckbox"
+                    :value="search.query"
+                    label="name"
+                    trackBy="value"
+                    @input="search.query = $event"
+                    :options="[{ value : 0, name : trans('off') }, { value : 1, name : trans('on') }]"></vue-chosen>
 
-            <div class="select" v-show="isSelect">
-                <select v-model="search.query" data-search-select class="form-control js_chosen" ref="chosenSelect" :data-placeholder="trans('get-value')">
-                    <option value="">{{ trans('show-all') }}</option>
-                    <option v-for="data in languageOptionsSearchFilter(isSelect ? model.fields[search.column].options : [])" :value="data[0]">{{ data[1] }}</option>
-                </select>
+                <vue-chosen
+                    data-search-select
+                    v-if="isSelect"
+                    :value="search.query"
+                    label="name"
+                    trackBy="value"
+                    @input="search.query = $event"
+                    :options="[{ name : trans('show-all'), value : '' }].concat(languageOptionsSearchFilter(isSelect ? model.fields[search.column].options : []).map(item => ({ value : item[0], name : item[1] })))"></vue-chosen>
             </div>
             <!-- Search columns -->
 
@@ -71,15 +78,7 @@ export default {
     },
 
     mounted(){
-        this.initSearchSelectboxes();
-
         this.resetSearchBar();
-
-        if ( this.isSelect ) {
-            this.$watch('model.fields.'+this.search.column+'.options', options => {
-                this.initSearchSelectboxes();
-            });
-        }
     },
 
     computed: {
@@ -209,24 +208,6 @@ export default {
                 $(this.$refs.chosenSelect).trigger("chosen:updated");
             });
         },
-        initSearchSelectboxes(){
-            this.$nextTick(() => {
-                window.js_date_event = document.createEvent('HTMLEvents');
-
-                var dispached = false;
-
-                js_date_event.initEvent('change', true, true);
-
-                $(this.$refs.chosenSelect).chosen({disable_search_threshold: 5}).on('change', function(){
-                    if ( dispached == false ) {
-                        dispached = true;
-                        this.dispatchEvent(js_date_event);
-                    } else {
-                        dispached = false;
-                    }
-                }).trigger('chosen:updated');
-            });
-        },
         resetSearchBar(){
             //On change column reset input
             this.$watch('search.column', function(column, prevcolumn){
@@ -307,7 +288,6 @@ export default {
     .input-group__value {
         border-top-right-radius: $btn-border-radius;
         border-bottom-right-radius: $btn-border-radius;
-        overflow: hidden;
         display: flex;
 
         input.form-control {

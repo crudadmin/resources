@@ -1,5 +1,5 @@
 <template>
-    <select :data-placeholder="placeholder" :multiple="multiple" :disabled="disabled">
+    <select :data-placeholder="placeholder||(multiple ? trans('select-option-multi') : trans('select-option'))" :multiple="multiple" :disabled="disabled">
         <option v-for="option in localOptions" v-bind:value="option[trackBy]">
             {{ option[label] }}
         </option>
@@ -31,7 +31,6 @@
             },
             placeholder: {
                 type: String,
-                default: 'Select'
             },
             searchable: {
                 type: Boolean,
@@ -39,7 +38,7 @@
             },
             searchableMin: {
                 type: Number,
-                default: 1
+                default: 10
             },
             allowEmpty: {
                 type: Boolean,
@@ -65,7 +64,7 @@
                 if (this.allowAll) {
                     options.push({
                         [this.trackBy]: -1,
-                        [this.label]: 'All'
+                        [this.label]: __('All')
                     })
                 }
                 if (Array.isArray(this.options)) {
