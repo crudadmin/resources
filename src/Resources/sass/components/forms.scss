@@ -384,15 +384,24 @@
         }
     }
 
-    .chosen-single > span {
-        margin-top: 0;
+    .chosen-single {
         display: flex;
         align-items: center;
         height: 100%;
+
+        & > span {
+            margin-top: 0;
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            margin-right: 1.7rem;
+        }
     }
 
     .chosen-drop {
         border-color: $inputBorderColor;
+        min-width: 20rem;
 
         .chosen-results {
             padding: 0;

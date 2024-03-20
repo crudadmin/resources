@@ -276,6 +276,7 @@
                 cursor: pointer;
                 margin-top: -1px;
                 margin-bottom: -1px;
+                flex-shrink: 0;
 
                 @include less-than(md) {
                     display: none;

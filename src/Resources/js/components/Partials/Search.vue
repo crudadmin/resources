@@ -1,8 +1,8 @@
 <template>
 <!-- Search bar -->
-<div class="search-bar --select-big" data-search-bar :class="{ interval : search.interval, resetRightBorders : canBeInterval || canResetSearch, hasResetButton : canResetSearch  }">
+<div class="search-bar --select-big" data-search-bar :class="{ '--interval' : search.interval, '--resetRightBorders' : canBeInterval || canResetSearch, '--hasResetButton' : canResetSearch  }">
     <div class="input-group">
-        <div class="input-group__column">
+        <div class="input-group__column --small-width">
             <vue-chosen
                 :placeholder="_('Vyberte typ podstránky')"
                 :value="search.column"
@@ -44,9 +44,9 @@
                 </button>
             </div>
 
-            <input type="text" data-inerval-input data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'" :value="search.query_to" @input="updateSearchQuery('query_to', $event)" class="form-control">
+            <input type="text" data-interval-input data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'" :value="search.query_to" @input="updateSearchQuery('query_to', $event)" class="form-control">
 
-            <input type="text" data-inerval-input data-search-interval-date v-show="search.interval && isDate" :value="search.query_to" readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker2">
+            <input type="text" data-interval-input data-search-interval-date v-show="search.interval && isDate" :value="search.query_to" readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker2">
 
             <div class="interval" data-reset-interval v-if="canResetSearch" data-toggle="tooltip" :data-original-title="trans('reset')">
                 <button type="button" class="btn btn-default" @click="resetIterval">
@@ -269,6 +269,11 @@ export default {
     .input-group__column {
         min-width: 17rem;
 
+        &.--small-width {
+            min-width: auto;
+            width: 10rem;
+        }
+
         ::v-deep .chosen-single {
             border-radius: $btn-border-radius 0 0 $btn-border-radius;
             border-right: 0;
@@ -283,6 +288,26 @@ export default {
                 }
             }
         }
+    }
+
+    &.--resetRightBorders {
+        .form-control:not([data-interval-input]) {
+            border-radius: 0;
+        }
+
+        &.--hasResetButton {
+            .form-control {
+                border-radius: 0;
+            }
+        }
+    }
+
+    &.--interval .interval-btn button {
+        border-radius: 0 !important;
+    }
+
+    &.--hasResetButton .interval-btn button {
+        border-radius: 0 !important;
     }
 
     .input-group__value {
@@ -308,18 +333,6 @@ export default {
             }
         }
 
-        &.hasResetButton {
-            .form-control {
-                border-radius: 0;
-            }
-        }
-
-        &.resetRightBorders {
-            .form-control:not([data-inerval-input]) {
-                border-radius: 0;
-            }
-        }
-
         .interval-btn {
             display: flex;
             width: 30px;
@@ -328,15 +341,19 @@ export default {
 
             button {
                 padding: 4px 8px;
-                border-radius: 0;
                 border-left: 0;
                 width: 100%;
                 box-shadow: none;
+                border-radius: 0;
+                border-top-right-radius: $btn-border-radius;
+                border-bottom-right-radius: $btn-border-radius;
             }
         }
 
         [data-reset-interval] button {
             border-radius: 0;
+            border-top-right-radius: $btn-border-radius;
+            border-bottom-right-radius: $btn-border-radius;
             height: 100%;
         }
 

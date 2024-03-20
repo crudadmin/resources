@@ -24,8 +24,8 @@
                         {{ _('Stiahnuť excel') }}
                     </button>
 
-                    <div class="dropdown fields-list" fields-list>
-                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" v-if="model.getSettings('table.switchcolumns', true) != false">
+                    <div class="dropdown fields-list" fields-list v-if="model.getSettings('table.switchcolumns', true) != false">
+                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             {{ trans('rows-list') }}
                             <i class="--icon-right fa fa-angle-down"></i>
                         </button>

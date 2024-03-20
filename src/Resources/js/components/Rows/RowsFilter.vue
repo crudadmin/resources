@@ -1,5 +1,5 @@
 <template>
-    <div class="buttons-wrapper">
+    <div class="buttons-wrapper" v-show="filtersValues.length">
         <div v-if="filtersValues.length <= model.getSettings('filter.max_buttons', 5)">
             <button
                 v-for="(filter, key) in filters"
