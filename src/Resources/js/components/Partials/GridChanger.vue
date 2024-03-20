@@ -24,7 +24,7 @@ export default {
         this.checkParentGridSize();
     },
     watch : {
-        parentActiveGridSize(){
+        parentActiveGridSizes(){
             this.checkParentGridSize();
         },
     },
@@ -35,8 +35,22 @@ export default {
         parentModel(){
             return this.model.getParentModel();
         },
-        parentActiveGridSize(){
-            return this.parentModel?.activeGridSize();
+        parentActiveGridSizes(){
+            let parentSizes = [],
+                size = null,
+                model = this.model;
+
+            do {
+                model = model?.getParentModel();
+
+                size = model?.activeGridSize();
+
+                if ( !_.isNil(size) ){
+                    parentSizes.push(size);
+                }
+            } while (model && !_.isNil(size))
+
+            return parentSizes;
         },
     },
     methods : {
@@ -52,38 +66,40 @@ export default {
             row.active = true;
         },
         checkParentGridSize(){
-            const parentSize = this.parentActiveGridSize;
+            const parentSizes = this.parentActiveGridSizes,
+                depthLevel = this.model.getData('depth_level');
 
-            if ( _.isNil(parentSize) ) {
-                return;
+            let disabledSizes = {};
+
+            for ( var parentSize of parentSizes ) {
+                for ( var key in this.sizes ){
+                    const size = this.sizes[key];
+
+                    //If grid parent size is on full width, then enable all grid sizes in this model
+                    if ( parentSize == 0 && depthLevel <= 1 ) {
+                        size.disabled = false;
+                    }
+
+                    //If grid parent size has small form, or model is sub in third level, then disable all except full screen
+                    else if ( ([6, 8].includes(parentSize)) && [0].includes(size.size) == false ) {
+                        disabledSizes[key] = true;
+                    }
+
+                    //Disable all small sizes
+                    else if ( [0, 6].indexOf(size.size) === -1  ) {
+                        disabledSizes[key] = true;
+                    }
+
+                    //Enable other options
+                    else {
+                        size.disabled = false;
+                    }
+                }
             }
 
-            const depthLevel = this.model.getData('depth_level');
-
-            for ( var key in this.sizes ){
-                const size = this.sizes[key];
-
-                //If grid parent size is on full width, then enable all grid sizes in this model
-                if ( parentSize == 0 && depthLevel <= 1 ) {
-                    size.disabled = false;
-                }
-
-                //If grid parent size has small form, or model is sub in third level, then disable all except full screen
-                else if ( ([6, 8].includes(parentSize) || depthLevel >= 2) && [0].includes(size.size) == false ) {
-                    size.disabled = true;
-                }
-
-                // else if ( parentSize == 6 [] )
-
-                //Disable all small sizes
-                else if ( [0, 6].indexOf(size.size) === -1  ) {
-                    size.disabled = true;
-                }
-
-                //Enable other options
-                else {
-                    size.disabled = false;
-                }
+            //Set final disabled states
+            for ( var key in disabledSizes){
+                this.sizes[key].disabled = true;
             }
         },
     }
