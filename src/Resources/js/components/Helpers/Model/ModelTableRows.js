@@ -368,6 +368,35 @@ var ModelTableRows = (Model) => {
         return this.getData('searching') === true || (this.maximum==0 || this.maximum >= minimum) && this.getData('rows').count >= minimum;
     }
 
+    Model.prototype.isEnabledGrid = function(){
+        var sizes = this.getData('sizes'),
+            enabled = _.filter(sizes, { disabled : false }),
+            active = _.find(sizes, { active : true });
+
+        if ( enabled.length <= 1 || (active && active.disabled == true) ) {
+            //Disable all active items
+            _.filter(sizes, { active : true }).forEach(item => {
+                if ( enabled[0].key == item.key ){
+                    return;
+                }
+
+                item.active = false;
+            })
+
+            if ( enabled[0] ) {
+                enabled[0].active = true;
+            }
+
+            return false;
+        }
+
+        if ( this.isSettingDisabled('grid') ) {
+            return false;
+        }
+
+        return true;
+    }
+
     Model.prototype.isActiveRow = function(row){
         if ( !this.isOpenedRow() ) {
             return false;

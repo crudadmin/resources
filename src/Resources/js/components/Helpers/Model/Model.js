@@ -87,9 +87,6 @@ const FreshBuilderData = () => {
         //Is searching?
         searching : false,
 
-        //Parent active grid size
-        parentActiveGridSize : null,
-
         //Default model columns
         default_columns : {},
 

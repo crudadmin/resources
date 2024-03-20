@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="right" v-if="!model.isSingle()">
-                    <GridChanger v-if="isEnabledGrid" :sizes="sizes" />
+                    <GridChanger :model="model" />
 
                     <custom-components :model="model" type="actions-grid-before" />
 
@@ -100,7 +100,7 @@
     import GridChanger from '@components/Partials/GridChanger.vue';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentRow', 'loadWithRows', 'hasParentModel', 'parentActiveGridSize', 'scopes'],
+        props : ['model_builder', 'langid', 'ischild', 'parentRow', 'loadWithRows', 'hasParentModel', 'scopes'],
 
         name : 'model-builder',
 
@@ -143,7 +143,6 @@
             this.model.setData('loadWithRows', this.loadWithRows);
             this.model.setData('langid', this.langid);
             this.model.setData('scopes', this.scopes||[]);
-            this.model.setData('parentActiveGridSize', this.parentActiveGridSize);
 
             //Set deep level of given model
             this.setDeepLevel();
@@ -155,8 +154,6 @@
             this.updateParentChildData();
 
             this.setModelEvents();
-
-            this.checkParentGridSize(this.parentActiveGridSize);
 
             this.onModelUpdate();
         },
@@ -181,11 +178,6 @@
                         }
                     }
                 },
-            },
-            parentActiveGridSize(parentSize){
-                this.model.setData('parentActiveGridSize', parentSize);
-
-                this.checkParentGridSize(parentSize);
             },
             langid(value){
                 this.model.setData('langid', value);
@@ -232,33 +224,6 @@
                         this.model.sendRowData();
                     }
                 });
-            },
-            checkParentGridSize(parentSize){
-                if ( [null, undefined].indexOf(parentSize) > -1 ) {
-                    return;
-                }
-
-                for ( var key in this.sizes ){
-                    //If grid parent size is on full width, then enable all grid sizes in this model
-                    if ( parentSize == 0 && this.model.getData('depth_level') <= 1 ) {
-                        this.sizes[key].disabled = false;
-                    }
-
-                    //If grid parent size has small form, or model is sub in third level, then disable all except full screen
-                    else if ( (parentSize == 8 || this.model.getData('depth_level') >= 2) && [0].indexOf(this.sizes[key].size) === -1 ) {
-                        this.sizes[key].disabled = true;
-                    }
-
-                    //Disable all small sizes
-                    else if ( [0, 6].indexOf(this.sizes[key].size) === -1  ) {
-                        this.sizes[key].disabled = true;
-                    }
-
-                    //Enable other options
-                    else {
-                        this.sizes[key].disabled = false;
-                    }
-                }
             },
             changeLanguage(id){
                 this.$root.language_id = id;
@@ -358,7 +323,7 @@
                     || (
                         !this.model.isSingle()
                         && (
-                            this.isEnabledGrid
+                            this.model.isEnabledGrid()
                             || this.model.canShowSearchBar()
                             || this.canShowAddButton
                         )
@@ -379,30 +344,6 @@
              */
             getModelKey(){
                 return this.model.slug + '-' + (this.model.getParentTableName()||0);
-            },
-            //Checks if is enabled grid system
-            isEnabledGrid(){
-                var enabled = _.filter(this.sizes, { disabled : false }),
-                    active = _.find(this.sizes, { active : true });
-
-                if ( enabled.length <= 1 || (active && active.disabled == true) ) {
-                    //Disable all active items
-                    _.filter(this.sizes, { active : true }).forEach(item => {
-                        item.active = false;
-                    })
-
-                    if ( enabled[0] ) {
-                        enabled[0].active = true;
-                    }
-
-                    return false;
-                }
-
-                if ( this.model.isSettingDisabled('grid') ) {
-                    return false;
-                }
-
-                return true;
             },
             canShowAddButton(){
                 return this.model.canAddRow() && !this.model.isSingle() && this.model.hasAccess('insert') && !this.model.isOnlyFormOpened() && this.model.isSettingEnabled('buttons.create', true);

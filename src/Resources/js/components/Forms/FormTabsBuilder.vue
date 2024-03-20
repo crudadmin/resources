@@ -49,7 +49,6 @@
                             :ischild="true"
                             :model_builder="getModel(tab.model)"
                             :loadWithRows="isLoadedModel(getModel(tab.model), $index, true)"
-                            :parentActiveGridSize="model.activeGridSize()"
                             :parentRow="row">
                         </model-builder>
                     </div>

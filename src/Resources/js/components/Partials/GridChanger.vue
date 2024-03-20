@@ -1,9 +1,9 @@
 <template>
-<!-- Grid size -->
-<ul class="change-grid-size d-none d-lg-flex">
+<ul class="change-grid-size d-none d-lg-flex" v-if="model.isEnabledGrid()">
     <li
         v-for="size in sizes"
         :data-size="size.key"
+        :key="size.key"
         v-if="!size.disabled"
         :class="{ 'active' : size.active, 'disabled' : size.disabled }"
         data-toggle="tooltip"
@@ -18,8 +18,27 @@
 import GridIcons from './GridIcons.vue';
 
 export default {
-    props : ['sizes'],
+    props : ['model'],
     components : {GridIcons},
+    mounted(){
+        this.checkParentGridSize();
+    },
+    watch : {
+        parentActiveGridSize(){
+            this.checkParentGridSize();
+        },
+    },
+    computed: {
+        sizes(){
+            return this.model.getData('sizes');
+        },
+        parentModel(){
+            return this.model.getParentModel();
+        },
+        parentActiveGridSize(){
+            return this.parentModel?.activeGridSize();
+        },
+    },
     methods : {
         changeSize(row){
             if ( row.disabled == true ){
@@ -31,6 +50,41 @@ export default {
             }
 
             row.active = true;
+        },
+        checkParentGridSize(){
+            const parentSize = this.parentActiveGridSize;
+
+            if ( _.isNil(parentSize) ) {
+                return;
+            }
+
+            const depthLevel = this.model.getData('depth_level');
+
+            for ( var key in this.sizes ){
+                const size = this.sizes[key];
+
+                //If grid parent size is on full width, then enable all grid sizes in this model
+                if ( parentSize == 0 && depthLevel <= 1 ) {
+                    size.disabled = false;
+                }
+
+                //If grid parent size has small form, or model is sub in third level, then disable all except full screen
+                else if ( ([6, 8].includes(parentSize) || depthLevel >= 2) && [0].includes(size.size) == false ) {
+                    size.disabled = true;
+                }
+
+                // else if ( parentSize == 6 [] )
+
+                //Disable all small sizes
+                else if ( [0, 6].indexOf(size.size) === -1  ) {
+                    size.disabled = true;
+                }
+
+                //Enable other options
+                else {
+                    size.disabled = false;
+                }
+            }
         },
     }
 }
