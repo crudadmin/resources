@@ -260,7 +260,8 @@ export default {
 
 <style lang="scss" scoped>
 .search-bar {
-    display: block;
+    display: flex;
+    flex-shrink: 0;
 
     & + .search-bar {
         margin-left: $navbarButtonsPadding;

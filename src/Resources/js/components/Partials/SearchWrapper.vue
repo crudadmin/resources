@@ -1,5 +1,5 @@
 <template>
-<div class="searchbar__wrapper" :class="{ '--hasMoreButton' : model.getData('searching') }" v-show="model.canShowSearchBar()">
+<div class="searchbar__wrapper" :class="{ '--hasMoreButton' : model.getData('searching') }" v-if="model.canShowSearchBar()">
     <div class="searchbar__wrapper__queries">
         <search
             v-for="(query, $index) in search.queries"

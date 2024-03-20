@@ -17,30 +17,15 @@
         <div class="admin-model" :data-depth="model.getData('depth_level')" :class="{ 'admin-model--single-mode' : model.isSingle(), 'admin-model--in-parent' : model.isInParent() }" v-show="model.canShowForm() || (model.canShowRows() || isSearching)">
             <div class="admin-model__header" :class="{ 'with-border' : model.isSingle() }" v-show="canShowAdminHeader">
                 <div class="left">
-                    <div>
-                        <h3 v-if="ischild" class="admin-header__title">{{ model.name }}</h3>
-                        <span class="admin-header__description" v-if="model.title && ischild" v-html="model.title"></span>
-                    </div>
+                    <SearchWrapper :model="model"></SearchWrapper>
+
+                    <RowsFilter :model="model" v-if="model.isSettingEnabled('filter', true) && (!model.isEnabledOnlyFormOrTableMode() || !model.canShowForm())" />
                 </div>
 
                 <div class="right" v-if="!model.isSingle()">
+                    <GridChanger v-if="isEnabledGrid" :sizes="sizes" />
+
                     <custom-components :model="model" type="actions-grid-before" />
-
-                    <SearchWrapper :model="model"></SearchWrapper>
-
-                    <!-- Grid size -->
-                    <ul class="change-grid-size d-none d-lg-flex" v-if="isEnabledGrid">
-                        <li
-                            v-for="size in sizes"
-                            :data-size="size.key"
-                            v-if="!size.disabled"
-                            :class="{ 'active' : size.active, 'disabled' : size.disabled }"
-                            data-toggle="tooltip"
-                            :data-original-title="size.name"
-                            @click="changeSize(size)">
-                            <GridIcons :type="size.key" :active="size.active" />
-                        </li>
-                    </ul>
 
                     <custom-components :model="model" type="actions-grid" />
 
@@ -110,16 +95,16 @@
     import _ from 'lodash';
     import ModelRowsBuilder from '../Rows/ModelRowsBuilder.vue';
     import SearchWrapper from '../Partials/SearchWrapper.vue';
-    import GridIcons from '../Partials/GridIcons.vue';
     import { mapMutations } from 'vuex';
     import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
+    import GridChanger from '@components/Partials/GridChanger.vue';
 
     export default {
         props : ['model_builder', 'langid', 'ischild', 'parentRow', 'loadWithRows', 'hasParentModel', 'parentActiveGridSize', 'scopes'],
 
         name : 'model-builder',
 
-        components : { ModelRowsBuilder, CustomComponents, SearchWrapper, GridIcons },
+        components : { ModelRowsBuilder, CustomComponents, SearchWrapper, GridChanger },
 
         data(){
             return {
@@ -324,15 +309,6 @@
 
                 this.model.setData('depth_level', depth);
                 this.model.setData('tree', treeUuids);
-            },
-            changeSize(row){
-                if ( row.disabled == true )
-                    return false;
-
-                for ( var key in this.sizes )
-                    this.sizes[key].active = false;
-
-                row.active = true;
             },
             checkIfCanShowLanguages(){
                 var languages_active = false;

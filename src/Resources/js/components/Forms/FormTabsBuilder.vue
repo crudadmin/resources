@@ -12,7 +12,9 @@
                 :default-tab="isModel(tab) && getModel(tab.model) ? false : ''"
                 :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table"
                 :data-tab-id="tab.id"
-                @click="model.setActiveTab($index, level)">
+                @click="model.setActiveTab($index, level)"
+                :title="isModel(tab) ? getModel(tab.model).title : null"
+                data-toggle="tooltip">
                 <a data-toggle="tab" class="nav-link" :class="{ active : activeTab == $index }" aria-expanded="true">
                     <i v-if="getTabIcon(tab)" class="fa nav-link--icon-left" :class="[faMigrator(getTabIcon(tab))]"></i>
                     {{ getTabName(tab)||trans('general-tab') }}

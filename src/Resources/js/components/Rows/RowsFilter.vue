@@ -7,7 +7,7 @@
                 data-toggle="tooltip"
                 :title="filter.title"
                 type="button"
-                class="btn mr-1"
+                class="btn"
                 :class="[filter.class, {
                     'btn--icon' : filter.icon || filter.color,
                     'btn-default': filterId.includes(key),
@@ -87,9 +87,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-button {
-    display: inline-flex;
-    align-items: center;
+.buttons-wrapper {
+    button {
+        display: inline-flex;
+        align-items: center;
+
+        &:not(:last-child) {
+            margin-right: 1rem;
+        }
+    }
 }
 
 .--dot {

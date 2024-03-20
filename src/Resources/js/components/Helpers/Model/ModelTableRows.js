@@ -360,7 +360,7 @@ var ModelTableRows = (Model) => {
         }
 
         //If is forced showing searchbar
-        if ( this.isSettingEnabled('search') ) {
+        if ( this.isSettingEnabled('search', false) ) {
             return true;
         }
 
