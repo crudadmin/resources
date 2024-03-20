@@ -344,6 +344,10 @@ export default {
                 return title;
             }
 
+            if ( this.parentRowId ){
+                return this.model.name;
+            }
+
             return this.trans('rows');
         },
         isDefaultColumnsList(){
