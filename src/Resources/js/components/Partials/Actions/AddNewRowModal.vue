@@ -89,7 +89,7 @@ export default {
             });
 
             this.model.on('form.open', (row) => {
-                $(this.$refs.modalEl).modal('show');
+                this.show();
             });
 
             $(this.$refs.modalEl).on('hidden.bs.modal', () => {
@@ -103,6 +103,16 @@ export default {
             }
 
             this.loaded = true;
+        },
+        show(){
+            //Wait on row load in case of viewable action for child tabs.
+            //For proper relation child loading workflow.
+            this.model.setData('load_child_tab_models', true);
+
+            //On modal element load
+            this.$nextTick(() => {
+                $(this.$refs.modalEl).modal('show');
+            })
         },
         close(){
             $(this.$refs.modalEl).modal('hide');
@@ -129,20 +139,13 @@ export default {
                     }
                 }
 
-                //Wait on row load in case of viewable action for child tabs.
-                //For proper relation child loading workflow.
-                model.setData('load_child_tab_models', true);
-
                 //Listing
                 if ( this.isListing ) {
                     model.enableOnlyFullScreen();
                     model.resetFormWithEvents();
                 }
 
-                //On modal element load
-                this.$nextTick(() => {
-                    $(this.$refs.modalEl).modal('show');
-                })
+                this.show();
             });
         },
         /**
