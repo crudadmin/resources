@@ -150,7 +150,6 @@ var ModelButtonActions = (Model) => {
                 ...(requestData||{}),
                 _button : {
                     ...this.getRowsRequestData(),
-                    parentTable : this.getParentTableName(true),
                     model : this.table,
                     id : ids,
                     button_key : button.key,

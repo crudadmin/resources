@@ -675,7 +675,7 @@ var ModelTableRows = (Model) => {
             { page, limit } = options||{};
 
         return {
-            parentTable : this.getParentTableName(this.without_parent),
+            parentTable : this.getParentTableName(),
             parentId : this.getParentRowId(),
             language_id : this.localization === true ? this.getData('langid') : 0,
             count : this.getData('refresh').count,

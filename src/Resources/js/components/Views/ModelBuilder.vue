@@ -138,7 +138,7 @@
             this.model.setRow(this.model.emptyRowInstance());
 
             //Set model properties
-            this.model.setData('parentRow', this.parentRow);
+            this.model.setData('parentRow', this.parentRow||this.model.getData('parentRow'));
 
             this.model.setData('langid', this.langid);
             this.model.setData('scopes', this.scopes||[]);

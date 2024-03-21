@@ -317,16 +317,17 @@ var FormActions = (Model) => {
             ...(this.getData('formRequest')||{}),
         };
 
-        let parentRow = this.getData('parentRow');
+        let parentRow = this.getData('parentRow'),
+            parentTableName = this.getParentTableName();
 
         //Check if form belongs to other form
         if ( this.foreign_column != null && parentRow ) {
-            data[this.foreign_column[this.getParentTableName()]] = parentRow.id;
+            data[this.foreign_column[parentTableName]] = parentRow.id;
         }
 
         //Model can be assigned to any other mothel without any specific relation
-        if ( this.global_relation && parentRow && this.getParentTableName(true) ) {
-            data['_table'] = this.getParentTableName(true);
+        if ( this.global_relation && parentRow && parentTableName ) {
+            data['_table'] = parentTableName;
             data['_row_id'] = parentRow.id;
         }
 

@@ -37,31 +37,6 @@
         </div>
 
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+name" value="1">
-
-        <!-- Modal for adding relation -->
-        <!-- <div class="modal fade" select-field :class="{ '--inModal' : isModalInModal }" v-if="isEnabledRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title">&nbsp;</h4>
-                    </div>
-                    <div class="modal-body">
-                        <model-builder
-                            v-if="allowRelation && relationModel"
-                            :key="modelBuilderId"
-                            :langid="langid"
-                            :hasParentModel="getRelationModelParent"
-                            :parentRow="getRelationRow"
-                            :scopes="canAddScopes"
-                            :model_builder="relationModel">
-                        </model-builder>
-                    </div>
-                </div>
-            </div> -->
-        </div>
     </Field>
 </template>
 
@@ -134,10 +109,10 @@
             relationTable(){
                 return (this.field.belongsTo||this.field.belongsToMany||'').split(',')[0];
             },
-            getRelationRow(){
+            getFilterByParentRow(){
                 var filterBy = this.getFilterBy;
 
-                if ( !this.getRelationModelParent || ! filterBy || ! this.row[filterBy[0]] ) {
+                if ( !this.getFilterByParentModel || ! filterBy || ! this.row[filterBy[0]] ) {
                     return {};
                 }
 
@@ -148,7 +123,7 @@
             /*
              * Return model of parent filtration field
              */
-            getRelationModelParent(){
+            getFilterByParentModel(){
                 var filterBy = this.getFilterBy;
 
                 if ( ! filterBy || ! this.row[filterBy[0]] ) {
@@ -318,6 +293,10 @@
             },
             performRelationAction(action, open){
                 this.setRelationModel(action);
+
+                //Dynamically set parent model
+                this.relationModel.setData('parentModel', this.getFilterByParentModel);
+                this.relationModel.setData('parentRow', this.getFilterByParentRow);
 
                 open(action, this.field.value);
             },

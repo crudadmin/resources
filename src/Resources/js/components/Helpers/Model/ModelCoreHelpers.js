@@ -1,10 +1,6 @@
 var ModelCoreHelpers = (Model) => {
-    Model.prototype.getParentTableName = function(force){
-        var parentModel = this.getParentModel();
-
-        if ( force !== true && ((!parentModel || !parentModel.isOpenedRow())) ) {
-            return;
-        }
+    Model.prototype.getParentTableName = function(force = true){
+        var parentModel = this.getData('parentModel')||this.getParentModel();
 
         return parentModel ? parentModel.table : null;
     };

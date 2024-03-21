@@ -262,7 +262,7 @@
                 return this.model.getRow();
             },
             getId() {
-                let parent = (this.model.getParentTableName(this.model.without_parent == true))||0;
+                let parent = this.model.getParentTableName()||0;
 
                 return 'id-' + this.model.slug + this.field_key + '-' + this.depth_level + '-' + parent + '-' + this.index + '-' + this.langslug;
             },
