@@ -961,13 +961,25 @@ var ModelTableRows = (Model) => {
         }
     }
 
-    Model.prototype.toggleChecked = function(id){
-        var checked = this.getData('checked'),
-            index = checked.indexOf(id);
+    Model.prototype.toggleChecked = function(id, checked){
+        checked = _.isNil(checked) ? this.getData('checked') : checked;
+
+        let index = checked.indexOf(id);
 
         if ( index == -1 ) {
             checked.push(id);
         } else {
+            checked.splice(index, 1);
+        }
+    }
+
+    Model.prototype.setColumnChecked = function(id, state){
+        let checked = this.getData('checked'),
+            index = checked.indexOf(id);
+
+        if ( index == -1 && state == true ) {
+            checked.push(id);
+        } else if ( index > -1 && state == false ) {
             checked.splice(index, 1);
         }
     }

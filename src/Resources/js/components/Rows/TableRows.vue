@@ -26,11 +26,11 @@
             @start="model.onDragStart($event)"
             @change="model.onDragChange($event)">
             <tr v-for="(item, key) in sortedRows" :key="item.id" :data-id="item.id" :class="getRowClass(item)">
-                <td class="row-draggable" v-if="model.isDragEnabled()" @click="checkRow(item.id)">
+                <td class="row-draggable" v-if="model.isDragEnabled()" @click="checkRow(item.id, $event)">
                     <i class="fa fa-grip-vertical"></i>
                 </td>
 
-                <td class="select-row-checkbox" v-if="hasCheckingEnabled" @click="checkRow(item.id)">
+                <td class="select-row-checkbox" v-if="hasCheckingEnabled" @click="checkRow(item.id, $event)">
                     <span v-if="item['$checkbox.slot']" v-html="item['$checkbox.slot']" class="checkbox-box-slot"></span>
                     <div class="checkbox-box">
                         <input type="checkbox" :checked="model.getChecked().indexOf(item.id) > -1">
@@ -406,23 +406,42 @@ export default {
 
             this.model.setChecked(this.isCheckedAll ? [] : ids);
         },
-        checkRow(id, field, row){
-            if ( row && this.canOpenRowOnClick && (this.model.isEditable() || this.model.isDisplayable()) ) {
-                this.model.selectRow(row);
-
-                return;
-            }
-
+        checkRow(id, $event){
             if ( this.hasCheckingEnabled === false ){
                 return;
             }
 
-            //Disable checking on type of fields
-            if ( field in this.model.fields && ['file'].indexOf(this.model.fields[field].type) > -1 ) {
-                return;
+            //Check multiple with shift
+            let checked = this.model.getData('checked'),
+                lastChecked = checked[checked.length - 1];
+
+            if ( $event && $event.shiftKey && checked.length >= 1 && (checked[0] != id) ) {
+                const rows = this.model.getRows(),
+                    checkedCloned = _.cloneDeep(checked)
+
+                rows.forEach(row => {
+                    if ( id > lastChecked && (row.id > lastChecked && row.id <= id) ){
+                        this.model.toggleChecked(row.id, checkedCloned);
+                    } else if ( id < lastChecked && (row.id <= lastChecked && row.id >= id) ){
+                        this.model.toggleChecked(row.id, checkedCloned);
+                    }
+                });
+
+                const toState = checkedCloned.length >= checked.length;
+
+                rows.forEach(row => {
+                    if ( id > lastChecked && (row.id >= lastChecked && row.id <= id) ){
+                        this.model.setColumnChecked(row.id, toState);
+                    } else if ( id < lastChecked && (row.id <= lastChecked && row.id >= id) ){
+                        this.model.setColumnChecked(row.id, toState);
+                    }
+                });
             }
 
-            this.model.toggleChecked(id);
+            //Check single
+            else {
+                this.model.toggleChecked(id);
+            }
         },
         toggleSorting(key){
             var sortable = this.model.getSettings('sortable');
