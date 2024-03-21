@@ -38,6 +38,7 @@ import RowsFilter from '@components/Rows/RowsFilter.vue';
 import Refreshing from '@components/Partials/Refreshing.vue';
 import Field from '@components/Partials/Field.vue';
 import FieldLabel from '@components/Partials/FieldLabel.vue';
+import AddNewRowModal from '@components/Partials/Actions/AddNewRowModal.vue';
 
 //Router
 import Router from './router.js';
@@ -58,6 +59,7 @@ Vue.component('Refreshing', Refreshing);
 Vue.component('Field', Field);
 Vue.component('FieldLabel', FieldLabel);
 Vue.component('FormInputBuilder', FormInputBuilder);
+Vue.component('AddNewRowModal', AddNewRowModal);
 
 //Global methods
 Vue.mixin(globalVueMixins);

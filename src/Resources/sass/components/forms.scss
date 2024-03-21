@@ -94,8 +94,10 @@
         &.--inline-model {
             margin-bottom: $form-group-margin-bottom;
 
-            .box-header, .box-footer {
-                padding: $boxPadding / 1.5;
+            & > div > div > .row > div > .box {
+                > .box-header, > .box-footer {
+                    padding: $boxPadding / 1.5;
+                }
             }
         }
     }

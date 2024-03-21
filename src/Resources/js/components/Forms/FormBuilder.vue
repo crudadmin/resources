@@ -5,7 +5,7 @@
             <div data-header class="box-header" v-show="model.isSettingDisabled('form.header') === false" :class="{ '--opened' : model.isOpenedRow(), '--forceVisible' : isBoxHeaderPermantlyVisible }">
                 <div class="box-header__actions">
                     <div class="box-header__left">
-                        <button class="btn btn-secondary btn--icon --no-margin --button-back --pr" v-if="(model.isOpenedRow() || model.isOnlyFormOpened()) && model.isEnabledOnlyFormOrTableMode() && model.hasRows()" @click="model.closeForm()" data-toggle="tooltip" :title="__('Vrátiť sa bez uloženia')" type="button">
+                        <button class="btn btn-secondary btn--icon --no-margin --button-back --pr" v-if="(model.isOpenedRow() || model.isOnlyFormOpened()) && model.isEnabledOnlyFormOrTableMode() && !model.isStandaloneForm()" @click="model.closeForm()" data-toggle="tooltip" :title="__('Vrátiť sa bez uloženia')" type="button">
                             <i class="fa fa-chevron-left">
                             </i>
                         </button>

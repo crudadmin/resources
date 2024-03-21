@@ -1,20 +1,33 @@
 <template>
 <div>
-    <button
-        :data-target="'#modal-inline-'+model.table"
-        data-toggle="modal"
-        type="button"
-        class="btn--icon btn btn-primary"
-    >
-        <i class="fa fa-plus --icon-left"></i>
-        {{ model.getSettings('buttons.create', trans('new-row')) }}
-    </button>
+    <slot :open="open">
+    </slot>
 
     <!-- Modal for adding relation -->
-    <div class="modal fade" :id="'modal-inline-'+model.table" ref="modalEl" data-keyboard="false" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
+    <div v-if="model" class="modal fade" :id="modalId" ref="modalEl" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
-                <form-builder :model="model" >
+                <!-- :langid="langid"
+                :hasParentModel="getRelationModelParent"
+                :parentRow="getRelationRow" -->
+
+                <div class="modal-body --modal-wrapper" v-if="isListing">
+                    <model-builder :model_builder="model">
+                        <template v-slot:actions-grid-after>
+                            <button
+                                @click="close()"
+                                type="button"
+                                class="btn--icon btn btn-secondary --no-margin --button-back"
+                            >
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </template>
+                    </model-builder>
+                </div>
+
+                <form-builder
+                    v-else
+                    :model="model">
                 </form-builder>
             </div>
         </div>
@@ -24,23 +37,105 @@
 
 <script>
 export default {
-    props : ['model'],
+    name : 'AddNewRowModal',
+
+    props : {
+        model : {},
+        id : {
+            default : 'relation-modal',
+        },
+    },
+
+    data(){
+        return {
+            action : null,
+            loaded : false,
+        }
+    },
 
     mounted(){
-        this.model.setData('form.standalone', true);
+        this.boot();
+    },
 
-        this.model.on(['create', 'update', 'form.close'], () => {
-            //Close modal
+    watch : {
+        model(model){
+            if ( this.loaded == false && model ) {
+                this.boot();
+            }
+        },
+    },
+
+    methods : {
+        boot(){
+            if ( !this.model ){
+                return;
+            }
+
+            this.model.on(['create', 'update', 'form.close'], () => {
+                if ( this.isListing ){
+                    return;
+                }
+
+                //Close modal
+                this.close();
+            });
+
+            this.model.on('form.open', (row) => {
+                $(this.$refs.modalEl).modal('show');
+            });
+
+            $(this.$refs.modalEl).on('hidden.bs.modal', () => {
+                this.model.closeForm();
+            });
+
+            this.loaded = true;
+        },
+        close(){
             $(this.$refs.modalEl).modal('hide');
-        });
+        },
+        open(action, rowId){
+            this.action = action;
 
-        this.model.on('form.open', (row) => {
-            $(this.$refs.modalEl).modal('show');
-        });
+            this.$nextTick(() => {
+                this.model.setData('form.standalone', this.isListing ? false : true);
 
-        $(this.$refs.modalEl).on('hidden.bs.modal', () => {
-            this.model.closeForm();
-        });
-    }
+                if ( ['view', 'edit'].includes(action) ){
+                    //Enable only edit mode.
+                    this.model.editable = action == 'view' ? false : true;
+
+                    //Open row ID
+                    if ( rowId ) {
+                        this.model.selectRow({ id : rowId })
+                    }
+                }
+
+                //Listing
+                else if ( this.isListing ) {
+                    this.model.enableOnlyFullScreen();
+                    this.model.resetFormWithEvents();
+                }
+
+                $(this.$refs.modalEl).modal('show');
+            });
+        }
+    },
+
+    computed : {
+        modalId(){
+            return 'modal-inline-'+this.id+'_'+this.model.table;
+        },
+        modalEl(){
+            return this.$refs.modalEl;
+        },
+        isListing(){
+            return ['list'].includes(this.action);
+        }
+    },
 }
 </script>
+
+<style lang="scss" scoped>
+.--modal-wrapper {
+    padding: $boxPadding;
+}
+</style>

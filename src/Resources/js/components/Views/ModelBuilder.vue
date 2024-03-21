@@ -23,9 +23,9 @@
                 </div>
 
                 <div class="right" v-if="!model.isSingle()">
-                    <GridChanger :model="model" />
-
                     <custom-components :model="model" type="actions-grid-before" />
+
+                    <GridChanger :model="model" />
 
                     <custom-components :model="model" type="actions-grid" />
 
@@ -51,6 +51,8 @@
                         <i class="fa fa-plus --icon-left"></i>
                         {{ model.getSettings('buttons.create', trans('new-row')) }}
                     </button>
+
+                    <slot name="actions-grid-after"></slot>
                 </div>
             </div>
 

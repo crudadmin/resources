@@ -428,11 +428,15 @@ var ModelTableRows = (Model) => {
     },
 
     Model.prototype.isOnlyFormOpened = function(){
-        if ( this.getData('form.standalone') ){
+        if ( this.isStandaloneForm() ){
             return true;
         }
 
         return this.getData('formOpened') == true && this.isEnabledOnlyFormOrTableMode() === true;
+    },
+
+    Model.prototype.isStandaloneForm = function(){
+        return this.getData('form.standalone') ? true : false;
     },
 
     Model.prototype.canShowRows = function(){
@@ -529,6 +533,10 @@ var ModelTableRows = (Model) => {
     Model.prototype.enableOnlyFullScreen = function(){
         let sizes = this.getData('sizes');
 
+        if ( !sizes.length ){
+            return;
+        }
+
         for ( var key in sizes ) {
             if ( key != 3 ) {
                 //Save previous disabled value when mode switched to fullscreen
@@ -544,6 +552,10 @@ var ModelTableRows = (Model) => {
 
     Model.prototype.exitFullScreenMode = function(){
         let sizes = this.getData('sizes');
+
+        if ( !sizes.length ){
+            return;
+        }
 
         //We want revert disabled state before full screen mode
         for ( var key in sizes ) {

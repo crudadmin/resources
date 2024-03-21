@@ -60,6 +60,19 @@
         padding: $navbarPadding / 2;
     }
 
+    .btn--icon.--button-back {
+        width: $buttonHeight;
+        height: $buttonHeight;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.--pr {
+            margin-right: $boxPadding / 1.5 !important;
+        }
+    }
+
     .box {
         background: white;
         border: 1px solid rgba(0, 0, 0, 0.05);
@@ -104,19 +117,6 @@
                     > .btn {
                         min-height: 31px;
                     }
-                }
-            }
-
-            .btn--icon.--button-back {
-                width: $buttonHeight;
-                height: $buttonHeight;
-                font-size: 1.6rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-
-                &.--pr {
-                    margin-right: $boxPadding / 1.5 !important;
                 }
             }
 

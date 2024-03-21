@@ -39,7 +39,17 @@
 
                     <PaginationLimit :model="model" :rows="rows" v-if="!insertButton" :visibleIfMinRows="20" />
 
-                    <AddNewRowModal :model="model" v-if="insertButton" />
+                    <AddNewRowModal :model="model" v-if="insertButton" v-slot="{ open }">
+                        <button
+                            @click="open"
+                            type="button"
+                            class="btn--icon btn btn-primary"
+                        >
+                            <i class="fa fa-plus --icon-left"></i>
+
+                            {{ model.getSettings('buttons.create', trans('new-row')) }}
+                        </button>
+                    </AddNewRowModal>
                 </div>
             </div>
 
@@ -81,7 +91,6 @@ import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
 import PaginationLimit from '../Partials/PaginationLimit.vue';
 import ColumnsList from '../Partials/ColumnsList.vue';
-import AddNewRowModal from '../Partials/Actions/AddNewRowModal.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
@@ -91,7 +100,7 @@ export default {
         insertButton : {default : false},
     },
 
-    components : { TableRows, Pagination, PaginationLimit, CustomComponents, AddNewRowModal, ColumnsList },
+    components : { TableRows, Pagination, PaginationLimit, CustomComponents, ColumnsList },
 
     data : function(){
         return {

@@ -1,6 +1,6 @@
 <template>
     <Field :field="field" :class="{ disabled : disabled || readonly || hasNoFilterValues }" v-show="required || !hasNoFilterValues">
-        <div class="form-group__chosen-container" :class="{ canPerformActions : hasRelationModal && hasAnyAction }">
+        <div class="form-group__chosen-container" :class="{ canPerformActions : isEnabledRelationModal }">
             <select ref="select" :disabled="disabled" :name="!isMultiple ? name : ''" :data-placeholder="field.placeholder ? field.placeholder : trans('select-option-multi')" :multiple="isMultiple" class="form-control">
                 <option v-if="!isMultiple" value="">{{ trans('select-option') }}</option>
                 <option
@@ -15,23 +15,31 @@
                     :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
             </select>
 
-            <div class="button-actions">
-                <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-success">
-                    <i class="fa fa-plus"></i>
-                </button>
-                <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-default">
-                    <i class="fa fa-folder-open"></i>
-                </button>
-                <button v-if="canEditRow" data-add-relation-row @click="performRelationAction('edit')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-default">
-                    <i class="fa fa-edit"></i>
-                </button>
-            </div>
+            <AddNewRowModal :id="id" :model="relationModel" v-slot="{ open }" v-if="isEnabledRelationModal">
+                <div class="button-actions">
+                    <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add', open)" type="button" class="action-button btn btn-success">
+                        <i class="fa fa-plus"></i>
+                    </button>
+
+                    <button v-if="canEditRow" data-edit-relation-row @click="performRelationAction('edit', open)" type="button" class="action-button btn btn-default">
+                        <i class="far fa-edit"></i>
+                    </button>
+
+                    <button v-else-if="canViewRow" data-view-relation-row @click="performRelationAction('view', open)" type="button" class="action-button btn btn-default">
+                        <i class="far fa-eye"></i>
+                    </button>
+
+                   <button v-if="canListRow" data-add-relation-row @click="performRelationAction('list', open)" type="button" class="action-button btn btn-default">
+                        <i class="fa fa-folder-open"></i>
+                    </button>
+                </div>
+            </AddNewRowModal>
         </div>
 
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+name" value="1">
 
         <!-- Modal for adding relation -->
-        <div class="modal fade" select-field :class="{ '--inModal' : isModalInModal }" v-if="hasRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
+        <!-- <div class="modal fade" select-field :class="{ '--inModal' : isModalInModal }" v-if="isEnabledRelationModal" :id="getModalId" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -52,7 +60,7 @@
                         </model-builder>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </Field>
 </template>
@@ -65,8 +73,7 @@
 
         data(){
             return {
-                allowRelation : false,
-                relationAction : null,
+                relationModel : null,
             };
         },
 
@@ -82,18 +89,6 @@
             },
             readonly(){
                 this.$nextTick(this.reloadSelectWithMultipleOrders);
-            },
-            allowRelation(state){
-                if ( state == true ) {
-                    this.setRelationModel();
-
-                    this.setModelEvents();
-                }
-            },
-            hasRelationModal(state){
-                if ( state == false ){
-                    this.allowRelation = false;
-                }
             },
         },
 
@@ -133,21 +128,8 @@
             row(){
                 return this.model.getRow();
             },
-            hasRelationModal(){
-                return this.canAddRow || this.canViewRow || this.canEditRow;
-            },
-            isCanAddInParentMode(){
-                return ['parent'].indexOf(this.field.canAdd) > -1;
-            },
-            modelBuilderId(){
-                if ( this.isCanAddInParentMode ){
-                    return this.id+this.row.id;
-                }
-
-                return 'key';
-            },
-            getModalId(){
-                return 'form-relation-modal-'+this.id;
+            isEnabledRelationModal(){
+                return this.canAddRow || this.canViewRow || this.canEditRow || this.canListRow;
             },
             relationTable(){
                 return (this.field.belongsTo||this.field.belongsToMany||'').split(',')[0];
@@ -180,50 +162,29 @@
                     return this.getFreshModel(relationTable);
                 }
             },
-            isModalInModal(){
-                return this.model.hasParentFormModel() === false
-            },
             /*
              * Can show adding row just for first level of forms (not when user click to add new row in form),
              * and also when is filter activated, then show just when is filter also selected
              */
             canAddRow(){
-                if ( !this.field.canAdd ){
-                    return false;
-                }
-
-                var temporaryRelationModel = this.getFreshModel(this.relationTable);
-                return (temporaryRelationModel && temporaryRelationModel.hasAccess('insert'))
-                        && (this.field.canAdd === true || this.isCanAddInParentMode)
-                        && (!this.getFilterBy || this.filterByValue);
+                return this.field.canAdd && this.hasRelationAccess('insert') && (!this.getFilterBy || this.filterByValue);
             },
             canViewRow(){
-                if ( !(this.field.canView && this.field.value) ){
-                    return false;
-                }
-
-                var temporaryRelationModel = this.getFreshModel(this.relationTable);
-                return (temporaryRelationModel && temporaryRelationModel.hasAccess('read'))
-                        && (!this.getFilterBy || this.filterByValue);
+                return (this.field.canView && this.field.value)
+                        && this.hasRelationAccess('read')
+                        && (!this.getFilterBy || this.filterByValue)
+                        && !this.field.belongsToMany;
             },
             canEditRow(){
-                if ( !(this.field.canEdit && this.field.value) ){
-                    return false;
-                }
-
-                var temporaryRelationModel = this.getFreshModel(this.relationTable);
-                return (temporaryRelationModel && temporaryRelationModel.hasAccess('update'))
-                        && (!this.getFilterBy || this.filterByValue);
+                return (this.field.canEdit && this.field.value)
+                        && this.hasRelationAccess('update')
+                        && (!this.getFilterBy || this.filterByValue)
+                        && !this.field.belongsToMany;
             },
-            canAddScopes(){
-                if ( this.isCanAddInParentMode == false ){
-                    return [];
-                }
-
-                return [{
-                    key : 'filterByParentField',
-                    params : [this.model.table, this.field_key, this.row.id].join(';')
-                }];
+            canListRow(){
+                return this.field.canList
+                        && this.hasRelationAccess('read')
+                        && (!this.getFilterBy || this.filterByValue);
             },
             getFilterBy(){
                 return this.model.getFilterBy(this.field_key);
@@ -350,85 +311,34 @@
         },
 
         methods : {
-            performRelationAction(action){
-                this.relationAction = action;
+            hasRelationAccess(type){
+                this.temporaryRelationModel = this.temporaryRelationModel||this.getFreshModel(this.relationTable);
 
-                this.allowRelation = true;
+                return this.temporaryRelationModel && this.temporaryRelationModel.hasAccess(type);
             },
-            setModelEvents(){
-                let originalInsertable = this.relationModel.insertable;
-                let originalEditable = this.relationModel.editable;
+            performRelationAction(action, open){
+                this.setRelationModel(action);
 
-                let onFormCreate = () => {
-                    $(this.$refs.relationModalRef).modal('hide');
-                };
-
-                $(this.$refs.relationModalRef).on('show.bs.modal', () => {
-                    if ( ['view', 'edit'].indexOf(this.relationAction) > -1 ) {
-                        this.relationModel.insertable = false;
-                        this.relationModel.displayable = true;
-
-                        //In preview mode we want disable edit
-                        if ( this.relationAction == 'view' ) {
-                            this.relationModel.editable = false;
-                        }
-
-                        this.relationModel.enableOnlyFullScreen();
-
-                        this.relationModel.selectRow({ id : this.field.value });
-                    } else if ( ['add'].indexOf(this.relationAction) > -1 ) {
-                        this.relationModel.openForm();
-                        this.relationModel.on('onCreate', onFormCreate);
-                    }
-                });
-
-                //Close only this modal, not all opened. Because canAdd can be opened multiple times inside another modal
-                $(this.$refs.relationModalRef).on('hidden.bs.modal', () => {
-                    if ( ['view', 'edit'].indexOf(this.relationAction) > -1 ){
-                        this.relationModel.insertable = originalInsertable;
-                        this.relationModel.editable = originalEditable;
-                        this.relationModel.exitFullScreenMode();
-                    } else if ( ['add'].indexOf(this.relationAction) > -1 ) {
-                        this.relationModel.off('onCreate', onFormCreate);
-                    }
-
-                    //Close relation form
-                    this.relationModel.closeForm();
-
-                    //If multiple modals are opened all the time, also after modal close. We want add
-                    //model-open class into body, for support of scrolling modal.
-                    if ( $('.modal[select-field] .modal-header:visible').length > 0 ) {
-                        $('body').addClass('modal-open');
-                    } else {
-                        $('body').removeClass('modal-open');
-                    }
-                });
+                open(action, this.field.value);
             },
-            setRelationModel(){
-                if ( !this.hasRelationModal ) {
+            setRelationModel(action){
+                if ( !this.isEnabledRelationModal || this.relationModel ) {
                     return;
                 }
 
-                let model = this.getFreshModel(this.relationTable);
+                let model = this.relationModel = this.getFreshModel(this.relationTable);
 
-                //We want disable refresh interval in model
-                if ( this.isCanAddInParentMode ) {
-                    model.settings.refresh_interval = false;
-                }
-
-                this.relationModel = model;
-
-                this.relationModel.on('onCreate', this.onRelationCreated = (row) => {
+                model.on('create', (row) => {
                     this.model.pushOption(this.field_key, row, 'store');
 
                     this.reloadSetters(row.id);
                 });
 
-                this.relationModel.on('onUpdate', this.onRelationUpdate = (row) => {
+                model.on('update', (row) => {
                     this.model.pushOption(this.field_key, row, 'update');
                 });
 
-                this.relationModel.on('onDelete', this.onRelationDeleted = (ids) => {
+                model.on('delete', (ids) => {
                     ids.forEach(id => {
                         this.model.pushOption(this.field_key, id, 'delete');
                     });
@@ -590,9 +500,6 @@
 
                 return filterBy;
             },
-            hasAnyAction(){
-                return this.performRelationAction('add') || this.performRelationAction('view') || this.performRelationAction('edit');
-            }
         },
     }
 </script>
@@ -620,9 +527,11 @@
         margin-right: -0.2rem;
     }
 
-    .button-actions {
+    ::v-deep .button-actions {
         display: flex;
-        z-index: 2;
+        z-index: 3;
+        position: relative;
+        height: 100%;
 
         .btn {
             border-radius: 0;
