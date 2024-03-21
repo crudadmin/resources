@@ -2,14 +2,21 @@ import Model from '@components/Helpers/Model/Model.js';
 
 var modelMixins = {
     methods: {
-        getFreshModel(table){
+        getFreshModel(table, bootDepthFromComponent){
             let originalModel = this.$root.originalModels[table];
 
             if ( ! originalModel ){
                 return;
             }
 
-            return new Model(originalModel);
+            const m = new Model(originalModel);
+
+            //Boot model depth
+            if ( bootDepthFromComponent ){
+                m.setDepthLevelByComponent(bootDepthFromComponent);
+            }
+
+            return m;
         },
         getActiveModel(table, depthLevel){
             if ( _.isNil(depthLevel) ) {

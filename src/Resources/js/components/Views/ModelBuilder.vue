@@ -101,7 +101,7 @@
     import GridChanger from '@components/Partials/GridChanger.vue';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentRow', 'hasParentModel', 'scopes'],
+        props : ['model_builder', 'langid', 'ischild', 'parentRow', 'scopes'],
 
         name : 'model-builder',
 
@@ -128,24 +128,20 @@
         },
 
         created() {
+            //Set deep level of given model
+            this.model.setDepthLevelByComponent(this);
+
             //For file paths
             this.root = this.$root.$http.$options.root;
-
-            //Store model and save his model-builder component
-            this.storeModel(this.model);
 
             //Set empty model instance
             this.model.setRow(this.model.emptyRowInstance());
 
             //Set model properties
-            this.model.setData('hasParentModel', this.hasParentModel);
             this.model.setData('parentRow', this.parentRow);
 
             this.model.setData('langid', this.langid);
             this.model.setData('scopes', this.scopes||[]);
-
-            //Set deep level of given model
-            this.model.setDepthLevel(this);
         },
 
         mounted() {

@@ -1,20 +1,8 @@
 var ModelCoreHelpers = (Model) => {
-    Model.prototype.hasParentFormModel = function(){
-        let hasParentModel = this.getData('hasParentModel');
-
-        //If parent model builder does not exists, return true
-        return _.isNil(hasParentModel) ? true : hasParentModel;
-    }
-
     Model.prototype.getParentTableName = function(force){
         var parentModel = this.getParentModel();
 
-        //if is model loaded in field, and has parent row, then load model of that parent
-        if ( this.hasParentFormModel() && typeof this.hasParentFormModel() == 'object' && 'slug' in this.hasParentFormModel() ) {
-            return this.hasParentFormModel().slug;
-        }
-
-        if ( force !== true && ((!parentModel || !parentModel.isOpenedRow()) || this.hasParentFormModel() === false) ) {
+        if ( force !== true && ((!parentModel || !parentModel.isOpenedRow())) ) {
             return;
         }
 
@@ -32,7 +20,9 @@ var ModelCoreHelpers = (Model) => {
     }
 
     Model.prototype.isWithoutExistingParentRow = function(){
-        return this.without_parent == true && !this.getParentRowId() && this.hasParentFormModel() == true;
+        //TODO: CHECK
+        return this.without_parent == true && !this.getParentRowId();
+        // return this.without_parent == true && !this.getParentRowId() && this.hasParentFormModel() == true;
     }
 };
 

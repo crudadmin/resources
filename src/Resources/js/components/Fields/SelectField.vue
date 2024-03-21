@@ -326,7 +326,7 @@
                     return;
                 }
 
-                let model = this.relationModel = this.getFreshModel(this.relationTable);
+                let model = this.relationModel = this.getFreshModel(this.relationTable, this);
 
                 model.on('create', (row) => {
                     this.model.pushOption(this.field_key, row, 'store');

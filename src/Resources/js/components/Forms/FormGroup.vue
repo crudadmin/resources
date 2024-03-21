@@ -93,7 +93,7 @@ export default {
         getModel(modelName){
             let model = getModel.call(this, modelName);
 
-            model.setDepthLevel(this);
+            model.setDepthLevelByComponent(this);
             model.setData('parentRow', this.model.getRow());
 
             return model;

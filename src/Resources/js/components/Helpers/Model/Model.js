@@ -26,7 +26,7 @@ const FreshBuilderData = () => {
         uuid : $app.generateUuid(),
 
         //Depth level of given model
-        depth_level : 0,
+        depth_level : -1,
 
         //All uuids of parent models tree for given model
         tree : [],
@@ -101,10 +101,6 @@ const FreshBuilderData = () => {
 
         //Model scopes
         scopes : [],
-
-        //Check if model has parent row. For example when we are using filterBy in select
-        //we need dynamically set parent of model builder
-        hasParentModel : null,
 
         //Assigned parent row. May be parent model, or imaginary parent row
         //only to filter displayed rows

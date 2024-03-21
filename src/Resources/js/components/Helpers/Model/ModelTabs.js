@@ -201,16 +201,27 @@ var Tabs = (Model) => {
         }
     }
 
-    Model.prototype.setDepthLevel = function(_component){
+    Model.prototype.setDepthLevelByComponent = function(_component){
+        //If depth is set already
+        if ( this.data.depth_level !== -1 ){
+            return;
+        }
+
         var parent = _component.$parent,
             depth = 0,
             treeUuids = [];
 
         while(parent && parent.$options.name != 'base-page-view') {
-            if ( parent.$options.name == 'model-builder' ) {
-                treeUuids.push(parent.model.getData('uuid'));
+            //We need try to find in any of component where trees hierarchy may be made
+            //Because model builder may be skipped in that structure. And we make tree directly from form builder
+            if ( ['model-builder', 'form-builder', 'model-rows-builder'].includes(parent.$options.name) ) {
+                let uuid = parent.model.getData('uuid');
 
-                depth++;
+                if ( uuid && treeUuids.includes(uuid) === false ) {
+                    treeUuids.push(uuid);
+
+                    depth++;
+                }
             }
 
             parent = parent.$parent;
@@ -218,6 +229,9 @@ var Tabs = (Model) => {
 
         this.setData('depth_level', depth);
         this.setData('tree', treeUuids);
+
+        //Store model and save his model-builder component
+        $store.commit('models/storeModel', this);
     };
 };
 

@@ -51,10 +51,6 @@ var RowActions = (Model) => {
         return this.getChildModels(table);
     };
 
-    Model.prototype.hasParentModel = function(table){
-        return this.getParentModels().map(model => model.table).includes(table);
-    }
-
     Model.prototype.emptyRowInstance = function(){
         var row = {},
             table;
@@ -204,7 +200,6 @@ var RowActions = (Model) => {
         if ( this.isOpenedRow() && this.getRow().id == row.id && !historyId ) {
             return;
         }
-
 
         //Resets form
         if ( row === true && data === null ) {
