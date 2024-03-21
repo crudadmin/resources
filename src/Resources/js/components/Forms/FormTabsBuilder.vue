@@ -23,7 +23,8 @@
                 </a>
             </li>
         </ul>
-        <div class="tab-content tab-content--form" :class="{ '--model-active' : isModel(getTabs[activeTab]) }" :data-active-index="activeTab">
+
+        <div class="tab-content tab-content--form" :class="{ '--model-active' : isModel(getTabs[activeTab]) && !getModel(getTabs[activeTab].model).inParent }" :data-active-index="activeTab">
             <div
                 v-for="(tab, $index) in getTabs"
                 v-if="canRenderTab(tab)"

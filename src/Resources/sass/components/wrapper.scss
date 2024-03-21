@@ -347,6 +347,7 @@
         &.admin-model--in-parent {
             > .admin-model__body {
                 > .row > .col--form > .crudadmin-form > .box {
+                    border: 0;
                     box-shadow: none;
 
                     > .box-body {
