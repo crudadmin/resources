@@ -1,6 +1,11 @@
 var ModelCoreHelpers = (Model) => {
-    Model.prototype.getParentTableName = function(force = true){
-        var parentModel = this.getData('parentModel')||this.getParentModel();
+    Model.prototype.getParentTableName = function(){
+        const manualParentModel = this.getData('parentModel');
+        if ( manualParentModel === false ){
+            return;
+        }
+
+        var parentModel = manualParentModel||this.getParentModel();
 
         return parentModel ? parentModel.table : null;
     };

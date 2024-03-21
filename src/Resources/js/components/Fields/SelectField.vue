@@ -136,6 +136,8 @@
                 if ( relationTable ) {
                     return this.getFreshModel(relationTable);
                 }
+
+                return false;
             },
             /*
              * Can show adding row just for first level of forms (not when user click to add new row in form),
