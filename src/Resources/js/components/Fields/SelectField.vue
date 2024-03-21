@@ -14,15 +14,18 @@
                     :selected="hasValue(data[0], value, isMultiple) ? 'selected' : ''"
                     :value="data[0]">{{ data[1] == null ? trans('number') + ' ' + data[0] : data[1] }}</option>
             </select>
-            <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-success">
-                <i class="fa fa-plus"></i>
-            </button>
-            <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-default">
-                <i class="fa fa-folder-open"></i>
-            </button>
-            <button v-if="canEditRow" data-add-relation-row @click="performRelationAction('edit')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-default">
-                <i class="fa fa-edit"></i>
-            </button>
+
+            <div class="button-actions">
+                <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-success">
+                    <i class="fa fa-plus"></i>
+                </button>
+                <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-default">
+                    <i class="fa fa-folder-open"></i>
+                </button>
+                <button v-if="canEditRow" data-add-relation-row @click="performRelationAction('edit')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-default">
+                    <i class="fa fa-edit"></i>
+                </button>
+            </div>
         </div>
 
         <input v-if="isRequiredIfHasValues" type="hidden" :name="'$required_'+name" value="1">
@@ -617,12 +620,18 @@
         margin-right: -0.2rem;
     }
 
-    .btn {
-        border-radius: 0;
+    .button-actions {
+        display: flex;
+        z-index: 2;
 
-        &:last-child {
-            border-top-right-radius: $inputRadius;
-            border-bottom-right-radius: $inputRadius;
+        .btn {
+            border-radius: 0;
+            width: $buttonHeight;
+
+            &:last-child {
+                border-top-right-radius: $inputRadius;
+                border-bottom-right-radius: $inputRadius;
+            }
         }
     }
 }
