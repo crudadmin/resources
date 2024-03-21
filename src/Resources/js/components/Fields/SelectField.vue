@@ -17,10 +17,10 @@
             <button v-if="canAddRow" data-add-relation-row @click="performRelationAction('add')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-success">
                 <i class="fa fa-plus"></i>
             </button>
-            <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn-default">
+            <button v-if="canViewRow" data-add-relation-row @click="performRelationAction('view')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-default">
                 <i class="fa fa-folder-open"></i>
             </button>
-            <button v-if="canEditRow" data-add-relation-row @click="performRelationAction('edit')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn-default">
+            <button v-if="canEditRow" data-add-relation-row @click="performRelationAction('edit')" type="button" :data-target="'#'+getModalId" data-toggle="modal" class="action-button btn btn-default">
                 <i class="fa fa-edit"></i>
             </button>
         </div>
@@ -609,6 +609,21 @@
 
     .action-button {
         z-index: 1;
+    }
+}
+
+.canPerformActions {
+    ::v-deep .chosen-container {
+        margin-right: -0.2rem;
+    }
+
+    .btn {
+        border-radius: 0;
+
+        &:last-child {
+            border-top-right-radius: $inputRadius;
+            border-bottom-right-radius: $inputRadius;
+        }
     }
 }
 </style>
