@@ -619,6 +619,10 @@ var FormActions = (Model) => {
         var title,
             row = this.getRow();
 
+        const isFieldSelect = (column) => {
+            return column && column in this.fields && (['select', 'radio'].indexOf(this.fields[column].type) > -1) ? true : false;
+        };
+
         if ( this.isOpenedRow() ) {
             //If update title has not been set
             if ( !(title = this.getSettings('title.update')) ) {
@@ -637,7 +641,7 @@ var FormActions = (Model) => {
             for ( var key in row ) {
                 var value = row[key];
 
-                if ( this.isFieldSelect(key) ) {
+                if ( isFieldSelect(key) ) {
                     var values = $app.languageOptions(this.fields[key].options, key);
 
                     for ( var i = 0; i < values.length; i++ ) {

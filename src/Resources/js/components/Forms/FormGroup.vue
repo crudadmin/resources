@@ -150,10 +150,6 @@ export default {
         getGroupClass(group){
             var width = (group.width+'').split('-');
 
-            if ( this.isInlineModelTab(group) ){
-                return 'col-12 --inline-model';
-            }
-
             if ( width[0] == 'half' )
                 width[0] = 6;
             else if ( width[0] == 'full' )
@@ -162,7 +158,7 @@ export default {
                 width[0] = 4;
 
             if ( width.length == 2 && width[1] == 'inline' ) {
-                return 'col-12 col-lg-'+width[0]+' fields-group--inline';
+                return 'col-12 col-lg-'+width[0]+' fields-group--inline '+(this.isInlineModelTab(group) ? '--inline-model' : '');
             }
 
             if ( $.isNumeric(width[0]) ) {

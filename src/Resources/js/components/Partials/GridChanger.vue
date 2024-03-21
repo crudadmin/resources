@@ -75,6 +75,10 @@ export default {
                 for ( var key in this.sizes ){
                     const size = this.sizes[key];
 
+                    if ( this.model.isSettingDisabled('grid.'+size.key) ){
+                        continue;
+                    }
+
                     //If grid parent size is on full width, then enable all grid sizes in this model
                     if ( parentSize == 0 && depthLevel <= 1 ) {
                         size.disabled = false;

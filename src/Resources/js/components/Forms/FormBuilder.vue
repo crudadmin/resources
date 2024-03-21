@@ -213,9 +213,6 @@ export default {
         openNewForm(){
             this.$parent.addNewRow();
         },
-        isFieldSelect(column){
-            return column && column in this.model.fields && (['select', 'radio'].indexOf(this.model.fields[column].type) > -1) ? true : false;
-        },
     },
 }
 </script>
