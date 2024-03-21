@@ -1,6 +1,10 @@
 var ModelBus = (Model) => {
     Model.prototype.on = function(type, callback){
-        this.data.events.push({ type, callback });
+        type = _.castArray(type);
+
+        type.forEach((t) => {
+            this.data.events.push({ type : t, callback });
+        });
 
         return this;
     };

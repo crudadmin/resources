@@ -428,6 +428,10 @@ var ModelTableRows = (Model) => {
     },
 
     Model.prototype.isOnlyFormOpened = function(){
+        if ( this.getData('form.standalone') ){
+            return true;
+        }
+
         return this.getData('formOpened') == true && this.isEnabledOnlyFormOrTableMode() === true;
     },
 

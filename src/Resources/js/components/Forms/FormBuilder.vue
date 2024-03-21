@@ -88,7 +88,11 @@ import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents
 export default {
     name : 'form-builder',
 
-    props : ['model'],
+    props : {
+        model : {
+            default : false,
+        },
+    },
 
     components: {
         FormTabsBuilder, ModelLanguageSwitch, CustomComponents, SubmitButton

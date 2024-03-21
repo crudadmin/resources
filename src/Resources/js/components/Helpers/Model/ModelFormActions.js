@@ -457,6 +457,8 @@ var FormActions = (Model) => {
 
             this.closeHistory();
         }
+
+        this.fire('form.close');
     }
 
     //Resets form values and errors
@@ -589,7 +591,7 @@ var FormActions = (Model) => {
                 for ( var table in rows ) {
                     var clonedRow = _.cloneDeep(rows[table]),
                         isParentRow = table == this.table,
-                        model = $app.getActiveModel(table, this.getData('depth_level') + (isParentRow ? 0 : 1));
+                        model = isParentRow ? this : $app.getActiveModel(table, this.getData('depth_level') + 1);
 
                     if ( !model ){
                         continue;

@@ -11,19 +11,11 @@
     </button>
 
     <!-- Modal for adding relation -->
-    <div class="modal fade" :id="'modal-inline-'+model.table" ref="relationModalRef" data-keyboard="false" tabindex="-1" role="dialog">
+    <div class="modal fade" :id="'modal-inline-'+model.table" ref="modalEl" data-keyboard="false" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">{{ model.getFormTitle() }}</h4>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form-builder :model="model" ></form-builder>
-                </div>
+                <form-builder :model="model" >
+                </form-builder>
             </div>
         </div>
     </div>
@@ -35,16 +27,18 @@ export default {
     props : ['model'],
 
     mounted(){
-        this.model.on('create', () => {
+        this.model.setData('form.standalone', true);
+
+        this.model.on(['create', 'update', 'form.close'], () => {
             //Close modal
-            $(this.$refs.relationModalRef).modal('hide');
+            $(this.$refs.modalEl).modal('hide');
         });
 
         this.model.on('form.open', (row) => {
-            $(this.$refs.relationModalRef).modal('show');
-        })
+            $(this.$refs.modalEl).modal('show');
+        });
 
-        $(this.$refs.relationModalRef).on('hidden.bs.modal', () => {
+        $(this.$refs.modalEl).on('hidden.bs.modal', () => {
             this.model.closeForm();
         });
     }
