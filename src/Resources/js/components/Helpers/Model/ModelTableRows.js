@@ -468,6 +468,16 @@ var ModelTableRows = (Model) => {
         return true;
     }
 
+    Model.prototype.canLoadSubTabs = function(){
+        const load = this.getData('load_child_tab_models');
+
+        if ( load === false ){
+            return false;
+        }
+
+        return true;
+    }
+
     Model.prototype.canShowForm = function(){
         if ( this.checkFormVisibility() === false ){
             return false;
@@ -687,7 +697,7 @@ var ModelTableRows = (Model) => {
         } = (options||{});
 
         //On first time allow reload rows without parent, for field options...
-        if ( (this.isWithoutExistingParentRow() || this.getData('loadWithRows') === false) && indicator == false ){
+        if ( (this.isWithoutExistingParentRow()) && indicator == false ){
             return false;
         }
 

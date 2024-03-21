@@ -9,11 +9,11 @@
                 v-show="isTabVisible(tab)"
                 data-tabs
                 :data-depth="model.getData('depth_level')"
-                :default-tab="isModel(tab) && getModel(tab.model) ? false : ''"
-                :data-model="isModel(tab) && getModel(tab.model) ? getModel(tab.model).slug : model.table"
+                :default-tab="isModel(tab) && getTabModel(tab) ? false : ''"
+                :data-model="isModel(tab) && getTabModel(tab) ? getTabModel(tab).slug : model.table"
                 :data-tab-id="tab.id"
                 @click="model.setActiveTab($index, level)"
-                :title="isModel(tab) ? getModel(tab.model).title : null"
+                :title="isModel(tab) ? getTabModel(tab).title : null"
                 data-toggle="tooltip">
                 <a data-toggle="tab" class="nav-link" :class="{ active : activeTab == $index }" aria-expanded="true">
                     <i v-if="getTabIcon(tab)" class="fa nav-link--icon-left" :class="[faMigrator(getTabIcon(tab))]"></i>
@@ -24,13 +24,13 @@
             </li>
         </ul>
 
-        <div class="tab-content tab-content--form" :class="{ '--model-active' : isModel(getTabs[activeTab]) && !getModel(getTabs[activeTab].model).inParent }" :data-active-index="activeTab">
+        <div class="tab-content tab-content--form" :class="{ '--model-active' : isModel(getTabs[activeTab]) && !getTabModel(getTabs[activeTab]).inParent }" :data-active-index="activeTab">
             <div
                 v-for="(tab, $index) in getTabs"
                 v-if="canRenderTab(tab)"
                 class="tab-pane"
                 :class="{ active : activeTab == $index }"
-                :data-tab-model="isModel(tab) ? getModel(tab.model).slug : false"
+                :data-tab-model="isModel(tab) ? getTabModel(tab).slug : false"
                 :data-tab-id="tab.id">
                 <div class="row">
                     <div v-if="hasTabs(tab.fields) || isModel(tab)" :class="{ model : isModel(tab) }" class="col-lg-12">
@@ -43,13 +43,12 @@
 
                         <model-builder
                             dusk="model-builder"
-                            :data-model="getModel(tab.model).table"
-                            :key="getModel(tab.model).getData('uuid')"
+                            :data-model="getTabModel(tab).table"
+                            :key="getTabModel(tab).getData('uuid')"
                             v-if="isModel(tab)"
                             :langid="model.getSelectedLanguageId()"
                             :ischild="true"
-                            :model_builder="getModel(tab.model)"
-                            :loadWithRows="isLoadedModel(getModel(tab.model), $index, true)"
+                            :model_builder="getTabModel(tab)"
                             :parentRow="row">
                         </model-builder>
                     </div>
@@ -71,7 +70,7 @@
 <script>
 import FormGroup from './FormGroup.vue';
 import ModelBuilder from '../Views/ModelBuilder.vue';
-import { isTab, isGroup, addGroupLevel, getModel } from '@components/Helpers/Model/ModelTabs.js';
+import { isTab, isGroup, addGroupLevel, getModel, isInlineModelTab } from '@components/Helpers/Model/ModelTabs.js';
 
 export default {
     name : 'form-tabs-builder',
@@ -81,10 +80,7 @@ export default {
     components : { FormGroup },
 
     data(){
-        return {
-            //Which child models has been loaded
-            modelsLoaded : [],
-        };
+        return {};
     },
 
     created() {
@@ -105,17 +101,25 @@ export default {
             if ( this.model.getSettings('autoreset') !== false || !id ) {
                 this.model.setActiveTab(0, true);
             }
-
-            this.modelsLoaded = [];
         },
-        activeTab(tabid){
+        activeTab(activeTab){
+            let tab = this.getTabs[activeTab],
+                isModel = this.isModel(tab),
+                model = isModel ? this.getTabModel(tab) : null;
+
+            //Set model tab as clicked.
+            if ( model ){
+                model.setData('load_child_tab_models', true);
+            }
+
             //If tab is in subgroup of field, we do not want change save button state
-            if ( typeof this.cansave == 'undefined' )
+            if ( typeof this.cansave == 'undefined' ) {
                 return;
+            }
 
             eventHub.$emit('changeFormSaveState', {
                 model : this.model.slug,
-                state : !(this.isModel(this.getTabs[tabid]) && this.getModel(this.getTabs[tabid].model).inParent !== true)
+                state : !(isModel && model.inParent !== true)
             });
         },
     },
@@ -144,8 +148,14 @@ export default {
     },
 
     methods: {
-        getModel(model){
-            return getModel.bind(this)(model);
+        getTabModel(tab){
+            return getModel.bind(this)(tab.model, (model) => {
+                if ( isInlineModelTab(tab) ){
+                    return;
+                }
+
+                model.setData('load_child_tab_models', false);
+            });
         },
         addGroupLevel,
         checkRecursivityModelTab(tab){
@@ -176,7 +186,7 @@ export default {
          */
         getTabName(tab){
             if ( this.isModel(tab) ) {
-                var model = this.getModel(tab.model),
+                var model = this.getTabModel(tab),
                     name = tab.name||model.name;
 
                 return name;
@@ -189,7 +199,7 @@ export default {
                 return;
             }
 
-            var model = this.getModel(tab.model);
+            var model = this.getTabModel(tab);
 
             //If is not single model, then show rows count
             if ( model.isSingle() || model.isInParent() ) {
@@ -206,7 +216,7 @@ export default {
          */
         getTabIcon(tab){
             if ( this.isModel(tab) )
-                return tab.icon||this.getModel(tab.model).icon;
+                return tab.icon||this.getTabModel(tab).icon;
 
             return tab.icon;
         },
@@ -214,10 +224,10 @@ export default {
          * Check if tabs is model type
          */
         isModel(tab){
-            if ( !(tab.type == 'tab' && tab.model && this.getModel(tab.model).active == true) )
+            if ( !(tab.type == 'tab' && tab.model && this.getTabModel(tab).active == true) )
                 return false;
 
-            return this.model.isOpenedRow() || this.getModel(tab.model).without_parent == true;
+            return this.model.isOpenedRow() || this.getTabModel(tab).without_parent == true;
         },
         isField(field){
             return typeof field == 'string' && field in this.model.fields;
@@ -269,15 +279,6 @@ export default {
             }.bind(this));
 
             return items;
-        },
-        isLoadedModel(model, index, autoLoadModel = false){
-            //Tab is active only when is selected, or when is inParentMode
-            //because we need loaded fields also when tab is not opened. For proper validation errors.
-            if ( autoLoadModel === true && ((index === this.activeTab || model.isInParent() || model.getSettings('tab_loaded')) && this.modelsLoaded.indexOf(model.slug) === -1) ) {
-                this.modelsLoaded.push(model.slug);
-            }
-
-            return this.modelsLoaded.indexOf(model.slug) > -1;
         },
         isTabVisible(tab){
             if ( ! isTab(tab) )

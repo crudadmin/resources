@@ -75,9 +75,6 @@ const FreshBuilderData = () => {
         //Assigned form into model
         form : null,
 
-        //Determine if rows should be loaded on rendered model
-        loadWithRows : true,
-
         //Which tab is currently active
         activeTab : {},
 

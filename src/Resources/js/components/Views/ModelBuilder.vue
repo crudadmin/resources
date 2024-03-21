@@ -73,7 +73,7 @@
                     <!--/.col (left) -->
 
                     <!-- right column -->
-                    <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()" v-if="loadWithRows!==false">
+                    <div :class="['col-lg-'+(12 - model.activeGridSize())]" class="col--form col-12" v-show="model.canShowForm()">
                         <custom-components :model="model" type="form-before" />
 
                         <form-builder
@@ -101,7 +101,7 @@
     import GridChanger from '@components/Partials/GridChanger.vue';
 
     export default {
-        props : ['model_builder', 'langid', 'ischild', 'parentRow', 'loadWithRows', 'hasParentModel', 'scopes'],
+        props : ['model_builder', 'langid', 'ischild', 'parentRow', 'hasParentModel', 'scopes'],
 
         name : 'model-builder',
 
@@ -141,7 +141,6 @@
             this.model.setData('hasParentModel', this.hasParentModel);
             this.model.setData('parentRow', this.parentRow);
 
-            this.model.setData('loadWithRows', this.loadWithRows);
             this.model.setData('langid', this.langid);
             this.model.setData('scopes', this.scopes||[]);
 
@@ -185,14 +184,6 @@
             },
             scopes(value){
                 this.model.setData('scopes', value);
-            },
-            loadWithRows(value){
-                //Update parent model active tab
-                this.model.setData('loadWithRows', value);
-
-                if ( value === true ) {
-                    this.sendRowsData();
-                }
             },
             'parentRow.id'(id, oldId){
                 //When parent row has been changed, then load children rows

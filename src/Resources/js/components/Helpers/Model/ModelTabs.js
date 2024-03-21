@@ -36,7 +36,7 @@ const isModelInFields = (childs, model) => {
 /*
  * Return model from childs by model table
  */
-export const getModel = function(requestedModel) {
+export const getModel = function(requestedModel, callback) {
     const currentModel = this.model;
 
     let cachedModel = () => {
@@ -61,7 +61,13 @@ export const getModel = function(requestedModel) {
     //We need create cached version of given model. To share UUID accross all model session
     //under this tab. We also need to create object observable from start. To be able retrieve data
     //after component mount.
-    return this.cachedModel[requestedModel] = Vue.observable(cachedModel());
+    const model = cachedModel();
+
+    if ( callback ){
+        callback(model);
+    }
+
+    return this.cachedModel[requestedModel] = Vue.observable(model);
 };
 
 export const isGroup = function(group){

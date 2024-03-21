@@ -55,6 +55,7 @@
                     <input v-for="(value, key) in model.getAdditionalFormData()" type="hidden" :name="key" :value="value">
 
                     <form-tabs-builder
+                        v-if="model.canLoadSubTabs()"
                         :level="0"
                         :model="model"
                         :withChilds="true"

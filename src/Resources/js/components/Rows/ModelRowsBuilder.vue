@@ -226,11 +226,6 @@ export default {
                 this.model.setPage(1);
             }
         },
-        loadWithRows(value){
-            if ( value == true ) {
-                this.model.enableRowsRefreshing(false);
-            }
-        },
         model(){
             this.updateModelOptions();
         },
@@ -305,9 +300,6 @@ export default {
         },
         paginationEnabled(){
             return this.model.isPaginationEnabled();
-        },
-        loadWithRows(){
-            return this.model.getData('loadWithRows');
         },
         progress(){
             return this.model.getData('progress');
