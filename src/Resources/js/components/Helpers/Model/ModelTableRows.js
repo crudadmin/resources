@@ -576,6 +576,11 @@ var ModelTableRows = (Model) => {
             columns = Object.keys(columns),
             sizes = this.getData('sizes');
 
+        //Grid is not booted
+        if ( !sizes || sizes.length == 0 ){
+            return;
+        }
+
         //Disable big table
         if ( columns.length >= 5 ) {
             sizes[0].disabled = true;

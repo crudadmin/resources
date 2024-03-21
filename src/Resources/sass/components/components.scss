@@ -25,6 +25,7 @@
 
     &, button {
         @include fontSize(14px);
+        min-height: $buttonHeight;
 
         &:not(.btn-primary):not(.btn-secondary):not(.btn-success):not(.btn-danger):not(.btn-info):not(.btn-dark):not(.btn-default) {
             color: $darkText;

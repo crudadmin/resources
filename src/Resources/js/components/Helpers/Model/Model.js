@@ -49,7 +49,7 @@ const FreshBuilderData = () => {
         },
 
         //Grid model sizes
-        sizes : {},
+        sizes : [],
 
         //Is form opened?
         formOpened: false,

@@ -16,7 +16,7 @@
                         </form-tabs-builder>
                     </div>
 
-                    <div v-else-if="canShowGroupName(group) && visibleFields.length == 0">
+                    <div v-else-if="canShowGroupName(group) && !isInlineModelTab(group) && visibleFields.length == 0">
                         <div class="col-12">
                             <p class="empty-group-separator">...</p>
                         </div>
@@ -46,6 +46,14 @@
                             :model="model">
                         </form-group>
                     </fragment>
+
+                    <div v-if="isInlineModelTab(group)" class="col-12">
+                        <model-rows-builder
+                            :model="getModel(group.model)"
+                            :rows="getModel(group.model).getData('rows')"
+                            :insertButton="true">
+                        </model-rows-builder>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,7 +61,7 @@
 </template>
 
 <script>
-import { addGroupLevel } from '@components/Helpers/Model/ModelTabs.js';
+import { addGroupLevel, isInlineModelTab, getModel } from '@components/Helpers/Model/ModelTabs.js';
 
 export default {
     name : 'form-group',
@@ -61,6 +69,7 @@ export default {
     props : ['model', 'group', 'level'],
 
     components : {
+        ModelRowsBuilder : () => import('../Rows/ModelRowsBuilder.vue'),
         FormTabsBuilder : () => import('./FormTabsBuilder.vue'),
     },
 
@@ -80,6 +89,15 @@ export default {
 
     methods: {
         addGroupLevel,
+        isInlineModelTab,
+        getModel(modelName){
+            let model = getModel.call(this, modelName);
+
+            model.setDepthLevel(this);
+            model.setData('parentRow', this.model.getRow());
+
+            return model;
+        },
         getVisibleFields(fields){
             return (fields||[]).filter(item => {
                 if ( typeof item == 'string' ) {
@@ -131,6 +149,10 @@ export default {
         //Return group class
         getGroupClass(group){
             var width = (group.width+'').split('-');
+
+            if ( this.isInlineModelTab(group) ){
+                return 'col-12 --inline-model';
+            }
 
             if ( width[0] == 'half' )
                 width[0] = 6;

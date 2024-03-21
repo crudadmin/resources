@@ -1,3 +1,5 @@
+import Model from '@components/Helpers/Model/Model.js';
+
 const getModelFields = function(model){
     if (model.fields_groups.length == 1 && model.fields_groups[0].type == 'default') {
         return model.fields_groups[0].fields;
@@ -31,12 +33,51 @@ const isModelInFields = (childs, model) => {
     return false;
 }
 
+/*
+ * Return model from childs by model table
+ */
+export const getModel = function(requestedModel) {
+    const currentModel = this.model;
+
+    let cachedModel = () => {
+        if ( typeof currentModel.childs[requestedModel] == 'string' ) {
+            return this.getFreshModel(currentModel.table);
+        }
+        if ( currentModel.childs[requestedModel] ) {
+            return Model(currentModel.childs[requestedModel]);
+        } else {
+            return this.getFreshModel(requestedModel);
+        }
+    };
+
+    if ( !this.cachedModel ){
+        this.cachedModel = {};
+    }
+
+    if ( this.cachedModel[requestedModel] ){
+        return this.cachedModel[requestedModel];
+    }
+
+    //We need create cached version of given model. To share UUID accross all model session
+    //under this tab. We also need to create object observable from start. To be able retrieve data
+    //after component mount.
+    return this.cachedModel[requestedModel] = Vue.observable(cachedModel());
+};
+
 export const isGroup = function(group){
     return typeof group == 'object' && 'type' in group;
 };
 
 export const isTab = function(group){
+    if ( isInlineModelTab(group) ){
+        return false;
+    }
+
     return isGroup(group) && group.type == 'tab';
+};
+
+export const isInlineModelTab = function(group){
+    return isGroup(group) && group.model && (group.width+'').includes('-inline');
 };
 
 export const addGroupLevel = function(level){
@@ -85,13 +126,13 @@ var Tabs = (Model) => {
     Model.prototype.getTabs = function(tabs, group, withChilds = true){
         var modelFields = getModelFields(this),
             items = tabs||(group ? group.fields : null)||modelFields,
-            tabs = items.filter(function(group) {
+            tabs = items.filter((group) => {
                 if ( !isTab(group) ){
                     return false;
                 }
 
                 return true;
-            }.bind(this));
+            });
 
         if ( tabs.length == 0 || tabs.length > 0 && tabs.length != items.length ){
             items = items.filter(function(group) {
@@ -153,6 +194,25 @@ var Tabs = (Model) => {
             Vue.set(tabs, level, index);
         }
     }
+
+    Model.prototype.setDepthLevel = function(_component){
+        var parent = _component.$parent,
+            depth = 0,
+            treeUuids = [];
+
+        while(parent && parent.$options.name != 'base-page-view') {
+            if ( parent.$options.name == 'model-builder' ) {
+                treeUuids.push(parent.model.getData('uuid'));
+
+                depth++;
+            }
+
+            parent = parent.$parent;
+        }
+
+        this.setData('depth_level', depth);
+        this.setData('tree', treeUuids);
+    };
 };
 
 export default Tabs;

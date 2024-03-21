@@ -49,7 +49,7 @@
                         type="button"
                         class="btn--icon btn btn-primary">
                         <i class="fa fa-plus --icon-left"></i>
-                        {{ newRowTitle() }}
+                        {{ model.getSettings('buttons.create', trans('new-row')) }}
                     </button>
                 </div>
             </div>
@@ -76,7 +76,6 @@
 
                         <form-builder
                             v-if="model.isSettingEnabled('form', true)"
-                            :rows="rows"
                             :model="model"
                         ></form-builder>
 
@@ -145,7 +144,7 @@
             this.model.setData('scopes', this.scopes||[]);
 
             //Set deep level of given model
-            this.setDeepLevel();
+            this.model.setDepthLevel(this);
         },
 
         mounted() {
@@ -257,24 +256,6 @@
             sendRowsData(){
                 this.model.emitRowData('rowsChanged');
             },
-            setDeepLevel(){
-                var parent = this.$parent,
-                    depth = 0,
-                    treeUuids = [];
-
-                while(parent && parent.$options.name != 'base-page-view') {
-                    if ( parent.$options.name == 'model-builder' ) {
-                        treeUuids.push(parent.model.getData('uuid'));
-
-                        depth++;
-                    }
-
-                    parent = parent.$parent;
-                }
-
-                this.model.setData('depth_level', depth);
-                this.model.setData('tree', treeUuids);
-            },
             checkIfCanShowLanguages(){
                 var languages_active = false;
 
@@ -293,9 +274,6 @@
 
                 //Show or hide languages menu
                 this.$root.languages_active = languages_active ? true : false;
-            },
-            newRowTitle(){
-                return this.model.getSettings('buttons.create', this.trans('new-row'));
             },
         },
 

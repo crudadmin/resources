@@ -1,5 +1,5 @@
 <template>
-<div class="pagination-limit" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled()" :title="trans('rows-count')">
+<div class="pagination-limit" :class="{ '--hidden-limit' : model.isHiddenMode() }" v-if="model.isPaginationEnabled() && canShow" :title="trans('rows-count')">
     <div class="dropdown fields-list" fields-list>
         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             {{ rows.limit }}
@@ -28,6 +28,18 @@
 
 <script>
 export default {
-    props : ['model', 'rows'],
+    props : {
+        model : {},
+        rows : {},
+        visibleIfMinRows : {
+            default : 0,
+        }
+    },
+    computed : {
+        canShow(){
+            //Unlock for heavier table rows
+            return this.rows.data.length >= this.visibleIfMinRows || this.rows.count >= 100;
+        },
+    },
 }
 </script>

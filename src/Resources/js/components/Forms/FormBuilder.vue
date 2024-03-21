@@ -12,7 +12,7 @@
 
                         <h3 class="box-header__title">
                             <span v-if="model.localization" data-toggle="tooltip" :data-original-title="trans('multilanguages')" class="--icon-left fa fa-globe-americas"></span>
-                            {{ title }}
+                            {{ model.getFormTitle() }}
                         </h3>
 
                         <custom-components :model="model" type="form-header-left" />
@@ -88,7 +88,7 @@ import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents
 export default {
     name : 'form-builder',
 
-    props : ['model', 'rows'],
+    props : ['model'],
 
     components: {
         FormTabsBuilder, ModelLanguageSwitch, CustomComponents, SubmitButton
@@ -155,79 +155,6 @@ export default {
         },
         formType(){
             return this.model.isInParent() ? 'div' : 'form';
-        },
-        title(){
-            var title;
-
-            if ( this.model.isOpenedRow() ) {
-                //If update title has not been set
-                if ( !(title = this.model.getSettings('title.update')) ) {
-                    if ( (this.model.fields.name || this.model.fields.title) && (this.row.name || this.row.title) ){
-                        return this.getLocaleFieldValue(this.row.name || this.row.title);
-                    }
-
-                    if ( this.model.editable ) {
-                        return this.trans('edit-row-n')+' ' + this.row.id;
-                    } else {
-                        return this._('Zobrazujete záznam č.')+' '+this.row.id;
-                    }
-                }
-
-                //Bind value from row to title
-                for ( var key in this.row ) {
-                    var value = this.row[key];
-
-                    if ( this.isFieldSelect(key) )
-                    {
-                        var values = this.$root.languageOptions(this.model.fields[key].options, key);
-
-                        for ( var i = 0; i < values.length; i++ )
-                            if ( values[i][0] == value )
-                            {
-                                value = values[i][1];
-                                break;
-                            }
-                    }
-
-                    //Return localized value
-                    if ( value && typeof value == 'object' ) {
-                        for ( var language of this.$root.languages ) {
-                            if ( language.slug in value ){
-                                value = value[language.slug];
-                                break;
-                            }
-                        }
-                    }
-
-                    //If localized value has not been found for default country, we need select first object value
-                    //and hope that it is string
-                    if ( value && typeof value == 'object' ) {
-                        for ( var k in value ) {
-                            if ( value[k] ){
-                                value = value[k];
-                                break;
-                            }
-                        }
-                    }
-
-                    title = title.replace(':'+key, value||'');
-                }
-
-                return title;
-            }
-
-            //Insert title
-            else if (
-                (title = this.model.getSettings('title.insert'))
-                || (title = this.model.getSettings('title.create'))
-            ) {
-                return title;
-            }
-
-            return this.trans('new-row');
-        },
-        newRowTitle(){
-            return this.$parent.newRowTitle();
         },
         canShowFooter(){
             if ( this.model.isSettingDisabled('form.footer') ){

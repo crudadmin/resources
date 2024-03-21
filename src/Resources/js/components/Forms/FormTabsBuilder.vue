@@ -70,8 +70,7 @@
 <script>
 import FormGroup from './FormGroup.vue';
 import ModelBuilder from '../Views/ModelBuilder.vue';
-import Model from '@components/Helpers/Model/Model.js';
-import { isTab, isGroup, addGroupLevel } from '@components/Helpers/Model/ModelTabs.js';
+import { isTab, isGroup, addGroupLevel, getModel } from '@components/Helpers/Model/ModelTabs.js';
 
 export default {
     name : 'form-tabs-builder',
@@ -144,6 +143,9 @@ export default {
     },
 
     methods: {
+        getModel(model){
+            return getModel.bind(this)(model);
+        },
         addGroupLevel,
         checkRecursivityModelTab(tab){
             if ( this.model.table == tab.model ){
@@ -167,35 +169,6 @@ export default {
             return fields.filter(item => {
                 return isTab(item);
             });
-        },
-        /*
-         * Return model from childs by model table
-         */
-        getModel(model){
-            let cachedModel = () => {
-                if ( typeof this.model.childs[model] == 'string' ) {
-                    return this.getFreshModel(this.model.table);
-                }
-
-                if ( this.model.childs[model] ) {
-                    return Model(this.model.childs[model]);
-                } else {
-                    return this.getFreshModel(model);
-                }
-            };
-
-            if ( !this.cachedModel ){
-                this.cachedModel = {};
-            }
-
-            if ( this.cachedModel[model] ){
-                return this.cachedModel[model];
-            }
-
-            //We need create cached version of given model. To share UUID accross all model session
-            //under this tab. We also need to create object observable from start. To be able retrieve data
-            //after component mount.
-            return this.cachedModel[model] = Vue.observable(cachedModel());
         },
         /*
          * Return tab name

@@ -90,6 +90,14 @@
         .fields-tabs__wrapper > div > .row > .tab--parent:last-child > .nav-tabs-custom > .tab-content--form {
             margin-bottom: 0;
         }
+
+        &.--inline-model {
+            margin-bottom: $form-group-margin-bottom;
+
+            .box-header, .box-footer {
+                padding: $boxPadding / 1.5;
+            }
+        }
     }
 }
 

@@ -18,9 +18,7 @@ var ModelCoreHelpers = (Model) => {
             return;
         }
 
-        let parentTable = this.getParentModel();
-
-        return parentTable ? parentTable.table : null;
+        return parentModel ? parentModel.table : null;
     };
 
     Model.prototype.getParentRowId = function(){

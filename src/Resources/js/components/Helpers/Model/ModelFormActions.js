@@ -614,6 +614,77 @@ var FormActions = (Model) => {
             }
         });
     }
+
+    Model.prototype.getFormTitle = function(e) {
+        var title,
+            row = this.getRow();
+
+        if ( this.isOpenedRow() ) {
+            //If update title has not been set
+            if ( !(title = this.getSettings('title.update')) ) {
+                if ( (this.fields.name || this.fields.title) && (row.name || row.title) ){
+                    return $app.getLocaleFieldValue(row.name || row.title);
+                }
+
+                if ( this.editable ) {
+                    return $app.trans('edit-row-n')+' ' + row.id;
+                } else {
+                    return this._('Zobrazujete záznam č.')+' '+row.id;
+                }
+            }
+
+            //Bind value from row to title
+            for ( var key in row ) {
+                var value = row[key];
+
+                if ( this.isFieldSelect(key) ) {
+                    var values = $app.languageOptions(this.fields[key].options, key);
+
+                    for ( var i = 0; i < values.length; i++ ) {
+                        if ( values[i][0] == value ) {
+                            value = values[i][1];
+                            break;
+                        }
+                    }
+                }
+
+                //Return localized value
+                if ( value && typeof value == 'object' ) {
+                    for ( var language of $app.languages ) {
+                        if ( language.slug in value ){
+                            value = value[language.slug];
+                            break;
+                        }
+                    }
+                }
+
+                //If localized value has not been found for default country, we need select first object value
+                //and hope that it is string
+                if ( value && typeof value == 'object' ) {
+                    for ( var k in value ) {
+                        if ( value[k] ){
+                            value = value[k];
+                            break;
+                        }
+                    }
+                }
+
+                title = title.replace(':'+key, value||'');
+            }
+
+            return title;
+        }
+
+        //Insert title
+        else if (
+            (title = this.getSettings('title.insert'))
+            || (title = this.getSettings('title.create'))
+        ) {
+            return title;
+        }
+
+        return $app.trans('new-row');
+    }
 };
 
 export default FormActions;

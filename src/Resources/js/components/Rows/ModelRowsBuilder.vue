@@ -23,27 +23,7 @@
                         {{ _('Stiahnuť excel') }}
                     </button>
 
-                    <div class="dropdown fields-list" fields-list v-if="model.getSettings('table.switchcolumns', true) != false">
-                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            {{ trans('rows-list') }}
-                            <i class="--icon-right fa fa-angle-down"></i>
-                        </button>
-                        <ul class="dropdown-menu menu-left dropdown-menu-right">
-                            <li @click="$event.stopPropagation()" v-for="(column, key) in enabled_columns" v-if="canShowColumn(column, key)" :class="{ active : column.enabled }" class="--no-item-padding">
-                                <label class="--dropdown-item-padding --dropdown-item-vertical">
-                                    <div class="checkbox-box mr-1">
-                                        <input type="checkbox" :data-column="key"  @click="toggleColumnEnabled(key)" :checked="column.enabled">
-                                        <span class="checkmark fa"></span>
-                                    </div>
-
-                                    <div>{{ model.fieldName(key) }}</div>
-                                </label>
-                            </li>
-                            <li class="default-reset">
-                                <a href="#" @click.prevent="toggleColumnsList">{{ isDefaultColumnsList ? _('Zobraziť všetky') : trans('default') }}</a>
-                            </li>
-                        </ul>
-                    </div>
+                    <ColumnsList :model="model" />
 
                     <div class="dropdown actions-list fields-list" v-if="model.getChecked().length > 0 && hasButtons" data-action-list>
                         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -57,7 +37,9 @@
                         </ul>
                     </div>
 
-                    <PaginationLimit :model="model" :rows="rows" />
+                    <PaginationLimit :model="model" :rows="rows" v-if="!insertButton" :visibleIfMinRows="20" />
+
+                    <AddNewRowModal :model="model" v-if="insertButton" />
                 </div>
             </div>
 
@@ -98,12 +80,18 @@
 import TableRows from './TableRows.vue';
 import Pagination from '../Partials/Pagination.vue';
 import PaginationLimit from '../Partials/PaginationLimit.vue';
+import ColumnsList from '../Partials/ColumnsList.vue';
+import AddNewRowModal from '../Partials/Actions/AddNewRowModal.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
-    props : ['model', 'rows'],
+    props : {
+        model : {},
+        rows : {},
+        insertButton : {default : false},
+    },
 
-    components : { TableRows, Pagination, PaginationLimit, CustomComponents },
+    components : { TableRows, Pagination, PaginationLimit, CustomComponents, AddNewRowModal, ColumnsList },
 
     data : function(){
         return {
@@ -318,9 +306,6 @@ export default {
         modelOptions(){
             return this.model.getData('modelOptions');
         },
-        enabled_columns(){
-            return this.model.getData('enabled_columns');
-        },
         langid(){
             return this.model.getSelectedLanguageId();
         },
@@ -344,33 +329,29 @@ export default {
                 return title;
             }
 
-            if ( this.parentRowId ){
+            if ( this.model.getParentModel() ){
                 return this.model.name;
             }
 
             return this.trans('rows');
         },
-        isDefaultColumnsList(){
-            var defaultColumns = this.model.getData('default_columns'),
-                defaultColumnsKeys = Object.keys(_.cloneDeep(defaultColumns));
-
-            return defaultColumnsKeys.filter(column => defaultColumns[column].enabled != (this.enabled_columns[column]||{}).enabled).length == 0;
-        },
         parentRowId(){
-            let parentModel = this.model.getParentModel();
+            let idFromGivenModel = this.model.getData('parentRow')?.id;
 
-            return parentModel ? (parentModel.getRow()||{}).id : null;
+            // This id is given by manually passing parent model
+            // Eg. if ModelBuilder is not working
+            if ( idFromGivenModel ){
+                return idFromGivenModel;
+            }
+
+            //Passing from fyzicaly existing parent model
+            return this.model.getParentModel()?.getRow()?.id;
         },
     },
 
     methods: {
         setDefaultModelLimit(){
             this.rows.limit = this.model.getLimitFromStorage();
-        },
-        toggleColumnEnabled(column){
-            this.model.setColumnVisibility(column, !this.enabled_columns[column].enabled);
-
-            this.model.loadRows();
         },
         //We need update modelOptions all the time model or modelOptions has been changed
         //because if model property in base $root models will change. options will dissapear.
@@ -388,28 +369,6 @@ export default {
                 download : true,
                 limit : -1,
             })
-        },
-        toggleColumnsList(){
-            if ( this.isDefaultColumnsList ) {
-                let defaultColumns = this.model.getData('default_columns');
-
-                for ( var key in defaultColumns ){
-                    this.model.setColumnVisibility(key, true);
-                }
-
-                this.model.loadRows();
-            } else {
-                this.model.resetAllowedColumns();
-            }
-        },
-        canShowColumn(column, key){
-            if ( ! column.name )
-                return false;
-
-            if ( key in this.model.fields && this.model.fields[key].type == 'password' )
-                return false;
-
-            return true;
         },
         /*
          * Sets default order after loading compoennt
