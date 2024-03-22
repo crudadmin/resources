@@ -37,6 +37,7 @@ export default {
         buttonClass(button){
             let name = button.class;
 
+            name = name.replace('primary', 'light-primary');
             name = name.replace('info', 'light-info');
             name = name.replace('warning', 'light-warning');
             name = name.replace('danger', 'light-danger');

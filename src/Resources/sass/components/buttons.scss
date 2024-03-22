@@ -6,6 +6,16 @@
     .--icon-left { margin-right: 0.7rem; }
     .--icon-right { margin-left: 0.7rem; }
 
+    &.btn-light-primary {
+        background: $primary-light;
+        color: $primary;
+
+        &:hover {
+            background: $primary;
+            color: $primary-light;
+        }
+    }
+
     &.btn-light-default {
         background: $default-light;
         color: $default;
