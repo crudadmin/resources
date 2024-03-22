@@ -1,4 +1,8 @@
 var ModelCoreHelpers = (Model) => {
+    Model.prototype.hasParentModel = function(table){
+        return this.getParentModels().map(model => model.table).includes(table);
+    }
+
     Model.prototype.getParentTableName = function(){
         const manualParentModel = this.getData('parentModel');
         if ( manualParentModel === false ){

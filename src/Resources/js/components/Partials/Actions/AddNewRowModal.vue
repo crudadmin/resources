@@ -4,7 +4,7 @@
     </slot>
 
     <!-- Modal for adding relation -->
-    <div class="modal fade" :id="modalId" ref="modalEl" data-keyboard="false" tabindex="-1" role="dialog" v-if="model">
+    <div :class="['modal fade', { '--inModal' : isModalInModal }]" :id="modalId" ref="modalEl" data-keyboard="false" tabindex="-1" role="dialog" v-if="model">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <!-- :langid="langid"
@@ -166,6 +166,9 @@ export default {
     },
 
     computed : {
+        isModalInModal(){
+            return _.isNil(this.model.getParentModel().getData('parentModel')) ? false : true
+        },
         modalId(){
             return 'modal-inline-'+this.id+'_'+this.model?.table;
         },
