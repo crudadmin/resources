@@ -313,6 +313,12 @@
                 return this.model.slug + '-' + (this.model.getParentTableName()||0);
             },
             canShowAddButton(){
+                //1. Hide button when form is visible already on full screen
+                //2. Show button when is not full screen - some people may click on new entry even if form is displayed, so they will see shaking form to see where can they put entry
+                if ( this.model.canShowForm() && this.model.isEnabledOnlyFormOrTableMode() ){
+                    return false;
+                }
+
                 return this.model.canAddRow() && !this.model.isSingle() && this.model.hasAccess('insert') && !this.model.isOnlyFormOpened() && this.model.isSettingEnabled('buttons.create', true);
             },
             isSearching(){
