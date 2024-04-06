@@ -210,6 +210,8 @@ const BaseComponent = (router, store) => {
                     localStorage.language_id = this.languages[0].id;
 
                 this.language_id = localStorage.language_id;
+
+                moment.locale(this.locale);
             },
             //Check specifics property in model
             getModelProperty(model, key, value){
