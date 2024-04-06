@@ -587,7 +587,7 @@ var ModelTableRows = (Model) => {
 
         //For large forms, disable smaller grids
         const fieldsLength = Object.keys(this.fields).length;
-        if ( fieldsLength >= 20 ){
+        if ( fieldsLength >= 20 && !this.getSettings('grid.default') ){
             return true;
         }
 
