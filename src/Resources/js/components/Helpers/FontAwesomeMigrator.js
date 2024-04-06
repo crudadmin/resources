@@ -212,7 +212,6 @@ const icons = {
         "fa-header": "fas fa-heading",
         "fa-heart-o": "far fa-heart",
         "fa-hospital-o": "far fa-hospital",
-        "fa-hotel": "fas fa-bed",
         "fa-hourglass-1": "fas fa-hourglass-start",
         "fa-hourglass-2": "fas fa-hourglass-half",
         "fa-hourglass-3": "fas fa-hourglass-end",

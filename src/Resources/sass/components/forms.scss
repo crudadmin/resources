@@ -113,6 +113,29 @@
     }
 }
 
+.vue-tel-input {
+    border-color: $inputBorderColor !important;
+    border-radius: $inputRadius;
+    box-shadow: none !important;
+
+    .vti__dropdown, .vti__input {
+        padding: $input-padding-y $input-padding-x;
+        color: $blackText;
+    }
+
+    .vti__dropdown-list {
+        font-size: 1.2rem;
+    }
+
+    .vti__dropdown-item {
+        padding: $input-padding-y $input-padding-x;
+
+        .vti__flag-wrapper {
+            margin-right: $input-padding-x;
+        }
+    }
+}
+
 .form-group {
     label {
         color: $blackText;
