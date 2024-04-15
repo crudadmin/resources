@@ -21,10 +21,10 @@
                     <div class="box-header__right">
                         <custom-components :model="model" type="form-header-right" />
 
-                        <button v-if="model.isOpenedRow() && canShowGettext" @click="model.openGettextEditor(row)" type="button" class="btn--icon btn btn-default btn-sm"><i class="fa fa-globe-americas"></i>
+                        <button v-if="model.isOpenedRow() && canShowGettext" @click="model.openGettextEditor(row)" type="button" class="btn--icon btn btn-secondary"><i class="fa fa-globe-americas"></i>
                             {{ trans('gettext-open') }}
                         </button>
-                        <button v-if="model.isOpenedRow() && model.history && model.isSingle()" type="button" @click="model.showHistory(row)" class="btn--icon btn btn-sm btn-default" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
+                        <button v-if="model.isOpenedRow() && model.history && model.isSingle()" type="button" @click="model.showHistory(row)" class="btn--icon btn btn-secondary" data-toggle="tooltip" title="" :data-original-title="trans('history.changes')">
                             <i class="fa fa-history"></i>
                             {{ model.getSettings('buttons.show-history', trans('history.show')) }}
                         </button>
