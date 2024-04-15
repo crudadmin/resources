@@ -123,14 +123,35 @@ export default {
             return parseInt(match[1]||2);
         },
         actions(){
+            const saveModal = () => {
+                this.openModal({
+                    message : this.trans('success-save'),
+                    type : 'success',
+                    toast : true,
+                });
+            };
+
             return [
+                {
+                    name : this.__('Uložiť'),
+                    class : 'btn-light-primary',
+                    callback : async () => {
+                        await this.save();
+
+                        saveModal()
+
+                        return false;
+                    }
+                },
                 {
                     name : trans('gettext-save'),
                     class : 'btn-primary',
                     callback : async () => {
                         await this.save();
+
+                        saveModal();
                     }
-                }
+                },
             ];
         },
         sourceTranslator(){
