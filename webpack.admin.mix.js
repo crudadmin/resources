@@ -8,21 +8,27 @@ mixConfig.setMixConfig(mix, ({ paths, publicPath }) => {
     /*
      * Build backend js
      */
-    mix.js('src/Resources/js/app.js', publicPath+'/js')
+    mix.js('src/Resources/js/app.js', publicPath + '/js')
         .vue({
-            version : 2,
+            version: 2,
             extractStyles: true,
             globalStyles: {
-                scss : [
-                    'src/Resources/sass/_variables.scss',
-                    'src/Resources/sass/_mixins.scss',
-                ]
+                scss: ['src/Resources/sass/_variables.scss', 'src/Resources/sass/_mixins.scss'],
             },
         })
-        .sass('src/Resources/sass/app.scss', publicPath+'/css')
+        .sass('src/Resources/sass/app.scss', publicPath + '/css')
         .extract([
-            'vue', 'jquery', 'lodash', 'js-md5', 'moment', 'vue-router', 'vue-fragment',
-            'vue-resource', 'vuedraggable', 'jquery-datetimepicker', 'bootstrap'
+            'vue',
+            'jquery',
+            'lodash',
+            'js-md5',
+            'moment',
+            'vue-router',
+            'vue-fragment',
+            'vue-resource',
+            'vuedraggable',
+            'jquery-datetimepicker',
+            'bootstrap',
         ]);
 
     mix.webpackConfig({
@@ -31,16 +37,16 @@ mixConfig.setMixConfig(mix, ({ paths, publicPath }) => {
                 '@': path.resolve(__dirname, 'src/Resources/'),
                 '@sass': path.resolve(__dirname, 'src/Resources/sass'),
                 '@components': path.resolve(__dirname, 'src/Resources/js/components'),
-            }
-        }
+            },
+        },
     });
 
-    for ( copyPath of paths ) {
-        mix.copy(publicPath+'/js/manifest.js', copyPath + '/js/manifest.js')
-           .copy(publicPath+'/js/vendor.js', copyPath + '/js/vendor.js')
-           .copy(publicPath+'/js/app.js', copyPath + '/js/app.js')
-           .copy(publicPath+'/css/app.css', copyPath + '/css/app.css')
-           .copy(publicPath+'/images', copyPath + '/images')
-           .copy(publicPath+'/fonts', copyPath + '/fonts');
+    for (copyPath of paths) {
+        mix.copy(publicPath + '/js/manifest.js', copyPath + '/js/manifest.js')
+            .copy(publicPath + '/js/vendor.js', copyPath + '/js/vendor.js')
+            .copy(publicPath + '/js/app.js', copyPath + '/js/app.js')
+            .copy(publicPath + '/css/app.css', copyPath + '/css/app.css')
+            .copy(publicPath + '/images', copyPath + '/images')
+            .copy(publicPath + '/fonts', copyPath + '/fonts');
     }
 });
