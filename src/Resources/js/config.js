@@ -2,5 +2,5 @@ export default {
     /*
      * Prefix of groups
      */
-    groups_prefix : '#$_',
-}
+    groups_prefix: '#$_',
+};

@@ -27,36 +27,36 @@
 </template>
 
 <script>
-    export default {
-        props : ['langid'],
+export default {
+    props: ['langid'],
 
-        computed: {
-            user(){
-                return this.$root.user;
-            },
-            dashboard(){
-                return this.$root.dashboard;
-            },
-            isCustomLayout(){
-                return this.dashboard;
-            },
-            htmlLayout(){
-                if ( !(this.dashboard && this.dashboard.html) ) {
-                    return;
-                }
-
-                this.$nextTick(() => {
-                    this.$root.runInlineScripts(this.dashboard.html)
-                });
-
-                return this.dashboard.html;
-            },
+    computed: {
+        user() {
+            return this.$root.user;
         },
-
-        methods: {
-            trans(key){
-                return this.$root.trans(key);
+        dashboard() {
+            return this.$root.dashboard;
+        },
+        isCustomLayout() {
+            return this.dashboard;
+        },
+        htmlLayout() {
+            if (!(this.dashboard && this.dashboard.html)) {
+                return;
             }
-        }
-    }
+
+            this.$nextTick(() => {
+                this.$root.runInlineScripts(this.dashboard.html);
+            });
+
+            return this.dashboard.html;
+        },
+    },
+
+    methods: {
+        trans(key) {
+            return this.$root.trans(key);
+        },
+    },
+};
 </script>

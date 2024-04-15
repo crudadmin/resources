@@ -1,4 +1,4 @@
-(function(){
+(function () {
     /*
      * Selectors
      */
@@ -8,9 +8,9 @@
     /*
      * If encrypt method does not exists
      */
-    if ( ! window.decryptText ) {
-        window.decryptText = function(text) {
-            if ( ! text ) {
+    if (!window.decryptText) {
+        window.decryptText = function (text) {
+            if (!text) {
                 return;
             }
 
@@ -28,16 +28,16 @@
                 var href = element.getAttribute('href');
 
                 //Decrypt also href value
-                if ( href ) {
+                if (href) {
                     try {
                         element.href = decryptText(href);
-                    } catch(e){}
+                    } catch (e) {}
                 }
             };
 
         //Decrypt text + href
         //We need use while, because getElementsByClassName is dynamic and elements would be removed dynamicaly in for
-        while(elementsToFullDecrypt.length > 0){
+        while (elementsToFullDecrypt.length > 0) {
             var element = elementsToFullDecrypt[0];
 
             element.innerHTML = decryptText(element.innerHTML);
@@ -47,7 +47,7 @@
         }
 
         //Decrypt href
-        for ( var i = 0; i < elementsToHrefDecrypt.length; i++ ){
+        for (var i = 0; i < elementsToHrefDecrypt.length; i++) {
             decryptHref(elementsToHrefDecrypt[i]);
         }
     });

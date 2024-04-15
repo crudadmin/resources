@@ -1,10 +1,10 @@
 // Body
-$body-bg: #F3F6F6;
+$body-bg: #f3f6f6;
 /*$info:          $cyan !default;*/
 /*$warning:       $yellow !default;*/
 $primary-light: #e6e7fb;
-$danger:        #f1416c !default;
-$danger-light:  #fff5f8 !default;
+$danger: #f1416c !default;
+$danger-light: #fff5f8 !default;
 $secondary: white;
 $warning: #ffc700;
 $warning-light: #fff8dd;
@@ -16,8 +16,8 @@ $default-light: #f6f5f5;
 $font-family-sans-serif: 'Inter', sans-serif;
 $line-height-base: 1.6;
 
-$inputBorderColor: #DEE3E8;
-$inputRadius: .475rem;
+$inputBorderColor: #dee3e8;
+$inputRadius: 0.475rem;
 $sidebarPadding: 35px;
 $boxPadding: 30px;
 $cardPadding: $boxPadding / 1.5;
@@ -32,7 +32,6 @@ $navbarButtonsPadding: $navbarPadding / 2.5;
 $boxBorderRadius: 8px;
 $validationErrorcolor: #dd4b39;
 
-
 //Forms settings
 $form-group-margin-bottom: $cardPadding;
 $btn-border-radius: 0.425rem;
@@ -42,9 +41,9 @@ $buttonHeight: 4rem;
 /*$input-btn-line-height: .8rem;*/
 
 // Colors
-$primary: #4A54E2;
-$blackText: #41464C;
-$darkText: #8292A5;
+$primary: #4a54e2;
+$blackText: #41464c;
+$darkText: #8292a5;
 $blue: #3490dc;
 $indigo: #6574cd;
 $purple: #9561e2;

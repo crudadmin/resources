@@ -1,30 +1,68 @@
 .crudadmin-form {
     .nav-tabs-custom {
-        > .nav-tabs > li > a { cursor: pointer; color: inherit }
-        > .nav-tabs > li[has-error] {border-top-color: #dd4939;}
-        > .nav-tabs > li[has-error] i {margin-left: -1px;}
-        > .nav-tabs > li[has-error] i.fa-exclamation-triangle ~ i {display: none}
-        > .nav-tabs > li[has-error] a {color: #dd4939}
+        > .nav-tabs > li > a {
+            cursor: pointer;
+            color: inherit;
+        }
+        > .nav-tabs > li[has-error] {
+            border-top-color: #dd4939;
+        }
+        > .nav-tabs > li[has-error] i {
+            margin-left: -1px;
+        }
+        > .nav-tabs > li[has-error] i.fa-exclamation-triangle ~ i {
+            display: none;
+        }
+        > .nav-tabs > li[has-error] a {
+            color: #dd4939;
+        }
 
         @include less-than(md) {
-           > .nav-tabs > .nav-item {
+            > .nav-tabs > .nav-item {
                 width: 100%;
             }
         }
 
-        .tab-pane > .row .model > .box { border-top: 0; box-shadow: none; }
-        .tab-pane > .row .model > .box > .box-header h3 { display: none; }
+        .tab-pane > .row .model > .box {
+            border-top: 0;
+            box-shadow: none;
+        }
+        .tab-pane > .row .model > .box > .box-header h3 {
+            display: none;
+        }
         .tab-pane > .row .model > .box > .box-header,
-        .tab-pane > .row .model > .box > .box-body { padding: 0; }
-        .tab-pane > .row .model > .box.single-mode { margin-bottom: 0px }
-        .tab-pane > .row .model > .box.single-mode > .box-header { display: none; }
-        .tab-pane > .row .model > .box.single-mode > .box-body > .row > .col > form > .box > .box-body { padding: 0; background: white; }
-        .tab-pane > .row .model > .box.single-mode > .box-body > .row > .col > form > .box > .box-footer { padding-left: 0; padding-bottom: 0; }
-        .tab-pane > .row > .col-lg-12:first-child:last-child > .box { box-shadow: none;border: none;padding: 0; }
+        .tab-pane > .row .model > .box > .box-body {
+            padding: 0;
+        }
+        .tab-pane > .row .model > .box.single-mode {
+            margin-bottom: 0px;
+        }
+        .tab-pane > .row .model > .box.single-mode > .box-header {
+            display: none;
+        }
+        .tab-pane > .row .model > .box.single-mode > .box-body > .row > .col > form > .box > .box-body {
+            padding: 0;
+            background: white;
+        }
+        .tab-pane > .row .model > .box.single-mode > .box-body > .row > .col > form > .box > .box-footer {
+            padding-left: 0;
+            padding-bottom: 0;
+        }
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box {
+            box-shadow: none;
+            border: none;
+            padding: 0;
+        }
         .tab-pane > .row > .col-lg-12:first-child:last-child > .box > .box-body,
-        .tab-pane > .row > .col-lg-12:first-child:last-child > .box > .box-header { padding: 0; }
-        .tab-pane > .row > .col-lg-12:first-child:last-child > .box > .box-header > h3 { display: none }
-        .tab-pane > .row > .col-lg-12:first-child:last-child > .box.single-mode > .box-header { display: none }
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box > .box-header {
+            padding: 0;
+        }
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box > .box-header > h3 {
+            display: none;
+        }
+        .tab-pane > .row > .col-lg-12:first-child:last-child > .box.single-mode > .box-header {
+            display: none;
+        }
     }
 
     .fields-group {
@@ -55,12 +93,24 @@
                     margin-bottom: 0;
                 }
 
-                &[data-fields="2"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 2); }
-                &[data-fields="3"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 3); }
-                &[data-fields="4"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 4); }
-                &[data-fields="5"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 5); }
-                &[data-fields="6"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 6); }
-                &[data-fields="7"] > .fields-group__wrapper > div > .row > .fields-group__item { width: calc(100% / 7); }
+                &[data-fields='2'] > .fields-group__wrapper > div > .row > .fields-group__item {
+                    width: calc(100% / 2);
+                }
+                &[data-fields='3'] > .fields-group__wrapper > div > .row > .fields-group__item {
+                    width: calc(100% / 3);
+                }
+                &[data-fields='4'] > .fields-group__wrapper > div > .row > .fields-group__item {
+                    width: calc(100% / 4);
+                }
+                &[data-fields='5'] > .fields-group__wrapper > div > .row > .fields-group__item {
+                    width: calc(100% / 5);
+                }
+                &[data-fields='6'] > .fields-group__wrapper > div > .row > .fields-group__item {
+                    width: calc(100% / 6);
+                }
+                &[data-fields='7'] > .fields-group__wrapper > div > .row > .fields-group__item {
+                    width: calc(100% / 7);
+                }
             }
         }
 
@@ -78,12 +128,21 @@
         }
 
         /* Last field in tabs */
-        & > .fields-tabs__wrapper > div > .row > .fields-group__item:last-child > .field-wrapper > .form-group  {
+        & > .fields-tabs__wrapper > div > .row > .fields-group__item:last-child > .field-wrapper > .form-group {
             margin-bottom: 0;
         }
 
         /* last Tab in Group */
-        .fields-tabs__wrapper > .card-body > .row > .tab--parent > .nav-tabs-custom > .tab-content--form > .tab-pane > .row > .fields-group > .fields-group__wrapper {
+        .fields-tabs__wrapper
+            > .card-body
+            > .row
+            > .tab--parent
+            > .nav-tabs-custom
+            > .tab-content--form
+            > .tab-pane
+            > .row
+            > .fields-group
+            > .fields-group__wrapper {
             margin-bottom: 0;
         }
 
@@ -95,7 +154,8 @@
             margin-bottom: $form-group-margin-bottom;
 
             & > div > div > .row > div > .box {
-                > .box-header, > .box-footer {
+                > .box-header,
+                > .box-footer {
                     padding: $boxPadding / 1.5;
                 }
             }
@@ -104,11 +164,12 @@
 }
 
 .form-control {
-    border-color: #DEE3E8;
+    border-color: #dee3e8;
     @include fontSize(14px);
     border-radius: $inputRadius;
 
-    &::placeholder, ::-webkit-input-placeholder {
+    &::placeholder,
+    ::-webkit-input-placeholder {
         color: $darkText;
     }
 }
@@ -118,7 +179,8 @@
     border-radius: $inputRadius;
     box-shadow: none !important;
 
-    .vti__dropdown, .vti__input {
+    .vti__dropdown,
+    .vti__input {
         padding: $input-padding-y $input-padding-x;
         color: $blackText;
     }
@@ -146,7 +208,8 @@
         color: $darkText;
     }
 
-    &.disabled, &.readonly {
+    &.disabled,
+    &.readonly {
         label {
             opacity: 0.7;
         }
@@ -162,7 +225,8 @@
         background: #fbfbfb;
         border-color: #e8e8e8;
 
-        &, &::placeholder {
+        &,
+        &::placeholder {
             color: #888;
         }
     }
@@ -175,7 +239,8 @@
             box-shadow: none;
         }
 
-        label, .help-block {
+        label,
+        .help-block {
             color: $validationErrorcolor;
         }
 
@@ -220,77 +285,86 @@
             font-weight: normal;
         }
 
-        input[type="checkbox"] {
+        input[type='checkbox'] {
             position: absolute;
             opacity: 0;
         }
 
         /* Normal Track */
-        input[type="checkbox"].ios-switch + div {
+        input[type='checkbox'].ios-switch + div {
             vertical-align: middle;
             width: 4.6rem;
             height: 2.5rem;
             border: 1px solid #cecece;
             border-radius: 999px;
             background-color: lighten($inputBorderColor, 5%);
-            -webkit-transition-duration: .4s;
+            -webkit-transition-duration: 0.4s;
             -webkit-transition-property: background-color, box-shadow;
-            box-shadow: inset 0 0 0 0px rgba(0,0,0,0.4);
+            box-shadow: inset 0 0 0 0px rgba(0, 0, 0, 0.4);
             margin: 5px 0;
         }
 
-
         /* Green Track */
-        input[type="checkbox"].green.ios-switch:checked + div {
+        input[type='checkbox'].green.ios-switch:checked + div {
             background-color: $primary;
             border: 1px solid $primary;
             box-shadow: inset 0 0 0 10px $primary;
         }
 
         /* Normal Knob */
-        input[type="checkbox"].ios-switch + div > div {
+        input[type='checkbox'].ios-switch + div > div {
             float: left;
             width: 2.3rem;
             height: 2.3rem;
             border-radius: inherit;
             background: #ffffff;
-            -webkit-transition-timing-function: cubic-bezier(.54,1.85,.5,1);
+            -webkit-transition-timing-function: cubic-bezier(0.54, 1.85, 0.5, 1);
             -webkit-transition-duration: 0.4s;
             -webkit-transition-property: transform, background-color, box-shadow;
-            -moz-transition-timing-function: cubic-bezier(.54,1.85,.5,1);
+            -moz-transition-timing-function: cubic-bezier(0.54, 1.85, 0.5, 1);
             -moz-transition-duration: 0.4s;
             -moz-transition-property: transform, background-color;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.12), 0px 0px 0 1px rgb(206, 206, 206);
+            box-shadow:
+                0px 2px 5px rgba(0, 0, 0, 0.12),
+                0px 0px 0 1px rgb(206, 206, 206);
             pointer-events: none;
         }
 
-        input[type="checkbox"].ios-switch:checked + div > div {
+        input[type='checkbox'].ios-switch:checked + div > div {
             -webkit-transform: translate3d(20px, 0, 0);
             -moz-transform: translate3d(20px, 0, 0);
             background-color: #ffffff;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0px 0px 0 1px rgba(8, 80, 172,1);
+            box-shadow:
+                0px 2px 5px rgba(0, 0, 0, 0.3),
+                0px 0px 0 1px rgba(8, 80, 172, 1);
         }
 
-        input[type="checkbox"].green.ios-switch:checked + div > div {
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3), 0 0 0 1px $primary;
+        input[type='checkbox'].green.ios-switch:checked + div > div {
+            box-shadow:
+                0px 2px 5px rgba(0, 0, 0, 0.3),
+                0 0 0 1px $primary;
         }
     }
 
     /*
      * Calendar
      */
-    &.multiple-date label { display: block; }
+    &.multiple-date label {
+        display: block;
+    }
 
-    .xdsoft_datetimepicker
-    {
+    .xdsoft_datetimepicker {
         z-index: 99999999999;
 
-        &, .xdsoft_time_box {
+        &,
+        .xdsoft_time_box {
             border-color: $inputBorderColor;
         }
 
-        .xdsoft_calendar, .xdsoft_time_box {
-            td, .xdsoft_time {
+        .xdsoft_calendar,
+        .xdsoft_time_box {
+            td,
+            .xdsoft_time {
                 background: white;
 
                 &:hover {
@@ -301,7 +375,7 @@
                     background: $primary !important;
                     color: white !important;
                     font-weight: bold !important;
-                    box-shadow: none !important
+                    box-shadow: none !important;
                 }
 
                 &.xdsoft_current:not(.multiple-selected) {
@@ -358,13 +432,16 @@
         }
     }
 
-    .cke, .cke_bottom, .cke_top {
+    .cke,
+    .cke_bottom,
+    .cke_top {
         border-color: $inputBorderColor;
     }
 }
 
 .chosen-container {
-    .chosen-single, .chosen-choices {
+    .chosen-single,
+    .chosen-choices {
         border-color: $inputBorderColor;
         @include border-radius($input-border-radius, 0);
         padding: calc($input-padding-y / 2.5) $input-padding-x;
@@ -386,21 +463,21 @@
                 justify-content: center;
 
                 b {
-                  display: block;
-                  background: none;
-                  font-style: normal;
-                  font-variant: normal;
-                  line-height: 1;
-                  text-rendering: auto;
-                  display: var(--fa-display, inline-block);
-                  font-family: var(--fa-style-family, "Font Awesome 6 Free");
-                  font-weight: var(--fa-style, 900);
-                  color: $darkText;
-                  font-size: 11px;
+                    display: block;
+                    background: none;
+                    font-style: normal;
+                    font-variant: normal;
+                    line-height: 1;
+                    text-rendering: auto;
+                    display: var(--fa-display, inline-block);
+                    font-family: var(--fa-style-family, 'Font Awesome 6 Free');
+                    font-weight: var(--fa-style, 900);
+                    color: $darkText;
+                    font-size: 11px;
 
-                  &:before {
-                    content: "\f107";
-                  }
+                    &:before {
+                        content: '\f107';
+                    }
                 }
             }
         }
@@ -470,7 +547,7 @@
     .chosen-results {
         max-height: 30rem;
 
-         li {
+        li {
             color: $darkText;
             padding: 0.6rem 1.2rem;
             line-height: 125%;
@@ -485,7 +562,7 @@
             }
 
             &.highlighted {
-                background: #FCFCFC !important;
+                background: #fcfcfc !important;
                 color: $darkText;
             }
 
@@ -496,7 +573,6 @@
         }
     }
 }
-
 
 .--select-big .chosen-results {
     & {
@@ -555,10 +631,10 @@
         justify-content: center;
 
         &:after {
-            content: "";
+            content: '';
             position: absolute;
             border-color: white;
-            content: "\f00c";
+            content: '\f00c';
             color: white;
             font-size: 1.1rem;
         }

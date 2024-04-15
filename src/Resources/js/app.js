@@ -5,8 +5,8 @@ window.eventHub = window.$bus = new Vue();
 window.store = window.$store = require('./store/store').default;
 
 import VueRouter from 'vue-router';
-import VueResource from 'vue-resource'
-import Fragment from 'vue-fragment'
+import VueResource from 'vue-resource';
+import Fragment from 'vue-fragment';
 
 import globalVueMixins from './mixins/globalVueMixins';
 import componentMixins from './mixins/componentMixins';
@@ -18,7 +18,7 @@ Vue.use(Fragment.Plugin);
 Vue.use(VueRouter);
 
 //Use Crudadmin translatable plugin
-if ( window.Gettext ) {
+if (window.Gettext) {
     Vue.use(Gettext);
 }
 
@@ -68,6 +68,4 @@ Vue.mixin(componentMixins);
 Vue.mixin(modelMixins);
 
 //Create base VueApp instance
-window.VueApp = window.$app = new Vue(
-    BaseComponent(Router, store)
-);
+window.VueApp = window.$app = new Vue(BaseComponent(Router, store));

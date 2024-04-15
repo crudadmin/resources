@@ -4,8 +4,20 @@
             <div class="box-header__actions">
                 <div class="box-header__left">
                     <div>
-                        <h3 class="box-header__title">{{ title }} <small>({{ rows.count }})</small></h3>
-                        <a data-toggle="tooltip" :title="_('Automatická synchronizácia záznamov v tabuľke je vypnutá')" class="box-header__actions--synchronize" @click="model.loadRows(true)" v-if="model.isEnabledAutoSync() == false"><i class="fa fa-sync-alt"></i> {{ _('Synchronizácia vypnutá') }}</a>
+                        <h3 class="box-header__title">
+                            {{ title }}
+                            <small>({{ rows.count }})</small>
+                        </h3>
+                        <a
+                            data-toggle="tooltip"
+                            :title="_('Automatická synchronizácia záznamov v tabuľke je vypnutá')"
+                            class="box-header__actions--synchronize"
+                            @click="model.loadRows(true)"
+                            v-if="model.isEnabledAutoSync() == false"
+                        >
+                            <i class="fa fa-sync-alt"></i>
+                            {{ _('Synchronizácia vypnutá') }}
+                        </a>
                     </div>
                 </div>
 
@@ -18,7 +30,8 @@
                         data-export-xls
                         @click.prevent="exportXlsTable()"
                         type="button"
-                        class="btn--icon btn btn-default">
+                        class="btn--icon btn btn-default"
+                    >
                         <i class="fa fa-file-excel"></i>
                         {{ _('Stiahnuť excel') }}
                     </button>
@@ -32,7 +45,8 @@
                         </button>
                         <ul class="dropdown-menu menu-left dropdown-menu-right">
                             <li v-for="button in availableActionButtons" @click="model.buttonAction(button.key)">
-                                <i class="fa --icon-left" :class="button.icon"></i>{{ button.name }}
+                                <i class="fa --icon-left" :class="button.icon"></i>
+                                {{ button.name }}
                             </li>
                         </ul>
                     </div>
@@ -40,11 +54,7 @@
                     <PaginationLimit :model="model" :rows="rows" v-if="!insertButton" :visibleIfMinRows="20" />
 
                     <AddNewRowModal :model="model" v-if="insertButton" v-slot="{ open }">
-                        <button
-                            @click="open"
-                            type="button"
-                            class="btn--icon btn btn-primary"
-                        >
+                        <button @click="open" type="button" class="btn--icon btn btn-primary">
                             <i class="fa fa-plus --icon-left"></i>
 
                             {{ model.getSettings('buttons.create', trans('new-row')) }}
@@ -57,12 +67,7 @@
         </div>
 
         <div class="box-body box-body--table" v-show="!model.isHiddenMode()">
-            <table-rows
-                :model="model"
-                :buttons="rows.buttons"
-                :count="rows.count"
-                :rows="rows">
-            </table-rows>
+            <table-rows :model="model" :buttons="rows.buttons" :count="rows.count" :rows="rows"></table-rows>
         </div>
 
         <div class="box-footer" v-show="!model.isHiddenMode()">
@@ -71,9 +76,7 @@
             <div class="box-footer__actions">
                 <div class="box-footer__left"></div>
                 <div class="box-footer__center">
-                    <pagination
-                        v-if="model.isPaginationEnabled()"
-                        :model="model" />
+                    <pagination v-if="model.isPaginationEnabled()" :model="model" />
                 </div>
                 <div class="box-footer__right">
                     <PaginationLimit :model="model" :rows="rows" />
@@ -94,23 +97,25 @@ import ColumnsList from '../Partials/ColumnsList.vue';
 import CustomComponents from '@components/Partials/ModelBuilder/CustomComponents.vue';
 
 export default {
-    props : {
-        model : {},
-        rows : {},
-        insertButton : {default : false},
+    props: {
+        model: {},
+        rows: {},
+        insertButton: { default: false },
     },
 
-    components : { TableRows, Pagination, PaginationLimit, CustomComponents, ColumnsList },
+    components: { TableRows, Pagination, PaginationLimit, CustomComponents, ColumnsList },
 
-    data : function(){
+    data: function () {
         return {
-            table : null,
+            table: null,
 
-            refresh : this.model.setData('refresh', {
-                refreshing : true,
-                count : 0,
-                interval : this.getRefreshInterval(),
-            }).getData('refresh'),
+            refresh: this.model
+                .setData('refresh', {
+                    refreshing: true,
+                    count: 0,
+                    interval: this.getRefreshInterval(),
+                })
+                .getData('refresh'),
         };
     },
 
@@ -131,76 +136,81 @@ export default {
          * When row is added, then push it into table
          * TODO: REFACTOR THIS
          */
-        eventHub.$on('onCreate', this.onCreateEvent = data => {
-            if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') ) {
-                return;
-            }
-
-            var array = data.request,
-                pages = Math.ceil(this.rows.count / this.rows.limit);
-
-            //If last page is full, and need to add new page
-            if ( this.model.isReversed(true) && this.rows.count > 0 && !this.model.isWithoutExistingParentRow() && pages == this.rows.count / this.rows.limit ){
-                this.model.setPage( pages + 1, this.model.isWithoutExistingParentRow() ? true : null );
-            }
-
-            //If user is not on lage page, then change page into last, for see added rows
-            else if ( this.model.isReversed(true) && this.rows.page < pages && !this.model.isWithoutExistingParentRow() ){
-                this.model.setPage( pages );
-            }
-
-            //If row can be pushed without reloading rows into first or last page
-            else if (
-                this.rows.page == 1 || (
-                    this.model.isReversed(true) && this.rows.page == pages
-                    || this.model.isWithoutExistingParentRow()
-                )
-            ) {
-                var rows = array.rows.concat(this.rows.data);
-
-                if ( this.model.isPaginationEnabled() && rows.length > this.rows.limit ) {
-                    rows = rows.slice(0, this.rows.limit);
+        eventHub.$on(
+            'onCreate',
+            (this.onCreateEvent = (data) => {
+                if (data.table != this.model.slug || data.depth_level != this.model.getData('depth_level')) {
+                    return;
                 }
 
-                //Insert buttons of new created row
-                for ( var key in array.buttons ) {
-                    Vue.set(this.rows.buttons, key, array.buttons[key]);
+                var array = data.request,
+                    pages = Math.ceil(this.rows.count / this.rows.limit);
+
+                //If last page is full, and need to add new page
+                if (
+                    this.model.isReversed(true) &&
+                    this.rows.count > 0 &&
+                    !this.model.isWithoutExistingParentRow() &&
+                    pages == this.rows.count / this.rows.limit
+                ) {
+                    this.model.setPage(pages + 1, this.model.isWithoutExistingParentRow() ? true : null);
                 }
 
-                this.rows.data = rows;
-                this.rows.count += array.rows.length;
-            }
+                //If user is not on lage page, then change page into last, for see added rows
+                else if (this.model.isReversed(true) && this.rows.page < pages && !this.model.isWithoutExistingParentRow()) {
+                    this.model.setPage(pages);
+                }
 
-            else {
-                this.model.loadRows();
-            }
-        });
+                //If row can be pushed without reloading rows into first or last page
+                else if (this.rows.page == 1 || (this.model.isReversed(true) && this.rows.page == pages) || this.model.isWithoutExistingParentRow()) {
+                    var rows = array.rows.concat(this.rows.data);
+
+                    if (this.model.isPaginationEnabled() && rows.length > this.rows.limit) {
+                        rows = rows.slice(0, this.rows.limit);
+                    }
+
+                    //Insert buttons of new created row
+                    for (var key in array.buttons) {
+                        Vue.set(this.rows.buttons, key, array.buttons[key]);
+                    }
+
+                    this.rows.data = rows;
+                    this.rows.count += array.rows.length;
+                } else {
+                    this.model.loadRows();
+                }
+            })
+        );
 
         /*
          * When row is updated, then change data into table for changed rows
          */
-        eventHub.$on('onUpdate', this.onUpdateEvent = data => {
-            if ( data.table != this.model.slug || data.depth_level != this.model.getData('depth_level') )
-                return;
+        eventHub.$on(
+            'onUpdate',
+            (this.onUpdateEvent = (data) => {
+                if (data.table != this.model.slug || data.depth_level != this.model.getData('depth_level')) return;
 
-            //Reset history on update row
-            this.model.closeHistory();
+                //Reset history on update row
+                this.model.closeHistory();
 
-            //Reload rows on row update event
-            if ( this.model.getSettings('reloadOnUpdate') == true ) {
-                this.model.loadRows();
-            }
-        });
+                //Reload rows on row update event
+                if (this.model.getSettings('reloadOnUpdate') == true) {
+                    this.model.loadRows();
+                }
+            })
+        );
 
         /*
          * Reload table rows on request
          */
-        eventHub.$on('reloadRows', this.onReloadRows = table => {
-            if ( this.model.slug != table )
-                return;
+        eventHub.$on(
+            'reloadRows',
+            (this.onReloadRows = (table) => {
+                if (this.model.slug != table) return;
 
-            this.model.loadRows();
-        });
+                this.model.loadRows();
+            })
+        );
 
         this.refreshOnParentStore();
     },
@@ -214,51 +224,55 @@ export default {
     },
 
     watch: {
-        progress(state){
-            if ( state == true ) {
+        progress(state) {
+            if (state == true) {
                 this.model.disableRowsRefreshing();
             } else {
                 this.model.enableRowsRefreshing(false);
             }
         },
-        langid(langid){
-            if ( this.model.localization == true ) {
+        langid(langid) {
+            if (this.model.localization == true) {
                 this.model.setPage(1);
             }
         },
-        model(){
+        model() {
             this.updateModelOptions();
         },
         modelOptions: {
-            deep : true,
-            handler(){
+            deep: true,
+            handler() {
                 this.updateModelOptions();
-            }
+            },
         },
-        'scopes' : {
-            handler(a, b){
+        scopes: {
+            handler(a, b) {
                 //If scopes has been changed
-                if ( _.isEqual(a,b) === false ){
-                    this.model.setPage(1, { force : true });
+                if (_.isEqual(a, b) === false) {
+                    this.model.setPage(1, { force: true });
                 }
             },
         },
-        'search.queries' : {
-            deep : true,
-            handler(queries){
+        'search.queries': {
+            deep: true,
+            handler(queries) {
                 var was_searching = this.model.getData('searching');
                 let searching = false;
 
-                for ( var i = 0; i < queries.length; i++ ) {
+                for (var i = 0; i < queries.length; i++) {
                     let item = queries[i],
                         query = !_.isNil(item.query) && item.query !== '' ? item.query : item.query_to;
 
-                    if ( searching === false && !_.isNil(query) && query !== '' ){
-                        if ( query.length >= 3 || $.isNumeric(query) ) {
+                    if (searching === false && !_.isNil(query) && query !== '') {
+                        if (query.length >= 3 || $.isNumeric(query)) {
                             searching = true;
                         }
 
-                        if ( item.column && item.column in this.model.fields && ['select', 'option', 'checkbox'].indexOf(this.model.fields[item.column].type) > -1 ) {
+                        if (
+                            item.column &&
+                            item.column in this.model.fields &&
+                            ['select', 'option', 'checkbox'].indexOf(this.model.fields[item.column].type) > -1
+                        ) {
                             searching = true;
                         }
                     }
@@ -267,23 +281,23 @@ export default {
                 this.model.setData('searching', searching);
 
                 //On first search query reset pagination
-                if ( this.model.getData('searching') == true && was_searching == false ){
+                if (this.model.getData('searching') == true && was_searching == false) {
                     this.model.setPage(1);
                 }
 
                 //If is normal searching, then search in every char, or if is turned searching from on to off state, then show normal rows
-                else if ( this.model.getData('searching') || ( this.model.getData('searching') == false && was_searching == true ) ) {
+                else if (this.model.getData('searching') || (this.model.getData('searching') == false && was_searching == true)) {
                     this.model.loadRows();
                 }
             },
         },
-        paginationEnabled(state, oldstate){
-            if ( oldstate == false && state == true ){
+        paginationEnabled(state, oldstate) {
+            if (oldstate == false && state == true) {
                 this.setDefaultModelLimit();
             }
         },
-        parentRowId(rowId, oldRowId){
-            if ( rowId != oldRowId ) {
+        parentRowId(rowId, oldRowId) {
+            if (rowId != oldRowId) {
                 //We need reload all rows, because parent has been changed
                 this.model.cleanRows();
 
@@ -294,54 +308,53 @@ export default {
     },
 
     computed: {
-        scopes(){
+        scopes() {
             //We need clone scopes, otherwise watcher data for refreshing rows will be always same value.
             return _.cloneDeep(this.model.getData('scopes'));
         },
-        paginationEnabled(){
+        paginationEnabled() {
             return this.model.isPaginationEnabled();
         },
-        progress(){
+        progress() {
             return this.model.getData('progress');
         },
-        modelOptions(){
+        modelOptions() {
             return this.model.getData('modelOptions');
         },
-        langid(){
+        langid() {
             return this.model.getSelectedLanguageId();
         },
-        row(){
+        row() {
             return this.model.getRow();
         },
-        search(){
+        search() {
             return this.model.getData('search');
         },
-        availableActionButtons(){
-
+        availableActionButtons() {
             return this.model.getAllButtons(['multiple', 'action']);
         },
-        hasButtons(){
+        hasButtons() {
             return Object.keys(this.availableActionButtons).length > 0;
         },
-        title(){
+        title() {
             var title;
 
-            if ( title = this.model.getSettings('title.rows') ) {
+            if ((title = this.model.getSettings('title.rows'))) {
                 return title;
             }
 
-            if ( this.model.getParentModel() ){
+            if (this.model.getParentModel()) {
                 return this.model.name;
             }
 
             return this.trans('rows');
         },
-        parentRowId(){
+        parentRowId() {
             let idFromGivenModel = this.model.getData('parentRow')?.id;
 
             // This id is given by manually passing parent model
             // Eg. if ModelBuilder is not working
-            if ( idFromGivenModel ){
+            if (idFromGivenModel) {
                 return idFromGivenModel;
             }
 
@@ -351,102 +364,93 @@ export default {
     },
 
     methods: {
-        setDefaultModelLimit(){
+        setDefaultModelLimit() {
             this.rows.limit = this.model.getLimitFromStorage();
         },
         //We need update modelOptions all the time model or modelOptions has been changed
         //because if model property in base $root models will change. options will dissapear.
         //This is buggy behaviour when data are set in beforeInitialAdminRequest model property
-        updateModelOptions(){
-            for ( var key in this.modelOptions ){
-                if ( !_.isNil(this.model.fields[key].options) ) {
+        updateModelOptions() {
+            for (var key in this.modelOptions) {
+                if (!_.isNil(this.model.fields[key].options)) {
                     this.model.fields[key].options = this.modelOptions[key];
                 }
             }
         },
-        exportXlsTable(){
+        exportXlsTable() {
             this.model.loadRows({
-                indicator : true,
-                download : true,
-                limit : -1,
-            })
+                indicator: true,
+                download: true,
+                limit: -1,
+            });
         },
         /*
          * Sets default order after loading compoennt
          */
-        setOrder(){
+        setOrder() {
             //Set order by settings parameter
-            if ( this.model.getData('orderBy') == null) {
+            if (this.model.getData('orderBy') == null) {
                 var orderBy = this.model.getSettings('orderBy');
 
-                if ( orderBy ) {
+                if (orderBy) {
                     var keys = Object.keys(orderBy);
 
-                    this.model.setData('orderBy', [
-                        keys[0],
-                        parseFloat(orderBy[keys[0]].toLowerCase().replace('asc', 0).replace('desc', 1))
-                    ]);
+                    this.model.setData('orderBy', [keys[0], parseFloat(orderBy[keys[0]].toLowerCase().replace('asc', 0).replace('desc', 1))]);
 
                     return;
                 }
             }
 
             //Set order by field parameter
-            for ( var key in this.model.fields ) {
+            for (var key in this.model.fields) {
                 var field = this.model.fields[key];
 
-                if ( 'orderBy' in field ) {
+                if ('orderBy' in field) {
                     var order = 1;
 
-                    this.model.setData('orderBy', [
-                        key,
-                        field['orderBy'].toLowerCase().replace('asc', 0).replace('desc', 1)
-                    ]);
+                    this.model.setData('orderBy', [key, field['orderBy'].toLowerCase().replace('asc', 0).replace('desc', 1)]);
 
                     return;
                 }
             }
 
-            let defaultOrder = [
-                this.model.orderBy[0],
-                this.model.orderBy[1].toLowerCase().replace('asc', 0).replace('desc', 1)
-            ];
+            let defaultOrder = [this.model.orderBy[0], this.model.orderBy[1].toLowerCase().replace('asc', 0).replace('desc', 1)];
 
             //Add default order of rows
             this.model.setData('orderBy', defaultOrder);
         },
-        getRefreshInterval(){
+        getRefreshInterval() {
             var interval = this.model.getSettings('refresh_interval', 10000);
 
             //Infinity interval
-            if ( interval == false ) {
+            if (interval == false) {
                 interval = 3600 * 1000;
             }
 
             return interval;
         },
-        removeRow(row){
-            var ids = row ? [ row.id ] : this.model.getChecked();
+        removeRow(row) {
+            var ids = row ? [row.id] : this.model.getChecked();
 
             this.model.removeRow(ids, (response, requestData) => {
                 //After remove reset checkbox
-                if ( ! row ) {
+                if (!row) {
                     //We need set length to zero, to keep array reference in admin model
                     this.model.resetChecked();
                 }
             });
         },
-        refreshOnParentStore(){
+        refreshOnParentStore() {
             let parentModel = this.model.getParentModel();
 
-            if ( parentModel ) {
-                parentModel.on('create', row => {
-                    if ( this.model.isWithoutExistingParentRow() && parentModel.isWithoutExistingParentRow() === false ) {
+            if (parentModel) {
+                parentModel.on('create', (row) => {
+                    if (this.model.isWithoutExistingParentRow() && parentModel.isWithoutExistingParentRow() === false) {
                         this.model.cleanRows();
                     }
                 });
             }
-        }
+        },
     },
-}
+};
 </script>

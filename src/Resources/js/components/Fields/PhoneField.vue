@@ -42,7 +42,7 @@ export default {
     methods: {
         changeValue(value) {
             this.$parent.changeValue(null, value);
-        }
+        },
     },
 };
 </script>

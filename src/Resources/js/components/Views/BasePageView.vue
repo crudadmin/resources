@@ -15,13 +15,7 @@
         <section class="crudadmin-wrapper" v-if="model">
             <license></license>
             <check-assets-version v-if="version"></check-assets-version>
-            <model-builder
-                :key="model.slug"
-                :model_builder="model"
-                :langid="langid"
-                dusk="model-builder"
-                :data-model="model.table">
-            </model-builder>
+            <model-builder :key="model.slug" :model_builder="model" :langid="langid" dusk="model-builder" :data-model="model.table"></model-builder>
         </section>
         <!-- /.content -->
     </div>
@@ -33,41 +27,41 @@ import License from '../Partials/License.vue';
 import CheckAssetsVersion from '../Partials/CheckAssetsVersion.vue';
 
 export default {
-    name : 'base-page-view',
+    name: 'base-page-view',
 
-    props : ['langid'],
+    props: ['langid'],
 
-    components : { ModelBuilder, License, CheckAssetsVersion },
+    components: { ModelBuilder, License, CheckAssetsVersion },
 
-    mounted(){
-        if ( typeof ga == 'function' ) {
+    mounted() {
+        if (typeof ga == 'function') {
             ga('send', 'pageview', 'auto');
         }
     },
 
     computed: {
-        version(){
+        version() {
             return this.$root.version;
         },
         /*
          * Return model from actual page
          */
-        model(){
+        model() {
             return this.getFreshModel(this.$route.params.model);
         },
-        getGroup(){
-            if ( this.model.slug in this.$root.models ) {
+        getGroup() {
+            if (this.model.slug in this.$root.models) {
                 return false;
             }
 
-            for ( var key in this.$root.models ) {
-                if ( this.model.slug in this.$root.models[key].submenu ) {
+            for (var key in this.$root.models) {
+                if (this.model.slug in this.$root.models[key].submenu) {
                     return this.$root.models[key];
                 }
             }
 
             return false;
-        }
-    }
-}
+        },
+    },
+};
 </script>

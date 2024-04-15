@@ -1,41 +1,42 @@
 <template>
-<ul class="change-grid-size d-none d-lg-flex" v-if="model.isEnabledGrid()">
-    <li
-        v-for="size in sizes"
-        :data-size="size.key"
-        :key="size.key"
-        v-if="!size.disabled"
-        :class="{ 'active' : size.active, 'disabled' : size.disabled }"
-        data-toggle="tooltip"
-        :data-original-title="size.name"
-        @click="changeSize(size)">
-        <GridIcons :type="size.key" :active="size.active" />
-    </li>
-</ul>
+    <ul class="change-grid-size d-none d-lg-flex" v-if="model.isEnabledGrid()">
+        <li
+            v-for="size in sizes"
+            :data-size="size.key"
+            :key="size.key"
+            v-if="!size.disabled"
+            :class="{ active: size.active, disabled: size.disabled }"
+            data-toggle="tooltip"
+            :data-original-title="size.name"
+            @click="changeSize(size)"
+        >
+            <GridIcons :type="size.key" :active="size.active" />
+        </li>
+    </ul>
 </template>
 
 <script>
 import GridIcons from './GridIcons.vue';
 
 export default {
-    props : ['model'],
-    components : {GridIcons},
-    mounted(){
+    props: ['model'],
+    components: { GridIcons },
+    mounted() {
         this.checkParentGridSize();
     },
-    watch : {
-        parentActiveGridSizes(){
+    watch: {
+        parentActiveGridSizes() {
             this.checkParentGridSize();
         },
     },
     computed: {
-        sizes(){
+        sizes() {
             return this.model.getData('sizes');
         },
-        parentModel(){
+        parentModel() {
             return this.model.getParentModel();
         },
-        parentActiveGridSizes(){
+        parentActiveGridSizes() {
             let parentSizes = [],
                 size = null,
                 model = this.model;
@@ -45,52 +46,52 @@ export default {
 
                 size = model?.activeGridSize();
 
-                if ( !_.isNil(size) ){
+                if (!_.isNil(size)) {
                     parentSizes.push(size);
                 }
-            } while (model && !_.isNil(size))
+            } while (model && !_.isNil(size));
 
             return parentSizes;
         },
     },
-    methods : {
-        changeSize(row){
-            if ( row.disabled == true ){
+    methods: {
+        changeSize(row) {
+            if (row.disabled == true) {
                 return false;
             }
 
-            for ( var key in this.sizes ) {
+            for (var key in this.sizes) {
                 this.sizes[key].active = false;
             }
 
             row.active = true;
         },
-        checkParentGridSize(){
+        checkParentGridSize() {
             const parentSizes = this.parentActiveGridSizes,
                 depthLevel = this.model.getData('depth_level');
 
             let disabledSizes = {};
 
-            for ( var parentSize of parentSizes ) {
-                for ( var key in this.sizes ){
+            for (var parentSize of parentSizes) {
+                for (var key in this.sizes) {
                     const size = this.sizes[key];
 
-                    if ( this.model.isSettingDisabled('grid.'+size.key) ){
+                    if (this.model.isSettingDisabled('grid.' + size.key)) {
                         continue;
                     }
 
                     //If grid parent size is on full width, then enable all grid sizes in this model
-                    if ( parentSize == 0 && depthLevel <= 1 ) {
+                    if (parentSize == 0 && depthLevel <= 1) {
                         size.disabled = false;
                     }
 
                     //If grid parent size has small form, or model is sub in third level, then disable all except full screen
-                    else if ( ([6, 8].includes(parentSize)) && [0].includes(size.size) == false ) {
+                    else if ([6, 8].includes(parentSize) && [0].includes(size.size) == false) {
                         disabledSizes[key] = true;
                     }
 
                     //Disable all small sizes
-                    else if ( [0, 6].indexOf(size.size) === -1  ) {
+                    else if ([0, 6].indexOf(size.size) === -1) {
                         disabledSizes[key] = true;
                     }
 
@@ -102,10 +103,10 @@ export default {
             }
 
             //Set final disabled states
-            for ( var key in disabledSizes){
+            for (var key in disabledSizes) {
                 this.sizes[key].disabled = true;
             }
         },
-    }
-}
+    },
+};
 </script>

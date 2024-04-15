@@ -1,5 +1,5 @@
 <template>
-    <Modal :modal="modal" :options="{ class : '--wide --history' }">
+    <Modal :modal="modal" :options="{ class: '--wide --history' }">
         <table class="table data-table table-bordered table-striped">
             <thead>
                 <tr>
@@ -18,17 +18,33 @@
                     <td>{{ row.actionName }}</td>
                     <td data-changes-length>
                         <span data-toggle="tooltip" title="" :data-original-title="changedFields(row)" v-if="isEditableAction(row)">
-                            {{ row.changedFields.length }} <i class="fa fa-eye"></i>
+                            {{ row.changedFields.length }}
+                            <i class="fa fa-eye"></i>
                         </span>
                     </td>
                     <td>{{ date(row.created_at) }}</td>
                     <td>
                         <div class="history-actions">
-                            <button v-if="isEditableAction(row)" type="button" @click="applyChanges(row)" class="btn btn-sm btn-success" :class="{ 'enabled-history' : history.history_id == row.id }" data-toggle="tooltip" :title="trans('history.show')">
+                            <button
+                                v-if="isEditableAction(row)"
+                                type="button"
+                                @click="applyChanges(row)"
+                                class="btn btn-sm btn-success"
+                                :class="{ 'enabled-history': history.history_id == row.id }"
+                                data-toggle="tooltip"
+                                :title="trans('history.show')"
+                            >
                                 <i class="fa fa-eye"></i>
                             </button>
 
-                            <button type="button" v-if="canDeleteHistoryItem(row, $index)" @click="deleteHistoryRow(row)" class="btn btn-sm btn-danger" data-toggle="tooltip" :title="_('Zmazať zmenu z histórie')">
+                            <button
+                                type="button"
+                                v-if="canDeleteHistoryItem(row, $index)"
+                                @click="deleteHistoryRow(row)"
+                                class="btn btn-sm btn-danger"
+                                data-toggle="tooltip"
+                                :title="_('Zmazať zmenu z histórie')"
+                            >
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </div>
@@ -43,63 +59,59 @@
 import { mapActions } from 'vuex';
 
 export default {
-    props : ['modal', 'model', 'data', 'row'],
+    props: ['modal', 'model', 'data', 'row'],
 
-    data(){
+    data() {
         return {
-            deleted : [],
+            deleted: [],
         };
     },
 
     computed: {
-        history(){
+        history() {
             return this.model.getData('history');
         },
-        sortedHistory(){
-            return _.orderBy(this.history.rows, 'id', 'desc').filter(item => this.deleted.includes(item.id) == false);
-        }
+        sortedHistory() {
+            return _.orderBy(this.history.rows, 'id', 'desc').filter((item) => this.deleted.includes(item.id) == false);
+        },
     },
 
-    created(){
+    created() {
         this.model.getData('history').id = this.row.id;
         this.model.getData('history').rows = this.data.rows;
     },
 
-    destroyed(){
+    destroyed() {
         this.model.closeHistory(true);
     },
 
     methods: {
         ...mapActions('modal', ['closeModal']),
-        canDeleteHistoryItem(item, index){
+        canDeleteHistoryItem(item, index) {
             //We cannot delete last item
-            if ( index + 1 == this.history.rows.length ) {
+            if (index + 1 == this.history.rows.length) {
                 return false;
             }
 
             //We need has delete permissions
             return this.getFreshModel('models_histories').hasAccess('delete');
         },
-        async applyChanges(item){
+        async applyChanges(item) {
             this.history.fields = item.changedFields;
             this.history.history_id = item.id;
 
-            await this.model.selectRow(
-                { id : this.history.id },
-                null,
-                item.id
-            );
+            await this.model.selectRow({ id: this.history.id }, null, item.id);
 
-            this.closeModal({ modal : this.modal });
+            this.closeModal({ modal: this.modal });
         },
-        deleteHistoryRow(row){
+        deleteHistoryRow(row) {
             this.warningModal({
-                message : this.trans('delete-warning'),
+                message: this.trans('delete-warning'),
                 success: async () => {
                     try {
                         let response = this.$http.post(this.$root.requests.removeFromHistory, {
-                            model : this.model.table,
-                            id : row.id,
+                            model: this.model.table,
+                            id: row.id,
                         });
 
                         this.deleted.push(row.id);
@@ -107,19 +119,19 @@ export default {
                         $app.errorResponseLayer(error);
                     }
                 },
-                close : true
+                close: true,
             });
         },
-        date(date){
+        date(date) {
             return moment(date).format('D.M.Y H:mm');
         },
-        changedFields(items){
+        changedFields(items) {
             var changes = [];
 
-            for ( var k in items.changedFields ) {
+            for (var k in items.changedFields) {
                 var key = items.changedFields[k];
 
-                if ( key in this.model.fields ) {
+                if (key in this.model.fields) {
                     changes.push(this.model.fields[key].name);
                 } else {
                     changes.push(key);
@@ -128,11 +140,11 @@ export default {
 
             return changes.join(', ');
         },
-        isEditableAction(row){
+        isEditableAction(row) {
             return ['insert', 'update'].includes(row.action);
-        }
+        },
     },
-}
+};
 </script>
 
 <style lang="scss">
@@ -162,6 +174,8 @@ export default {
         }
     }
 
-    .th-history-buttons { width: 51px }
+    .th-history-buttons {
+        width: 51px;
+    }
 }
 </style>

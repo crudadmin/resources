@@ -11,38 +11,38 @@ import Editable from './Editor/Editable';
 /*
  * CrudAdmin auto translatable
  */
-(function(){
+(function () {
     window.CAEditor = {
         //Boot state
-        state : false,
+        state: false,
 
         //Config
-        config : window.CAEditorConfig,
+        config: window.CAEditorConfig,
 
         //Translatable class
-        translatable : Translatable,
+        translatable: Translatable,
 
         //Uploadable class
-        uploadable : Uploadable,
+        uploadable: Uploadable,
 
         //Linkable class
-        linkable : Linkable,
+        linkable: Linkable,
 
         //Editable class
-        editable : Editable,
+        editable: Editable,
 
         //All elementws with assigned pencil
-        matchedElements : [],
+        matchedElements: [],
 
         //Pencils feature
-        pencils : Pencils,
+        pencils: Pencils,
 
         //On editor initialization
-        init(TAObject){
+        init(TAObject) {
             Navigation.init();
 
             //Editor is not allowed
-            if ( CAEditor.config.active === false ) {
+            if (CAEditor.config.active === false) {
                 return;
             }
 
@@ -50,7 +50,7 @@ import Editable from './Editor/Editable';
         },
 
         //On First boot
-        boot(TAObject, onAjax){
+        boot(TAObject, onAjax) {
             //Boot translations
             Translatable.boot(TAObject, onAjax);
 
@@ -69,60 +69,64 @@ import Editable from './Editor/Editable';
             this.state = true;
         },
 
-        enable(){
+        enable() {
             //If editor has been booted already, pencils are just hidden, so we need show them.
-            if ( this.config.active === true ) {
+            if (this.config.active === true) {
                 Pencils.showAllPencils();
 
                 this.state = true;
 
                 //Send ajax that state is on
-                this.ajax.post(this.config.requests.changeState, { state : true });
+                this.ajax.post(this.config.requests.changeState, { state: true });
             } else {
                 //We need set active/boot status to true
                 this.config.active = true;
 
                 //Turn on state and get the newest translates with all raw texts
-                this.ajax.post(this.config.requests.changeState, {
-                    state : true,
-                    response : true,
-                }, (response) => {
-                    var JSONObject = eval(response.response);
+                this.ajax.post(
+                    this.config.requests.changeState,
+                    {
+                        state: true,
+                        response: true,
+                    },
+                    (response) => {
+                        var JSONObject = eval(response.response);
 
-                    this.boot(JSONObject, true);
-                })
+                        this.boot(JSONObject, true);
+                    }
+                );
             }
         },
-        toggle(){
-            if ( this.state === false ) {
+        toggle() {
+            if (this.state === false) {
                 this.enable();
             } else {
                 this.destroy();
             }
         },
-        destroy(){
+        destroy() {
             Pencils.hideAllPencils();
             Editor.turnOffAllEditors();
             this.state = false;
 
             //Turn of state
             this.ajax.post(this.config.requests.changeState, {
-                state : false,
+                state: false,
             });
         },
-        refresh(refreshDOM){
-            if ( refreshDOM === true ){
+        refresh(refreshDOM) {
+            if (refreshDOM === true) {
                 this.isRefreshedDom = true;
             }
 
             //We can refresh editor only one per second
-            if ( this.refreshingState ){
+            if (this.refreshingState) {
                 clearTimeout(this.refreshingState);
             }
 
             this.refreshingState = setTimeout(() => {
                 //If dom has been changed, we want reload all existing translates.
-                if ( this.isRefreshedDom === true ) {
+                if (this.isRefreshedDom === true) {
                     Translatable.getTranslatableElements();
 
                     this.isRefreshedDom = false;
@@ -131,64 +135,64 @@ import Editable from './Editor/Editable';
                 this.pencils.refresh();
             }, 1000);
         },
-        registerPointerProperties(element, type, settings){
-            if ( !element.hasPointer ) {
+        registerPointerProperties(element, type, settings) {
+            if (!element.hasPointer) {
                 element.hasPointer = [];
             }
 
-            if ( !element._pointerSettings ) {
+            if (!element._pointerSettings) {
                 element._pointerSettings = {};
             }
 
             //Get pointer settings
-            if ( !element.getPointerSetting ) {
-                element.getPointerSetting = function(key, type){
-                    if ( !this._pointerSettings || !this._pointerSettings[type] ){
+            if (!element.getPointerSetting) {
+                element.getPointerSetting = function (key, type) {
+                    if (!this._pointerSettings || !this._pointerSettings[type]) {
                         return;
                     }
 
                     return this._pointerSettings[type][key];
-                }
+                };
             }
 
             //Get pointer settings
-            if ( !element.getAllPointerSetting ) {
-                element.getAllPointerSetting = function(key, type){
+            if (!element.getAllPointerSetting) {
+                element.getAllPointerSetting = function (key, type) {
                     var items = [];
 
-                    for ( var k in this._pointerSettings ) {
-                        if ( key in this._pointerSettings[k] ) {
-                            if ( !type || type == k ) {
+                    for (var k in this._pointerSettings) {
+                        if (key in this._pointerSettings[k]) {
+                            if (!type || type == k) {
                                 items.push(this._pointerSettings[k][key]);
                             }
                         }
                     }
 
                     return items;
-                }
+                };
             }
 
             //Get pointer settings
-            if ( !element.getPointerSettings ) {
-                element.getPointerSettings = function(){
+            if (!element.getPointerSettings) {
+                element.getPointerSettings = function () {
                     return this._pointerSettings;
-                }
+                };
             }
 
             //set pointer settings
-            if ( !element.setPointerSetting ) {
-                element.setPointerSetting = function(key, value, type){
+            if (!element.setPointerSetting) {
+                element.setPointerSetting = function (key, value, type) {
                     this._pointerSettings[type][key] = value;
-                }
+                };
             }
 
             //set pointer settings
-            if ( !element.setPointerSettings ) {
-                element.setPointerSettings = function(type, settings){
-                    for ( var key in settings ){
+            if (!element.setPointerSettings) {
+                element.setPointerSettings = function (type, settings) {
+                    for (var key in settings) {
                         element.setPointerSetting(key, settings[key], type);
                     }
-                }
+                };
             }
 
             //Register that this element has given pointer type
@@ -197,14 +201,14 @@ import Editable from './Editor/Editable';
             //Bind pointer settings
             element._pointerSettings[type] = {};
 
-            if ( settings ) {
+            if (settings) {
                 //Bind additional pointer settings
                 element.setPointerSettings(type, settings);
             }
         },
-        pushPointerElement(element, type, settings){
+        pushPointerElement(element, type, settings) {
             //Element has pointer already
-            if ( element.hasPointer && element.hasPointer.indexOf(type) > -1 ) {
+            if (element.hasPointer && element.hasPointer.indexOf(type) > -1) {
                 return;
             }
 
@@ -214,28 +218,28 @@ import Editable from './Editor/Editable';
             }
 
             //Register pointer element
-            if ( this.matchedElements.indexOf(element) === -1 ) {
+            if (this.matchedElements.indexOf(element) === -1) {
                 this.matchedElements.push(element);
             }
         },
-        ajax : Ajax,
+        ajax: Ajax,
 
         //Returns matched elements by given type
-        allMatchedElements(searchByType){
-            if ( ! searchByType ){
+        allMatchedElements(searchByType) {
+            if (!searchByType) {
                 return this.matchedElements;
             }
 
             var elements = [];
 
-            for ( var i = 0; i < this.matchedElements.length; i++ ) {
-                if ( searchByType in this.matchedElements[i].getPointerSettings() ){
+            for (var i = 0; i < this.matchedElements.length; i++) {
+                if (searchByType in this.matchedElements[i].getPointerSettings()) {
                     elements.push(this.matchedElements[i]);
                 }
             }
 
             return elements;
-        }
+        },
     };
 
     window.addEventListener('load', () => {

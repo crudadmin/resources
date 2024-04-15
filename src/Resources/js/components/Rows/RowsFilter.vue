@@ -8,14 +8,17 @@
                 :title="filter.title"
                 type="button"
                 class="btn"
-                :class="[filter.class, {
-                    'btn--icon' : filter.icon || filter.color,
-                    'btn-default': filterId.includes(key),
-                    'btn-secondary': !filterId.includes(key),
-                }]"
+                :class="[
+                    filter.class,
+                    {
+                        'btn--icon': filter.icon || filter.color,
+                        'btn-default': filterId.includes(key),
+                        'btn-secondary': !filterId.includes(key),
+                    },
+                ]"
             >
                 <i class="fa" :class="filter.icon" v-if="filter.icon"></i>
-                <i v-else-if="filter.color" class="--dot" :style="{ backgroundColor : filter.color }"></i>
+                <i v-else-if="filter.color" class="--dot" :style="{ backgroundColor: filter.color }"></i>
                 {{ filter.name }}
             </button>
         </div>
@@ -26,11 +29,16 @@
                     <i class="--icon-right fa fa-angle-down"></i>
                 </button>
                 <ul class="dropdown-menu menu-left dropdown-menu-right">
-                    <li @click="$event.stopPropagation()" v-for="(filter, key) in filters" :class="{ active : filterId.includes(key) }" class="--no-item-padding">
+                    <li
+                        @click="$event.stopPropagation()"
+                        v-for="(filter, key) in filters"
+                        :class="{ active: filterId.includes(key) }"
+                        class="--no-item-padding"
+                    >
                         <label class="--dropdown-item-padding --dropdown-item-vertical" @click="setFilter(key)">
                             <div v-if="hasAnyIconOrColor" class="icon-wrapper --icon-left">
                                 <i class="fa" :class="filter.icon" v-if="filter.icon"></i>
-                                <i v-else-if="filter.color" class="--dot" :style="{ backgroundColor : filter.color }"></i>
+                                <i v-else-if="filter.color" class="--dot" :style="{ backgroundColor: filter.color }"></i>
                             </div>
                             {{ filter.name }}
                         </label>
@@ -55,28 +63,29 @@ export default {
             filterId: [],
         };
     },
-    computed : {
-        filters(){
-            return (this.model.getSettings('rows.filter.items')||[]);
+    computed: {
+        filters() {
+            return this.model.getSettings('rows.filter.items') || [];
         },
-        filtersValues(){
+        filtersValues() {
             return Object.values(this.filters);
         },
-        hasAnyIconOrColor(){
-            return this.filtersValues.filter(item => item.color||item.icon).length > 0;
-        }
+        hasAnyIconOrColor() {
+            return this.filtersValues.filter((item) => item.color || item.icon).length > 0;
+        },
     },
     methods: {
         setFilter(filterId) {
-            if ( _.isNil(filterId) ) {
+            if (_.isNil(filterId)) {
                 this.filterId = [];
-            } if ( this.model.getSettings('rows.filter.single') ){
-                this.filterId = this.filterId.includes(filterId) == false ? [filterId].filter(item => !_.isNil(item)) : [];
+            }
+            if (this.model.getSettings('rows.filter.single')) {
+                this.filterId = this.filterId.includes(filterId) == false ? [filterId].filter((item) => !_.isNil(item)) : [];
             } else {
-                this.filterId = _.xor(this.filterId, [filterId]).filter(item => !_.isNil(item));
+                this.filterId = _.xor(this.filterId, [filterId]).filter((item) => !_.isNil(item));
             }
 
-            if ( this.filterId.length ){
+            if (this.filterId.length) {
                 this.model.setScope('filterProperty', this.filterId.join(','));
             } else {
                 this.model.removeScope('filterProperty');

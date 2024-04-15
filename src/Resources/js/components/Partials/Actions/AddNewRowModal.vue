@@ -1,86 +1,86 @@
 <template>
-<div>
-    <slot :open="open">
-    </slot>
+    <div>
+        <slot :open="open"></slot>
 
-    <!-- Modal for adding relation -->
-    <div :class="['modal fade', { '--inModal' : isModalInModal }]" :id="modalId" ref="modalEl" data-keyboard="false" tabindex="-1" role="dialog" v-if="model">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <!-- :langid="langid"
+        <!-- Modal for adding relation -->
+        <div
+            :class="['modal fade', { '--inModal': isModalInModal }]"
+            :id="modalId"
+            ref="modalEl"
+            data-keyboard="false"
+            tabindex="-1"
+            role="dialog"
+            v-if="model"
+        >
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <!-- :langid="langid"
                 :hasParentModel="getRelationModelParent"
                 :parentRow="getRelationRow" -->
 
-                <div class="modal-body --modal-wrapper" v-if="hasModelBuilder" v-show="isListing">
-                    <model-builder :model_builder="model">
-                        <template v-slot:actions-grid-after>
-                            <button
-                                @click="close()"
-                                type="button"
-                                class="btn--icon btn btn-secondary --no-margin --button-back"
-                            >
-                                <i class="fa fa-times"></i>
-                            </button>
-                        </template>
-                    </model-builder>
-                </div>
+                    <div class="modal-body --modal-wrapper" v-if="hasModelBuilder" v-show="isListing">
+                        <model-builder :model_builder="model">
+                            <template v-slot:actions-grid-after>
+                                <button @click="close()" type="button" class="btn--icon btn btn-secondary --no-margin --button-back">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </template>
+                        </model-builder>
+                    </div>
 
-                <form-builder
-                    v-if="!isListing"
-                    :model="model">
-                </form-builder>
+                    <form-builder v-if="!isListing" :model="model"></form-builder>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
 export default {
-    name : 'AddNewRowModal',
+    name: 'AddNewRowModal',
 
-    props : {
-        model : {},
-        id : {
-            default : 'relation-modal',
+    props: {
+        model: {},
+        id: {
+            default: 'relation-modal',
         },
     },
 
-    data(){
+    data() {
         return {
-            action : null,
-            loaded : false,
-            hasModelBuilder : false,
-        }
+            action: null,
+            loaded: false,
+            hasModelBuilder: false,
+        };
     },
 
-    mounted(){
+    mounted() {
         this.boot();
     },
 
-    watch : {
-        model(model){
-            if ( this.loaded == false && model ) {
+    watch: {
+        model(model) {
+            if (this.loaded == false && model) {
                 this.boot();
             }
         },
-        isListing(state){
-            if ( state === true ) {
+        isListing(state) {
+            if (state === true) {
                 this.hasModelBuilder = true;
             }
-        }
+        },
     },
 
-    methods : {
-        boot(){
-            if ( !this.model ){
+    methods: {
+        boot() {
+            if (!this.model) {
                 return;
             }
 
             this.model.setData('load_child_tab_models', false);
 
             this.model.on(['create', 'update', 'form.close'], () => {
-                if ( this.isListing ){
+                if (this.isListing) {
                     return;
                 }
 
@@ -96,7 +96,7 @@ export default {
                 this.model.closeForm();
             });
 
-            if ( this._onModelLoad ){
+            if (this._onModelLoad) {
                 this._onModelLoad(this.model);
 
                 this._onModelLoad = null;
@@ -104,7 +104,7 @@ export default {
 
             this.loaded = true;
         },
-        show(){
+        show() {
             //Wait on row load in case of viewable action for child tabs.
             //For proper relation child loading workflow.
             this.model.setData('load_child_tab_models', true);
@@ -112,12 +112,12 @@ export default {
             //On modal element load
             this.$nextTick(() => {
                 $(this.$refs.modalEl).modal('show');
-            })
+            });
         },
-        close(){
+        close() {
             $(this.$refs.modalEl).modal('hide');
         },
-        open(action, rowId){
+        open(action, rowId) {
             this.onModelLoad(async (model) => {
                 this.action = action;
 
@@ -128,19 +128,19 @@ export default {
                 model.setData('form.standalone', this.isListing ? false : true);
 
                 //Open row if is viewable mode
-                if ( ['view', 'edit'].includes(action) ){
+                if (['view', 'edit'].includes(action)) {
                     //Enable only edit mode.
                     model.editable = action == 'view' ? false : true;
 
                     //Open row ID
-                    if ( rowId ) {
+                    if (rowId) {
                         //Load row form db
-                        await model.selectRow({ id : rowId })
+                        await model.selectRow({ id: rowId });
                     }
                 }
 
                 //Listing
-                if ( this.isListing ) {
+                if (this.isListing) {
                     model.enableOnlyFullScreen();
                     model.resetFormWithEvents();
                 }
@@ -152,9 +152,9 @@ export default {
          * This method fixed correct flow during opening existing row.
          * It keeps right state: so first load model, set it row, then load model component for right ajax requests and not doing duplicates.
          */
-        onModelLoad(callback){
+        onModelLoad(callback) {
             //If model is loaded already
-            if ( this.model ){
+            if (this.model) {
                 callback(this.model);
             }
 
@@ -162,24 +162,24 @@ export default {
             else {
                 this._onModelLoad = callback;
             }
-        }
+        },
     },
 
-    computed : {
-        isModalInModal(){
-            return _.isNil(this.model.getParentModel().getData('parentModel')) ? false : true
+    computed: {
+        isModalInModal() {
+            return _.isNil(this.model.getParentModel().getData('parentModel')) ? false : true;
         },
-        modalId(){
-            return 'modal-inline-'+this.id+'_'+this.model?.table;
+        modalId() {
+            return 'modal-inline-' + this.id + '_' + this.model?.table;
         },
-        modalEl(){
+        modalEl() {
             return this.$refs.modalEl;
         },
-        isListing(){
+        isListing() {
             return ['list'].includes(this.action);
-        }
+        },
     },
-}
+};
 </script>
 
 <style lang="scss" scoped>

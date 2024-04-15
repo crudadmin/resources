@@ -1,16 +1,14 @@
 <template>
     <div class="box__overlay">
-      <i class="fa fa-sync fa-spin"></i>
-      <p>{{ trans('loading') }}</p>
+        <i class="fa fa-sync fa-spin"></i>
+        <p>{{ trans('loading') }}</p>
     </div>
 </template>
 
 <script>
 export default {
-    methods: {
-
-    }
-}
+    methods: {},
+};
 </script>
 
 <style lang="scss" scoped>
@@ -20,7 +18,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.7);
+    background: rgba(255, 255, 255, 0.7);
     z-index: 100;
 
     p {

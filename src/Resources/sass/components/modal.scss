@@ -16,7 +16,9 @@
         z-index: 999;
     }
 
-    &.modal-success, &.modal-danger, &.modal-warning {
+    &.modal-success,
+    &.modal-danger,
+    &.modal-warning {
         .modal-content {
             background: #00a65a;
             color: white;
@@ -31,9 +33,13 @@
                 }
             }
 
-            .modal-header, .modal-footer { border-color: rgba(0, 0, 0, 0.1); }
+            .modal-header,
+            .modal-footer {
+                border-color: rgba(0, 0, 0, 0.1);
+            }
 
-            .btn-secondary, .btn-primary {
+            .btn-secondary,
+            .btn-primary {
                 background: none;
                 border-color: white;
                 color: white;
@@ -41,15 +47,21 @@
         }
     }
 
-    &.modal-danger .modal-content { background: $danger; }
-    &.modal-warning .modal-content { background: #f39c12; }
+    &.modal-danger .modal-content {
+        background: $danger;
+    }
+    &.modal-warning .modal-content {
+        background: #f39c12;
+    }
 
     .modal-title {
         font-weight: 400;
         @include fontSize(20px);
     }
 
-    .modal-header, .modal-body, .modal-footer {
+    .modal-header,
+    .modal-body,
+    .modal-footer {
         padding: $boxPadding / 1.5;
     }
 
@@ -60,13 +72,15 @@
             margin-bottom: 0;
         }
 
-        p > a, > a {
+        p > a,
+        > a {
             color: white;
             font-weight: 600;
             text-decoration: underline;
         }
 
-        p > a:hover, > a:hover {
+        p > a:hover,
+        > a:hover {
             color: white;
             text-decoration: none;
         }
@@ -110,11 +124,14 @@
             bottom: 0;
 
             @keyframes toastAnimation {
-                0% { bottom: -20rem; }
-                100% { bottom: 0; }
+                0% {
+                    bottom: -20rem;
+                }
+                100% {
+                    bottom: 0;
+                }
             }
         }
-
 
         .icon {
             margin-right: 15px;
@@ -142,16 +159,16 @@
             height: 3rem;
             opacity: 1;
             font-weight: 400;
-            color: #A8B3C1;
+            color: #a8b3c1;
             border-radius: 100%;
             font-weight: 400;
-            color: #A8B3C1;
+            color: #a8b3c1;
             box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
             transition: all 0.2s ease-in-out;
 
             &:hover {
                 opacity: 1;
-                background: #4A54E2;
+                background: #4a54e2;
                 color: white;
             }
 
@@ -164,31 +181,34 @@
 
         /* Default color */
         border-color: $primary;
-        .toast-body, .toast-header {
+        .toast-body,
+        .toast-header {
             color: $blackText;
         }
 
         &.--success {
-            border-color: #32AB45;
+            border-color: #32ab45;
 
-            .toast-body, .toast-header {
-                color: #32AB45;
+            .toast-body,
+            .toast-header {
+                color: #32ab45;
             }
 
             .close:hover {
-                background: #32AB45;
+                background: #32ab45;
             }
         }
 
         &.--danger {
-            border-color: #E7492E;
+            border-color: #e7492e;
 
-            .toast-body, .toast-header {
-                color: #E7492E;
+            .toast-body,
+            .toast-header {
+                color: #e7492e;
             }
 
             .close:hover {
-                background: #E7492E;
+                background: #e7492e;
             }
         }
     }

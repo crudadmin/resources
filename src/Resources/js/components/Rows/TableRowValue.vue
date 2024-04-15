@@ -7,9 +7,10 @@
             :field="settings.field"
             :row="item"
             :model="model"
-            :is="componentName(model, settings.component)" />
+            :is="componentName(model, settings.component)"
+        />
 
-        <div v-else-if="isColor" :style="{ color : fieldValueLimitedAndEncoded }">
+        <div v-else-if="isColor" :style="{ color: fieldValueLimitedAndEncoded }">
             {{ fieldValueLimitedAndEncoded }}
         </div>
 
@@ -17,12 +18,17 @@
             <div v-for="(file, index) in getFiles">
                 <file :file="file" :field="field" :model="model" :image="image"></file>
 
-                <span v-if="index != getFiles.length - 1">, </span>
+                <span v-if="index != getFiles.length - 1">,</span>
             </div>
         </div>
 
         <!-- Table value -->
-        <span v-else :data-toggle="fieldValue.length > settings.string_limit ? 'tooltip' : ''" :data-original-title="onlyEncodedTitle" v-html="fieldValueLimitedAndEncoded"></span>
+        <span
+            v-else
+            :data-toggle="fieldValue.length > settings.string_limit ? 'tooltip' : ''"
+            :data-original-title="onlyEncodedTitle"
+            v-html="fieldValueLimitedAndEncoded"
+        ></span>
     </div>
 </template>
 
@@ -30,12 +36,12 @@
 import File from '../Partials/File.vue';
 
 export default {
-    props : ['model', 'item', 'field', 'name', 'image', 'columns', 'settings'],
+    props: ['model', 'item', 'field', 'name', 'image', 'columns', 'settings'],
 
-    components : { File },
+    components: { File },
 
-    created(){
-        if ( this.settings.component ) {
+    created() {
+        if (this.settings.component) {
             this.registerModelComponents(this.model, this.settings.component);
         }
 
@@ -48,30 +54,26 @@ export default {
     // },
 
     computed: {
-        isFile(){
-            if (
-                this.settings.isRealField
-                && this.settings.field.isFile()
-                && this.settings.encode
-            ) {
+        isFile() {
+            if (this.settings.isRealField && this.settings.field.isFile() && this.settings.encode) {
                 return true;
             }
 
             return false;
         },
-        isColor(){
+        isColor() {
             return this.settings.isRealField && this.settings.field.isColor();
         },
-        getFiles(){
-            var value = this.fieldValue||[];
+        getFiles() {
+            var value = this.fieldValue || [];
 
-            if ( $.isArray(value) ) {
+            if ($.isArray(value)) {
                 return value;
             }
 
-            return [ value ];
+            return [value];
         },
-        hasFieldValue(){
+        hasFieldValue() {
             return _.isNil(this.fieldValue) === false;
         },
         fieldValue() {
@@ -80,46 +82,50 @@ export default {
                 rowValue = this.field in row ? this.getMutatedValue(row[this.field], field) : '';
 
             //Get select original value
-            if ( field ) {
+            if (field) {
                 var isRadio = field.isRadio();
 
-                if ( field.isSelect() || isRadio ) {
-                    if ( 'multiple' in field && field.multiple == true && $.isArray(rowValue) && !isRadio ) {
+                if (field.isSelect() || isRadio) {
+                    if ('multiple' in field && field.multiple == true && $.isArray(rowValue) && !isRadio) {
                         var values = [],
                             rows = rowValue,
                             related_table = this.getRelatedModelTable(field),
-                            options = (!related_table && !field.option) ? field.options : this.getLanguageSelectOptions( field.options, this.getRelatedModelTable(field) );
+                            options =
+                                !related_table && !field.option
+                                    ? field.options
+                                    : this.getLanguageSelectOptions(field.options, this.getRelatedModelTable(field));
 
-                        for ( var i = 0; i < rows.length; i++ ) {
-                            var searched = options.filter(function(item){
-                                return item[0] == rows[i];
-                            }.bind(this));
+                        for (var i = 0; i < rows.length; i++) {
+                            var searched = options.filter(
+                                function (item) {
+                                    return item[0] == rows[i];
+                                }.bind(this)
+                            );
 
-                            if ( searched.length > 0 ) {
-                                values.push( searched[0][1] );
+                            if (searched.length > 0) {
+                                values.push(searched[0][1]);
                             }
                         }
 
                         return values.join(', ');
                     } else {
                         var related_table = this.getRelatedModelTable(field),
-                            options = isRadio || (!related_table && !field.option) ? field.options : this.getLanguageSelectOptions(field.options, related_table);
+                            options =
+                                isRadio || (!related_table && !field.option)
+                                    ? field.options
+                                    : this.getLanguageSelectOptions(field.options, related_table);
 
                         //Check if key exists in options
-                        if ( ! options )
-                            return rowValue;
+                        if (!options) return rowValue;
 
-                        for ( var i = 0; i < options.length; i++ )
-                        {
-                            if ( rowValue == options[i][0] ) {
+                        for (var i = 0; i < options.length; i++) {
+                            if (rowValue == options[i][0]) {
                                 return options[i][1];
                             }
                         }
                     }
-                }
-
-                else if ( field.isCheckbox() ) {
-                    if ( rowValue === null ){
+                } else if (field.isCheckbox()) {
+                    if (rowValue === null) {
                         return;
                     }
 
@@ -127,10 +133,10 @@ export default {
                 }
 
                 //Multi date format values
-                else if ( field.isDatepicker() ) {
+                else if (field.isDatepicker()) {
                     rowValue = this.returnDateFormat(rowValue, this.field);
                 }
-            } else if ( ['created_at', 'updated_at'].indexOf(this.field) > -1 ) {
+            } else if (['created_at', 'updated_at'].indexOf(this.field) > -1) {
                 return this.returnDateFormat(rowValue, this.field);
             }
 
@@ -138,78 +144,80 @@ export default {
                 add_after = this.settings.add_after;
 
             //If is object
-            if ( typeof rowValue == 'object' ) {
+            if (typeof rowValue == 'object') {
                 return rowValue;
             }
 
-            return (rowValue || rowValue == 0) ? ((add_before||'') + rowValue + (add_after||'')) : null;
+            return rowValue || rowValue == 0 ? (add_before || '') + rowValue + (add_after || '') : null;
         },
-        onlyEncodedTitle(){
+        onlyEncodedTitle() {
             //If is not encoded column, then return empty value
-            if ( this.settings.encode === false ) {
+            if (this.settings.encode === false) {
                 return '';
             }
 
             return this.fieldValue;
         },
-        fieldValueLimitedAndEncoded(){
+        fieldValueLimitedAndEncoded() {
             return this.encodeValue(this.stringLimit(this.fieldValue));
         },
-        hasComponent(){
+        hasComponent() {
             return this.settings.component ? true : false;
         },
     },
 
     methods: {
-        returnDateFormat(rowValue, field){
-            return _.castArray(rowValue||[]).map(item => {
-                var date = moment(item),
-                    format = this.fromPHPFormatToMoment(this.model.getFieldFormat(field)||'d.m.Y H:i');
+        returnDateFormat(rowValue, field) {
+            return _.castArray(rowValue || [])
+                .map((item) => {
+                    var date = moment(item),
+                        format = this.fromPHPFormatToMoment(this.model.getFieldFormat(field) || 'd.m.Y H:i');
 
-                return date.isValid() ? date.format(format) : item;
-            }).join(', ');
+                    return date.isValid() ? date.format(format) : item;
+                })
+                .join(', ');
         },
-        stringLimit(string){
+        stringLimit(string) {
             var limit = this.settings.string_limit;
 
-            if ( limit != 0 && string.length > limit && this.settings.encode !== false ) {
+            if (limit != 0 && string.length > limit && this.settings.encode !== false) {
                 return string.substr(0, limit) + '...';
             }
 
             return string;
         },
-        encodeValue(string){
+        encodeValue(string) {
             var field = this.settings.field;
 
-            if ( this.settings.isRealField ) {
+            if (this.settings.isRealField) {
                 //Check if column can be encoded
-                if ( this.settings.encode == true ) {
+                if (this.settings.encode == true) {
                     string = $(document.createElement('div')).text(string).html();
                 }
 
-                if ( field.isText() && parseInt(field.limit) === 0) {
+                if (field.isText() && parseInt(field.limit) === 0) {
                     return string.replace(/\n/g, '<br>');
                 }
 
                 //Is phone number
-                if ( (field.isText() && ('phone' in field || 'phone_link' in field)) || field.isPhone() ) {
-                    return '<a href="tel:'+string+'">'+string+'</a>';
+                if ((field.isText() && ('phone' in field || 'phone_link' in field)) || field.isPhone()) {
+                    return '<a href="tel:' + string + '">' + string + '</a>';
                 }
             }
 
             return string;
         },
-        getRelatedModelTable(field){
-            var table = field.belongsTo||field.belongsToMany;
+        getRelatedModelTable(field) {
+            var table = field.belongsTo || field.belongsToMany;
 
-            if ( ! table ) {
+            if (!table) {
                 return false;
             }
 
             return table.split(',')[0];
         },
-        getMutatedValue(value, field){
-            if ( field && 'locale' in field ) {
+        getMutatedValue(value, field) {
+            if (field && 'locale' in field) {
                 //Get default language
                 let dslug = this.settings.default_slug;
 
@@ -217,21 +225,24 @@ export default {
             }
 
             //Return correct zero value
-            if ( value === 0 ) {
+            if (value === 0) {
                 return 0;
             }
 
             return value;
         },
-        getLanguageSelectOptions(array, model){
+        getLanguageSelectOptions(array, model) {
             model = this.$root.models[model];
 
-            var filter =  model && model.localization ? {
-                language_id : this.$root.language_id,
-            } : {};
+            var filter =
+                model && model.localization
+                    ? {
+                          language_id: this.$root.language_id,
+                      }
+                    : {};
 
             return this.$root.languageOptions(array, this.settings.field, filter, false);
         },
-    }
-}
+    },
+};
 </script>

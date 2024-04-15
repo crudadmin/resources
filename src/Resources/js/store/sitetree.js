@@ -2,14 +2,14 @@ const sitetree = {
     namespaced: true,
 
     state: {
-        models : {},
+        models: {},
     },
 
     mutations: {
-        setModels(state, models){
+        setModels(state, models) {
             state.models = models;
         },
     },
-}
+};
 
 export default sitetree;

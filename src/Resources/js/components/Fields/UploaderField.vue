@@ -2,7 +2,7 @@
     <Field :field="field">
         <FieldLabel :model="model" :field="field" :field_key="field_key" />
 
-        <input type="hidden" :name="name" :value="uuid">
+        <input type="hidden" :name="name" :value="uuid" />
 
         <div class="file-manager" @click="openManager" @dragenter="onFileDrop">
             <span>{{ __('Otvoriť správcu súborov') }}</span>
@@ -16,37 +16,33 @@ import FileManagerModal from '@components/Modal/FileManagerModal';
 export default {
     props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level'],
 
-    data(){
+    data() {
         return {
-            uuid : this.generateUuid(),
+            uuid: this.generateUuid(),
         };
     },
 
-    methods : {
-        onFileDrop(){
+    methods: {
+        onFileDrop() {
             this.openManager();
         },
-        openManager(){
-            let parts = [
-                this.model.table,
-                this.field_key,
-                (this.model.getRow()?.id||this.uuid)
-            ];
+        openManager() {
+            let parts = [this.model.table, this.field_key, this.model.getRow()?.id || this.uuid];
 
             this.openModal({
-                title : this.field.name,
-                class : '--wide --fileManager',
-                component : {
-                    name : 'FileManagerModal',
-                    component : FileManagerModal,
-                    props : {
-                        url : window.crudadmin.baseURL + '/filemanager?type=models/'+parts.join('/'),
+                title: this.field.name,
+                class: '--wide --fileManager',
+                component: {
+                    name: 'FileManagerModal',
+                    component: FileManagerModal,
+                    props: {
+                        url: window.crudadmin.baseURL + '/filemanager?type=models/' + parts.join('/'),
                     },
-                }
+                },
             });
-        }
+        },
     },
-}
+};
 </script>
 
 <style lang="scss">

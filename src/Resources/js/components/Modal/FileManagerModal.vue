@@ -1,5 +1,5 @@
 <template>
-    <Modal :modal="modal" :options="{ actions : false, escClose : true }">
+    <Modal :modal="modal" :options="{ actions: false, escClose: true }">
         <iframe :src="url"></iframe>
     </Modal>
 </template>
@@ -8,14 +8,14 @@
 import { mapActions } from 'vuex';
 
 export default {
-    props : ['modal', 'url'],
+    props: ['modal', 'url'],
 
     computed: {},
 
-    destroyed(){},
+    destroyed() {},
 
     methods: {},
-}
+};
 </script>
 
 <style lang="scss">

@@ -3,8 +3,12 @@
         margin-right: 0.7rem;
     }
 
-    .--icon-left { margin-right: 0.7rem; }
-    .--icon-right { margin-left: 0.7rem; }
+    .--icon-left {
+        margin-right: 0.7rem;
+    }
+    .--icon-right {
+        margin-left: 0.7rem;
+    }
 
     &.btn-light-primary {
         background: $primary-light;
@@ -57,10 +61,10 @@
     }
 
     &.btn-default {
-        background: #DEE3E8;
+        background: #dee3e8;
 
         &:hover {
-            background: darken(#DEE3E8, 10%);
+            background: darken(#dee3e8, 10%);
         }
     }
 

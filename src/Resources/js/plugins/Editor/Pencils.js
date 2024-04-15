@@ -3,28 +3,28 @@ import Helpers from './Helpers';
 import Navigation from './Navigation';
 
 var Pencils = {
-    wrapperId : 'CAE_Pencils__wrapper',
-    wrapperTooltipNavbar : 'CAE_Pencils__tooltip_wrapper',
-    className : 'CAE_Pencil',
-    classNameMultiple : 'CAE_Pencil--multiple',
-    classNameSaved : 'CAE_Pencil--saved',
-    classNameHidden : 'CAE_Pencil--hidden',
-    classNameMoving : 'CAE_Pencil--moving',
-    classNameAppears : 'CAE_Pencil--appears',
-    classNameError : 'CAE_Pencil--error',
-    classNameActive : 'CAE_Pencil--active',
-    classNameLoading : 'CAE_Pencil--loading',
-    classNameIcon : 'CAE_Pencil--icon',
-    classNameImage : 'CAE_Pencil--image',
-    classNameFile : 'CAE_Pencil--file',
-    classNameLinkable : 'CAE_Pencil--linkable',
-    classNameEditor : 'CAE_Pencil--editor',
-    classNameSubmenu : 'CAE_Pencil--subpointers',
+    wrapperId: 'CAE_Pencils__wrapper',
+    wrapperTooltipNavbar: 'CAE_Pencils__tooltip_wrapper',
+    className: 'CAE_Pencil',
+    classNameMultiple: 'CAE_Pencil--multiple',
+    classNameSaved: 'CAE_Pencil--saved',
+    classNameHidden: 'CAE_Pencil--hidden',
+    classNameMoving: 'CAE_Pencil--moving',
+    classNameAppears: 'CAE_Pencil--appears',
+    classNameError: 'CAE_Pencil--error',
+    classNameActive: 'CAE_Pencil--active',
+    classNameLoading: 'CAE_Pencil--loading',
+    classNameIcon: 'CAE_Pencil--icon',
+    classNameImage: 'CAE_Pencil--image',
+    classNameFile: 'CAE_Pencil--file',
+    classNameLinkable: 'CAE_Pencil--linkable',
+    classNameEditor: 'CAE_Pencil--editor',
+    classNameSubmenu: 'CAE_Pencil--subpointers',
 
     //Wrapper element
-    pointersWrapper : null,
+    pointersWrapper: null,
 
-    init(){
+    init() {
         this.createPointersWrapper();
         this.initHovers();
         this.registerClicks();
@@ -34,27 +34,27 @@ var Pencils = {
         Observer.observeNewElements();
     },
 
-    refresh(){
+    refresh() {
         this.buildPencils();
     },
 
-    createPointersWrapper(){
+    createPointersWrapper() {
         var e = document.createElement('div');
-            e.id = Pencils.wrapperId;
+        e.id = Pencils.wrapperId;
 
         document.getElementsByTagName('body')[0].appendChild(e);
 
         this.pointersWrapper = e;
     },
 
-    buildPencils(){
+    buildPencils() {
         //Add pencils
-        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+        for (var i = 0; i < CAEditor.matchedElements.length; i++) {
             var element = CAEditor.matchedElements[i];
 
             //If element already has pencil, skip it.
             //Also pdate position of pencil, because element may be deleted.
-            if ( element._CAPencil ) {
+            if (element._CAPencil) {
                 this.bindPosition(element);
                 continue;
             }
@@ -68,7 +68,7 @@ var Pencils = {
      * Check hovers of all elements for creating and hidding pencils.
      * Because on hover elements some pencil may dissapear or may be visible...
      */
-    initHovers(){
+    initHovers() {
         var allElements = document.getElementsByTagName('*');
 
         var checkHoverChanges = (e) => {
@@ -77,44 +77,42 @@ var Pencils = {
                 elementsToMove = [];
 
             //Add parent element if does have pencil
-            if ( hoveredParent._CAPencil ) {
+            if (hoveredParent._CAPencil) {
                 elementsToMove.push(hoveredParent);
             }
 
             //Add all childs with pencil into potentionaly moved elements
-            for ( var i = 0; i < childs.length; i++ ) {
+            for (var i = 0; i < childs.length; i++) {
                 //If child has pencil
-                if ( childs[i]._CAPencil ) {
+                if (childs[i]._CAPencil) {
                     elementsToMove.push(childs[i]);
                 }
             }
 
             //See for position changed of every element till position wont changes.
-            for ( var i = 0; i < elementsToMove.length; i++ ) {
+            for (var i = 0; i < elementsToMove.length; i++) {
                 this.observePencilMovement(elementsToMove[i]);
             }
         };
 
-        for ( var i = 0; i < allElements.length; i++ ) {
+        for (var i = 0; i < allElements.length; i++) {
             allElements[i].addEventListener('mouseenter', checkHoverChanges);
             allElements[i].addEventListener('mouseleave', checkHoverChanges);
         }
     },
-    observePencilMovement(element){
+    observePencilMovement(element) {
         var prevPositionKey = null,
             checkPosition = () => {
-                var position,
-                    style;
+                var position, style;
 
                 //Get element position by node type
-                if ( element.nodeName == '#text' ) {
+                if (element.nodeName == '#text') {
                     var range = document.createRange();
-                        range.selectNodeContents(element);
+                    range.selectNodeContents(element);
 
                     position = range.getClientRects()[0];
 
                     style = element.parentElement ? getComputedStyle(element.parentElement) : {};
-
                 } else {
                     position = element.getBoundingClientRect();
                     style = getComputedStyle(element);
@@ -122,7 +120,7 @@ var Pencils = {
 
                 var positionKey = position ? [position.x, position.y, style.opacity, style.visibility].join('-') : null;
 
-                if ( position && prevPositionKey != positionKey ) {
+                if (position && prevPositionKey != positionKey) {
                     Pencils.bindPosition(element);
 
                     prevPositionKey = positionKey;
@@ -135,7 +133,7 @@ var Pencils = {
                 else {
                     Helpers.removeClass(element._CAPencil, this.classNameMoving);
                 }
-            }
+            };
 
         //We want turn off moving animation for smother effect
         Helpers.addClass(element._CAPencil, this.classNameMoving);
@@ -144,15 +142,14 @@ var Pencils = {
     },
     placeCaretAtEnd(el) {
         el.focus();
-        if (typeof window.getSelection != "undefined"
-                && typeof document.createRange != "undefined") {
+        if (typeof window.getSelection != 'undefined' && typeof document.createRange != 'undefined') {
             var range = document.createRange();
             range.selectNodeContents(el);
             range.collapse(false);
             var sel = window.getSelection();
             sel.removeAllRanges();
             sel.addRange(range);
-        } else if (typeof document.body.createTextRange != "undefined") {
+        } else if (typeof document.body.createTextRange != 'undefined') {
             var textRange = document.body.createTextRange();
             textRange.moveToElementText(el);
             textRange.collapse(false);
@@ -163,37 +160,37 @@ var Pencils = {
      * We need have this super complicated clics handler, because pencils may not be visible in some ceses.
      * That's why pencils are user-select none. And not all the time are on the top of z-index.
      */
-    registerClicks(){
+    registerClicks() {
         document.body.addEventListener('click', (e) => {
             var clickX = e.pageX,
                 clickY = e.pageY,
                 allElements = document.getElementsByTagName('*'),
                 list = [];
 
-            for ( var i = 0; i < allElements.length; i++ ) {
+            for (var i = 0; i < allElements.length; i++) {
                 var rect = allElements[i].getBoundingClientRect(),
                     offset = {
-                      top: rect.top + window.scrollY,
-                      left: rect.left + window.scrollX
+                        top: rect.top + window.scrollY,
+                        left: rect.left + window.scrollX,
                     },
                     range = {
-                        x : [ offset.left, offset.left + allElements[i].offsetWidth ],
-                        y : [ offset.top, offset.top + allElements[i].offsetHeight ]
+                        x: [offset.left, offset.left + allElements[i].offsetWidth],
+                        y: [offset.top, offset.top + allElements[i].offsetHeight],
                     };
 
-                if ( (clickX >= range.x[0] && clickX <= range.x[1]) && (clickY >= range.y[0] && clickY <= range.y[1]) ) {
+                if (clickX >= range.x[0] && clickX <= range.x[1] && clickY >= range.y[0] && clickY <= range.y[1]) {
                     list.push(allElements[i]);
                 }
             }
 
-            for ( var i = 0; i < list.length; i++ ) {
+            for (var i = 0; i < list.length; i++) {
                 //Check if is pencil element
-                if ( Helpers.hasClass(list[i], Pencils.className) ) {
+                if (Helpers.hasClass(list[i], Pencils.className)) {
                     Pencils.onClick(list[i]);
 
                     e.preventDefault();
 
-                    this.removeAdditionalPointers(null, e.originalPointer||list[i]);
+                    this.removeAdditionalPointers(null, e.originalPointer || list[i]);
                     return;
                 }
             }
@@ -207,50 +204,50 @@ var Pencils = {
         document.body.addEventListener('mouseup', (e) => {
             var elements = CAEditor.allMatchedElements();
 
-            elements.forEach(item => {
+            elements.forEach((item) => {
                 this.observePencilMovement(item);
             });
         });
     },
-    registerResize(){
+    registerResize() {
         var resize;
 
         window.addEventListener('resize', () => {
-            if ( resize ) {
+            if (resize) {
                 clearTimeout(resize);
             }
 
             resize = setTimeout(this.repaintPencils, 100);
         });
     },
-    registerScroll(){
+    registerScroll() {
         var scroll;
 
         window.addEventListener('scroll', () => {
-            if ( scroll ) {
+            if (scroll) {
                 clearTimeout(scroll);
             }
 
             scroll = setTimeout(this.repaintPencils, 30);
         });
     },
-    onClick(pencil){
+    onClick(pencil) {
         var element = pencil._CAElement,
             helpers = Object.keys(element.getPointerSettings()),
-            handler = element.getPointerSetting('onPointerClick', pencil.pointerType||(helpers.length == 1 ? helpers[0] : null));
+            handler = element.getPointerSetting('onPointerClick', pencil.pointerType || (helpers.length == 1 ? helpers[0] : null));
 
         //Reset error state on click
         Helpers.removeClass(pencil, Pencils.classNameError);
 
         //If handler has been selected
-        if ( handler ) {
+        if (handler) {
             handler(element, pencil);
         }
 
         //When pointer has multiple listeners
-        else if ( helpers.length > 1 ) {
+        else if (helpers.length > 1) {
             //If pointer has been removed, we want only hide subpointers
-            if ( this.removeAdditionalPointers(pencil) ) {
+            if (this.removeAdditionalPointers(pencil)) {
                 return;
             }
 
@@ -261,14 +258,14 @@ var Pencils = {
                 offsetLeft = parseInt(pencil.offsetWidth / 2) + offsetMargin;
 
             //We want add additional pointers with offsets
-            for ( var i = 0; i < helpers.length; i++ ) {
+            for (var i = 0; i < helpers.length; i++) {
                 let clonedPointer = this.createPencil(element, null, helpers[i]);
 
                 pencil.additionalPointers.push(clonedPointer);
 
                 //This is offset of given pointer
                 clonedPointer.originalPointer = pencil;
-                clonedPointer.leftOffset = (clonedPointer.offsetWidth / 2) + offsetLeft;
+                clonedPointer.leftOffset = clonedPointer.offsetWidth / 2 + offsetLeft;
 
                 //We want animation
                 clonedPointer.style.left = pencil.style.left;
@@ -282,20 +279,17 @@ var Pencils = {
             }
         }
     },
-    removeAdditionalPointers(pointer, excepPointer){
+    removeAdditionalPointers(pointer, excepPointer) {
         var removed = false;
 
         var pointers = [];
 
         //Find active pointer with additional pointers
-        if ( !pointer ){
-            for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+        if (!pointer) {
+            for (var i = 0; i < CAEditor.matchedElements.length; i++) {
                 let additional = CAEditor.matchedElements[i]._CAPencil.additionalPointers;
 
-                if (
-                    additional && additional.length > 0
-                    && CAEditor.matchedElements[i]._CAPencil !== excepPointer
-                ) {
+                if (additional && additional.length > 0 && CAEditor.matchedElements[i]._CAPencil !== excepPointer) {
                     pointers.push(CAEditor.matchedElements[i]._CAPencil);
                     break;
                 }
@@ -305,17 +299,20 @@ var Pencils = {
         }
 
         //Turn off all active pointers
-        for ( var a = 0; a < pointers.length; a++ ) {
+        for (var a = 0; a < pointers.length; a++) {
             let pointer = pointers[a];
 
             //Remove multipencils
-            if ( pointer.additionalPointers && pointer.additionalPointers.length > 0 ) {
-                for ( var i = 0; i < pointer.additionalPointers.length; i++ ){
+            if (pointer.additionalPointers && pointer.additionalPointers.length > 0) {
+                for (var i = 0; i < pointer.additionalPointers.length; i++) {
                     pointer.additionalPointers[i].style.left = pointer.style.left;
 
-                    setTimeout(function(){
-                        this.remove();
-                    }.bind(pointer.additionalPointers[i]), 200);
+                    setTimeout(
+                        function () {
+                            this.remove();
+                        }.bind(pointer.additionalPointers[i]),
+                        200
+                    );
 
                     removed = true;
                 }
@@ -328,40 +325,40 @@ var Pencils = {
 
         return removed;
     },
-    repaintPencils(){
-        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+    repaintPencils() {
+        for (var i = 0; i < CAEditor.matchedElements.length; i++) {
             Pencils.bindPosition(CAEditor.matchedElements[i]);
         }
     },
-    createPencil(element, key, type){
+    createPencil(element, key, type) {
         var helpers = Object.keys(element.getPointerSettings());
 
         var e = document.createElement('div');
-            e.setAttribute('data-key', key);
-            e.className = Pencils.className + (helpers.length > 1 && !type ? (' '+Pencils.classNameMultiple) : '');
-            e._CAElement = element;
+        e.setAttribute('data-key', key);
+        e.className = Pencils.className + (helpers.length > 1 && !type ? ' ' + Pencils.classNameMultiple : '');
+        e._CAElement = element;
 
         //Fire onCreate event
         var handlers = element.getAllPointerSetting('onPointerCreate', type);
 
         handlers.forEach((callback) => {
-            if ( callback ) {
+            if (callback) {
                 callback(e, element);
             }
-        })
+        });
 
         this.pointersWrapper.appendChild(e);
 
         return e;
     },
-    bindPosition(element, pencil){
-        pencil = pencil||element._CAPencil;
+    bindPosition(element, pencil) {
+        pencil = pencil || element._CAPencil;
 
         var pencilHeight = 20,
             pencilWidth = 20;
 
         //If element does not have pencil
-        if ( pencil === undefined ){
+        if (pencil === undefined) {
             return;
         }
 
@@ -373,16 +370,19 @@ var Pencils = {
             positionY = position ? position.y : null;
 
         //Get position of text node
-        var textNode = element.nodeName == '#text' ? element : (
-                element.childNodes.length == 1 ? element.firstChild : null //we want position with elements with one textNode
-            ),
+        var textNode =
+                element.nodeName == '#text'
+                    ? element
+                    : element.childNodes.length == 1
+                      ? element.firstChild
+                      : null, //we want position with elements with one textNode
             rects;
 
         //If textnode is present
-        if ( textNode ) {
+        if (textNode) {
             var range = document.createRange();
-                range.selectNodeContents(textNode);
-                rects = range.getClientRects();
+            range.selectNodeContents(textNode);
+            rects = range.getClientRects();
         }
 
         //Get real position of textNode
@@ -392,7 +392,7 @@ var Pencils = {
         }
 
         //Try guess position
-        else if ( position ) {
+        else if (position) {
             var styles = getComputedStyle(element),
                 textAlign = styles['text-align'],
                 paddingLeft = parseFloat(styles['padding-left'].replace('px', '')),
@@ -404,7 +404,7 @@ var Pencils = {
             positionY += paddingTop;
 
             //We want show images on the right side
-            if ( element.nodeName === 'IMG' ){
+            if (element.nodeName === 'IMG') {
                 positionX = positionX + element.getBoundingClientRect().width;
 
                 var windowWidth = window.outerWidth,
@@ -412,7 +412,7 @@ var Pencils = {
 
                 //If position of image pointer is just above window width
                 //Show this pointer on right corner. Not after screen width.
-                if ( positionX >= windowWidth && positionX <= maxRadiusAfterWidth ) {
+                if (positionX >= windowWidth && positionX <= maxRadiusAfterWidth) {
                     positionX = windowWidth - pencilWidth;
                 }
             } else {
@@ -420,7 +420,7 @@ var Pencils = {
                 positionX -= pencilWidth;
 
                 //Point pencil on center of text
-                if ( textAlign == 'center' ){
+                if (textAlign == 'center') {
                     positionX += (element.offsetWidth - paddingLeft - paddingRight) / 2;
                 }
             }
@@ -429,32 +429,32 @@ var Pencils = {
         var isFixed = this.isPositionFixed(element);
 
         //Check if position is visible
-        if ( !isHidden ) {
-            hasNoPosition = (!positionY || !positionX || positionY == 0 || positionX == 0);
+        if (!isHidden) {
+            hasNoPosition = !positionY || !positionX || positionY == 0 || positionX == 0;
 
             isHidden = hasNoPosition || this.isHiddenElement(element);
         }
 
         //If pencil has set offset
-        if ( pencil.leftOffset ){
+        if (pencil.leftOffset) {
             positionX += pencil.leftOffset;
         }
 
         pencil.style.position = isFixed ? 'fixed' : 'absolute';
-        pencil.style.left = ((isFixed ? 0 : window.scrollX) + positionX)+'px';
-        pencil.style.top = ((isFixed ? 0 : window.scrollY) + positionY - pencilHeight)+'px';
+        pencil.style.left = (isFixed ? 0 : window.scrollX) + positionX + 'px';
+        pencil.style.top = (isFixed ? 0 : window.scrollY) + positionY - pencilHeight + 'px';
 
         //If element is gonne be hidden and has been visible in previosu state
-        if ( pencil.style.display && pencil.style.display != 'none' && isHidden && !hasNoPosition ) {
+        if (pencil.style.display && pencil.style.display != 'none' && isHidden && !hasNoPosition) {
             var handlers = element.getAllPointerSetting('onPointerHide');
 
-            handlers.forEach(callback => {
+            handlers.forEach((callback) => {
                 callback(element, pencil);
             });
 
             //When dot has been visible, we want hide this dot after one second delay
             //Because element may dissapear, but we may edit content in alert.
-            if ( pencil.disappearTimaout ) {
+            if (pencil.disappearTimaout) {
                 clearTimeout(pencil.disappearTimaout);
             }
 
@@ -468,7 +468,7 @@ var Pencils = {
             pencil.style.display = isHidden ? 'none' : 'block';
 
             //If element is visible again, we want turn off dissappear from previous state
-            if ( !isHidden ){
+            if (!isHidden) {
                 clearTimeout(pencil.disappearTimaout);
             }
         }
@@ -477,19 +477,19 @@ var Pencils = {
         this.setPencilZindex(element, pencil);
 
         //We want repaint all additional pointers
-        if ( pencil.additionalPointers && pencil.additionalPointers.length ) {
-            for ( var i = 0; i < pencil.additionalPointers.length; i++ ) {
+        if (pencil.additionalPointers && pencil.additionalPointers.length) {
+            for (var i = 0; i < pencil.additionalPointers.length; i++) {
                 this.bindPosition(element, pencil.additionalPointers[i]);
             }
         }
     },
-    isPositionFixed(element, pencil){
+    isPositionFixed(element, pencil) {
         var fixed = false;
 
-        while(element.parentElement) {
+        while (element.parentElement) {
             var position = element.nodeType == 1 ? window.document.defaultView.getComputedStyle(element).position : null;
 
-            if ( position == 'fixed' ) {
+            if (position == 'fixed') {
                 fixed = true;
                 break;
             }
@@ -499,16 +499,16 @@ var Pencils = {
 
         return fixed;
     },
-    isHiddenElement(element, pencil){
+    isHiddenElement(element, pencil) {
         var hidden = false;
 
-        while(element.parentElement) {
+        while (element.parentElement) {
             var styles = element.nodeType == 1 ? window.document.defaultView.getComputedStyle(element) : null;
 
-            if ( styles && (styles.opacity < 0.2 || styles.visibility == 'hidden') ) {
+            if (styles && (styles.opacity < 0.2 || styles.visibility == 'hidden')) {
                 hidden = true;
 
-                if ( !element.observer ) {
+                if (!element.observer) {
                     Observer.observeDOM(element, () => {
                         this.observePencilMovement(element);
                     });
@@ -523,44 +523,44 @@ var Pencils = {
 
         return hidden;
     },
-    setPencilZindex(origElement, pencil){
+    setPencilZindex(origElement, pencil) {
         var element = origElement,
             maxZindex = 'auto';
 
         do {
             var zIndex = element.nodeType == 1 ? parseInt(window.document.defaultView.getComputedStyle(element).zIndex) : NaN;
 
-            if ( isNaN(zIndex) || zIndex < 0 ) {
+            if (isNaN(zIndex) || zIndex < 0) {
                 continue;
             }
 
             maxZindex = zIndex;
-        } while(element = element.parentElement)
+        } while ((element = element.parentElement));
 
         pencil.style.zIndex = maxZindex;
     },
-    hideAllPencils(){
-        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+    hideAllPencils() {
+        for (var i = 0; i < CAEditor.matchedElements.length; i++) {
             var pencil = CAEditor.matchedElements[i]._CAPencil;
 
             //We need remove all pencils
-            if ( pencil ) {
+            if (pencil) {
                 Helpers.addClass(pencil, Pencils.classNameHidden);
             }
         }
     },
-    showAllPencils(){
-        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
+    showAllPencils() {
+        for (var i = 0; i < CAEditor.matchedElements.length; i++) {
             var pencil = CAEditor.matchedElements[i]._CAPencil;
 
             //We need remove all pencils
-            if ( pencil ) {
+            if (pencil) {
                 Helpers.removeClass(pencil, Pencils.classNameHidden);
 
                 this.bindPosition(CAEditor.matchedElements[i]);
             }
         }
-    }
-}
+    },
+};
 
 export default Pencils;

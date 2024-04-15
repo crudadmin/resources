@@ -2,21 +2,21 @@ const header = {
     namespaced: true,
 
     state: {
-        isActiveMobileMenu : false,
-        sidebarMenuVisible : true,
+        isActiveMobileMenu: false,
+        sidebarMenuVisible: true,
     },
 
     mutations: {
-        setMobileMenuActive(state, bool){
+        setMobileMenuActive(state, bool) {
             state.isActiveMobileMenu = bool;
         },
-        toggleMobileMenu(state){
+        toggleMobileMenu(state) {
             state.isActiveMobileMenu = !state.isActiveMobileMenu;
         },
-        toggleSidebarMenu(state){
+        toggleSidebarMenu(state) {
             state.sidebarMenuVisible = !state.sidebarMenuVisible;
-        }
+        },
     },
-}
+};
 
 export default header;

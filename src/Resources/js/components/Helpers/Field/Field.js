@@ -6,17 +6,10 @@ import FieldLocale from './FieldLocale';
 import FieldHistory from './FieldHistory';
 
 const FreshBuilderData = () => {
-    return {
+    return {};
+};
 
-    }
-}
-
-const extensions = [
-    FieldProperties,
-    FieldTypes,
-    FieldLocale,
-    FieldHistory,
-];
+const extensions = [FieldProperties, FieldTypes, FieldLocale, FieldHistory];
 
 const Field = () => {};
 

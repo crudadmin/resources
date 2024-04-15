@@ -2,27 +2,27 @@ const models = {
     namespaced: true,
 
     state: {
-        models : [],
+        models: [],
     },
 
     mutations: {
-        storeModel(state, model){
+        storeModel(state, model) {
             state.models.push(model);
         },
-        removeModel(state, model){
-            _.remove(state.models, { data : { uuid : model.getData('uuid') } });
+        removeModel(state, model) {
+            _.remove(state.models, { data: { uuid: model.getData('uuid') } });
         },
     },
 
     getters: {
-        getModel : (state, getters) => uuid => {
+        getModel: (state, getters) => (uuid) => {
             return _.find(state.models, {
-                data : {
-                    uuid
-                }
+                data: {
+                    uuid,
+                },
             });
-        }
-    }
-}
+        },
+    },
+};
 
 export default models;

@@ -6,22 +6,22 @@ import DashboardView from './components/Views/DashBoardView.vue';
 import BasePageView from './components/Views/BasePageView.vue';
 
 var router = new VueRouter({
-    routes : [
+    routes: [
         {
-            path : '*',
-            name : 'dashboard',
+            path: '*',
+            name: 'dashboard',
             component: DashboardView,
         },
         {
-            path : '/page/:model',
-            name : 'admin-model',
+            path: '/page/:model',
+            name: 'admin-model',
             component: BasePageView,
-        }
-    ]
+        },
+    ],
 });
 
 router.afterEach((to, from) => {
     store.commit('header/setMobileMenuActive', false);
-})
+});
 
 export default router;

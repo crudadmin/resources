@@ -1,24 +1,26 @@
 var Navigation = {
-    wrapperClassName : 'CAE_Navigation',
+    wrapperClassName: 'CAE_Navigation',
 
-    init(){
+    init() {
         this.addNavigation();
 
         this.bindTranslatesToggle();
     },
 
-    addNavigation(){
+    addNavigation() {
         var node = document.createElement('div');
 
-        let editorLIText = __("Režim upravovania"),
-            adminLiText = __("Administrácia webu"),
-            editorLI = CAEditor.config.enabled ? `<li id="CAE_ToggleState">
+        let editorLIText = __('Režim upravovania'),
+            adminLiText = __('Administrácia webu'),
+            editorLI = CAEditor.config.enabled
+                ? `<li id="CAE_ToggleState">
                             <label class="CAE_Checkbox CAE_Icons">
                                 ${editorLIText}
                                 <input type="checkbox">
                                 <div><div></div></div>
                             </label>
-                        </li>` : '';
+                        </li>`
+                : '';
 
         node.className = this.wrapperClassName;
         node.innerHTML = `
@@ -36,11 +38,11 @@ var Navigation = {
         document.getElementsByTagName('body')[0].appendChild(node);
     },
 
-    bindTranslatesToggle(){
+    bindTranslatesToggle() {
         var toggle = document.getElementById('CAE_ToggleState');
 
         //If editor is turned off
-        if ( !toggle ){
+        if (!toggle) {
             return;
         }
 
@@ -48,8 +50,8 @@ var Navigation = {
 
         toggle.addEventListener('change', (e) => {
             CAEditor.toggle();
-        })
-    }
-}
+        });
+    },
+};
 
 export default Navigation;

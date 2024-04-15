@@ -3,20 +3,20 @@ import Helpers from './Helpers';
 import Pencils from './Pencils';
 
 var Translatable = {
-    allTranslates : null,
-    rawTranslates : null,
-    translatedTree : [],
-    duplicates : [],
-    maxTranslateLength : 0,
+    allTranslates: null,
+    rawTranslates: null,
+    translatedTree: [],
+    duplicates: [],
+    maxTranslateLength: 0,
 
-    boot(TAObject, onAjax){
+    boot(TAObject, onAjax) {
         //Turn on translatable if translate object will returns
-        if ( typeof TAObject === 'object' && TAObject.translates && onAjax == true ) {
+        if (typeof TAObject === 'object' && TAObject.translates && onAjax == true) {
             CAEditor.config.translatable = true;
         }
 
         //If uploadable is not allowed
-        if ( CAEditor.config.translatable === false ){
+        if (CAEditor.config.translatable === false) {
             return;
         }
 
@@ -31,17 +31,17 @@ var Translatable = {
     /*
      * Register element pointer
      */
-    registerTranslatableElement(element, html){
+    registerTranslatableElement(element, html) {
         var isTextFromEditor = false;
 
         //Element has been registered already
         if (
-            element.hasPointer && element.hasPointer.indexOf('translatable') > -1
-            || element._isInEditorElement
-            || (isTextFromEditor = this.isInEditorElement(element))
+            (element.hasPointer && element.hasPointer.indexOf('translatable') > -1) ||
+            element._isInEditorElement ||
+            (isTextFromEditor = this.isInEditorElement(element))
         ) {
             //Prevent check of editor type next time...
-            if ( isTextFromEditor ) {
+            if (isTextFromEditor) {
                 element._isInEditorElement = true;
             }
 
@@ -50,11 +50,11 @@ var Translatable = {
 
         CAEditor.pushPointerElement(element, 'translatable', {
             //Bind original translate into element property
-            originalTranslate : this.translatedTree[html],
+            originalTranslate: this.translatedTree[html],
 
-            onPointerCreate : this.events.onPointerCreate.bind(this),
-            onPointerClick : this.events.onPointerClick.bind(this),
-            onPointerHide : this.events.onPointerHide.bind(this),
+            onPointerCreate: this.events.onPointerCreate.bind(this),
+            onPointerClick: this.events.onPointerClick.bind(this),
+            onPointerHide: this.events.onPointerHide.bind(this),
         });
     },
 
@@ -62,33 +62,33 @@ var Translatable = {
      * We want build tree with keys as translations and values as original texts.
      * For better performance for searching elements.
      */
-    getTranslationsTree(){
+    getTranslationsTree() {
         //Debug given texts
         var debugText = [];
 
         //Build translates tree
-        for ( var key in this.allTranslates ) {
-            var translate = this.domPreparer.prepareTranslateHTML(this.allTranslates[key][0]||key);
+        for (var key in this.allTranslates) {
+            var translate = this.domPreparer.prepareTranslateHTML(this.allTranslates[key][0] || key);
 
             /*
              * DEBUG only given texts
              */
-            if ( debugText.length > 0 && translate.indexOf(debugText) === -1 ) {
+            if (debugText.length > 0 && translate.indexOf(debugText) === -1) {
                 continue;
             }
 
-            if ( translate && translate.indexOf('je fiktívny text') > -1 ){
-                console.log(translate)
+            if (translate && translate.indexOf('je fiktívny text') > -1) {
+                console.log(translate);
             }
 
             //We need save duplicate translates
-            if ( translate in this.translatedTree ) {
+            if (translate in this.translatedTree) {
                 this.duplicates.push(translate);
             }
 
             this.translatedTree[translate] = key;
 
-            if ( translate.length > this.maxTranslateLength ) {
+            if (translate.length > this.maxTranslateLength) {
                 this.maxTranslateLength = translate.length;
             }
         }
@@ -98,48 +98,48 @@ var Translatable = {
      * ig. we need sort all attributes by name order, because VueJS sorts attributes... then translates are not same with innerHTML
      */
     domPreparer: {
-        prepared : {},
+        prepared: {},
 
-        prepareTranslateHTML(html, e){
+        prepareTranslateHTML(html, e) {
             //We need cache prepared texts, because othervise it may have heavy performance impact on browser
-            if ( html in this.prepared ){
+            if (html in this.prepared) {
                 return this.prepared[html];
             }
 
             var vn = document.createElement('div');
-                vn.innerHTML = html;
+            vn.innerHTML = html;
 
             this.modifyElements(vn);
 
-            return this.prepared[html] = vn.innerHTML;
+            return (this.prepared[html] = vn.innerHTML);
         },
-        modifyElements(parentNode){
+        modifyElements(parentNode) {
             //Element has no childnodes
-            if ( !parentNode.childNodes ){
+            if (!parentNode.childNodes) {
                 return;
             }
 
-            for ( var k = 0; k < parentNode.childNodes.length; k++ ) {
+            for (var k = 0; k < parentNode.childNodes.length; k++) {
                 let e = parentNode.childNodes[k];
 
                 this.sortAttributes(e);
 
                 //If childnode has another childs...
-                if ( e.childNodes && e.childNodes.length > 0 ){
-                    this.modifyElements(e)
+                if (e.childNodes && e.childNodes.length > 0) {
+                    this.modifyElements(e);
                 }
             }
         },
-        sortAttributes(e){
+        sortAttributes(e) {
             let defaultAttributes = [];
 
             //If childnode has attributes, we need sort them
-            if ( e.attributes && e.attributes.length > 0 ){
+            if (e.attributes && e.attributes.length > 0) {
                 //Build attributes tree
-                for ( let i = 0; i < e.attributes.length; i++ ){
+                for (let i = 0; i < e.attributes.length; i++) {
                     defaultAttributes.push({
-                        name : e.attributes[i].nodeName,
-                        value : e.attributes[i].nodeValue
+                        name: e.attributes[i].nodeName,
+                        value: e.attributes[i].nodeValue,
                     });
                 }
 
@@ -149,24 +149,24 @@ var Translatable = {
                 });
 
                 //Remove all attributes
-                defaultAttributes.forEach(item => {
+                defaultAttributes.forEach((item) => {
                     e.removeAttribute(item.name);
                 });
 
                 //Add attributes aggain in correct order
-                defaultAttributes.forEach(item => {
+                defaultAttributes.forEach((item) => {
                     item = this.updateAttribute(item);
 
                     e.setAttribute(item.name, item.value);
                 });
             }
         },
-        updateAttribute(item){
+        updateAttribute(item) {
             //We want update style to format same as from vuejs render
-            if ( item.name == 'style' ){
+            if (item.name == 'style') {
                 let newValue = item.value.replace(/\:/g, ': ').replace(/\s\s/g, ' ');
 
-                if ( newValue && newValue.substr(-1) != ';' ){
+                if (newValue && newValue.substr(-1) != ';') {
                     newValue += ';';
                 }
 
@@ -176,29 +176,29 @@ var Translatable = {
             return item;
         },
     },
-    getTranslatableElements(){
+    getTranslatableElements() {
         var elements = document.querySelectorAll('*');
 
         //Get all elements with innerhtml from translates
-        for ( var i = 0; i < elements.length; i++ ){
+        for (var i = 0; i < elements.length; i++) {
             var html = this.nodeValue(elements[i]);
 
             //We want skip longer texts than 50%
             //Because some tags may be encoded...
-            if ( (html||'').length > this.maxTranslateLength * 1.5 ) {
+            if ((html || '').length > this.maxTranslateLength * 1.5) {
                 continue;
             }
 
             //Add element into array if has not been added already and has translation
-            if ( this.translatedTree[html] !== undefined ) {
+            if (this.translatedTree[html] !== undefined) {
                 this.registerTranslatableElement(elements[i], html);
             }
 
             //Look for text childs
             else {
-                for ( var n = 0; n < elements[i].childNodes.length; n++ ){
+                for (var n = 0; n < elements[i].childNodes.length; n++) {
                     var node = elements[i].childNodes[n];
-                    if ( node.nodeName !== '#text' ) {
+                    if (node.nodeName !== '#text') {
                         continue;
                     }
 
@@ -208,11 +208,11 @@ var Translatable = {
                     //then we want boot translation into parent element.
                     //This is because innerHTML in parent element may be escaped, and wont be matched
                     //with translation. But value in textNode is correct for this element.
-                    if ( elements[i].childNodes.length === 1 ) {
+                    if (elements[i].childNodes.length === 1) {
                         node = node.parentElement;
                     }
 
-                    if ( this.translatedTree[html] !== undefined ) {
+                    if (this.translatedTree[html] !== undefined) {
                         this.registerTranslatableElement(node, html);
                     }
                 }
@@ -222,26 +222,26 @@ var Translatable = {
     /*
      * Get element or node value
      */
-    nodeValue(e){
+    nodeValue(e) {
         var value = e.nodeName == '#text' ? e.data : e.innerHTML,
-            value = value||'';
+            value = value || '';
 
         return this.domPreparer.prepareTranslateHTML(value, e).trim();
     },
     /*
      * Check if given translation is in text block from editor field (type:editor)
      */
-    isInEditorElement(element){
-        if ( element ) {
-            if ( element.hasPointer && element.hasPointer.indexOf('translatable') > -1 ) {
+    isInEditorElement(element) {
+        if (element) {
+            if (element.hasPointer && element.hasPointer.indexOf('translatable') > -1) {
                 return true;
             }
 
-            if ( element.nodeName != '#text' && element.getAttribute('data-crudadmin-editor') === '' ) {
+            if (element.nodeName != '#text' && element.getAttribute('data-crudadmin-editor') === '') {
                 return true;
             }
 
-            if ( element.parentElement ) {
+            if (element.parentElement) {
                 return this.isInEditorElement(element.parentElement);
             }
         }
@@ -251,27 +251,27 @@ var Translatable = {
     /*
      * Update translation on change
      */
-    updateTranslation(e){
-        var data = { changes : {} },
+    updateTranslation(e) {
+        var data = { changes: {} },
             value = this.nodeValue(e);
 
         //We need replace &nbsp; for empty spaces. Because if we push empty char it will change to this encoded value.
         //We need place empty char, when user will delete whole translation. This situation is buggy in some browsers..
         //So we need remove here this empty char at the end.
-        if ( value.substr(-6) == '&nbsp;' ) {
+        if (value.substr(-6) == '&nbsp;') {
             value = value.substr(0, -6);
         }
 
         //If is not raw text, we can save unencoded value
         //Because double encodion would be applied from laravel side
-        if ( Editor.hasAllowedFormation(e) === false ) {
+        if (Editor.hasAllowedFormation(e) === false) {
             value = Helpers.htmlspecialcharsDecode(value);
         }
 
         data.changes[e.getPointerSetting('originalTranslate', 'translatable')] = value;
 
         //Clear previous key change
-        if ( this._ajaxSend ) {
+        if (this._ajaxSend) {
             clearTimeout(this._ajaxSend);
         }
 
@@ -284,13 +284,13 @@ var Translatable = {
             var url = CAEditor.config.requests.updateText;
 
             CAEditor.ajax.post(url, data, {
-                success(response){
+                success(response) {
                     Helpers.addClass(e._CAPencil, Pencils.classNameSaved);
                 },
-                error(response){
+                error(response) {
                     //Add red pointer color
                     Helpers.addClass(e._CAPencil, Pencils.classNameError);
-                }
+                },
             });
 
             this.updateSameTranslationElements(e);
@@ -299,10 +299,13 @@ var Translatable = {
     /*
      * Update all translates with same translation
      */
-    updateSameTranslationElements(element){
-        for ( var i = 0; i < CAEditor.matchedElements.length; i++ ) {
-            if ( CAEditor.matchedElements[i].getPointerSetting('originalTranslate', 'translatable') == element.getPointerSetting('originalTranslate', 'translatable') ) {
-                if ( CAEditor.matchedElements[i] != element ) {
+    updateSameTranslationElements(element) {
+        for (var i = 0; i < CAEditor.matchedElements.length; i++) {
+            if (
+                CAEditor.matchedElements[i].getPointerSetting('originalTranslate', 'translatable') ==
+                element.getPointerSetting('originalTranslate', 'translatable')
+            ) {
+                if (CAEditor.matchedElements[i] != element) {
                     CAEditor.matchedElements[i].innerHTML = element.innerHTML;
                 }
             }
@@ -311,9 +314,9 @@ var Translatable = {
     /*
      * Check if is translate visible
      */
-    isInvisibleElement(element){
+    isInvisibleElement(element) {
         //If is textNode
-        if ( element.nodeName == '#text' ) {
+        if (element.nodeName == '#text') {
             element = element.parentElement;
         }
 
@@ -321,7 +324,7 @@ var Translatable = {
             opacity = parseInt(css.opacity);
 
         //If is invisible element
-        if ( opacity <= 0.5 || css.visibility == 'hidden' || css.fontSize == 0 ) {
+        if (opacity <= 0.5 || css.visibility == 'hidden' || css.fontSize == 0) {
             return true;
         }
 
@@ -330,16 +333,16 @@ var Translatable = {
     /*
      * Edit hidden translate in promt modal message
      */
-    openAlertModal(element, actualValue){
+    openAlertModal(element, actualValue) {
         var newText = prompt(CATranslates.texts.update, actualValue);
 
         //On cancel
-        if ( newText == null ) {
+        if (newText == null) {
             return;
         }
 
         //We need update node, or innerHTML tag value
-        if ( element.nodeName == '#text' ) {
+        if (element.nodeName == '#text') {
             element.data = newText;
         } else {
             element.innerHTML = newText;
@@ -349,35 +352,35 @@ var Translatable = {
         this.updateTranslation(element);
     },
 
-    isStaticEditor(element){
+    isStaticEditor(element) {
         return element.nodeName != '#text' && element.getAttribute('data-crudadmin-static-editor') === '';
     },
 
     /*
      * Pencil events
      */
-    events : {
-        onPointerCreate(pencil, element){
-            if ( this.isStaticEditor(element) ){
+    events: {
+        onPointerCreate(pencil, element) {
+            if (this.isStaticEditor(element)) {
                 Helpers.addClass(pencil, Pencils.classNameIcon);
                 Helpers.addClass(pencil, Pencils.classNameEditor);
             }
 
             pencil.setAttribute('data-translate', element.getPointerSetting('originalTranslate', 'translatable'));
         },
-        onPointerClick(element, pencil){
+        onPointerClick(element, pencil) {
             var actualValue = this.nodeValue(element);
 
             //We cant allow update duplicate translates. Because change may be updated on right source translate.
-            if ( this.duplicates.indexOf(actualValue) > -1 ) {
+            if (this.duplicates.indexOf(actualValue) > -1) {
                 alert(CATranslates.texts.cannotUpdate);
                 return;
             }
 
             //Invisible element cannot be edited in editor style
-            if ( this.isInvisibleElement(element) ) {
+            if (this.isInvisibleElement(element)) {
                 this.openAlertModal(element, actualValue);
-            } else if ( this.isStaticEditor(element) ) {
+            } else if (this.isStaticEditor(element)) {
                 Editor.makeInlineCKEditor(element, () => {
                     Translatable.updateTranslation(element);
                 });
@@ -388,10 +391,10 @@ var Translatable = {
             //When pointer is clicked, we want remove all additional pointers
             Pencils.removeAdditionalPointers(element._CAPencil);
         },
-        onPointerHide(element, pencil){
+        onPointerHide(element, pencil) {
             //If element is beign edite state, we want open alert instead.
             //Because propably this elements has been hidden
-            if ( element.isContentEditable !== true ){
+            if (element.isContentEditable !== true) {
                 return;
             }
 
@@ -401,8 +404,8 @@ var Translatable = {
 
             //When element is hidden and is being editing state. We want open alert editor
             this.openAlertModal(element, actualValue);
-        }
-    }
-}
+        },
+    },
+};
 
 export default Translatable;

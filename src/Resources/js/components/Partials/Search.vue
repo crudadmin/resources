@@ -1,122 +1,179 @@
 <template>
-<!-- Search bar -->
-<div class="search-bar --select-big" data-search-bar :class="{ '--interval' : search.interval, '--resetRightBorders' : canBeInterval || canResetSearch, '--hasResetButton' : canResetSearch  }">
-    <div class="input-group">
-        <div class="input-group__column --small-width">
-            <vue-chosen
-                :placeholder="_('Vyberte typ podstránky')"
-                :value="search.column"
-                label="name"
-                trackBy="value"
-                @input="onColumnChange"
-                :options="filterColumns"></vue-chosen>
-        </div>
-
-        <div class="input-group__value" :key="search.column">
-            <!-- Search columns -->
-            <input type="text" v-show="isSearch" data-search-text :placeholder="trans('search')+'...'" :value="search.query" @input="updateSearchQuery('query', $event)" class="form-control">
-
-            <input type="text" v-show="isDate" :value="search.query" data-search-date readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker1">
-
-            <div class="select" v-show="isCheckbox||isSelect">
+    <!-- Search bar -->
+    <div
+        class="search-bar --select-big"
+        data-search-bar
+        :class="{ '--interval': search.interval, '--resetRightBorders': canBeInterval || canResetSearch, '--hasResetButton': canResetSearch }"
+    >
+        <div class="input-group">
+            <div class="input-group__column --small-width">
                 <vue-chosen
-                    v-if="isCheckbox"
-                    :value="search.query"
+                    :placeholder="_('Vyberte typ podstránky')"
+                    :value="search.column"
                     label="name"
                     trackBy="value"
-                    @input="search.query = $event"
-                    :options="[{ value : 0, name : trans('off') }, { value : 1, name : trans('on') }]"></vue-chosen>
+                    @input="onColumnChange"
+                    :options="filterColumns"
+                ></vue-chosen>
+            </div>
 
-                <vue-chosen
-                    data-search-select
-                    v-if="isSelect"
+            <div class="input-group__value" :key="search.column">
+                <!-- Search columns -->
+                <input
+                    type="text"
+                    v-show="isSearch"
+                    data-search-text
+                    :placeholder="trans('search') + '...'"
                     :value="search.query"
-                    label="name"
-                    trackBy="value"
-                    @input="search.query = $event"
-                    :options="[{ name : trans('show-all'), value : '' }].concat(languageOptionsSearchFilter(isSelect ? model.fields[search.column].options : []).map(item => ({ value : item[0], name : item[1] })))"></vue-chosen>
-            </div>
-            <!-- Search columns -->
+                    @input="updateSearchQuery('query', $event)"
+                    class="form-control"
+                />
 
-            <div class="interval-btn" data-interval v-if="canBeInterval" data-toggle="tooltip" data-original-title="Interval">
-                <button type="button" class="btn" :class="{ 'btn-default' : !search.interval, 'btn-primary' : search.interval }" @click="search.interval = !search.interval">
-                    <i class="fa fa-arrows-alt-h"></i>
-                </button>
-            </div>
+                <input
+                    type="text"
+                    v-show="isDate"
+                    :value="search.query"
+                    data-search-date
+                    readonly
+                    class="form-control js_date"
+                    :placeholder="__('Vyberte dátum')"
+                    ref="datePicker1"
+                />
 
-            <input type="text" data-interval-input data-search-interval-text v-show="search.interval && isSearch" :placeholder="trans('search')+'...'" :value="search.query_to" @input="updateSearchQuery('query_to', $event)" class="form-control">
+                <div class="select" v-show="isCheckbox || isSelect">
+                    <vue-chosen
+                        v-if="isCheckbox"
+                        :value="search.query"
+                        label="name"
+                        trackBy="value"
+                        @input="search.query = $event"
+                        :options="[
+                            { value: 0, name: trans('off') },
+                            { value: 1, name: trans('on') },
+                        ]"
+                    ></vue-chosen>
 
-            <input type="text" data-interval-input data-search-interval-date v-show="search.interval && isDate" :value="search.query_to" readonly class="form-control js_date" :placeholder="__('Vyberte dátum')" ref="datePicker2">
+                    <vue-chosen
+                        data-search-select
+                        v-if="isSelect"
+                        :value="search.query"
+                        label="name"
+                        trackBy="value"
+                        @input="search.query = $event"
+                        :options="
+                            [{ name: trans('show-all'), value: '' }].concat(
+                                languageOptionsSearchFilter(isSelect ? model.fields[search.column].options : []).map((item) => ({
+                                    value: item[0],
+                                    name: item[1],
+                                }))
+                            )
+                        "
+                    ></vue-chosen>
+                </div>
+                <!-- Search columns -->
 
-            <div class="interval" data-reset-interval v-if="canResetSearch" data-toggle="tooltip" :data-original-title="trans('reset')">
-                <button type="button" class="btn btn-default" @click="resetIterval">
-                    <i class="fa fa-times"></i>
-                </button>
+                <div class="interval-btn" data-interval v-if="canBeInterval" data-toggle="tooltip" data-original-title="Interval">
+                    <button
+                        type="button"
+                        class="btn"
+                        :class="{ 'btn-default': !search.interval, 'btn-primary': search.interval }"
+                        @click="search.interval = !search.interval"
+                    >
+                        <i class="fa fa-arrows-alt-h"></i>
+                    </button>
+                </div>
+
+                <input
+                    type="text"
+                    data-interval-input
+                    data-search-interval-text
+                    v-show="search.interval && isSearch"
+                    :placeholder="trans('search') + '...'"
+                    :value="search.query_to"
+                    @input="updateSearchQuery('query_to', $event)"
+                    class="form-control"
+                />
+
+                <input
+                    type="text"
+                    data-interval-input
+                    data-search-interval-date
+                    v-show="search.interval && isDate"
+                    :value="search.query_to"
+                    readonly
+                    class="form-control js_date"
+                    :placeholder="__('Vyberte dátum')"
+                    ref="datePicker2"
+                />
+
+                <div class="interval" data-reset-interval v-if="canResetSearch" data-toggle="tooltip" :data-original-title="trans('reset')">
+                    <button type="button" class="btn btn-default" @click="resetIterval">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script type="text/javascript">
 export default {
-    props : ['search', 'model'],
+    props: ['search', 'model'],
 
     watch: {
-        search : {
-            deep : true,
-            handler(search, oldsearch){
+        search: {
+            deep: true,
+            handler(search, oldsearch) {
                 //Update select
                 this.reloadSearchBarSelect();
             },
         },
-        'search.column'(column){
-            if ( this.isCheckbox ){
+        'search.column'(column) {
+            if (this.isCheckbox) {
                 this.search.query = 1;
             }
-        }
+        },
     },
 
-    mounted(){
+    mounted() {
         this.resetSearchBar();
     },
 
     computed: {
-        canResetSearch(){
+        canResetSearch() {
             return this.search.query || this.search.query_to;
         },
-        canBeInterval(){
+        canBeInterval() {
             var column = this.search.column;
 
-            if ( ['created_at', this.model.getKeyName()].indexOf(column) > -1 )
-                return true;
+            if (['created_at', this.model.getKeyName()].indexOf(column) > -1) return true;
 
             let field = this.model.fields[column];
 
-            if ( field ){
-                if ( field.encrypted ){
+            if (field) {
+                if (field.encrypted) {
                     return false;
                 }
 
-                if ( field.isNumber() || field.isDatepicker() ){
+                if (field.isNumber() || field.isDatepicker()) {
                     return true;
                 }
             }
 
             return false;
         },
-        getSearchableFields(){
+        getSearchableFields() {
             var keys = [];
 
             //Get searchable fields
-            for ( var key in this.model.fields ) {
+            for (var key in this.model.fields) {
                 var field = this.model.fields[key];
 
                 if (
-                        ! field.name
-                        || (!('belongsToMany' in field) && 'multiple' in field)
-                        || ( 'removeFromForm' in field && 'hidden' in field )
-                        || field.isPassword()
+                    !field.name ||
+                    (!('belongsToMany' in field) && 'multiple' in field) ||
+                    ('removeFromForm' in field && 'hidden' in field) ||
+                    field.isPassword()
                 ) {
                     continue;
                 }
@@ -130,89 +187,89 @@ export default {
         /*
          * Search columns
          */
-        getColumnField(){
+        getColumnField() {
             var column = this.search.column;
 
-            if ( column && column in this.model.fields && this.model.fields[column] ){
+            if (column && column in this.model.fields && this.model.fields[column]) {
                 return this.model.fields[column];
             }
         },
-        isSearch(){
-            return (this.isCheckbox || this.isDate || this.isSelect) ? false : true;
+        isSearch() {
+            return this.isCheckbox || this.isDate || this.isSelect ? false : true;
         },
-        isCheckbox(){
-            if ( !this.getColumnField ) {
+        isCheckbox() {
+            if (!this.getColumnField) {
                 return false;
             }
 
             return this.getColumnField.isCheckbox() ? true : false;
         },
-        isDate(){
+        isDate() {
             var column = this.search.column;
 
-            if ( ['created_at'].indexOf(column) > -1 ) {
+            if (['created_at'].indexOf(column) > -1) {
                 return true;
             }
 
-            if ( this.getColumnField ) {
+            if (this.getColumnField) {
                 return this.getColumnField.isDatepicker();
             }
 
             return false;
         },
-        isSelect(){
-            if ( this.getColumnField ) {
+        isSelect() {
+            if (this.getColumnField) {
                 return this.getColumnField.isSelect() || this.getColumnField.isRadio();
             }
 
             return false;
         },
-        filterColumns(){
+        filterColumns() {
             let columns = [];
 
-            columns.push({ name : this.getSearchingColumnName(null), value : null });
+            columns.push({ name: this.getSearchingColumnName(null), value: null });
 
-            if ( this.model.getSettings('increments', true) ){
-                columns.push({ name : this.getSearchingColumnName(this.model.getKeyName()), value : this.model.getKeyName() });
+            if (this.model.getSettings('increments', true)) {
+                columns.push({ name: this.getSearchingColumnName(this.model.getKeyName()), value: this.model.getKeyName() });
             }
 
             for (var key of this.getSearchableFields) {
-                columns.push({ name : this.getSearchingColumnName(key), value : key });
+                columns.push({ name: this.getSearchingColumnName(key), value: key });
             }
 
-            columns.push({ name : this.getSearchingColumnName('created_at'), value : 'created_at' });
+            columns.push({ name: this.getSearchingColumnName('created_at'), value: 'created_at' });
 
             return _.uniqBy(columns, 'value');
-        }
+        },
     },
 
     methods: {
-        updateSearchQuery: _.debounce(function(input, e){
+        updateSearchQuery: _.debounce(function (input, e) {
             this.search[input] = e.target.value;
         }, 300),
         /*
          * Returns correct values into multilangual select
          */
-        languageOptionsSearchFilter(array){
+        languageOptionsSearchFilter(array) {
             return this.$root.languageOptions(array, this.model.fields[this.search.column]);
         },
-        getSearchingColumnName(key){
-            if ( !key ) {
+        getSearchingColumnName(key) {
+            if (!key) {
                 return this.trans('search-all');
             }
 
             return this.model.fieldName(key);
         },
-        reloadSearchBarSelect(){
+        reloadSearchBarSelect() {
             this.$nextTick(() => {
-                $(this.$refs.chosenSelect).trigger("chosen:updated");
+                $(this.$refs.chosenSelect).trigger('chosen:updated');
             });
         },
-        resetSearchBar(){
+        resetSearchBar() {
             //On change column reset input
-            this.$watch('search.column', function(column, prevcolumn){
+            this.$watch('search.column', function (column, prevcolumn) {
                 //Reset searched value if previous column was select or option
-                if ( prevcolumn && prevcolumn in this.model.fields && ['select', 'option'].indexOf(this.model.fields[prevcolumn].type) !== -1 ) {
+                if (prevcolumn && prevcolumn in this.model.fields && ['select', 'option'].indexOf(this.model.fields[prevcolumn].type) !== -1) {
                     this.search.query = null;
                 }
 
@@ -223,12 +280,11 @@ export default {
 
             this.reloadDatetimeSearch();
         },
-        reloadDatetimeSearch(){
-            if ( ! this.isDate )
-                return;
+        reloadDatetimeSearch() {
+            if (!this.isDate) return;
 
             var column = this.search.column,
-                elements = [this.$refs.datePicker1, this.$refs.datePicker2].filter(el => el);
+                elements = [this.$refs.datePicker1, this.$refs.datePicker2].filter((el) => el);
 
             //Add datepickers
             $(elements).datetimepicker({
@@ -237,25 +293,25 @@ export default {
                 timepicker: column == 'created_at' ? false : this.model.fields[column].type != 'date',
                 datepicker: column == 'created_at' ? true : this.model.fields[column].type != 'time',
                 scrollInput: false,
-                onChangeDateTime : (current_date_time, e) => {
-                    if ( !current_date_time ){
+                onChangeDateTime: (current_date_time, e) => {
+                    if (!current_date_time) {
                         return;
                     }
 
                     this.search[e.attr('data-search-date') === undefined ? 'query_to' : 'query'] = moment(current_date_time).format('DD.MM.Y');
-                }
+                },
             });
         },
-        resetIterval(){
+        resetIterval() {
             this.search.query = '';
             this.search.query_to = '';
             this.search.interval = false;
         },
-        onColumnChange(column){
+        onColumnChange(column) {
             this.search.column = column;
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -281,7 +337,7 @@ export default {
         }
     }
 
-   ::v-deep {
+    ::v-deep {
         .chosen-container {
             .chosen-single {
                 > span {
@@ -323,7 +379,7 @@ export default {
             border-bottom-left-radius: 0;
         }
 
-       ::v-deep {
+        ::v-deep {
             .chosen-container {
                 height: 100%;
 

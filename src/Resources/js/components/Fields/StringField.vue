@@ -11,18 +11,19 @@
             :disabled="field.isDisabled()"
             :readonly="field.isReadonly()"
             @change="changeValue"
-            @keyup="changeValue">
+            @keyup="changeValue"
+        />
     </Field>
 </template>
 
 <script>
-    export default {
-        props: ['model', 'name', 'field', 'value'],
+export default {
+    props: ['model', 'name', 'field', 'value'],
 
-        methods : {
-            changeValue(e){
-                this.$parent.changeValue(e);
-            },
+    methods: {
+        changeValue(e) {
+            this.$parent.changeValue(e);
         },
-    }
+    },
+};
 </script>

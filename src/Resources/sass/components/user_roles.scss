@@ -3,7 +3,8 @@
         border: 1px solid $inputBorderColor !important;
     }
 
-    th:not(:first-child), td:not(:first-child) {
+    th:not(:first-child),
+    td:not(:first-child) {
         text-align: center;
     }
 
@@ -80,7 +81,7 @@
                 position: relative;
 
                 &:before {
-                    content: "";
+                    content: '';
                     width: 10px;
                     height: 10px;
                     border-bottom: 2px solid $inputBorderColor;

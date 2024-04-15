@@ -1,8 +1,8 @@
 export default (Field, rawField) => {
-    Field.prototype.hasHistoryChange = function(){
+    Field.prototype.hasHistoryChange = function () {
         let history = this.getModel().getData('history');
 
-        if ( ! history ) {
+        if (!history) {
             return false;
         }
 

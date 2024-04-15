@@ -1,13 +1,13 @@
 <template>
-<div class="crudadmin-wrapper">
-    <Modal :modal="modal" :options="{ class : '--wide --modelAddRow', actions : [], escClose : true }" :style="{ '--form' : relationModel.table }">
-        <model-builder :model_builder="relationModel"></model-builder>
+    <div class="crudadmin-wrapper">
+        <Modal :modal="modal" :options="{ class: '--wide --modelAddRow', actions: [], escClose: true }" :style="{ '--form': relationModel.table }">
+            <model-builder :model_builder="relationModel"></model-builder>
 
-        <template v-slot:footer>
-            <SubmitButton :model="relationModel" />
-        </template>
-    </Modal>
-</div>
+            <template v-slot:footer>
+                <SubmitButton :model="relationModel" />
+            </template>
+        </Modal>
+    </div>
 </template>
 
 <script type="text/javascript">
@@ -17,12 +17,12 @@ import { mapActions } from 'vuex';
 export default {
     props: ['modal', 'model', 'data', 'rows'],
 
-    components : {SubmitButton},
+    components: { SubmitButton },
     data() {
         return {};
     },
     computed: {
-        modelData(){
+        modelData() {
             return this.data;
         },
         relationModel() {
@@ -41,19 +41,19 @@ export default {
             model.on('create', () => {
                 this.model.resetChecked();
 
-                this.closeModal({ modal : this.modal });
+                this.closeModal({ modal: this.modal });
             });
 
             return model;
         },
     },
-    methods : {
+    methods: {
         ...mapActions('modal', ['closeModal']),
-        getFormData(model){
+        getFormData(model) {
             let obj = {};
 
             this.rows.forEach((row, i) => {
-                obj[model.foreign_column[this.model.table]+'['+i+']'] = row.id;
+                obj[model.foreign_column[this.model.table] + '[' + i + ']'] = row.id;
             });
 
             return obj;

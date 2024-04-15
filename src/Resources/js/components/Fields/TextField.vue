@@ -10,41 +10,40 @@
             :readonly="field.isReadonly()"
             :name="name"
             :maxlength="field.max"
-            :class="{ 'form-control' : field.isText(), 'js_editor' : field.isEditor() }"
+            :class="{ 'form-control': field.isText(), js_editor: field.isEditor() }"
             :placeholder="field.getPlaceholder()"
-            :value="value">
-        </textarea>
+            :value="value"
+        ></textarea>
     </Field>
 </template>
 
 <script>
-    export default {
-        props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level'],
+export default {
+    props: ['id', 'model', 'name', 'field_key', 'field', 'value', 'depth_level'],
 
-        mounted(){
-            //On update ckeditor
-            if ( this.field.isEditor() ) {
-                var editor = $(this.$refs.editor).ckEditors();
+    mounted() {
+        //On update ckeditor
+        if (this.field.isEditor()) {
+            var editor = $(this.$refs.editor).ckEditors();
 
-                if ( CKEDITOR.instances[this.id] ) {
-                    CKEDITOR.instances[this.id].on('change', e => {
-                        this.$parent.changeValue(null, e.editor.getData())
-                    });
-                }
+            if (CKEDITOR.instances[this.id]) {
+                CKEDITOR.instances[this.id].on('change', (e) => {
+                    this.$parent.changeValue(null, e.editor.getData());
+                });
             }
+        }
 
-            eventHub.$on('updateField', this.onUpdateEvent = data => {
-                if ( data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.$parent.field_key )
-                    return;
+        eventHub.$on(
+            'updateField',
+            (this.onUpdateEvent = (data) => {
+                if (data.table != this.model.slug || data.depth_level != this.depth_level || data.key != this.$parent.field_key) return;
 
                 //After change value, update same value in ckeditor
-                if ( ! this.field.isEditor() )
-                    return;
+                if (!this.field.isEditor()) return;
 
                 var editor = CKEDITOR.instances[this.id];
 
-                if ( ! editor )
-                    return;
+                if (!editor) return;
 
                 var value = this.$parent.getLocalizedValue(this.field.value) || '';
 
@@ -56,27 +55,28 @@
                 editor.on('instanceReady', () => {
                     //If multiple ready events will be triggered, bing only last valid value from event.
                     //If all events will be binded into ckeditor at same time. It may have buggy value.
-                    if ( this.onReadyInstance ){
+                    if (this.onReadyInstance) {
                         clearTimeout(this.onReadyInstance);
                     }
 
                     this.onReadyInstance = setTimeout(() => {
-                        if ( _.trim(editor.getData()) != _.trim(value) ) {
+                        if (_.trim(editor.getData()) != _.trim(value)) {
                             editor.setData(value);
                         }
                     }, 20);
                 });
-            });
-        },
+            })
+        );
+    },
 
-        destroyed(){
-            eventHub.$off('updateField', this.onUpdateEvent);
-        },
+    destroyed() {
+        eventHub.$off('updateField', this.onUpdateEvent);
+    },
 
-        methods : {
-            changeValue(e){
-                this.$parent.changeValue(e);
-            },
+    methods: {
+        changeValue(e) {
+            this.$parent.changeValue(e);
         },
-    }
+    },
+};
 </script>

@@ -10,21 +10,21 @@
                 @change="changeValue"
                 :disabled="field.isDisabled()"
                 :checked="value == 1"
-                :name="name">
+                :name="name"
+            />
             <div><div></div></div>
         </FieldLabel>
     </Field>
-
 </template>
 
 <script>
-    export default {
-        props: ['model', 'name', 'field_key', 'field', 'value'],
+export default {
+    props: ['model', 'name', 'field_key', 'field', 'value'],
 
-        methods : {
-            changeValue(e){
-                this.$parent.changeValue(e);
-            },
+    methods: {
+        changeValue(e) {
+            this.$parent.changeValue(e);
         },
-    }
+    },
+};
 </script>

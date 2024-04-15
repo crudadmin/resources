@@ -1,6 +1,6 @@
 .dropdown {
     li.active {
-        background: #F3F6F6;
+        background: #f3f6f6;
         color: $blackText;
     }
 
@@ -23,7 +23,8 @@
         }
     }
 
-    &, button {
+    &,
+    button {
         @include fontSize(14px);
         min-height: $buttonHeight;
 
@@ -42,22 +43,30 @@
             background: white;
 
             &:hover {
-                background: #FCFCFC;
+                background: #fcfcfc;
                 color: $darkText;
             }
         }
 
         i {
-            &.--icon-left { margin-right: 1.5rem; }
-            &.--icon-right { margin-left: 1.5rem; }
+            &.--icon-left {
+                margin-right: 1.5rem;
+            }
+            &.--icon-right {
+                margin-left: 1.5rem;
+            }
 
             @include fontSize(11px);
         }
 
         &.btn-sm {
             i {
-                &.--icon-left { margin-right: 8px; }
-                &.--icon-right { margin-left: 8px; }
+                &.--icon-left {
+                    margin-right: 8px;
+                }
+                &.--icon-right {
+                    margin-left: 8px;
+                }
             }
         }
 
@@ -66,7 +75,8 @@
         }
     }
 
-    ul, .dropdown-menu {
+    ul,
+    .dropdown-menu {
         width: 200px;
         padding: 0;
         margin-top: 3px;
@@ -74,7 +84,8 @@
         max-height: calc(43px * 10.5);
         overflow-y: scroll;
 
-        li, .dropdown-item {
+        li,
+        .dropdown-item {
             @include fontSize(14px);
             color: $darkText;
             cursor: pointer;
@@ -83,7 +94,8 @@
                 cursor: pointer;
             }
 
-            &:not(.--no-item-padding), .--dropdown-item-padding {
+            &:not(.--no-item-padding),
+            .--dropdown-item-padding {
                 padding: 1rem 1.2rem;
             }
 
@@ -96,8 +108,12 @@
                 min-width: 1.3rem;
                 text-align: center;
 
-                &.--icon-left { margin-right: 1.5rem; }
-                &.--icon-right { margin-left: 1.5rem; }
+                &.--icon-left {
+                    margin-right: 1.5rem;
+                }
+                &.--icon-right {
+                    margin-left: 1.5rem;
+                }
 
                 @include fontSize(11px);
             }
@@ -106,18 +122,19 @@
                 color: $darkText;
                 display: block;
 
-                &, &:hover {
+                &,
+                &:hover {
                     text-decoration: none;
                 }
             }
 
             &.active {
-                background: #F3F6F6;
-                color: #41464C;
+                background: #f3f6f6;
+                color: #41464c;
             }
 
             &:not(.active):hover {
-                background: #FCFCFC;
+                background: #fcfcfc;
             }
 
             &:not(:last-child) {
@@ -161,7 +178,7 @@
             border: 0 !important;
 
             &:hover {
-                background: #FCFCFC;
+                background: #fcfcfc;
             }
 
             &.active {
@@ -187,7 +204,7 @@
             border-radius: $boxBorderRadius;
             margin-bottom: $form-group-margin-bottom;
 
-            &[data-active-index="0"] {
+            &[data-active-index='0'] {
                 border-top-left-radius: 0px;
             }
 
@@ -208,7 +225,8 @@
     border-right: 0;
     overflow: hidden;
 
-    a.page-link, .page-link {
+    a.page-link,
+    .page-link {
         border-color: $navbarBorderColor;
         border-top: 0;
         border-bottom: 0;
@@ -220,20 +238,22 @@
         padding: 1rem 1.25rem;
 
         &:hover {
-            background: #FCFCFC;
+            background: #fcfcfc;
             color: $primary;
         }
     }
 
     .active {
-        a.page-link, .page-link {
-            background: #F3F6F6;
+        a.page-link,
+        .page-link {
+            background: #f3f6f6;
             color: $blackText;
         }
     }
 
     .disabled {
-        a.page-link, .page-link {
+        a.page-link,
+        .page-link {
             color: lighten($darkText, 30%);
         }
     }
@@ -251,8 +271,12 @@
     height: 8px;
     border-radius: 100%;
 
-    &.--active { background: #32AB45; }
-    &.--inactive { background: #E7492E; }
+    &.--active {
+        background: #32ab45;
+    }
+    &.--inactive {
+        background: #e7492e;
+    }
 }
 
 .box-header__actions {
@@ -267,9 +291,15 @@
         .dropdown-menu li {
             text-align: right;
 
-            .fa { display: none; }
-            &.has-error a { color: $validationErrorcolor; }
-            &.has-error .fa { display: inline-block }
+            .fa {
+                display: none;
+            }
+            &.has-error a {
+                color: $validationErrorcolor;
+            }
+            &.has-error .fa {
+                display: inline-block;
+            }
         }
     }
 }

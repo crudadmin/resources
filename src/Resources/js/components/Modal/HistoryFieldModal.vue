@@ -24,14 +24,21 @@
                                 :langslug="langslug"
                                 :index="$index"
                                 :field_key="field_key"
-                                :field="historyModel(row).fields[field_key]">
-                            </form-input-builder>
+                                :field="historyModel(row).fields[field_key]"
+                            ></form-input-builder>
                         </form>
                     </td>
                     <td>{{ date(row.created_at) }}</td>
                     <td>
                         <div class="history-actions">
-                            <button type="button" @click="applyChanges(row)" class="btn btn-sm btn-success" :class="{ 'enabled-history' : history.history_id == row.id }" data-toggle="tooltip" :title="trans('history.show')">
+                            <button
+                                type="button"
+                                @click="applyChanges(row)"
+                                class="btn btn-sm btn-success"
+                                :class="{ 'enabled-history': history.history_id == row.id }"
+                                data-toggle="tooltip"
+                                :title="trans('history.show')"
+                            >
                                 <i class="fa fa-eye"></i>
                             </button>
                         </div>
@@ -46,29 +53,29 @@
 import { mapActions } from 'vuex';
 
 export default {
-    props : ['modal', 'model', 'field_key'],
+    props: ['modal', 'model', 'field_key'],
 
     computed: {
-        history(){
+        history() {
             return this.model.getData('history');
         },
-        sortedHistory(){
+        sortedHistory() {
             return _.orderBy(this.history.rows, 'id', 'desc');
-        }
+        },
     },
 
-    destroyed(){
+    destroyed() {
         this.model.closeHistory(true);
     },
 
     methods: {
         ...mapActions('modal', ['closeModal']),
-        historyModel(row){
-            if ( !this._historyModel ){
+        historyModel(row) {
+            if (!this._historyModel) {
                 this._historyModel = {};
             }
 
-            if ( !this._historyModel[row.id] ){
+            if (!this._historyModel[row.id]) {
                 this._historyModel[row.id] = _.cloneDeep(this.model);
             }
 
@@ -85,23 +92,19 @@ export default {
 
             return model;
         },
-        async applyChanges(item){
+        async applyChanges(item) {
             this.history.fields = item.changedFields;
             this.history.history_id = item.id;
 
-            await this.model.selectRow(
-                { id : this.history.id },
-                null,
-                item.id
-            );
+            await this.model.selectRow({ id: this.history.id }, null, item.id);
 
-            this.closeModal({ modal : this.modal });
+            this.closeModal({ modal: this.modal });
         },
-        date(date){
+        date(date) {
             return moment(date).format('D.M.Y H:mm');
         },
     },
-}
+};
 </script>
 
 <style lang="scss">
@@ -135,6 +138,8 @@ export default {
         }
     }
 
-    .th-history-buttons { width: 51px }
+    .th-history-buttons {
+        width: 51px;
+    }
 }
 </style>

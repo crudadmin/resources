@@ -94,7 +94,8 @@
                 padding: $boxPadding / 2;
             }
 
-            &.box-header--actions, .box-header__actions {
+            &.box-header--actions,
+            .box-header__actions {
                 display: flex;
                 justify-content: space-between;
 
@@ -106,7 +107,8 @@
                     }
                 }
 
-                .box-header__right, .box-header__left {
+                .box-header__right,
+                .box-header__left {
                     display: flex;
                     align-items: center;
 
@@ -125,8 +127,12 @@
                 font-weight: 400;
                 margin-bottom: 0;
 
-                .--icon-left { margin-right: 5px; }
-                .--icon-right { margin-left: 5px; }
+                .--icon-left {
+                    margin-right: 5px;
+                }
+                .--icon-right {
+                    margin-left: 5px;
+                }
             }
 
             .box-header__description {
@@ -142,12 +148,13 @@
             padding: $boxPadding;
             border-bottom: 1px solid $navbarBorderColor;
 
-            @include less-than(md){
+            @include less-than(md) {
                 padding: $boxPadding / 2;
 
                 &.box-body--table {
                     .table {
-                        > thead th, > tbody td {
+                        > thead th,
+                        > tbody td {
                             padding: 0.42rem;
                         }
                     }
@@ -165,11 +172,12 @@
             border-bottom-left-radius: $boxBorderRadius;
             border-bottom-right-radius: $boxBorderRadius;
 
-            @include less-than(md){
+            @include less-than(md) {
                 padding: $boxPadding / 2;
             }
 
-            &.box-footer--actions, .box-footer__actions {
+            &.box-footer--actions,
+            .box-footer__actions {
                 display: flex;
                 justify-content: space-between;
                 overflow: visible;
@@ -182,7 +190,8 @@
                     margin-left: auto;
                 }
 
-                .box-footer__right, .box-footer__left {
+                .box-footer__right,
+                .box-footer__left {
                     display: flex;
                     align-items: center;
 
@@ -202,10 +211,8 @@
                     }
                 }
             }
-
         }
     }
-
 
     .admin-model {
         .admin-model__header {
@@ -218,7 +225,8 @@
                 margin-bottom: $navbarPadding / 2;
             }
 
-            .left, .right {
+            .left,
+            .right {
                 display: flex;
                 align-items: center;
 
@@ -239,7 +247,6 @@
                         margin-bottom: $navbarButtonsPadding;
                     }
                 }
-
             }
 
             .btn {
@@ -251,8 +258,12 @@
                 font-weight: 400;
                 margin-bottom: 0;
 
-                .--icon-left { margin-right: 5px; }
-                .--icon-right { margin-left: 5px; }
+                .--icon-left {
+                    margin-right: 5px;
+                }
+                .--icon-right {
+                    margin-left: 5px;
+                }
             }
 
             .admin-header__description {
@@ -294,7 +305,7 @@
                     }
 
                     &:hover:not(.disabled):not(.active) {
-                        background: #FCFCFC;
+                        background: #fcfcfc;
                     }
 
                     &.disabled {
@@ -336,9 +347,15 @@
          * Single mode settings
          */
         &.admin-model--single-mode {
-            > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header:not(.--forceVisible) { display: none; }
-            > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header h3 { display: none; }
-            > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header .--button-back { display: none; }
+            > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header:not(.--forceVisible) {
+                display: none;
+            }
+            > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header h3 {
+                display: none;
+            }
+            > .admin-model__body > .row > .col--form > .crudadmin-form > .box > .box-header .--button-back {
+                display: none;
+            }
         }
 
         /*
