@@ -3,6 +3,7 @@
   "description": "CrudAdmin",
   "version": "3.0.0",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "dev": "npm run development",
     "development": "mix",
     "watch": "mix watch",
@@ -10,10 +11,12 @@
     "hot": "mix watch --hot",
     "prod": "npm run production --section=admin && npm run production --section=web --kill-others-on-fail",
     "production": "mix --production",
-    "precommit": "npm run prod && git add src/Resources/admin/js/* && git add src/Resources/admin/css/*"
+    "precommit-sample": "npm run prod && git add src/Resources/admin/js/* && git add src/Resources/admin/css/*"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.11"
   },
   "devDependencies": {
-    "git-pre-commit": "^2.1.4",
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.49.11",
     "sass-loader": "^12.6.0",
