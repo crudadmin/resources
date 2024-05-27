@@ -47,7 +47,7 @@
                     label="name"
                     :options="selectedModelRows"></vue-chosen>
             </div>
-            <button class="btn btn-primary" @click="saveItem" v-if="!row.id">{{ _('Pridať') }}</button>
+            <button type="button" class="btn btn-primary" @click="saveItem" v-if="!row.id">{{ _('Pridať') }}</button>
         </div>
         <div class="sitetree__item__actions">
             <a class="btn btn-sm" target="_blank" :href="selectedLink" v-if="selectedLink">
@@ -55,6 +55,7 @@
             </a>
 
             <button
+                type="button"
                 class="btn btn-sm btn-primary"
                 @click="showSubTree = !showSubTree"
                 v-if="row.id && isGroup && (row.insertable || nextLevel.length > 0)"
@@ -63,6 +64,7 @@
             </button>
 
             <button
+                type="button"
                 data-toggle="tooltip"
                 :title="_('Upraviť skupinu')"
                 class="btn btn-sm"
@@ -74,6 +76,7 @@
             </button>
 
             <button
+                type="button"
                 data-toggle="tooltip"
                 :title="_('Zámok na pridavanie do skupiny')"
                 class="btn btn-sm btn-default"
@@ -332,6 +335,7 @@ export default {
             try {
                 let response = await this.$http.post(crudadmin.baseURL+'/sitetree/store', {
                     ...this.castRow(this.row),
+                    ...this.model.getAdditionalFormData(),
                     parent_id : this.parentRow ? this.parentRow.id : null,
                 });
 
