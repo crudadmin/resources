@@ -1,0 +1,275 @@
+{
+  "_vendor.js": {
+    "file": "vendor.js",
+    "name": "vendor"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
+    "file": "fa-brands-400.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2": {
+    "file": "fa-brands-400.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf": {
+    "file": "fa-regular-400.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": {
+    "file": "fa-regular-400.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": {
+    "file": "fa-solid-900.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": {
+    "file": "fa-solid-900.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2"
+  },
+  "node_modules/lightbox2/dist/images/close.png": {
+    "file": "close.png",
+    "src": "node_modules/lightbox2/dist/images/close.png"
+  },
+  "node_modules/lightbox2/dist/images/loading.gif": {
+    "file": "loading.gif",
+    "src": "node_modules/lightbox2/dist/images/loading.gif"
+  },
+  "node_modules/lightbox2/dist/images/next.png": {
+    "file": "next.png",
+    "src": "node_modules/lightbox2/dist/images/next.png"
+  },
+  "node_modules/lightbox2/dist/images/prev.png": {
+    "file": "prev.png",
+    "src": "node_modules/lightbox2/dist/images/prev.png"
+  },
+  "src/Resources/images/caeditor/button-pencil-hover.svg": {
+    "file": "button-pencil-hover.svg",
+    "src": "src/Resources/images/caeditor/button-pencil-hover.svg"
+  },
+  "src/Resources/images/caeditor/button-pencil.svg": {
+    "file": "button-pencil.svg",
+    "src": "src/Resources/images/caeditor/button-pencil.svg"
+  },
+  "src/Resources/images/caeditor/ellipsis-h-solid.svg": {
+    "file": "ellipsis-h-solid.svg",
+    "src": "src/Resources/images/caeditor/ellipsis-h-solid.svg"
+  },
+  "src/Resources/images/caeditor/external-link.png": {
+    "file": "external-link.png",
+    "src": "src/Resources/images/caeditor/external-link.png"
+  },
+  "src/Resources/images/caeditor/file-upload-solid.svg": {
+    "file": "file-upload-solid.svg",
+    "src": "src/Resources/images/caeditor/file-upload-solid.svg"
+  },
+  "src/Resources/images/caeditor/image-regular.svg": {
+    "file": "image-regular.svg",
+    "src": "src/Resources/images/caeditor/image-regular.svg"
+  },
+  "src/Resources/images/caeditor/italic-solid.svg": {
+    "file": "italic-solid.svg",
+    "src": "src/Resources/images/caeditor/italic-solid.svg"
+  },
+  "src/Resources/images/caeditor/link-solid.svg": {
+    "file": "link-solid.svg",
+    "src": "src/Resources/images/caeditor/link-solid.svg"
+  },
+  "src/Resources/images/caeditor/spinner-solid.svg": {
+    "file": "spinner-solid.svg",
+    "src": "src/Resources/images/caeditor/spinner-solid.svg"
+  },
+  "src/Resources/js/app.js": {
+    "file": "app.js",
+    "name": "app",
+    "src": "src/Resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor.js"
+    ],
+    "css": [
+      "app.css"
+    ]
+  },
+  "src/Resources/js/plugins/FrontendEditor.js": {
+    "file": "FrontendEditor.js",
+    "name": "FrontendEditor",
+    "src": "src/Resources/js/plugins/FrontendEditor.js",
+    "isEntry": true
+  },
+  "src/Resources/js/plugins/Gettextable.js": {
+    "file": "Gettextable.js",
+    "name": "Gettextable",
+    "src": "src/Resources/js/plugins/Gettextable.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor.js"
+    ]
+  },
+  "src/Resources/sass/app.scss": {
+    "file": "app2.css",
+    "src": "src/Resources/sass/app.scss",
+    "isEntry": true
+  },
+  "src/Resources/sass/fonts/inter/Inter-Black.woff": {
+    "file": "Inter-Black.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-Black.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Black.woff2": {
+    "file": "Inter-Black.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-Black.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff": {
+    "file": "Inter-BlackItalic.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff2": {
+    "file": "Inter-BlackItalic.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Bold.woff": {
+    "file": "Inter-Bold.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-Bold.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Bold.woff2": {
+    "file": "Inter-Bold.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-Bold.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff": {
+    "file": "Inter-BoldItalic.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff2": {
+    "file": "Inter-BoldItalic.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff": {
+    "file": "Inter-ExtraBold.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff2": {
+    "file": "Inter-ExtraBold.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff": {
+    "file": "Inter-ExtraBoldItalic.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff2": {
+    "file": "Inter-ExtraBoldItalic.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff": {
+    "file": "Inter-ExtraLight-BETA.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff2": {
+    "file": "Inter-ExtraLight-BETA.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff": {
+    "file": "Inter-ExtraLightItalic-BETA.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff2": {
+    "file": "Inter-ExtraLightItalic-BETA.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Italic.woff": {
+    "file": "Inter-Italic.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-Italic.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Italic.woff2": {
+    "file": "Inter-Italic.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-Italic.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff": {
+    "file": "Inter-Light-BETA.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff2": {
+    "file": "Inter-Light-BETA.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff": {
+    "file": "Inter-LightItalic-BETA.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff2": {
+    "file": "Inter-LightItalic-BETA.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Medium.woff": {
+    "file": "Inter-Medium.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-Medium.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Medium.woff2": {
+    "file": "Inter-Medium.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-Medium.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff": {
+    "file": "Inter-MediumItalic.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff2": {
+    "file": "Inter-MediumItalic.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Regular.woff": {
+    "file": "Inter-Regular.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-Regular.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Regular.woff2": {
+    "file": "Inter-Regular.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-Regular.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-SemiBold.woff": {
+    "file": "Inter-SemiBold.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-SemiBold.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-SemiBold.woff2": {
+    "file": "Inter-SemiBold.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-SemiBold.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff": {
+    "file": "Inter-SemiBoldItalic.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff2": {
+    "file": "Inter-SemiBoldItalic.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff": {
+    "file": "Inter-Thin-BETA.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff2": {
+    "file": "Inter-Thin-BETA.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff": {
+    "file": "Inter-ThinItalic-BETA.woff",
+    "src": "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff"
+  },
+  "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff2": {
+    "file": "Inter-ThinItalic-BETA.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-italic.var.woff2": {
+    "file": "Inter-italic.var.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-italic.var.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter-roman.var.woff2": {
+    "file": "Inter-roman.var.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter-roman.var.woff2"
+  },
+  "src/Resources/sass/fonts/inter/Inter.var.woff2": {
+    "file": "Inter.var.woff2",
+    "src": "src/Resources/sass/fonts/inter/Inter.var.woff2"
+  },
+  "src/Resources/sass/frontend.scss": {
+    "file": "frontend.css",
+    "src": "src/Resources/sass/frontend.scss",
+    "isEntry": true
+  }
+}
