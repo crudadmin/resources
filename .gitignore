@@ -1,5 +1,4 @@
 /vendor
-/dist/build
 /dist/hot
 /node_modules
 /config.js
