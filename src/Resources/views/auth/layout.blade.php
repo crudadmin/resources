@@ -1,3 +1,7 @@
+<?php
+    Vite::useHotFile(base_path('vendor/crudadmin/resources/dist/hot'));
+    Vite::useBuildDirectory('vendor/crudadmin/build');
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,10 +21,7 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ admin_asset('dist/css/AdminLTE.min.css') }}">
 
-  <!-- iCheck -->
-  <link rel="stylesheet" href="{{ admin_asset('plugins/iCheck/square/blue.css') }}">
-
-  <link rel="stylesheet" href="<?php echo admin_asset('/css/app.css?v=').Admin::getAssetsVersion() ?>">
+  @vite(['src/Resources/sass/app.scss'])
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -30,7 +31,7 @@
   <![endif]-->
 </head>
 <body class="hold-transition login-page">
-  <div class="login-box" id="app">
+  <div class="login-box">
     <div class="login-logo">
       <a href=""><b><?php echo getAdminLogo() ?></b></a>
     </div>
@@ -44,18 +45,8 @@
     @include('admin::partials.crudadmin-props')
   </script>
 
-  <script src="<?php echo admin_asset('/js/manifest.js') ?>"></script>
-  <script src="<?php echo admin_asset('/js/vendor.js') ?>"></script>
-  <script src="<?php echo admin_asset('/js/app.js') ?>"></script>
-  <script src="{{ admin_asset('plugins/iCheck/icheck.min.js') }}"></script>
-  <script>
-    $(function () {
-      $('input').iCheck({
-        checkboxClass: 'icheckbox_square-blue',
-        radioClass: 'iradio_square-blue',
-        increaseArea: '20%' // optional
-      });
-    });
-  </script>
+  @vite([
+      'src/Resources/js/app.js'
+  ])
 </body>
 </html>
