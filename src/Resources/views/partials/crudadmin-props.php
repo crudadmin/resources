@@ -1,6 +1,7 @@
 window.crudadmin = {
     logo : '<?php echo getAdminLogo() ?>',
     author : {
+        copyright : <?php echo config('admin.author') === false ? 'false' : 'true' ?>,
         name : '<?php echo config('admin.author.name', 'CrudAdmin') ?>',
         text : '<?php echo date('Y') > config('admin.author.since', 2016) ? config('admin.author.since', 2016) . ' - '.date('Y') : date('Y') ?> <?php if (config('admin.author', true) !== false) { ?> by <?php echo config('admin.author.copyright', 'Marek Gogoľ') ?> <?php } ?>',
     },
