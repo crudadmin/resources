@@ -36,7 +36,7 @@
         </div>
       </div>
       <!-- /.col -->
-      <div class="col-6">
+      <div class="col-6 text-end">
         <button type="submit" class="btn btn-primary btn-block btn-flat">{{ trans('admin::admin.login') }}</button>
       </div>
       <!-- /.col -->

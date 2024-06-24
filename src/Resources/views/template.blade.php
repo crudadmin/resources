@@ -56,6 +56,6 @@
     </script>
     @endif
 
-    @include('admin::slots.scripts');
+    @include('admin::slots.scripts')
   </body>
 </html>

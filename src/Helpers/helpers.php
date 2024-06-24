@@ -57,9 +57,15 @@ function crudadmin_resources_path($path = null)
     return __DIR__.'/../Resources/'.$path;
 }
 
-function getAdminLogo()
+function getAdminLogo($small = false)
 {
-    $name = config('admin.logo') ?: config('admin.name');
+    $configLogos = array_wrap(config('admin.logo'));
+
+    $name = ($configLogos[0] ?? null) ?: config('admin.name');
+
+    if ( $small ) {
+        $name = ($configLogos[1] ?? null) ?: $name;
+    }
 
     if (
         starts_with($name, public_path())
@@ -72,4 +78,27 @@ function getAdminLogo()
     }
 
     return $name;
+}
+
+/*
+ * Return dashboard content
+ */
+function getDashBoardView()
+{
+    $dashboard = config('admin.dashboard');
+
+    //Try load blade component
+    $path = $dashboard ?: resource_path('views/admin/dashboard.blade.php');
+    if (file_exists($path)) {
+        return [
+            'html' => view()->file($path)->render(),
+        ];
+    }
+
+    //If vue template is available
+    if ( $dashboard ) {
+        return [
+            'vue' => $dashboard
+        ];
+    }
 }
