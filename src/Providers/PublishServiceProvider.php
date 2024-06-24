@@ -11,6 +11,8 @@ class PublishServiceProvider extends ServiceProvider
         /*
          * Admin UI Publishes
          */
-        $this->publishes([__DIR__ . '/../../dist' => public_path('vendor/crudadmin') ], 'admin.resources');
+        $this->publishes([
+            __DIR__ . '/../../dist' => public_path('vendor/crudadmin')
+        ], 'admin.resources');
     }
 }
