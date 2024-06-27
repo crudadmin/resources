@@ -1,6 +1,7 @@
 <?php
     Vite::useHotFile(base_path('vendor/crudadmin/resources/dist/hot'));
     Vite::useBuildDirectory('vendor/crudadmin/build');
+    Vite::useIntegrityKey('integrity');
 ?>
 
 <!DOCTYPE html>
