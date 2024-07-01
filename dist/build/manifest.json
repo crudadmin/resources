@@ -130,10 +130,10 @@
     "integrity": "sha384-gor3K/oLE5Y2r1pNUyhpNLChOAD85HjdeZaWqx9ozrA+rNLgthvegcHMMCPZdla3"
   },
   "src/Resources/sass/app.scss": {
-    "file": "assets/app-CSmN5hWh.css",
+    "file": "assets/app-CJEAnoAJ.css",
     "src": "src/Resources/sass/app.scss",
     "isEntry": true,
-    "integrity": "sha384-vsvnf4hX8GLxNMC28RK7x4uk9Kq3piCqrEpfHo02X+1fTX3hDFRXjGbuMD745RwV"
+    "integrity": "sha384-KQw+TF9ilpU8eBP15YGAYL5HwKfcjU5juhKa/TeEUgDbxIEY+y1FrNjNRfE84Atr"
   },
   "src/Resources/sass/fonts/inter/Inter-Black.woff": {
     "file": "assets/Inter-Black-BIxta2n9.woff",
