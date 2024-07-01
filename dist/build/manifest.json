@@ -1,8 +1,8 @@
 {
-  "_vendor-DQFLRpT3.js": {
-    "file": "assets/vendor-DQFLRpT3.js",
+  "_vendor-Bdkm8fjk.js": {
+    "file": "assets/vendor-Bdkm8fjk.js",
     "name": "vendor",
-    "integrity": "sha384-jWva+IQg8K43sVwSBOnLtGWQMmEClDl5XurY1jKXEHS4YGw0B+DlS29vDXqvPJkX"
+    "integrity": "sha384-TKYbhodb1hNCIrz3uomMVFznHcVEQsyZD68Ov9i6MDr61fEfbx3JVluabZFmyfrK"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
     "file": "assets/fa-brands-400-DHHcbFjz.ttf",
@@ -100,17 +100,17 @@
     "integrity": "sha384-jVtvrsNbg8g5mFkG10QZeCQ+cojLWMIP2HMYSAH9XmyvQ4G80hdb4dBYjBvyi7q6"
   },
   "src/Resources/js/app.js": {
-    "file": "assets/app-BrsM-yVB.js",
+    "file": "assets/app-BOJW0mtx.js",
     "name": "app",
     "src": "src/Resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-DQFLRpT3.js"
+      "_vendor-Bdkm8fjk.js"
     ],
     "css": [
-      "assets/app-CEJhCwX-.css"
+      "assets/app-kP9MEIPi.css"
     ],
-    "integrity": "sha384-nvxgmMKFIr4ARzRwki9Vpo4SEi25YP/wCI7d4JI5TKIp5wCy7EmrVvVK9w5r2AS7"
+    "integrity": "sha384-5Bt19kWYdWrbtPOhEMPr3cWjmt3nPqXN7HD/WW04wQMayU0ian9aBk3jBqECeClm"
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
     "file": "assets/FrontendEditor-CP6lQePT.js",
@@ -120,20 +120,20 @@
     "integrity": "sha384-bZq1+amGFGLrtd1LqN+Gz07+Po2jw4C4ptUh/HbKpYAcGgJTWJYfWI89sRxwGxBM"
   },
   "src/Resources/js/plugins/Gettextable.js": {
-    "file": "assets/Gettextable-DpXewgmm.js",
+    "file": "assets/Gettextable-CGs75pjq.js",
     "name": "Gettextable",
     "src": "src/Resources/js/plugins/Gettextable.js",
     "isEntry": true,
     "imports": [
-      "_vendor-DQFLRpT3.js"
+      "_vendor-Bdkm8fjk.js"
     ],
-    "integrity": "sha384-8YIqMpmQV6ylf0syMCuJF2ThkezZ71ZmanxdyE0vxeDEUB96AqHWZGgTNE9tx832"
+    "integrity": "sha384-jzYZ35kuKlulXG2cli5yIYDHRUQANjpwsrXZlYZsTO1lK2NaidmbJaQFGNCZH5cr"
   },
   "src/Resources/sass/app.scss": {
-    "file": "assets/app-8t3JMrDV.css",
+    "file": "assets/app-CSmN5hWh.css",
     "src": "src/Resources/sass/app.scss",
     "isEntry": true,
-    "integrity": "sha384-x69IxkRsZ2Rn0TnBujUPReUbkh+clAvspJcLvtbsrmyqp05LBhBYUMz301lskx6W"
+    "integrity": "sha384-vsvnf4hX8GLxNMC28RK7x4uk9Kq3piCqrEpfHo02X+1fTX3hDFRXjGbuMD745RwV"
   },
   "src/Resources/sass/fonts/inter/Inter-Black.woff": {
     "file": "assets/Inter-Black-BIxta2n9.woff",
