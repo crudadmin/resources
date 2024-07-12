@@ -64,7 +64,6 @@ class AdminUpdateCommand extends Command
         $remove = [
             $publicVendorPath.'/build',
             $publicVendorPath.'/js',
-            $publicVendorPath.'/dist/js',
             $publicVendorPath.'/plugins',
             $publicVendorPath.'/css',
         ];

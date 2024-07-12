@@ -47,8 +47,10 @@ class LoginController extends Controller
     /*
      * Redirect login form to homepage
      */
-    public function showLoginForm()
+    public function showLoginForm($provider = null)
     {
+        Admin::setAuthProvider($provider);
+
         //If is user logged
         if ($this->guard()->user()) {
             return redirect($this->redirectPath());
@@ -57,6 +59,16 @@ class LoginController extends Controller
         $username = $this->username();
 
         return view('admin::auth.login', compact('username'));
+    }
+
+    /*
+     * Overide default login request to be able pass provider as param
+     */
+    public function adminLogin($provider = null)
+    {
+        Admin::setAuthProvider(request('_provider') ?: $provider);
+
+        return $this->login(request());
     }
 
     /**

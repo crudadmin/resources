@@ -12,15 +12,13 @@
       <input type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="Email">
       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       @if ($errors->has('email'))
-          <span class="help-block">
-              <strong>{{ $errors->first('email') }}</strong>
-          </span>
+          <span class="help-block">{{ $errors->first('email') }}</span>
       @endif
     </div>
 
     <div class="row">
       <div class="col-lg-12">
-        <button type="submit" class="btn btn-primary btn-block btn-flat">{{ trans('admin::admin.send-password') }}</button>
+        <button type="submit" class="btn btn-primary btn-block btn-flat w-100">{{ trans('admin::admin.send-password') }}</button>
       </div>
         @if (session('status'))
       <div class="col-lg-12">

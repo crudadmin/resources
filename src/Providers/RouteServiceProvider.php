@@ -37,7 +37,7 @@ class RouteServiceProvider extends ServiceProvider
         //Admin routes
         $router->group([
             'namespace' => $this->adminNamespace,
-            'middleware' => 'web',
+            'middleware' => ['web', 'admin.providers'],
         ], function ($router) {
             require __DIR__ . '/../routes.php';
         });

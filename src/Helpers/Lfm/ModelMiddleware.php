@@ -55,7 +55,7 @@ class ModelMiddleware
 
         //Check current row avaiability
         if ( is_numeric($rowId) ){
-            if ( $this->model->getAdminRows()->where('id', $rowId)->count() === 0 ) {
+            if ( $this->model->withAdminRows()->where('id', $rowId)->count() === 0 ) {
                 return false;
             }
         } else if ( Str::isUuid($rowId) === false ) {

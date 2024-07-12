@@ -13,8 +13,8 @@
 /*
  * Login routes
  */
-Route::get('/admin/login', 'Auth\LoginController@showLoginForm');
-Route::post('/admin/login', 'Auth\LoginController@login');
+Route::get('/admin/login/{provider?}', 'Auth\LoginController@showLoginForm');
+Route::post('/admin/login/{provider?}', 'Auth\LoginController@adminLogin');
 Route::get('/admin/logout', 'Auth\LoginController@logout');
 
 Route::get('/admin/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm');

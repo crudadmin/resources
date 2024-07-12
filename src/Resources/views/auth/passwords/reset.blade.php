@@ -14,9 +14,7 @@
       <input type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="Email">
       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       @if ($errors->has('email'))
-          <span class="help-block">
-              <strong>{{ $errors->first('email') }}</strong>
-          </span>
+          <span class="help-block">{{ $errors->first('email') }}</span>
       @endif
     </div>
 
@@ -24,24 +22,20 @@
       <input type="password" name="password" class="form-control" value="{{ old('password') }}" placeholder="{{ trans('admin::admin.password') }}">
       <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
       @if ($errors->has('password'))
-          <span class="help-block">
-              <strong>{{ $errors->first('password') }}</strong>
-          </span>
+          <span class="help-block">{{ $errors->first('password') }}</span>
       @endif
     </div>
     <div class="form-group has-feedback">
       <input type="password" name="password_confirmation" class="form-control" value="{{ old('password_confirmation') }}" placeholder="{{ trans('admin::admin.password-again') }}">
       <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
       @if ($errors->has('password_confirmation'))
-          <span class="help-block">
-              <strong>{{ $errors->first('password_confirmation') }}</strong>
-          </span>
+          <span class="help-block">{{ $errors->first('password_confirmation') }}</span>
       @endif
     </div>
 
     <div class="row">
       <div class="col-lg-12">
-        <button type="submit" class="btn btn-primary btn-block btn-flat">{{ trans('admin::admin.password-reset-button') }}</button>
+        <button type="submit" class="btn btn-primary btn-block btn-flat w-100">{{ trans('admin::admin.password-reset-button') }}</button>
       </div>
       <!-- /.col -->
     </div>
