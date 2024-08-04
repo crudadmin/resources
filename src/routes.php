@@ -25,12 +25,12 @@ Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset');
 Route::get('/vendor/crudadmin/css/app.dynamic.css', 'ResourcesController@index');
 
 //Verification
-Route::group(['middleware' => ['admin.autologout', 'admin']], function () {
+Route::group(['middleware' => ['admin', 'admin.autologout']], function () {
     Route::get('/admin/verificator', 'Auth\VerificatorController@showVerificationForm');
     Route::post('/admin/verificator', 'Auth\VerificatorController@processVerification');
 });
 
-Route::group(['middleware' => ['admin.autologout', 'admin.verification', 'admin']], function () {
+Route::group(['middleware' => ['admin', 'admin.autologout', 'admin.verification']], function () {
     // Dashboard
     Route::get('/admin', 'DashboardController@index');
 });
