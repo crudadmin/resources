@@ -100,7 +100,7 @@
     "integrity": "sha384-jVtvrsNbg8g5mFkG10QZeCQ+cojLWMIP2HMYSAH9XmyvQ4G80hdb4dBYjBvyi7q6"
   },
   "src/Resources/js/app.js": {
-    "file": "assets/app-DTFt_5W8.js",
+    "file": "assets/app-CIJj_HQr.js",
     "name": "app",
     "src": "src/Resources/js/app.js",
     "isEntry": true,
@@ -108,9 +108,9 @@
       "_vendor-D_U05yqm.js"
     ],
     "css": [
-      "assets/app-Do2tqGpm.css"
+      "assets/app-e6O1rw8w.css"
     ],
-    "integrity": "sha384-RJwiwVkCZsKIJ8RITcUKtN8ppNLMMqt8j09N/Mc/BbHAtUTOMq/CHufx+If495/M"
+    "integrity": "sha384-Tb3wDzp7QHKSeVqT1uSinIWlK7SmI8iuL8ysmAP/BLx7yZkRcz5f+YZbN2JxzKOT"
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
     "file": "assets/FrontendEditor-CP6lQePT.js",
@@ -130,10 +130,10 @@
     "integrity": "sha384-Pqcy6QXUYwpnFUhBG1qu6c/6QzpUrlvTM23tPDM0VAZHjKuUnzfkVEwLeXEocN30"
   },
   "src/Resources/sass/app.scss": {
-    "file": "assets/app-C209Lk9E.css",
+    "file": "assets/app-pExRUkso.css",
     "src": "src/Resources/sass/app.scss",
     "isEntry": true,
-    "integrity": "sha384-flO+oZGWCeScBm5RogQyqlTZ+Awfnu/JsupAK5KsBzve+WCGRI6Vns/PO7Oe8TgG"
+    "integrity": "sha384-ju1L0jLCXwCfci3GR28DEmnye6KM7xHC79uWXjItBkZ5lvPGzyXKnarxc2648jHy"
   },
   "src/Resources/sass/fonts/inter/Inter-Black.woff": {
     "file": "assets/Inter-Black-BIxta2n9.woff",
