@@ -2,10 +2,11 @@
 
 namespace Admin\Resources\Controllers\Auth;
 
+use Admin;
 use Admin\Resources\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-use Admin;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -49,16 +50,16 @@ class LoginController extends Controller
      */
     public function showLoginForm($provider = null)
     {
-        Admin::setAuthProvider($provider);
+        if ( $provider ) {
+            Admin::setAuthProvider($provider);
+        }
 
         //If is user logged
         if ($this->guard()->user()) {
             return redirect($this->redirectPath());
         }
 
-        $username = $this->username();
-
-        return view('admin::auth.login', compact('username'));
+        return view('admin::auth.login');
     }
 
     /*
@@ -66,7 +67,9 @@ class LoginController extends Controller
      */
     public function adminLogin($provider = null)
     {
-        Admin::setAuthProvider(request('_provider') ?: $provider);
+        if ( $provider = (request('_provider') ?: $provider) ) {
+            Admin::setAuthProvider($provider);
+        }
 
         return $this->login(request());
     }
@@ -101,5 +104,36 @@ class LoginController extends Controller
     public function username()
     {
         return config('admin.authentication.login.column', 'email');
+    }
+
+    /**
+     * Attempt to log the user into the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function attemptLogin(Request $request)
+    {
+        $whitelistedProviders = Admin::getAuthProviders();
+
+        // Test only selected provider, when autoprovider login is off.
+        if ( Admin::hasAutoProviderLogin() === false ) {
+            $whitelistedProviders = array_intersect_key($whitelistedProviders, [ Admin::getAuthProvider() => [] ]);
+        }
+
+        //Try to log in into all providers
+        foreach ($whitelistedProviders as $providerKey => $model) {
+            Admin::setAuthProvider($providerKey);
+
+            $attempt = $this->guard()->attempt(
+                $this->credentials($request), $request->boolean('remember')
+            );
+
+            if ( $attempt ){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

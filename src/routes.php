@@ -19,7 +19,7 @@ Route::get('/admin/logout', 'Auth\LoginController@logout');
 
 Route::get('/admin/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm');
 Route::post('/admin/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
-Route::get('/admin/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
+Route::get('/admin/password/reset/{token}/{provider?}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset');
 
 Route::get('/vendor/crudadmin/css/app.dynamic.css', 'ResourcesController@index');

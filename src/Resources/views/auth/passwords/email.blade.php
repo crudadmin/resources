@@ -8,6 +8,8 @@
   <form action="{{ admin_action('Auth\ForgotPasswordController@sendResetLinkEmail') }}" method="post">
     {!! csrf_field() !!}
 
+    @include('admin::partials.provider_select')
+
     <div class="form-group has-feedback">
       <input type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="Email">
       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

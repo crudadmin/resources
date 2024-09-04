@@ -1,23 +1,19 @@
 @extends('admin::auth.layout')
 
 @section('content')
+@php
+$username = config('admin.authentication.login.column', 'email');
+@endphp
+
 <!-- /.login-logo -->
 <div class="login-box-body">
   <p class="login-box-msg">{{ config('admin.authentication.login.title', trans('admin::admin.login-with')) }}</p>
 
-  <form action="" method="post">
+  <form action="{{ admin_action('Auth\LoginController@showLoginForm') }}" method="post">
     {!! csrf_field() !!}
 
-    @if ( count(Admin::getAuthProviders()) > 1 )
-    <div class="form-group has-feedback">
-      <select class="form-control" name="_provider">
-        @foreach( Admin::getAuthProviders() as $key => $model )
-        <option value="{{ $key }}" {{ $key == Admin::getAuthProvider() ? 'selected' : '' }}>{{ $model->getProperty('name') }}</option>
-        @endforeach
-      </select>
-    </div>
-    @else
-    <input type="hidden" name="_provider" value="{{ Admin::getAuthProvider() }}">
+    @if ( Admin::hasAutoProviderLogin() === false )
+      @include('admin::partials.provider_select')
     @endif
 
     <div class="form-group has-feedback">
