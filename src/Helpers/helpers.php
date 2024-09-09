@@ -59,7 +59,13 @@ function crudadmin_resources_path($path = null)
 
 function getAdminLogo($small = false)
 {
-    $configLogos = array_wrap(config('admin.logo'));
+    $configLogos = config('admin.logo');
+
+    if ( is_callable($configLogos) ){
+        $configLogos = $configLogos();
+    }
+
+    $configLogos = array_wrap($configLogos);
 
     $name = ($configLogos[0] ?? null) ?: config('admin.name');
 

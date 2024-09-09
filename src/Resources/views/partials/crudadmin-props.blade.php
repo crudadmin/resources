@@ -16,10 +16,11 @@ window.crudadmin = {
             default : '<?php echo getAdminLogo() ?>',
             small : '<?php echo getAdminLogo(true) ?>',
         },
-        author : {
-            copyright : @json(config('admin.author')),
-            name : '{{ config('admin.author.name', 'CrudAdmin') }}',
-            text : '<?php echo date('Y') > config('admin.author.since', 2016) ? config('admin.author.since', 2016) . ' - '.date('Y') : date('Y') ?> <?php if (config('admin.author', true) !== false) { ?> by <?php echo config('admin.author.copyright', 'Marek Gogoľ') ?> <?php } ?>',
+        author : @json(config('admin.author', true)),
+        copyright : {
+            years : '{{ config('admin.copyright.years', (date('Y') > ($since = config('admin.copyright.since', 2016))) ? $since. ' - '.date('Y') : date('Y')) }}',
+            website : '{{ config('admin.copyright.website', 'https://www.crudadmin.com') }}',
+            name : '{{ config('admin.copyright.name', 'CrudAdmin') }}',
         },
         @if ( admin() )
         version : {
