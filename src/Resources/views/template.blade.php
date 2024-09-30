@@ -40,7 +40,7 @@
     <script src="{{ admin_asset('/plugins/ckeditor/ckeditor.js') }}"></script>
 
     @foreach ((array)config('admin.scripts', []) as $script)
-    <script type="module" src="{{ admin_asset($script, true) }}"></script>
+        <script{!! ($script['module'] ?? true) ? ' type="module"' : '' !!} src="{{ admin_asset(is_array($script) ? $script['src'] : $script, true) }}"></script>
     @endforeach
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
