@@ -100,7 +100,7 @@
     "integrity": "sha384-jVtvrsNbg8g5mFkG10QZeCQ+cojLWMIP2HMYSAH9XmyvQ4G80hdb4dBYjBvyi7q6"
   },
   "src/Resources/js/app.js": {
-    "file": "assets/app-Cv3JRqj-.js",
+    "file": "assets/app-DRxSPGws.js",
     "name": "app",
     "src": "src/Resources/js/app.js",
     "isEntry": true,
@@ -110,7 +110,7 @@
     "css": [
       "assets/app-zw5BihlK.css"
     ],
-    "integrity": "sha384-WT+lnGjiy++Q2HXVqwQBWphBsPtpJ9hKjlXxydKNS5BeYZy5KoZ1M8651VvHlutm"
+    "integrity": "sha384-ahqvFy/1T+ofpZH4HWg1aLoj9+SLlFmlg2/Pj3BHfKsjpQmhbt2jPJTGDtXPGuyb"
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
     "file": "assets/FrontendEditor-CP6lQePT.js",
