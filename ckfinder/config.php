@@ -32,7 +32,7 @@ if ( !function_exists('ckfinder_config_mutator') ){
 $config = array();
 
 $config['authentication'] = function () {
-    return admin()->check();
+    return admin() ? true : false;
 };
 
 /*============================ License Key ============================================*/
