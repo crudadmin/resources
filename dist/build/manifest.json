@@ -1,38 +1,46 @@
 {
-  "_vendor-Mc4HVAVf.js": {
-    "file": "assets/vendor-Mc4HVAVf.js",
+  "_vendor-4uVi24hu.css": {
+    "file": "assets/vendor-4uVi24hu.css",
+    "src": "_vendor-4uVi24hu.css",
+    "integrity": "sha384-FN/1Ci7ekDvenxahLGqwPbLeoC/be7X0BIvZW8ktiKKU1OE8N+1Ay1540vgv93BN"
+  },
+  "_vendor-CKwnaEmD.js": {
+    "file": "assets/vendor-CKwnaEmD.js",
     "name": "vendor",
-    "integrity": "sha384-BDnHgDGvplq+RLcIDhtLH7+MHcyGjTtdbu5e+HiBp1ES29uQmXXgQh57GnAnpo8U"
+    "css": [
+      "assets/vendor-4uVi24hu.css"
+    ],
+    "integrity": "sha384-7R69pn/GXpsxDy6cEhRiD1eAq7FFzHf+8pWhp2EgiADsqDYKhCmoe2+bUaXKbhc5"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
-    "file": "assets/fa-brands-400-CArp7j8S.ttf",
+    "file": "assets/fa-brands-400-D1LuMI3I.ttf",
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf",
-    "integrity": "sha384-1r9aMBeVEoqUZxPemsSizyhiy9udPRMx7qPE3vm170Q++Gvm9HdX0Xp4AYG7zZD9"
+    "integrity": "sha384-sVbZUNVZWPj8bqWYhryjUx8yliiq0NTMCDoGRhWBdl9049SfaNwMH4zKcYUCHYsC"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2": {
-    "file": "assets/fa-brands-400-BU4mH_I_.woff2",
+    "file": "assets/fa-brands-400-D_cYUPeE.woff2",
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2",
-    "integrity": "sha384-oLUdhcYxEhc6VEPTIRqddztfDzaaRLfH1QovsHHxa34jb5uUq+7P3lduKieRPSej"
+    "integrity": "sha384-5bQWftm2RhZySCFP7cLHM9Q0J7z6ky5sbicvUH56HGBRUDIGyAj52Py3qqJcISlb"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf": {
-    "file": "assets/fa-regular-400-D4OwLFL7.ttf",
+    "file": "assets/fa-regular-400-DZaxPHgR.ttf",
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf",
-    "integrity": "sha384-UVCUoqY/+Zf3K0y/Hc23XKxn1jbZTYbKUsZC0n2U+mGTHxe2s+nxcsIbgJSuMd4f"
+    "integrity": "sha384-k2+OiOWuJnJ+ykFVRnXlmenTtZk09Iyc9bQxTdLsGHVb5z94VFyPDZcc8KoTfhTQ"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": {
-    "file": "assets/fa-regular-400-Cy4iLbxs.woff2",
+    "file": "assets/fa-regular-400-BjRzuEpd.woff2",
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2",
-    "integrity": "sha384-pZeh828gMakWoq9n7DEPO/beX9YoI85Aa8vBsc5j+ml4XG6iU+KVHeuALbvlGT6k"
+    "integrity": "sha384-Z05gtC6+ONF8+7LTo5Vz1F6CZZS7YFou0LyBMChIU/hvIv6nbDo9UpXr8qKbFUPq"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": {
-    "file": "assets/fa-solid-900-BAw_JAW6.ttf",
+    "file": "assets/fa-solid-900-D0aA9rwL.ttf",
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf",
-    "integrity": "sha384-BWqwxdyyQxBY0zSGQCLParsUyspYMdeAA43Skesy7L46QfkuKStjO2sSCXbcqqSj"
+    "integrity": "sha384-BgBSLF2YWxewkUxcUBiIIkLEfhga95l3wB6uwJJTqOK9KrccAVTfGj2+U8ZI6KpY"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": {
-    "file": "assets/fa-solid-900-CcrrL0x0.woff2",
+    "file": "assets/fa-solid-900-CTAAxXor.woff2",
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2",
-    "integrity": "sha384-p3nSIqcEsf8BiePiRwVsWN7m/L/sbcvDLJNH6e1JfQ1pdvKwIVziuRYymQJCndTu"
+    "integrity": "sha384-77y8nNGW9eYPJKjLxoeFrOIkHDBkRk9yWR1JHddn++xVgG4hAQIyuDbKcPV/Cjh5"
   },
   "node_modules/lightbox2/dist/images/close.png": {
     "file": "assets/close-DeJujm55.png",
@@ -100,40 +108,37 @@
     "integrity": "sha384-jVtvrsNbg8g5mFkG10QZeCQ+cojLWMIP2HMYSAH9XmyvQ4G80hdb4dBYjBvyi7q6"
   },
   "src/Resources/js/app.js": {
-    "file": "assets/app-SR2r_sY1.js",
+    "file": "assets/app-nX4hxENZ.js",
     "name": "app",
     "src": "src/Resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-Mc4HVAVf.js"
+      "_vendor-CKwnaEmD.js"
     ],
     "css": [
-      "assets/app-sGXZGG-i.css"
+      "assets/app-Cb_oMhtd.css"
     ],
-    "integrity": "sha384-XdHmYZPOilz6zDtt64DvKZjYC/cz6lHMOKOjnoVrs/Qcl6Eco901qymBXHtfGbqU"
+    "integrity": "sha384-vY5Wnh5thjCPenycloZ0qAve+o/ACQdWvAbOUkfGNcpl5AaaoGEgY+153jMQLeMp"
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
-    "file": "assets/FrontendEditor-CP6lQePT.js",
+    "file": "assets/FrontendEditor.js",
     "name": "FrontendEditor",
     "src": "src/Resources/js/plugins/FrontendEditor.js",
     "isEntry": true,
     "integrity": "sha384-bZq1+amGFGLrtd1LqN+Gz07+Po2jw4C4ptUh/HbKpYAcGgJTWJYfWI89sRxwGxBM"
   },
   "src/Resources/js/plugins/Gettextable.js": {
-    "file": "assets/Gettextable-MPcz4LNc.js",
+    "file": "assets/Gettextable.js",
     "name": "Gettextable",
     "src": "src/Resources/js/plugins/Gettextable.js",
     "isEntry": true,
-    "imports": [
-      "_vendor-Mc4HVAVf.js"
-    ],
-    "integrity": "sha384-P7MKRkImPANi/adJ0zdMNjJ1FZ0GAMi7GzBduSrvZjv0H15ICE6FaKSo58vDNbiD"
+    "integrity": "sha384-aP8eNiO1vr1HkhXGkK9QivpznVM8TVl5+antOvVZy3bq2o/VSlmYpprif21i23eC"
   },
   "src/Resources/sass/app.scss": {
-    "file": "assets/app-B3vrneqj.css",
+    "file": "assets/app-BARus8_M.css",
     "src": "src/Resources/sass/app.scss",
     "isEntry": true,
-    "integrity": "sha384-loEAHpGRxq4nWyu9yJEZoweBEn5fdG9n5GLTGb5F3sgkSEvGdGqPzbe82WY7a1y1"
+    "integrity": "sha384-pN2Di53R3UIwN955bb/GJ3mUJpS+X61HAKyYgORdE5Odku/t09Ae7iqpBrBUpIX5"
   },
   "src/Resources/sass/fonts/inter/Inter-Black.woff": {
     "file": "assets/Inter-Black-BIxta2n9.woff",
@@ -331,7 +336,7 @@
     "integrity": "sha384-ShFAYyGV2VnjIaRCRrHDSq8GbT8G5GJ4toiO6b32GBKxAHVikst22cYIaOZN3WPT"
   },
   "src/Resources/sass/frontend.scss": {
-    "file": "assets/frontend-CePdoRPL.css",
+    "file": "assets/frontend.css",
     "src": "src/Resources/sass/frontend.scss",
     "isEntry": true,
     "integrity": "sha384-SEadbEMvhSF7qVdOPyK2peStWrahc0Uu1tA/xZ2w7grznkcmSihpcavtyYt+UqCK"
