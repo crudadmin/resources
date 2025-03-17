@@ -132,7 +132,7 @@
     "name": "Gettextable",
     "src": "src/Resources/js/plugins/Gettextable.js",
     "isEntry": true,
-    "integrity": "sha384-aP8eNiO1vr1HkhXGkK9QivpznVM8TVl5+antOvVZy3bq2o/VSlmYpprif21i23eC"
+    "integrity": "sha384-zIUrxlLWRHfbGX5clbJBcMbjWKSGG3FmJui6S9/1wOThfiCEBudHAvo5ai2CFAnN"
   },
   "src/Resources/sass/app.scss": {
     "file": "assets/app-BARus8_M.css",
