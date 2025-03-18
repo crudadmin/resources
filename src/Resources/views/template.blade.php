@@ -46,11 +46,11 @@
         <script src="{{ Gettext::getJSPlugin(AdminLocalization::class) }}"></script>
 
         @vite([
-            'src/Resources/js/plugins/Gettextable.js',
             'src/Resources/js/app.js'
         ])
 
         {{-- Plugins --}}
+        <script src="{{ admin_asset('/build/assets/Gettextable.js') }}"></script>
         <script src="{{ admin_asset('/plugins/ckeditor/ckeditor.js') }}"></script>
 
         @foreach ((array)config('admin.scripts', []) as $script)
