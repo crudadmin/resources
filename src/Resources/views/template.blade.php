@@ -16,13 +16,27 @@
     <link rel="stylesheet" href="{{ admin_asset('/plugins/chosen/chosen.css') }}" />
     <link rel="stylesheet" href="{{ admin_asset('/plugins/datetimepicker/jquery.datetimepicker.css')}}" />
 
-    @vite(['src/Resources/sass/app.scss']) @foreach (array_merge((array)config('admin.styles', []), ((($customCssPath =
+    @vite(['src/Resources/sass/app.scss'])
+
+    @foreach (array_merge((array)config('admin.styles', []), ((($customCssPath =
     public_path('/assets/admin/css/custom.css')) && file_exists($customCssPath)) ? [ asset('/assets/admin/css/custom.css') ] : [])) as $css)
     <link rel="stylesheet" type="text/css" href="{{ admin_asset($css, true) }}" />
     @endforeach
+
+    @if ($primaryColor = config('admin.primary_color'))
+    <style>
+        :root {
+            --primary: <?php echo $primaryColor ?> !important;
+        }
+    </style>
+    @endif
 </head>
 <body>
+    @if ( admin() )
     <div id="app"></div>
+    @endif
+
+    @yield('content')
 
     <!-- Admin variables -->
     <script type="text/javascript">

@@ -1,6 +1,6 @@
 @extends('admin::auth.layout')
 
-@section('content')
+@section('login_content')
 <!-- /.login-logo -->
 <div class="login-box-body">
   <p class="login-box-msg">{!! sprintf(_('Prosím, pre prihlásenie vložte overovací kód, ktorý sme Vám práve odoslali skrz <strong style="white-space: nowrap">%s</strong>.'), admin()->getSelectOption('verification_method')) !!}</p>

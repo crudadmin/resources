@@ -14,15 +14,15 @@
  * Login routes
  */
 Route::get('/admin/login/{provider?}', 'Auth\LoginController@showLoginForm');
-Route::post('/admin/login/{provider?}', 'Auth\LoginController@adminLogin');
-Route::get('/admin/logout', 'Auth\LoginController@logout');
+
+Route::group(['middleware' => ['throttle:auth']], function () {
+    Route::post('/admin/login/{provider?}', 'Auth\LoginController@adminLogin');
+});
 
 Route::get('/admin/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm');
 Route::post('/admin/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
 Route::get('/admin/password/reset/{token}/{provider?}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('/admin/password/reset', 'Auth\ResetPasswordController@reset');
-
-Route::get('/vendor/crudadmin/css/app.dynamic.css', 'ResourcesController@index');
 
 //Verification
 Route::group(['middleware' => ['admin', 'admin.autologout']], function () {
@@ -33,6 +33,7 @@ Route::group(['middleware' => ['admin', 'admin.autologout']], function () {
 Route::group(['middleware' => ['admin', 'admin.autologout', 'admin.verification']], function () {
     // Dashboard
     Route::get('/admin', 'DashboardController@index');
+    Route::get('/admin/logout', 'Auth\LoginController@logout');
 });
 
 Route::group(['middleware' => 'ckfinder'], function () {

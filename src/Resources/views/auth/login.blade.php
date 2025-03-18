@@ -1,6 +1,6 @@
 @extends('admin::auth.layout')
 
-@section('content')
+@section('login_content')
 @php
 $username = config('admin.authentication.login.column', 'email');
 @endphp
@@ -10,6 +10,8 @@ $username = config('admin.authentication.login.column', 'email');
   <p class="login-box-msg">{{ config('admin.authentication.login.title', trans('admin::admin.login-with')) }}</p>
 
   <form action="{{ admin_action('Auth\LoginController@showLoginForm') }}" method="post">
+    <input type="hidden" name="remember" value="on">
+
     {!! csrf_field() !!}
 
     @if ( Admin::hasAutoProviderLogin() === false )
@@ -32,12 +34,14 @@ $username = config('admin.authentication.login.column', 'email');
       @endif
     </div>
     <div class="row">
-      <div class="col-6">
-        <div class="form-check">
+      <div class="col-6 d-flex align-items-center">
+        <a href="{{ admin_action('Auth\ForgotPasswordController@showLinkRequestForm') }}">{{ trans('admin::admin.forgot-password') }}</a>
+
+        <!-- <div class="form-check">
           <label>
-            <input type="checkbox" class="form-check-input" name="remember"> {{ trans('admin::admin.remember-password') }}
+            <input type="checkbox" class="form-check-input" name="remember" checked> {{ trans('admin::admin.remember-password') }}
           </label>
-        </div>
+        </div> -->
       </div>
       <!-- /.col -->
       <div class="col-6 text-end">
@@ -46,9 +50,6 @@ $username = config('admin.authentication.login.column', 'email');
       <!-- /.col -->
     </div>
   </form>
-
-
-  <a href="{{ admin_action('Auth\ForgotPasswordController@showLinkRequestForm') }}">{{ trans('admin::admin.forgot-password') }}</a><br>
 </div>
 <!-- /.login-box-body -->
 @stop

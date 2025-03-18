@@ -1,6 +1,6 @@
 @extends('admin::auth.layout');
 
-@section('content')
+@section('login_content')
 <!-- /.login-logo -->
 <div class="login-box-body">
   <p class="login-box-msg">{{ trans('admin::admin.password-reset') }}</p>
