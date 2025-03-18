@@ -40,6 +40,10 @@ class ForgotPasswordController extends Controller
 
     public function sendResetLinkEmail(Request $request)
     {
+        if ( config('mail.default') == 'log' ){
+            return redirect()->back()->with('error', _('Obnova hesla aktuálne nie je aktívná. Odosielanie emailov nie je nastavené.'));
+        }
+
         $this->validateEmail($request);
 
         if ( $provider = (request('_provider') ?: $provider) ) {

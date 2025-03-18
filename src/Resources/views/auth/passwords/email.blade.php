@@ -22,11 +22,11 @@
       <div class="col-lg-12">
         <button type="submit" class="btn btn-primary btn-block btn-flat w-100">{{ trans('admin::admin.send-password') }}</button>
       </div>
-        @if (session('status'))
+        @if (session('status') || session('error'))
       <div class="col-lg-12">
         <br>
-        <div class="alert alert-success">
-            {{ session('status') }}
+        <div class="alert {{ session('error') ? 'alert-danger' : 'alert-success' }}">
+            {{ session('status') ?? session('error') }}
         </div>
       </div>
         @endif

@@ -43,32 +43,34 @@
         @include('admin::partials.crudadmin-props');
     </script>
 
-    <script src="{{ Gettext::getJSPlugin(AdminLocalization::class) }}"></script>
+    @if ( admin() )
+        <script src="{{ Gettext::getJSPlugin(AdminLocalization::class) }}"></script>
 
-    @vite([
-        'src/Resources/js/plugins/Gettextable.js',
-        'src/Resources/js/app.js'
-    ])
+        @vite([
+            'src/Resources/js/plugins/Gettextable.js',
+            'src/Resources/js/app.js'
+        ])
 
-    {{-- Plugins --}}
-    <script src="{{ admin_asset('/plugins/ckeditor/ckeditor.js') }}"></script>
+        {{-- Plugins --}}
+        <script src="{{ admin_asset('/plugins/ckeditor/ckeditor.js') }}"></script>
 
-    @foreach ((array)config('admin.scripts', []) as $script)
-        <script{!! ($script['module'] ?? true) ? ' type="module"' : '' !!} src="{{ admin_asset(is_array($script) ? $script['src'] : $script, true) }}"></script>
-    @endforeach
+        @foreach ((array)config('admin.scripts', []) as $script)
+            <script{!! ($script['module'] ?? true) ? ' type="module"' : '' !!} src="{{ admin_asset(is_array($script) ? $script['src'] : $script, true) }}"></script>
+        @endforeach
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    @if (Admin::isDev() === false)
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-42935841-6"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        @if (Admin::isDev() === false)
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-42935841-6"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-      gtag('config', 'UA-42935841-6');
-    </script>
+        gtag('config', 'UA-42935841-6');
+        </script>
+        @endif
+
+        @include('admin::slots.scripts')
     @endif
-
-    @include('admin::slots.scripts')
   </body>
 </html>
