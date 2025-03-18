@@ -4,108 +4,87 @@
     "name": "vendor",
     "css": [
       "assets/vendor-4uVi24hu.css"
-    ],
-    "integrity": "sha384-cHumwIWD39B8tVFsl9LDiKO4f7EShicL+k9O7P9dE2nNdpfMPG3VNEOdoi15suR6"
+    ]
   },
   "_vendor-4uVi24hu.css": {
     "file": "assets/vendor-4uVi24hu.css",
-    "src": "_vendor-4uVi24hu.css",
-    "integrity": "sha384-FN/1Ci7ekDvenxahLGqwPbLeoC/be7X0BIvZW8ktiKKU1OE8N+1Ay1540vgv93BN"
+    "src": "_vendor-4uVi24hu.css"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
     "file": "assets/fa-brands-400-D1LuMI3I.ttf",
-    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf",
-    "integrity": "sha384-sVbZUNVZWPj8bqWYhryjUx8yliiq0NTMCDoGRhWBdl9049SfaNwMH4zKcYUCHYsC"
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2": {
     "file": "assets/fa-brands-400-D_cYUPeE.woff2",
-    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2",
-    "integrity": "sha384-5bQWftm2RhZySCFP7cLHM9Q0J7z6ky5sbicvUH56HGBRUDIGyAj52Py3qqJcISlb"
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf": {
     "file": "assets/fa-regular-400-DZaxPHgR.ttf",
-    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf",
-    "integrity": "sha384-k2+OiOWuJnJ+ykFVRnXlmenTtZk09Iyc9bQxTdLsGHVb5z94VFyPDZcc8KoTfhTQ"
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": {
     "file": "assets/fa-regular-400-BjRzuEpd.woff2",
-    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2",
-    "integrity": "sha384-Z05gtC6+ONF8+7LTo5Vz1F6CZZS7YFou0LyBMChIU/hvIv6nbDo9UpXr8qKbFUPq"
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": {
     "file": "assets/fa-solid-900-D0aA9rwL.ttf",
-    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf",
-    "integrity": "sha384-BgBSLF2YWxewkUxcUBiIIkLEfhga95l3wB6uwJJTqOK9KrccAVTfGj2+U8ZI6KpY"
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": {
     "file": "assets/fa-solid-900-CTAAxXor.woff2",
-    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2",
-    "integrity": "sha384-77y8nNGW9eYPJKjLxoeFrOIkHDBkRk9yWR1JHddn++xVgG4hAQIyuDbKcPV/Cjh5"
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2"
   },
   "node_modules/lightbox2/dist/images/close.png": {
     "file": "assets/close-DeJujm55.png",
-    "src": "node_modules/lightbox2/dist/images/close.png",
-    "integrity": "sha384-IVIUuGTFPioJqnvMxi5REZd2tdU7TQyq/Q7NHqspJ+Tamfan0Zc+HIZ/SCHUSPZD"
+    "src": "node_modules/lightbox2/dist/images/close.png"
   },
   "node_modules/lightbox2/dist/images/loading.gif": {
     "file": "assets/loading-BY_-FGaJ.gif",
-    "src": "node_modules/lightbox2/dist/images/loading.gif",
-    "integrity": "sha384-qR7WgcACY76KO6BuLL1cay0YTE3MXdD6CqgtSKQmq2LOMkxL8m6qSKp5UggHC3rs"
+    "src": "node_modules/lightbox2/dist/images/loading.gif"
   },
   "node_modules/lightbox2/dist/images/next.png": {
     "file": "assets/next-QVcNtdNi.png",
-    "src": "node_modules/lightbox2/dist/images/next.png",
-    "integrity": "sha384-9qgpBRH7/e3quW67B5oK6gfLkF0Ck1buW0WlgwCYOmZmFKdwY1b4bHawE96Y9OOM"
+    "src": "node_modules/lightbox2/dist/images/next.png"
   },
   "node_modules/lightbox2/dist/images/prev.png": {
     "file": "assets/prev-BVHqDsrk.png",
-    "src": "node_modules/lightbox2/dist/images/prev.png",
-    "integrity": "sha384-B5BqVWAx6yhpBR/dZT0FESwzdMjBk8RW05DODX+aQ95/l/aAoIuDnhwhAIgVAjsD"
+    "src": "node_modules/lightbox2/dist/images/prev.png"
   },
   "src/Resources/images/caeditor/button-pencil-hover.svg": {
     "file": "assets/button-pencil-hover-DFfqhGy2.svg",
-    "src": "src/Resources/images/caeditor/button-pencil-hover.svg",
-    "integrity": "sha384-VUikzKYWGbSoZNpAlckvua1yg7/J7KGO86qwKzw3ffkGSxiHowK/zdBhtx6Mw1Hh"
+    "src": "src/Resources/images/caeditor/button-pencil-hover.svg"
   },
   "src/Resources/images/caeditor/button-pencil.svg": {
     "file": "assets/button-pencil-C1wZcHMB.svg",
-    "src": "src/Resources/images/caeditor/button-pencil.svg",
-    "integrity": "sha384-QlAqdTfb2ic5hwj8oPRSQt8r8HM9D+s3LDTA2xZAdH0Fm8clCf5n8BNe31iWhd3y"
+    "src": "src/Resources/images/caeditor/button-pencil.svg"
   },
   "src/Resources/images/caeditor/ellipsis-h-solid.svg": {
     "file": "assets/ellipsis-h-solid--S5jO01K.svg",
-    "src": "src/Resources/images/caeditor/ellipsis-h-solid.svg",
-    "integrity": "sha384-vY/nnbGzpdmtwFxuW3ZV6RFKox3EfsoFGGGLlVjNxiYu75bUtZgeuLz8IpwGgqRL"
+    "src": "src/Resources/images/caeditor/ellipsis-h-solid.svg"
   },
   "src/Resources/images/caeditor/external-link.png": {
     "file": "assets/external-link-C0X5o0_t.png",
-    "src": "src/Resources/images/caeditor/external-link.png",
-    "integrity": "sha384-dBomvnD8ArDxcG5EzaDjwCemkXkMPpHopTvbLXdEEiJW4UHh6NikZZI9ndfBbv6C"
+    "src": "src/Resources/images/caeditor/external-link.png"
   },
   "src/Resources/images/caeditor/file-upload-solid.svg": {
     "file": "assets/file-upload-solid-sgTruP_l.svg",
-    "src": "src/Resources/images/caeditor/file-upload-solid.svg",
-    "integrity": "sha384-CkwLjiu7F3c3PhZFRYsz5BHbIzrVfD82QsLkLRh1BjvtLzh77Qfka6kOM5zzKdII"
+    "src": "src/Resources/images/caeditor/file-upload-solid.svg"
   },
   "src/Resources/images/caeditor/image-regular.svg": {
     "file": "assets/image-regular-BW8hu21K.svg",
-    "src": "src/Resources/images/caeditor/image-regular.svg",
-    "integrity": "sha384-BaA9eFO3OyikgDBIObo8epRvIjaktaG8YRDRxOMP8NsFIkMOyEb18oLpxK+naoeu"
+    "src": "src/Resources/images/caeditor/image-regular.svg"
   },
   "src/Resources/images/caeditor/italic-solid.svg": {
     "file": "assets/italic-solid-BUAhpx0q.svg",
-    "src": "src/Resources/images/caeditor/italic-solid.svg",
-    "integrity": "sha384-HrSEQmhLLdDPzct2kix31n/w4hYDbLyW2o805iQJN+ZERH67zhIDz1SY8+InMGQi"
+    "src": "src/Resources/images/caeditor/italic-solid.svg"
   },
   "src/Resources/images/caeditor/link-solid.svg": {
     "file": "assets/link-solid-DE4yd2qT.svg",
-    "src": "src/Resources/images/caeditor/link-solid.svg",
-    "integrity": "sha384-NkVgc5Q7Tkk3lAw7os0O1vTM/u/DMKJk1zt9Z2tqNBrbDlgfCKhc5B/9O75DRVDm"
+    "src": "src/Resources/images/caeditor/link-solid.svg"
   },
   "src/Resources/images/caeditor/spinner-solid.svg": {
     "file": "assets/spinner-solid-Btgm_P8I.svg",
-    "src": "src/Resources/images/caeditor/spinner-solid.svg",
-    "integrity": "sha384-jVtvrsNbg8g5mFkG10QZeCQ+cojLWMIP2HMYSAH9XmyvQ4G80hdb4dBYjBvyi7q6"
+    "src": "src/Resources/images/caeditor/spinner-solid.svg"
   },
   "src/Resources/js/app.js": {
     "file": "assets/app-CYDrQuGI.js",
@@ -117,228 +96,184 @@
     ],
     "css": [
       "assets/app-yxK_yCUZ.css"
-    ],
-    "integrity": "sha384-kx0qeUdngL6YscZTGtVnepQoXGbAQANiF9I9KFI1mi3XLwv8L/cftjgbQv9fgpWq"
+    ]
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
     "file": "assets/FrontendEditor.js",
     "name": "FrontendEditor",
     "src": "src/Resources/js/plugins/FrontendEditor.js",
-    "isEntry": true,
-    "integrity": "sha384-bZq1+amGFGLrtd1LqN+Gz07+Po2jw4C4ptUh/HbKpYAcGgJTWJYfWI89sRxwGxBM"
+    "isEntry": true
   },
   "src/Resources/js/plugins/Gettextable.js": {
     "file": "assets/Gettextable.js",
     "name": "Gettextable",
     "src": "src/Resources/js/plugins/Gettextable.js",
-    "isEntry": true,
-    "integrity": "sha384-V6WRQFni6nvTNwh2Zp5gByDGsQoYGAI7rAtYgVqhFgZzq5OYs3T5RhLFeBZLCQr+"
+    "isEntry": true
   },
   "src/Resources/sass/app.scss": {
     "file": "assets/app-C8Zoedrw.css",
     "src": "src/Resources/sass/app.scss",
-    "isEntry": true,
-    "integrity": "sha384-tuE5XDDjtsClvV/fBH2IE8v13gOUYTRE9Ker5a850hJ8lcbGU6WlbUdBJlNVZMZE"
+    "isEntry": true
   },
   "src/Resources/sass/fonts/inter/Inter-Black.woff": {
     "file": "assets/Inter-Black-BIxta2n9.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-Black.woff",
-    "integrity": "sha384-H6q42FsT43bDrOV5BAh2EoISnIn4A796qdPC5ei0Rz4AVxYooj9B4sOO3xhuYiSY"
+    "src": "src/Resources/sass/fonts/inter/Inter-Black.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-Black.woff2": {
     "file": "assets/Inter-Black-Cx121Dg2.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-Black.woff2",
-    "integrity": "sha384-t3yjFHPUS0QCuna26vyT0CREJONM3y6mazvAhUgUdkWcw2gmk0mP6bENqPhPWRLf"
+    "src": "src/Resources/sass/fonts/inter/Inter-Black.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff": {
     "file": "assets/Inter-BlackItalic-Lt3IHv4C.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff",
-    "integrity": "sha384-avKVIlRstV2joeIQYQNf+soI0kBgLtlMaxPQIFIPR1cW7CkZqrTwy9FXHsS6hpgU"
+    "src": "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff2": {
     "file": "assets/Inter-BlackItalic-EoYvh0qP.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff2",
-    "integrity": "sha384-hAOgEQj4OAuGNoYSS0Pcr/1+Z1WRggDvlQrCCNjFSYJlFDBH/W++wNb6fmCPe1LL"
+    "src": "src/Resources/sass/fonts/inter/Inter-BlackItalic.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-Bold.woff": {
     "file": "assets/Inter-Bold-C7Yeb1kY.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-Bold.woff",
-    "integrity": "sha384-KqNNibKMzGVN6aXcCF4i0Lw7xsgBnvorOkAYrT6oirSsDnQTgLUw0GWmV8oXzybG"
+    "src": "src/Resources/sass/fonts/inter/Inter-Bold.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-Bold.woff2": {
     "file": "assets/Inter-Bold-DwkEV7oY.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-Bold.woff2",
-    "integrity": "sha384-KZMTNneVdX5GnDSeFkiVC5mcI+b5mZMuBzd+iDYGm354SWgWMMHyHA1ISD+SOILZ"
+    "src": "src/Resources/sass/fonts/inter/Inter-Bold.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff": {
     "file": "assets/Inter-BoldItalic-Ds4xNcHq.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff",
-    "integrity": "sha384-XatdmKHW91NfIXALCxqOyicA5PiYQIyGp+wwsLBFiZS4PD33mnAmUt1IJcq/R+bc"
+    "src": "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff2": {
     "file": "assets/Inter-BoldItalic-B-TxFHck.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff2",
-    "integrity": "sha384-DlSTfu945/Mvf3Ck+we8jbZgW554ewm++sVFVtYDRMkySPMR4iw2byZp8GmOgIXg"
+    "src": "src/Resources/sass/fonts/inter/Inter-BoldItalic.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff": {
     "file": "assets/Inter-ExtraBold-BzOKBBbv.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff",
-    "integrity": "sha384-LgqN0aj+Ehn13F7WgWWVLiX50n3POYEt6t8RgWoHwUgy3yR5xAnglRqNDDRRuSI8"
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff2": {
     "file": "assets/Inter-ExtraBold-BwaJnYZC.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff2",
-    "integrity": "sha384-04jP0WEQfUyFTbg31WQFWSmU5QNSdMQct+afBiVavnTo6etcW1PGPe13hVfzYRN/"
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBold.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff": {
     "file": "assets/Inter-ExtraBoldItalic-Br88qCL3.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff",
-    "integrity": "sha384-aHvp5gr+mna0xfTCwfkFJtH0JvG+TN3C1UypzOpCTwmQ0PgwWlo3Ffz5qj0JcIlY"
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff2": {
     "file": "assets/Inter-ExtraBoldItalic-fC3zmXnu.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff2",
-    "integrity": "sha384-KpVX8IXFRbLkUavbSI21aszClyITNviGut0nvfotM4Sn8EZHzlk+e2Z+FtHhDh4l"
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraBoldItalic.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff": {
     "file": "assets/Inter-ExtraLight-BETA-DQEyx1KX.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff",
-    "integrity": "sha384-K2A1sV5p9vsO/DB4jca1N0Q+2Yk6kK12wjBwQUuXLiHzi652J9QisCWQb7CDZpgq"
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff2": {
     "file": "assets/Inter-ExtraLight-BETA-XT6YhCRT.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff2",
-    "integrity": "sha384-ZDQDji4LjtGRo4gkFDcjmTHaRsHWsJUrqEftsZ/qnoyJCngbNufJfNCgUn1O01oa"
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLight-BETA.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff": {
     "file": "assets/Inter-ExtraLightItalic-BETA-CXaZMDya.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff",
-    "integrity": "sha384-Vpmzu7rQDdO2An94AMe45ZkFfGFuqqxH5er0OS0fAt9pFpq6rUxCzvCKZkY7Nybc"
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff2": {
     "file": "assets/Inter-ExtraLightItalic-BETA-DbjIZ5pt.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff2",
-    "integrity": "sha384-XmooPzqiQzY/5Xl/QG+EWv9jVB+NUxVGwqDgEk+2kA3azE0aB77TcJym00mmOEo3"
+    "src": "src/Resources/sass/fonts/inter/Inter-ExtraLightItalic-BETA.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-Italic.woff": {
     "file": "assets/Inter-Italic-DhN7S7ia.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-Italic.woff",
-    "integrity": "sha384-8kXJs/1gOHoSKza/Nwx258legNAb66Xc5Cxjuv5iahyBFA2duC3yCRZDjtTYyQ+i"
+    "src": "src/Resources/sass/fonts/inter/Inter-Italic.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-Italic.woff2": {
     "file": "assets/Inter-Italic-Ctb2FTMY.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-Italic.woff2",
-    "integrity": "sha384-OkvAKSB6E9ZcE8aMrAAP7XOHhz/81hm6TuKa49+M680/IZUyF52DiVikObm6gTn+"
+    "src": "src/Resources/sass/fonts/inter/Inter-Italic.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff": {
     "file": "assets/Inter-Light-BETA-COgtmNOQ.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff",
-    "integrity": "sha384-AuKVNfY6SQ7em1i4BihV31JHcYAJ711AowKu5HCb8jQTc4qZ5xcWu8jleyHL4hWQ"
+    "src": "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff2": {
     "file": "assets/Inter-Light-BETA-C18LLDJw.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff2",
-    "integrity": "sha384-AQso8zhuvFtTS9SR9yYZx7LrcN8PMp6y/yarPoPV/eNkyuzqLXOeIPPGxkuaFAfK"
+    "src": "src/Resources/sass/fonts/inter/Inter-Light-BETA.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff": {
     "file": "assets/Inter-LightItalic-BETA-D9xFNA4b.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff",
-    "integrity": "sha384-uMin4PM8GkDhXtEPJRUp2mGfp1SO8tSAOEjLxLFAki1S63M2jRI/RPhUUymR+j+I"
+    "src": "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff2": {
     "file": "assets/Inter-LightItalic-BETA-BpKx_tP3.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff2",
-    "integrity": "sha384-WMR/dRaRulfSoQKQugVwQMT0hZURp340LN9rBeQJRALWxB+wpyz8grWfh/KoL1XX"
+    "src": "src/Resources/sass/fonts/inter/Inter-LightItalic-BETA.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-Medium.woff": {
     "file": "assets/Inter-Medium-zpbHaqoG.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-Medium.woff",
-    "integrity": "sha384-/TMF2jtJUeAuOKoRRZLPmU34SCmmCYcW7FTEGOQSkbYlT7yvTMjlAWiuPBWqdUBJ"
+    "src": "src/Resources/sass/fonts/inter/Inter-Medium.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-Medium.woff2": {
     "file": "assets/Inter-Medium-DyzO6fBC.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-Medium.woff2",
-    "integrity": "sha384-R1ez4ZaiRjpoxzaAy4pAERRuad5DkVs8UYxX1VG7OkKn2mJFBbzAvMbF9y96oRZz"
+    "src": "src/Resources/sass/fonts/inter/Inter-Medium.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff": {
     "file": "assets/Inter-MediumItalic-brxQg1Kf.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff",
-    "integrity": "sha384-/xdjdN3/sH8Klsax3rjhhUNsTJUWs+OxPS05lyggRqOMMsCFUlQariLUzvE5v1+K"
+    "src": "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff2": {
     "file": "assets/Inter-MediumItalic-yzl0V_Iq.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff2",
-    "integrity": "sha384-tQ7VKEuFgX1Ymz7QukLaSMdrvY4YkfYMr6Dgn+gRFQAk5hVNUPugjF7RV/l8vopY"
+    "src": "src/Resources/sass/fonts/inter/Inter-MediumItalic.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-Regular.woff": {
     "file": "assets/Inter-Regular-DoAECITF.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-Regular.woff",
-    "integrity": "sha384-8jHE+L054Xu1txpKbg945+kU/yFff5heP24WchkInnh1OEexqdVFJTwpxG+NO+nX"
+    "src": "src/Resources/sass/fonts/inter/Inter-Regular.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-Regular.woff2": {
     "file": "assets/Inter-Regular-Dar2-nRQ.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-Regular.woff2",
-    "integrity": "sha384-o86X2UePjGH/F3qC0A0SEAy1IydcSo3oW5Ia7KRGq5yppz3vIQlPhlESGL6IKO0W"
+    "src": "src/Resources/sass/fonts/inter/Inter-Regular.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-SemiBold.woff": {
     "file": "assets/Inter-SemiBold-EKKaO3hv.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-SemiBold.woff",
-    "integrity": "sha384-IXsFA7XuaCprIGkNYOg91yo2/c66c5jCZxz0EjU3vVBOf/5h6vzZ3yi6iAH93zk3"
+    "src": "src/Resources/sass/fonts/inter/Inter-SemiBold.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-SemiBold.woff2": {
     "file": "assets/Inter-SemiBold-BxShtueD.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-SemiBold.woff2",
-    "integrity": "sha384-y8qs5O+OOzb7vXmGQrjKqSWiVWeNNW6b5eYlnwRIdt5EodePwz5EkRoCID2/Wdm2"
+    "src": "src/Resources/sass/fonts/inter/Inter-SemiBold.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff": {
     "file": "assets/Inter-SemiBoldItalic-B1xq9HpC.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff",
-    "integrity": "sha384-xEMn8TIO4aaWfy7L0qWaIoDykpfEFNKwnPxH0obzbjXI+gWNl3K034DM6uGWiOyc"
+    "src": "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff2": {
     "file": "assets/Inter-SemiBoldItalic-BJYN--wE.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff2",
-    "integrity": "sha384-qnY5cIxHJkK0NO3w0iZb+kU6aiaPfvV5ij6xojpN4+5wig45xv/WSFRXZORs05TE"
+    "src": "src/Resources/sass/fonts/inter/Inter-SemiBoldItalic.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff": {
     "file": "assets/Inter-Thin-BETA-hM0SpnJj.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff",
-    "integrity": "sha384-kc6lEyLTra6rXJGjaM0skftq4dbTQE4/IxG/2XhCK0hYd9mzTVJEK9ScYwD3gzDV"
+    "src": "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff2": {
     "file": "assets/Inter-Thin-BETA-C48SAVey.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff2",
-    "integrity": "sha384-ClhPHx8vWFedUrrv42t9yfSeYH1wqPMfPn/nlmNgU9Ch+eGvBQoRafPDVeHRd3zH"
+    "src": "src/Resources/sass/fonts/inter/Inter-Thin-BETA.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff": {
     "file": "assets/Inter-ThinItalic-BETA-CnhdRW1U.woff",
-    "src": "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff",
-    "integrity": "sha384-IKSWct38ZMSuWovTLeHPE/qzxiV/2LO3YBAVjKjRTLDQsQbE9gE8A77ZMFiAqp9f"
+    "src": "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff"
   },
   "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff2": {
     "file": "assets/Inter-ThinItalic-BETA-DVjyUBJb.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff2",
-    "integrity": "sha384-iVotlsvBVCLnglgsd3nE81WDN94N/3Jod33Ul9fJ0kuHmZgeqvrgOQHsAv/BjpOS"
+    "src": "src/Resources/sass/fonts/inter/Inter-ThinItalic-BETA.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-italic.var.woff2": {
     "file": "assets/Inter-italic.var-DAt1ujYf.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-italic.var.woff2",
-    "integrity": "sha384-/wMiFf/l93vEGHeIVrLr1wlzN9z9Ca60CpdEcjM5L57GEliXT4xIEKQYnBHKfFAs"
+    "src": "src/Resources/sass/fonts/inter/Inter-italic.var.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter-roman.var.woff2": {
     "file": "assets/Inter-roman.var-BMde_HeF.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter-roman.var.woff2",
-    "integrity": "sha384-bBsotICQ9bCtPHh5Ls2ICMpLcscqd3NpP6K2ypq9c19HlacIZvxCtVlHCSP+CQbE"
+    "src": "src/Resources/sass/fonts/inter/Inter-roman.var.woff2"
   },
   "src/Resources/sass/fonts/inter/Inter.var.woff2": {
     "file": "assets/Inter.var-DbCwp6Vh.woff2",
-    "src": "src/Resources/sass/fonts/inter/Inter.var.woff2",
-    "integrity": "sha384-ShFAYyGV2VnjIaRCRrHDSq8GbT8G5GJ4toiO6b32GBKxAHVikst22cYIaOZN3WPT"
+    "src": "src/Resources/sass/fonts/inter/Inter.var.woff2"
   },
   "src/Resources/sass/frontend.scss": {
     "file": "assets/frontend.css",
     "src": "src/Resources/sass/frontend.scss",
-    "isEntry": true,
-    "integrity": "sha384-0f9tKNqAZ4mXcBPvw/4CnmMbw4gsXAeQ4oVBFHJGWFmEvsBv5amp1y81La0e99aB"
+    "isEntry": true
   }
 }
