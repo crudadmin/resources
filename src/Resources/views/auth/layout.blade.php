@@ -4,7 +4,7 @@
 <body class="login-page">
   <div class="login-box">
     <div class="login-logo">
-      <a href=""><b><?php echo getAdminLogo() ?></b></a>
+      <a href=""><?php echo getAdminLogo() ?></a>
     </div>
 
     @yield('login_content')
