@@ -29,7 +29,7 @@ window.crudadmin = {
             assets : '{{ Admin::getAssetsVersion() }}',
         },
         license_key: '{{ config('admin.license_key') }}',
-        user: @json(admin()->setAdminResponse()),
+        user: @json(admin()->setAuthResponse()),
         models : @json(AdminTree::get()),
         languages: @json(Admin::isEnabledLocalization() ? Localization::getLanguages() : []),
         admin_languages: @json(Admin::isEnabledAdminLocalization() ? AdminLocalization::getLanguages() : []),
