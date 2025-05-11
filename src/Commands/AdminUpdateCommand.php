@@ -111,6 +111,7 @@ class AdminUpdateCommand extends Command
     public function prepareStorage()
     {
         Admin::addGitignoreFiles([
+            public_path('/uploads'),
             storage_path('/crudadmin')
         ]);
 
