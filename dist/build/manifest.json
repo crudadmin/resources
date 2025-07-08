@@ -1,14 +1,14 @@
 {
-  "_vendor--E5fSRzn.js": {
-    "file": "assets/vendor--E5fSRzn.js",
+  "_vendor-4uVi24hu.css": {
+    "file": "assets/vendor-4uVi24hu.css",
+    "src": "_vendor-4uVi24hu.css"
+  },
+  "_vendor-CzcXMU6F.js": {
+    "file": "assets/vendor-CzcXMU6F.js",
     "name": "vendor",
     "css": [
       "assets/vendor-4uVi24hu.css"
     ]
-  },
-  "_vendor-4uVi24hu.css": {
-    "file": "assets/vendor-4uVi24hu.css",
-    "src": "_vendor-4uVi24hu.css"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
     "file": "assets/fa-brands-400-D1LuMI3I.ttf",
@@ -87,15 +87,15 @@
     "src": "src/Resources/images/caeditor/spinner-solid.svg"
   },
   "src/Resources/js/app.js": {
-    "file": "assets/app-DTw2sSbT.js",
+    "file": "assets/app-C90pXq-L.js",
     "name": "app",
     "src": "src/Resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor--E5fSRzn.js"
+      "_vendor-CzcXMU6F.js"
     ],
     "css": [
-      "assets/app-CDrHGh9O.css"
+      "assets/app-3QYOF7L9.css"
     ]
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
@@ -111,7 +111,7 @@
     "isEntry": true
   },
   "src/Resources/sass/app.scss": {
-    "file": "assets/app-BUoZ81BU.css",
+    "file": "assets/app-RK6H6QMI.css",
     "src": "src/Resources/sass/app.scss",
     "isEntry": true
   },
