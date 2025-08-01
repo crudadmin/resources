@@ -39,9 +39,9 @@ if (! function_exists('admin_asset')) {
 }
 
 if (! function_exists('admin_action')) {
-    function admin_action($controller, $params = null)
+    function admin_action($controller, $params = null, $fullPath = true)
     {
-        return action('\Admin\Resources\Controllers\\'.$controller, $params);
+        return action('\Admin\Resources\Controllers\\'.$controller, $params, $fullPath);
     }
 }
 

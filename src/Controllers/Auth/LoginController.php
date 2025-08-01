@@ -28,7 +28,10 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/admin';
+    public function redirectTo()
+    {
+        return request('redirect') ?: '/admin';
+    }
 
     /**
      * Create a new authentication controller instance.
@@ -94,8 +97,10 @@ class LoginController extends Controller
         $this->guard()->logout();
 
         //Custom logout path
-        if (!($path = config('admin.authentication.login.path'))) {
-            $path = $this->redirectTo;
+        if ( $request->has('redirect') ) {
+            $path = $request->input('redirect');
+        } else if (!($path = config('admin.authentication.login.path'))) {
+            $path = $this->redirectTo();
         }
 
         return redirect($path);

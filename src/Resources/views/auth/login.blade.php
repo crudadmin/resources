@@ -12,6 +12,10 @@ $username = config('admin.authentication.login.column', 'email');
   <form action="{{ admin_action('Auth\LoginController@showLoginForm') }}" method="post">
     <input type="hidden" name="remember" value="on">
 
+    @if ( request()->has('redirect') )
+        <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+    @endif
+
     {!! csrf_field() !!}
 
     @if ( Admin::hasAutoProviderLogin() === false )
