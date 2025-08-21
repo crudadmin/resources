@@ -1,5 +1,5 @@
 <?php
-    Vite::useHotFile(base_path('vendor/crudadmin/resources/dist/hot'));
+    Vite::useHotFile(public_path('vendor/crudadmin/hot'));
     Vite::useBuildDirectory('vendor/crudadmin/build');
 ?>
 <!DOCTYPE html>
