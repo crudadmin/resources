@@ -13,7 +13,6 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
 
     <link rel="stylesheet" href="{{ admin_asset('/plugins/chosen/chosen.css') }}" />
-    <link rel="stylesheet" href="{{ admin_asset('/plugins/datetimepicker/jquery.datetimepicker.css')}}" />
 
     @vite(['src/Resources/sass/app.scss'])
 

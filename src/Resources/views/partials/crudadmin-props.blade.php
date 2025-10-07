@@ -32,6 +32,7 @@ window.crudadmin = {
         user: @json(admin()->setAuthResponse()),
         models : @json(AdminTree::get()),
         languages: @json(Admin::isEnabledLocalization() ? Localization::getLanguages() : []),
+        statistics : @json(Admin::getStatistics()),
         admin_languages: @json(Admin::isEnabledAdminLocalization() ? AdminLocalization::getLanguages() : []),
         admin_language: @json(admin()->language ? admin()->language : AdminLocalization::get()),
         gettext: @json(config('admin.gettext', false)),
