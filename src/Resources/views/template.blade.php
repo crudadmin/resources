@@ -29,7 +29,7 @@
     </style>
     @endif
 
-    @include('admin::partials.meta');
+    @include('admin::slots.meta');
 </head>
 <body>
     @if ( admin() )
