@@ -28,6 +28,8 @@
         }
     </style>
     @endif
+
+    @include('admin::partials.meta');
 </head>
 <body>
     @if ( admin() )
