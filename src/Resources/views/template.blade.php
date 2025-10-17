@@ -29,7 +29,7 @@
     </style>
     @endif
 
-    @include('admin::slots.meta');
+    @include('admin::slots.meta')
 </head>
 <body>
     @if ( admin() )
@@ -40,7 +40,7 @@
 
     <!-- Admin variables -->
     <script type="text/javascript">
-        @include('admin::partials.crudadmin-props');
+        @include('admin::partials.crudadmin-props')
     </script>
 
     @if ( admin() )
