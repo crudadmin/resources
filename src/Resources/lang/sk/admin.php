@@ -103,7 +103,7 @@ return [
     'general-tab' => _('Všeobecné'),
     'number' => _('č.'),
     'rows-list' => _('Zoznam stĺpcov'),
-    'default' => _('Predvolené'),
+    'default' => _('Zobraziť predvolené'),
 
     'edit' => _('Upraviť'),
     'show' => _('Zobraziť'),
