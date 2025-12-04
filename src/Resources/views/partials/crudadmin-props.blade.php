@@ -1,20 +1,22 @@
 window.crudadmin = {
-    logged : <?php echo Admin::getAdminGuard()->check() ? 'true' : 'false' ?>,
+    logged : @json(Admin::getAdminGuard()->check()),
 
-    ckfinder : <?php echo config('admin.ckfinder', false) === true ? 'true' : 'false' ?>,
+    ckfinder : @json(config('admin.ckfinder', false) === true),
     components : {},
 
     layout : {
+        env : '{{ config('app.env') }}',
+        debug : @json(config('app.debug')),
         paths : {
-            root : '<?php echo url('/') ?>',
-            cache : '<?php echo \Admin\Core\Helpers\Storage\AdminFile::getPublicCacheDirectory() ?>',
-            assets : '<?php echo admin_asset('/') ?>',
-            baseURL : '<?php echo url('/admin') ?>',
-            vendor : '<?php echo Admin::getAdminAssetsPath() ?>',
+            root : '{{ url('/') }}',
+            cache : '{{ \Admin\Core\Helpers\Storage\AdminFile::getPublicCacheDirectory() }}',
+            assets : '{{ admin_asset('/') }}',
+            baseURL : '{{ url('/admin') }}',
+            vendor : '{{ Admin::getAdminAssetsPath() }}',
         },
         logo : {
-            default : '<?php echo getAdminLogo() ?>',
-            small : '<?php echo getAdminLogo(true) ?>',
+            default : '{!! getAdminLogo() !!}',
+            small : '{!! getAdminLogo(true) !!}',
         },
         author : @json(config('admin.author', true)),
         copyright : {
@@ -24,6 +26,7 @@ window.crudadmin = {
         },
         @if ( admin() )
         version : {
+            hash: '{{ Admin::getAppHash() }}',
             app : '{{ Admin::getVersion() }}',
             resources : '{{ Admin::getResourcesVersion() }}',
             assets : '{{ Admin::getAssetsVersion() }}',
