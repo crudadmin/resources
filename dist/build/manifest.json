@@ -87,7 +87,7 @@
     "src": "src/Resources/images/caeditor/spinner-solid.svg"
   },
   "src/Resources/js/app.js": {
-    "file": "assets/app-C4ESmkuO.js",
+    "file": "assets/app-CtQnq1zv.js",
     "name": "app",
     "src": "src/Resources/js/app.js",
     "isEntry": true,
@@ -95,7 +95,7 @@
       "_vendor-DOHpHeq0.js"
     ],
     "css": [
-      "assets/app-s1WpR0QE.css"
+      "assets/app-VA5BKj_T.css"
     ]
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
