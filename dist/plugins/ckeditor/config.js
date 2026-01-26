@@ -12,9 +12,9 @@ CKEDITOR.editorConfig = function (config) {
 
     var fileManagerPath;
     if (window.crudadmin.ckfinder) {
-        fileManagerPath = window.crudadmin.baseURL + '/api/ckfinder/browser';
+        fileManagerPath = window.crudadmin.layout.paths.baseURL + '/api/ckfinder/browser';
     } else {
-        fileManagerPath = window.crudadmin.baseURL + '/filemanager';
+        fileManagerPath = window.crudadmin.layout.paths.baseURL + '/filemanager';
     }
 
     config.skin = 'moono-lisa';
