@@ -31,6 +31,9 @@ window.crudadmin = {
             resources : '{{ Admin::getResourcesVersion() }}',
             assets : '{{ Admin::getAssetsVersion() }}',
         },
+        editor : {
+            stateless : @json(\EditorMode::isStateless()),
+        },
         license_key: '{{ config('admin.license_key') }}',
         user: @json(admin()->setAuthResponse()),
         models : @json(AdminTree::get()),
@@ -56,7 +59,7 @@ window.crudadmin = {
             download : '{{ action('\Admin\Controllers\DownloadController@adminDownload') }}',
             translations : '{{ action('\Admin\Controllers\GettextController@getEditorResponse', [':id', ':table']) }}',
             switch_locale : '{{ action('\Admin\Controllers\GettextController@switchAdminLanguage', [':id']) }}',
-            update_translations : '{{ action('\Admin\Controllers\GettextController@updateTranslations', [':id', ':table']) }}',
+            update_translations : '{{ action('\Admin\Controllers\GettextController@updateTranslationsFromAdmin', [':id', ':table']) }}',
         },
         @endif
     }
