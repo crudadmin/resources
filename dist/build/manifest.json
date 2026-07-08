@@ -87,7 +87,7 @@
     "src": "src/Resources/images/caeditor/spinner-solid.svg"
   },
   "src/Resources/js/app.js": {
-    "file": "assets/app-Bnclz1_M.js",
+    "file": "assets/app-Bg5kYOdW.js",
     "name": "app",
     "src": "src/Resources/js/app.js",
     "isEntry": true,
@@ -95,7 +95,7 @@
       "_vendor-BnNw7xhd.js"
     ],
     "css": [
-      "assets/app-jwMeB1Vp.css"
+      "assets/app-BDETrSQ0.css"
     ]
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
@@ -111,7 +111,7 @@
     "isEntry": true
   },
   "src/Resources/sass/app.scss": {
-    "file": "assets/app-WJBtwoSi.css",
+    "file": "assets/app-D61qWFjz.css",
     "src": "src/Resources/sass/app.scss",
     "isEntry": true
   },
