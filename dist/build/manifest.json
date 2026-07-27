@@ -3,8 +3,8 @@
     "file": "assets/vendor-4uVi24hu.css",
     "src": "_vendor-4uVi24hu.css"
   },
-  "_vendor-BnNw7xhd.js": {
-    "file": "assets/vendor-BnNw7xhd.js",
+  "_vendor-sCuYDh2i.js": {
+    "file": "assets/vendor-sCuYDh2i.js",
     "name": "vendor",
     "css": [
       "assets/vendor-4uVi24hu.css"
@@ -87,15 +87,15 @@
     "src": "src/Resources/images/caeditor/spinner-solid.svg"
   },
   "src/Resources/js/app.js": {
-    "file": "assets/app-Bg5kYOdW.js",
+    "file": "assets/app-DxvPQ7hJ.js",
     "name": "app",
     "src": "src/Resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-BnNw7xhd.js"
+      "_vendor-sCuYDh2i.js"
     ],
     "css": [
-      "assets/app-BDETrSQ0.css"
+      "assets/app-SKjvKIyz.css"
     ]
   },
   "src/Resources/js/plugins/FrontendEditor.js": {
